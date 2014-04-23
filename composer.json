@@ -1,0 +1,24 @@
+{
+  "name": "alecsammon/php-raml-parser",
+  "description": "A RAML parser built in php",
+
+
+  "authors": [
+    {
+      "name": "Alec Sammon",
+      "email": "alec.sammon@mangahigh.com"
+    }
+  ],
+
+  "autoload": {
+    "psr-4": {
+      "Raml\\": "src/"
+    }
+  },
+
+  "require": {
+    "justinrainbow/json-schema": "~1.3",
+    "symfony/yaml": "2.4.*@dev",
+    "phpunit/phpunit": "3.7.32"
+  }
+}
