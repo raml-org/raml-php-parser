@@ -159,7 +159,14 @@ class Parser
         foreach ($raml as $key => $value) {
             if($key === 'is') {
                 foreach($value as $traitName) {
-                    $newArray = array_replace_recursive($newArray, $this->replaceTraits($traits[$traitName], $traits));
+                    if (is_array($traitName)) {
+                        $traitVariables = current($traitName);
+                        $traitName = key($traitName);
+                        $trait = $this->applyTraitVariables($traitVariables, $traits[$traitName]);
+                    } else {
+                        $trait = $traits[$traitName];
+                    }
+                    $newArray = array_replace_recursive($newArray, $this->replaceTraits($trait, $traits));
                 }
             } else {
                 $newValue = $this->replaceTraits($value, $traits);
@@ -169,5 +176,12 @@ class Parser
 
         }
         return $newArray;
+    }
+    
+    private function applyTraitVariables($values, $trait) {
+        foreach ($values as $key => $value) {
+            $trait = str_replace("<<$key>>", $value, $trait);
+        }
+        return $trait;
     }
 }
