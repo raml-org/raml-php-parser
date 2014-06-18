@@ -36,9 +36,29 @@ class Parser
                 }
             }
 
-            $array = $this->replaceTraits($array, $keyedTraits);
+            foreach($array as $key=>$value) {
+                if(strpos($key, '/') === 0) {
+                    $name = (isset($value['displayName'])) ? $value['displayName'] : substr($key, 1);
+                    $array[$key] = $this->replaceTraits($value, $keyedTraits, $key, $name);
+                }
+            }
         }
 
+        if(isset($array['resourceTypes'])) {
+            $keyedTraits = [];
+            foreach($array['resourceTypes'] as $trait) {
+                foreach($trait as $k=>$t) {
+                    $keyedTraits[$k] = $t;
+                }
+            }
+
+            foreach($array as $key=>$value) {
+                if(strpos($key, '/') === 0) {
+                    $name = (isset($value['displayName'])) ? $value['displayName'] : substr($key, 1);
+                    $array[$key] = $this->replaceTypes($value, $keyedTraits, $key, $name);
+                }
+            }
+        }
 
         return $array;
     }
@@ -148,7 +168,7 @@ class Parser
      *
      * @return array
      */
-    private function replaceTraits($raml, $traits)
+    private function replaceTraits($raml, $traits, $path, $name)
     {
         if(!is_array($raml)) {
             return $raml;
@@ -162,14 +182,18 @@ class Parser
                     if (is_array($traitName)) {
                         $traitVariables = current($traitName);
                         $traitName = key($traitName);
+
+                        $traitVariables['resourcePath'] = $path;
+                        $traitVariables['resourcePathName'] = $name;
+
                         $trait = $this->applyTraitVariables($traitVariables, $traits[$traitName]);
                     } else {
                         $trait = $traits[$traitName];
                     }
-                    $newArray = array_replace_recursive($newArray, $this->replaceTraits($trait, $traits));
+                    $newArray = array_replace_recursive($newArray, $this->replaceTraits($trait, $traits, $path, $name));
                 }
             } else {
-                $newValue = $this->replaceTraits($value, $traits);
+                $newValue = $this->replaceTraits($value, $traits, $path, $name);
                 $newArray[$key] = isset($newArray[$key]) ? array_replace_recursive($newArray[$key], $newValue) : $newValue;
 
             }
@@ -177,11 +201,65 @@ class Parser
         }
         return $newArray;
     }
-    
-    private function applyTraitVariables($values, $trait) {
-        foreach ($values as $key => $value) {
-            $trait = str_replace("<<$key>>", $value, $trait);
+
+    /**
+     * Insert the traits into the RAML file
+     *
+     * @param $raml
+     * @param $traits
+     *
+     * @return array
+     */
+    private function replaceTypes($raml, $traits, $path, $name)
+    {
+        if(!is_array($raml)) {
+            return $raml;
         }
-        return $trait;
+
+        $newArray = [];
+
+        foreach ($raml as $key => $value) {
+            if($key === 'type') {
+                if (is_array($value)) {
+                    $traitVariables = current($value);
+                    $traitName = key($value);
+
+                    $traitVariables['resourcePath'] = $path;
+                    $traitVariables['resourcePathName'] = $name;
+
+                    $trait = $this->applyTraitVariables($traitVariables, $traits[$traitName]);
+                } else {
+                    $trait = $traits[$value];
+                }
+                $newArray = array_replace_recursive($newArray, $this->replaceTypes($trait, $traits, $path, $name));
+
+            } else {
+                $newValue = $this->replaceTypes($value, $traits, $path, $name);
+                $newArray[$key] = isset($newArray[$key]) ? array_replace_recursive($newArray[$key], $newValue) : $newValue;
+
+            }
+
+        }
+        return $newArray;
+    }
+
+
+    /**
+     * Add trait variables
+     *
+     * @param $values
+     * @param $trait
+     *
+     * @return mixed
+     */
+    private function applyTraitVariables($values, $trait) {
+
+        $jsonString = json_encode($trait, true);
+
+        foreach ($values as $key => $value) {
+            $jsonString = str_replace('\u003C\u003C'.$key.'\u003E\u003E', $value, $jsonString);
+        }
+
+        return json_decode($jsonString, true);
     }
 }

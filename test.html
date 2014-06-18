@@ -1,0 +1,9 @@
+<script src="https://raw.githubusercontent.com/raml-org/raml-js-parser/master/dist/raml-parser.min.js"></script>
+
+        <script>
+RAML.Parser.loadFile('test/fixture/traitsAndTypes.raml').then( function(data) {
+console.log(data)
+}, function(error) {
+console.log('Error parsing: ' + error);
+});
+        </script>
