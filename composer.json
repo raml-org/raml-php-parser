@@ -18,9 +18,13 @@
     }
   },
 
+  "require-dev": {
+    "satooshi/php-coveralls": "dev-master",
+    "phpunit/phpunit": "3.7.32"
+  },
+
   "require": {
     "justinrainbow/json-schema": "~1.3",
-    "symfony/yaml": "2.4.*@dev",
-    "phpunit/phpunit": "3.7.32"
+    "symfony/yaml": "2.4.*@dev"
   }
 }

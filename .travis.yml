@@ -1,6 +1,16 @@
 language: php
+
 php:
   - 5.4
+  - 5.5
+
 before_script:
-  - ./composer.phar install
-script: ./vendor/bin/phpunit -c phpunit.xml test
+  - ./composer.phar install --dev --no-interaction
+
+script:
+  - mkdir -p build/logs
+  - ./vendor/bin/phpunit --coverage-clover build/logs/clover.xml -c phpunit.xml test
+
+after_script:
+ -  ./vendor/bin/coveralls -v
+
