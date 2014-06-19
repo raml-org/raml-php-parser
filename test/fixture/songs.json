@@ -1,0 +1,8 @@
+{
+  "$schema": "http://json-schema.org/schema",
+  "type": "array",
+  "description": "A list of songs",
+  "items": {
+    "$ref": "song.json"
+  }
+}

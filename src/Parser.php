@@ -60,8 +60,37 @@ class Parser
             }
         }
 
+        $array = $this->array_map_recursive(function($data) use ($rootDir) {
+                if(is_string($data) && $this->is_json($data)) {
+                    $retriever = new \JsonSchema\Uri\UriRetriever;
+                    $jsonSchemaParser = new \JsonSchema\RefResolver($retriever);
+
+                    $data = json_decode($data);
+                    $jsonSchemaParser->resolve($data, 'file:'.$rootDir.'/');
+
+                    return $data;
+                }
+
+                return $data;
+
+            }, $array);
+
         return $array;
     }
+
+
+    private function is_json($string) {
+        json_decode($string);
+        return (json_last_error() == JSON_ERROR_NONE);
+    }
+
+    private function array_map_recursive(callable $func, array $arr) {
+        array_walk_recursive($arr, function(&$v) use ($func) {
+                $v = $func($v);
+            });
+        return $arr;
+    }
+
 
     // ---
 

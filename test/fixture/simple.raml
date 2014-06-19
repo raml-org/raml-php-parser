@@ -15,6 +15,19 @@ traits:
     queryParameters:
       genre:
         description: filter the songs by genre
+    responses:
+            200:
+              body:
+                application/json:
+                  schema: |
+                    {
+                      "$schema": "http://json-schema.org/schema",
+                      "type": "array",
+                      "description": "A list of songs",
+                      "items": {
+                        "$ref": "song.json"
+                      }
+                    }
   post:
   /{songId}:
     get:

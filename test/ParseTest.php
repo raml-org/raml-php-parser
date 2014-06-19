@@ -29,6 +29,36 @@ class ParseTest extends PHPUnit_Framework_TestCase
     }
 
     /** @test */
+    public function shouldParseJson()
+    {
+        $simpleRaml = $this->parser->parse(__DIR__.'/fixture/simple.raml');
+        $this->assertInstanceOf('stdClass', $simpleRaml['/songs']['/{songId}']['get']['responses']['200']['body']['application/json']['schema']);
+    }
+
+    /** @test */
+    public function shouldParseJsonRefs()
+    {
+        $simpleRaml = $this->parser->parse(__DIR__.'/fixture/simple.raml');
+        $schema = $simpleRaml['/songs']['get']['responses']['200']['body']['application/json']['schema'];
+        $this->assertEquals('A canonical song', $schema->items->description);
+    }
+
+    /** @test */
+    public function shouldParseIncludedJson()
+    {
+        $simpleRaml = $this->parser->parse(__DIR__.'/fixture/includeSchema.raml');
+        $this->assertInstanceOf('stdClass', $simpleRaml['/songs']['get']['responses']['200']['body']['application/json']['schema']);
+    }
+
+    /** @test */
+    public function shouldParseIncludedJsonRefs()
+    {
+        $simpleRaml = $this->parser->parse(__DIR__.'/fixture/includeSchema.raml');
+        $schema = $simpleRaml['/songs']['get']['responses']['200']['body']['application/json']['schema'];
+        $this->assertEquals('A canonical song', $schema->items->description);
+    }
+
+    /** @test */
     public function shouldApplyTraitVariables()
     {
         $traitsAndTypes = $this->parser->parse(__DIR__.'/fixture/traitsAndTypes.raml');
@@ -46,5 +76,14 @@ class ParseTest extends PHPUnit_Framework_TestCase
         $this->assertEquals('The number of pages to return, not to exceed 10', $traitsAndTypes['/books']['get']['queryParameters']['numPages']['description']);
 
         $this->assertEquals('Return DVD that have their title matching the given value for path /dvds', $traitsAndTypes['/dvds']['get']['queryParameters']['title']['description']);
+    }
+
+    /** @test */
+    public function shouldIncludeOtherFiles()
+    {
+        $parent = $this->parser->parse(__DIR__.'/fixture/parent.raml');
+
+        $this->assertEquals('valueA', $parent['external']['propertyA']);
+        $this->assertEquals('valueB', $parent['external']['propertyB']);
     }
 }
