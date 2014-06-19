@@ -17,11 +17,11 @@ traits:
     paged:
       queryParameters:
         numPages:
-          description: The number of pages to return, not to exceed <<maxPages>>
+          description: The number of pages to return
 /books:
   type: { searchableCollection: { queryParamName: title, fallbackParamName: digest_all_fields } }
   get:
-    is: [ secured: { tokenName: access_token }, paged: { maxPages: 10 } ]
+    is: [ secured: { tokenName: access_token }, paged ]
 /dvds:
   displayName: DVD
   type: { searchableCollection: { queryParamName: title, fallbackParamName: digest_all_fields } }

@@ -28,40 +28,41 @@ class Parser
 
         $array = $this->includeAndParseFiles($array, $rootDir);
 
-        if(isset($array['traits'])) {
+        if (isset($array['traits'])) {
             $keyedTraits = [];
-            foreach($array['traits'] as $trait) {
-                foreach($trait as $k=>$t) {
+            foreach ($array['traits'] as $trait) {
+                foreach ($trait as $k => $t) {
                     $keyedTraits[$k] = $t;
                 }
             }
 
-            foreach($array as $key=>$value) {
-                if(strpos($key, '/') === 0) {
+            foreach ($array as $key => $value) {
+                if (strpos($key, '/') === 0) {
                     $name = (isset($value['displayName'])) ? $value['displayName'] : substr($key, 1);
                     $array[$key] = $this->replaceTraits($value, $keyedTraits, $key, $name);
                 }
             }
         }
 
-        if(isset($array['resourceTypes'])) {
+        if (isset($array['resourceTypes'])) {
             $keyedTraits = [];
-            foreach($array['resourceTypes'] as $trait) {
-                foreach($trait as $k=>$t) {
+            foreach ($array['resourceTypes'] as $trait) {
+                foreach ($trait as $k => $t) {
                     $keyedTraits[$k] = $t;
                 }
             }
 
-            foreach($array as $key=>$value) {
-                if(strpos($key, '/') === 0) {
+            foreach ($array as $key => $value) {
+                if (strpos($key, '/') === 0) {
                     $name = (isset($value['displayName'])) ? $value['displayName'] : substr($key, 1);
                     $array[$key] = $this->replaceTypes($value, $keyedTraits, $key, $name);
                 }
             }
         }
 
-        $array = $this->array_map_recursive(function($data) use ($rootDir) {
-                if(is_string($data) && $this->is_json($data)) {
+        $array = $this->arrayMapRecursive(
+            function ($data) use ($rootDir) {
+                if (is_string($data) && $this->isJson($data)) {
                     $retriever = new \JsonSchema\Uri\UriRetriever;
                     $jsonSchemaParser = new \JsonSchema\RefResolver($retriever);
 
@@ -73,21 +74,29 @@ class Parser
 
                 return $data;
 
-            }, $array);
+            },
+            $array
+        );
 
         return $array;
     }
 
 
-    private function is_json($string) {
+    private function isJson($string)
+    {
         json_decode($string);
         return (json_last_error() == JSON_ERROR_NONE);
     }
 
-    private function array_map_recursive(callable $func, array $arr) {
-        array_walk_recursive($arr, function(&$v) use ($func) {
+    private function arrayMapRecursive(callable $func, array $arr)
+    {
+        array_walk_recursive(
+            $arr,
+            function (&$v) use ($func) {
                 $v = $func($v);
-            });
+            }
+        );
+
         return $arr;
     }
 
@@ -144,7 +153,7 @@ class Parser
      */
     private function loadAndParseFile($fileName, $rootDir)
     {
-        if(isset($this->cachedFiles[$fileName])) {
+        if (isset($this->cachedFiles[$fileName])) {
             return $this->cachedFiles[$fileName];
         }
 
@@ -161,7 +170,7 @@ class Parser
                 $fileData = $this->parseRaml($rootDir. '/'.$fileName);
                 break;
             default:
-                throw new \Exception(pathinfo('Extension "'.$fileName, PATHINFO_EXTENSION) . '" not supported (yet)');
+                throw new \Exception('Extension "' . pathinfo($fileName, PATHINFO_EXTENSION) . '" not supported (yet)');
         }
 
         $this->cachedFiles[$fileName] = $fileData;
@@ -178,11 +187,14 @@ class Parser
      */
     private function includeAndParseFiles($array, $rootDir)
     {
-        if(is_array($array)) {
-            return array_map(function($array) use ($rootDir) {
+        if (is_array($array)) {
+            return array_map(
+                function ($array) use ($rootDir) {
                     return $this->includeAndParseFiles($array, $rootDir);
-                }, $array);
-        } elseif(strpos($array, '!include') === 0) {
+                },
+                $array
+            );
+        } elseif (strpos($array, '!include') === 0) {
             return $this->loadAndParseFile(str_replace('!include ', '', $array), $rootDir);
         } else {
             return $array;
@@ -199,15 +211,15 @@ class Parser
      */
     private function replaceTraits($raml, $traits, $path, $name)
     {
-        if(!is_array($raml)) {
+        if (!is_array($raml)) {
             return $raml;
         }
 
         $newArray = [];
 
         foreach ($raml as $key => $value) {
-            if($key === 'is') {
-                foreach($value as $traitName) {
+            if ($key === 'is') {
+                foreach ($value as $traitName) {
                     if (is_array($traitName)) {
                         $traitVariables = current($traitName);
                         $traitName = key($traitName);
@@ -223,8 +235,12 @@ class Parser
                 }
             } else {
                 $newValue = $this->replaceTraits($value, $traits, $path, $name);
-                $newArray[$key] = isset($newArray[$key]) ? array_replace_recursive($newArray[$key], $newValue) : $newValue;
 
+                if (isset($newArray[$key])) {
+                    $newArray[$key] = array_replace_recursive($newArray[$key], $newValue);
+                } else {
+                    $newArray[$key] = $newValue;
+                }
             }
 
         }
@@ -241,14 +257,14 @@ class Parser
      */
     private function replaceTypes($raml, $traits, $path, $name)
     {
-        if(!is_array($raml)) {
+        if (!is_array($raml)) {
             return $raml;
         }
 
         $newArray = [];
 
         foreach ($raml as $key => $value) {
-            if($key === 'type') {
+            if ($key === 'type') {
                 if (is_array($value)) {
                     $traitVariables = current($value);
                     $traitName = key($value);
@@ -264,8 +280,12 @@ class Parser
 
             } else {
                 $newValue = $this->replaceTypes($value, $traits, $path, $name);
-                $newArray[$key] = isset($newArray[$key]) ? array_replace_recursive($newArray[$key], $newValue) : $newValue;
 
+                if (isset($newArray[$key])) {
+                    $newArray[$key] = array_replace_recursive($newArray[$key], $newValue);
+                } else {
+                    $newArray[$key] = $newValue;
+                }
             }
 
         }
@@ -281,7 +301,8 @@ class Parser
      *
      * @return mixed
      */
-    private function applyTraitVariables($values, $trait) {
+    private function applyTraitVariables($values, $trait)
+    {
 
         $jsonString = json_encode($trait, true);
 

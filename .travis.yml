@@ -13,3 +13,4 @@ script:
 
 after_script:
  -  ./vendor/bin/coveralls -v
+ -  ./vendor/bin/phpcs --report=summary --standard=PSR1,PSR2 src

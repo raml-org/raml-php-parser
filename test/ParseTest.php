@@ -59,6 +59,34 @@ class ParseTest extends PHPUnit_Framework_TestCase
     }
 
     /** @test */
+    public function shouldThrowErrorIfUnknownIncluded()
+    {
+        $this->setExpectedException('Exception', 'Extension "ini" not supported (yet)');
+        $this->parser->parse(__DIR__.'/fixture/includeIni.raml');
+    }
+
+    /** @test */
+    public function shouldParseIncludedRaml()
+    {
+        $parent = $this->parser->parse(__DIR__.'/fixture/includeRaml.raml');
+
+        $this->assertEquals('valueA', $parent['external']['propertyA']);
+        $this->assertEquals('valueB', $parent['external']['propertyB']);
+
+        $this->assertEquals('valueA', $parent['internal']['propertyA']);
+        $this->assertEquals('valueB', $parent['internal']['propertyB']);
+    }
+
+    /** @test */
+    public function shouldParseIncludedYaml()
+    {
+        $parent = $this->parser->parse(__DIR__.'/fixture/includeYaml.raml');
+
+        $this->assertEquals('valueA', $parent['external']['propertyA']);
+        $this->assertEquals('valueB', $parent['external']['propertyB']);
+    }
+
+    /** @test */
     public function shouldApplyTraitVariables()
     {
         $traitsAndTypes = $this->parser->parse(__DIR__.'/fixture/traitsAndTypes.raml');
@@ -73,17 +101,8 @@ class ParseTest extends PHPUnit_Framework_TestCase
         $this->assertEquals('Return books that have their title matching the given value for path /books', $traitsAndTypes['/books']['get']['queryParameters']['title']['description']);
         $this->assertEquals('If no values match the value given for title, use digest_all_fields instead', $traitsAndTypes['/books']['get']['queryParameters']['digest_all_fields']['description']);
         $this->assertEquals('A valid access_token is required', $traitsAndTypes['/books']['get']['queryParameters']['access_token']['description']);
-        $this->assertEquals('The number of pages to return, not to exceed 10', $traitsAndTypes['/books']['get']['queryParameters']['numPages']['description']);
+        $this->assertEquals('The number of pages to return', $traitsAndTypes['/books']['get']['queryParameters']['numPages']['description']);
 
         $this->assertEquals('Return DVD that have their title matching the given value for path /dvds', $traitsAndTypes['/dvds']['get']['queryParameters']['title']['description']);
-    }
-
-    /** @test */
-    public function shouldIncludeOtherFiles()
-    {
-        $parent = $this->parser->parse(__DIR__.'/fixture/parent.raml');
-
-        $this->assertEquals('valueA', $parent['external']['propertyA']);
-        $this->assertEquals('valueB', $parent['external']['propertyB']);
     }
 }

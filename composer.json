@@ -4,6 +4,7 @@
   "description": "A RAML parser built in php",
   "homepage": "https://github.com/alecsammon/php-raml-parser",
   "license": "MIT",
+  "minimum-stability": "dev",
 
   "authors": [
     {
@@ -20,11 +21,12 @@
 
   "require-dev": {
     "satooshi/php-coveralls": "dev-master",
-    "phpunit/phpunit": "3.7.32"
+    "phpunit/phpunit": "3.7.32",
+    "squizlabs/php_codesniffer": "2.0.*"
   },
 
   "require": {
-    "justinrainbow/json-schema": "~1.3",
-    "symfony/yaml": "2.4.*@dev"
+    "justinrainbow/json-schema": "1.3.6",
+    "symfony/yaml": "2.5.0"
   }
 }
