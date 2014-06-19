@@ -44,6 +44,8 @@ class Parser
             }
         }
 
+        // ---
+
         if (isset($array['resourceTypes'])) {
             $keyedTraits = [];
             foreach ($array['resourceTypes'] as $trait) {
@@ -59,6 +61,8 @@ class Parser
                 }
             }
         }
+
+        // ---
 
         $array = $this->arrayMapRecursive(
             function ($data) use ($rootDir) {
@@ -81,13 +85,29 @@ class Parser
         return $array;
     }
 
+    // ---
 
+    /**
+     * Checks if a string is JSON
+     *
+     * @param $string
+     *
+     * @return bool
+     */
     private function isJson($string)
     {
         json_decode($string);
         return (json_last_error() == JSON_ERROR_NONE);
     }
 
+    /**
+     * Apply a callback to all elements of a recursive array
+     *
+     * @param callable $func
+     * @param array $arr
+     *
+     * @return array
+     */
     private function arrayMapRecursive(callable $func, array $arr)
     {
         array_walk_recursive(
@@ -99,9 +119,6 @@ class Parser
 
         return $arr;
     }
-
-
-    // ---
 
     /**
      * Convert a yaml file into a string
@@ -280,6 +297,7 @@ class Parser
 
             } else {
                 $newValue = $this->replaceTypes($value, $traits, $path, $name);
+
 
                 if (isset($newArray[$key])) {
                     $newArray[$key] = array_replace_recursive($newArray[$key], $newValue);

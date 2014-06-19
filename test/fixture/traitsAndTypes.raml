@@ -9,6 +9,15 @@ resourceTypes:
             description: Return <<resourcePathName>> that have their <<queryParamName>> matching the given value for path <<resourcePath>>
           <<fallbackParamName>>:
             description: If no values match the value given for <<queryParamName>>, use <<fallbackParamName>> instead
+  - member:
+      get:
+        responses:
+          200:
+            body: |
+              schema: {
+                "$schema": "http://json-schema.org/schema",
+                "type": "object"
+              }
 traits:
   - secured:
       queryParameters:
@@ -25,3 +34,10 @@ traits:
 /dvds:
   displayName: DVD
   type: { searchableCollection: { queryParamName: title, fallbackParamName: digest_all_fields } }
+/user:
+  type: member
+  get:
+    is: [ secured: { tokenName: access_token }, paged ]
+    queryParameters:
+      fullDetails:
+        description: Should we return all the details about the user?
