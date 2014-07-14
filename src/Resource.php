@@ -41,14 +41,19 @@ class Resource
     {
         $this->uri = $uri;
 
-        $this->displayName = (isset($data['displayName'])) ? $data['displayName'] : $this->convertUriToDisplayName($uri);
+        if (isset($data['displayName'])) {
+            $this->displayName = $data['displayName'];
+        } else {
+            $this->displayName = $this->convertUriToDisplayName($uri);
+        }
+
         $this->baseUriParameters = (isset($data['baseUriParameters'])) ? $data['baseUriParameters'] : [];
 
-        if($data) {
+        if ($data) {
             foreach ($data as $key => $value) {
                 if (strpos($key, '/') === 0) {
                     $this->subResources[$key] = new Resource($key, $value, $baseUri.$uri);
-                } elseif(in_array($key, self::$knownMethods)) {
+                } elseif (in_array($key, self::$knownMethods)) {
                     $this->methods[$key] = new Method($key, $value);
                 }
             }
@@ -105,6 +110,4 @@ class Resource
     {
         return isset($this->methods[$method]) ? $this->methods[$method] : null;
     }
-
-
 }

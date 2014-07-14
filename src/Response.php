@@ -18,7 +18,7 @@ class Response
      *
      * @param $data
      */
-    public function __construct($statusCode, $body=[], $description=null, $headers=[])
+    public function __construct($statusCode, $body = [], $description = null, $headers = [])
     {
         $this->body = $body;
         $this->statusCode = $statusCode;
@@ -32,6 +32,4 @@ class Response
     {
         return isset($this->body[$type]) ? $this->body[$type]['schema'] : null;
     }
-
-
 }

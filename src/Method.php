@@ -43,19 +43,19 @@ class Method
      */
     public function __construct($type, $data)
     {
-        if(isset($data['responses'])) {
-            foreach($data['responses'] as $responseCode => $responseData) {
+        if (isset($data['responses'])) {
+            foreach ($data['responses'] as $responseCode => $responseData) {
                 $this->responses[$responseCode] = new \Raml\Response(
-                        $responseCode,
-                        isset($responseData['body']) ? $responseData['body'] : [],
-                        isset($responseData['description']) ? $responseData['description'] : null,
-                        isset($responseData['headers']) ? $responseData['headers'] : []
-                    );
+                    $responseCode,
+                    isset($responseData['body']) ? $responseData['body'] : [],
+                    isset($responseData['description']) ? $responseData['description'] : null,
+                    isset($responseData['headers']) ? $responseData['headers'] : []
+                );
             }
         }
 
-        if(isset($data['queryParameters'])) {
-            foreach($data['queryParameters'] as $name => $data) {
+        if (isset($data['queryParameters'])) {
+            foreach ($data['queryParameters'] as $name => $data) {
                 $this->queryParameters[$name] = new \Raml\QueryParameter(
                     isset($data['description']) ? $data['description'] : null,
                     isset($data['type']) ? $data['type'] : 'string'

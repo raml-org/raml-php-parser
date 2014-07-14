@@ -126,7 +126,7 @@ class ApiDefinition
         $resources = $this->getResources();
         $resource = null;
 
-        foreach($uriParts as $part) {
+        foreach ($uriParts as $part) {
             // if part is empty
             // exclude empty from beginning of string
             // or from //
@@ -134,8 +134,8 @@ class ApiDefinition
                 continue;
             }
 
-            foreach($resources as $potentialResource) {
-                if('/'.$part === $potentialResource->getUri() || strpos($potentialResource->getUri(), '/{') === 0) {
+            foreach ($resources as $potentialResource) {
+                if ('/'.$part === $potentialResource->getUri() || strpos($potentialResource->getUri(), '/{') === 0) {
                     if ($part === $uriParts[count($uriParts)-1]) {
                         $resource = $potentialResource;
                     }
@@ -211,7 +211,4 @@ class ApiDefinition
     {
         return $this->resources;
     }
-
-
-
 }
