@@ -18,10 +18,14 @@ class Parser
      *
      * @param $fileName
      *
-     * @return array
+     * @return \Raml\ApiDefinition
      */
     public function parse($fileName)
     {
+        if (!is_file($fileName)) {
+            throw new \Exception('File does not exist');
+        }
+
         $rootDir = dirname($fileName);
 
         $array = $this->parseYaml($fileName);
@@ -82,7 +86,7 @@ class Parser
             $array
         );
 
-        return $array;
+        return new ApiDefinition($array);
     }
 
     // ---
@@ -180,11 +184,11 @@ class Parser
                 break;
             case 'yaml':
             case 'yml':
-                $fileData = $this->parseYaml($rootDir. '/'.$fileName);
-                break;
             case 'raml':
             case 'rml':
-                $fileData = $this->parseRaml($rootDir. '/'.$fileName);
+                $fileData = $this->parseYaml($rootDir. '/'.$fileName);
+                $rootDir = dirname($rootDir. '/'.$fileName);
+                $fileData = $this->includeAndParseFiles($fileData, $rootDir);
                 break;
             default:
                 throw new \Exception('Extension "' . pathinfo($fileName, PATHINFO_EXTENSION) . '" not supported (yet)');

@@ -10,8 +10,8 @@ traits:
           description: The number of pages to return
           type: number
 /songs:
-  is: [ paged ]
   get:
+    is: [ paged ]
     queryParameters:
       genre:
         description: filter the songs by genre
