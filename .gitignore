@@ -1,4 +1,8 @@
+# IDE and OS files
 .idea
+.DS_Store
+
+# Test and composer files
 /vendor
 /build
 

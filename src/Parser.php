@@ -241,6 +241,7 @@ class Parser
         foreach ($raml as $key => $value) {
             if ($key === 'is') {
                 foreach ($value as $traitName) {
+                    $trait = [];
                     if (is_array($traitName)) {
                         $traitVariables = current($traitName);
                         $traitName = key($traitName);
@@ -249,7 +250,7 @@ class Parser
                         $traitVariables['resourcePathName'] = $name;
 
                         $trait = $this->applyTraitVariables($traitVariables, $traits[$traitName]);
-                    } else {
+                    } elseif (isset($traits[$traitName])) {
                         $trait = $traits[$traitName];
                     }
                     $newArray = array_replace_recursive($newArray, $this->replaceTraits($trait, $traits, $path, $name));
@@ -269,14 +270,14 @@ class Parser
     }
 
     /**
-     * Insert the traits into the RAML file
+     * Insert the types into the RAML file
      *
      * @param $raml
-     * @param $traits
+     * @param $types
      *
      * @return array
      */
-    private function replaceTypes($raml, $traits, $path, $name)
+    private function replaceTypes($raml, $types, $path, $name)
     {
         if (!is_array($raml)) {
             return $raml;
@@ -286,6 +287,8 @@ class Parser
 
         foreach ($raml as $key => $value) {
             if ($key === 'type') {
+                $type = [];
+
                 if (is_array($value)) {
                     $traitVariables = current($value);
                     $traitName = key($value);
@@ -293,14 +296,14 @@ class Parser
                     $traitVariables['resourcePath'] = $path;
                     $traitVariables['resourcePathName'] = $name;
 
-                    $trait = $this->applyTraitVariables($traitVariables, $traits[$traitName]);
-                } else {
-                    $trait = $traits[$value];
+                    $type = $this->applyTraitVariables($traitVariables, $types[$traitName]);
+                } elseif (isset($types[$value])) {
+                    $type = $types[$value];
                 }
-                $newArray = array_replace_recursive($newArray, $this->replaceTypes($trait, $traits, $path, $name));
 
+                $newArray = array_replace_recursive($newArray, $this->replaceTypes($type, $types, $path, $name));
             } else {
-                $newValue = $this->replaceTypes($value, $traits, $path, $name);
+                $newValue = $this->replaceTypes($value, $types, $path, $name);
 
 
                 if (isset($newArray[$key])) {

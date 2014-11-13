@@ -205,4 +205,11 @@ class ParseTest extends PHPUnit_Framework_TestCase
         $this->setExpectedException('Exception', 'File does not exist');
         $this->parser->parse(__DIR__.'/fixture/gone.raml');
     }
+
+    /** @test */
+    public function shouldParseHateoasExample()
+    {
+        $hateoasRaml = $this->parser->parse(__DIR__.'/fixture/hateoas/example.raml');
+        $this->assertInstanceOf('\Raml\ApiDefinition', $hateoasRaml);
+    }
 }

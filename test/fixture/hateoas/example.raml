@@ -1,0 +1,31 @@
+#%RAML 0.8
+title: HATEOAS Inc. Example API
+version: v1
+baseUri: http://hateoas-example.skqr.net/app_dev.php/api/{version}
+mediaType: application/vnd.api+json
+schemas:
+  - default: !include posts.schema.json
+resourceTypes: !include resourceTypes.raml
+traits: !include traits.raml
+/posts:
+  displayName: Posts
+  get:
+    description: Retrieves one or more posts.
+    is: [paginated]
+    responses:
+      200:
+  post:
+    description: Creates one or more posts.
+    responses:
+      201:
+  /{postIds}:
+    get:
+      description: Retrieves one or more posts.
+      responses:
+        200:
+    put:
+      description: Updates one or more posts.
+      responses:
+        204:
+    delete:
+      description: Deletes one or more posts.
