@@ -1,11 +1,12 @@
-Experimental branch! Introduces major backwards incompatibilities!
-
 [![Build Status](https://travis-ci.org/alecsammon/php-raml-parser.svg?branch=master)](https://travis-ci.org/alecsammon/php-raml-parser)
 [![Coverage Status](https://img.shields.io/coveralls/alecsammon/php-raml-parser.svg)](https://coveralls.io/r/alecsammon/php-raml-parser?branch=master)
 [![HHVM Status](http://hhvm.h4cc.de/badge/alecsammon/php-raml-parser.png)](http://hhvm.h4cc.de/package/alecsammon/php-raml-parser)
 
 Parses a RAML file into a PHP object.
-Converts any JSON schemas into a PHP object - see https://github.com/justinrainbow/json-schema
+
+See the RAML spec here: https://github.com/raml-org/raml-spec
+
+Converts JSON schemas into a PHP objects using https://github.com/justinrainbow/json-schema
 
 Get started:
 ```
@@ -42,3 +43,4 @@ Supported (I Believe)
 - Display Name
 - Traits
 - Resource Types
+
