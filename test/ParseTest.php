@@ -23,6 +23,13 @@ class ParseTest extends PHPUnit_Framework_TestCase
     }
 
     /** @test */
+    public function shouldCorrectlyReturnHttpProtocol()
+    {
+        $simpleRaml = $this->parser->parse(__DIR__.'/fixture/simple.raml');
+        $this->assertTrue($simpleRaml->supportsHttp());
+    }
+
+    /** @test */
     public function shouldReturnAResourceObjectForAResource()
     {
         $simpleRaml = $this->parser->parse(__DIR__.'/fixture/simple.raml');

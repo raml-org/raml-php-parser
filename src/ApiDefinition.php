@@ -67,9 +67,6 @@ class ApiDefinition
      */
     private $documentation;
 
-    // ---
-    // Resources
-
     /**
      * The resources the API supplies
      * {/*}
@@ -77,8 +74,6 @@ class ApiDefinition
      * @var array
      */
     private $resources;
-
-    // ---
 
     /**
      * Create a new API Definition from an array
@@ -109,8 +104,6 @@ class ApiDefinition
             }
         }
     }
-
-    // ---
 
     /**
      * Get a resource by a uri
@@ -144,8 +137,6 @@ class ApiDefinition
         return $resource;
 
     }
-
-    // ---
 
     /**
      * @return string
@@ -187,19 +178,21 @@ class ApiDefinition
         return $this->baseUri;
     }
 
-    // ---
-
-    public function supportsHTTP()
+    /**
+     * @return boolean
+     */
+    public function supportsHttp()
     {
-
+        return in_array(ApiDefinition::HTTP, $this->protocols);
     }
 
-    public function supportsHTTPs()
+    /**
+     * @return boolean
+     */
+    public function supportsHttps()
     {
-
+        return in_array(ApiDefinition::HTTPS, $this->protocols);
     }
-
-    // ---
 
     /**
      * @return array
