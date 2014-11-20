@@ -11,10 +11,7 @@ class ApiDefinition
     const HTTP = 'http';
     const HTTPS = 'https';
 
-    // ---
-    // Root Section
-
-    /*
+    /**
      * The API Title (required)
      * {title}
      *

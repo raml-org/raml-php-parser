@@ -3,20 +3,33 @@ namespace Raml;
 
 class Response
 {
+    /**
+     * @var integer
+     */
     private $statusCode;
 
-    private $description;
-
+    /**
+     * @var array
+     */
     private $body;
 
-    private $headers;
-
-    // ---
+    /**
+     * @var string
+     */
+    private $description;
 
     /**
-     * Create a new Resource from an array
+     * @var array
+     */
+    private $headers;
+
+    /**
+     * Constructor for a new Response object
      *
-     * @param $data
+     * @param integer $statusCode
+     * @param array $body
+     * @param string $description
+     * @param array $headers
      */
     public function __construct($statusCode, $body = [], $description = null, $headers = [])
     {
@@ -26,8 +39,12 @@ class Response
         $this->headers = $headers;
     }
 
-    // ---
-
+    /**
+     * Given a type (such as application/json), return the schema.
+     *
+     * @param string $type
+     * @return array
+     */
     public function getSchemaByType($type)
     {
         return isset($this->body[$type]) ? $this->body[$type]['schema'] : null;

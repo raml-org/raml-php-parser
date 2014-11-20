@@ -3,6 +3,10 @@ namespace Raml;
 
 class Method
 {
+    /**
+     * @var string
+     */
+    private $type;
 
     /**
      * @var string
@@ -34,10 +38,8 @@ class Method
      */
     private $responses;
 
-    // ---
-
     /**
-     * Create a new Resource from an array
+     * Create a new Method from an array
      *
      * @param $data
      */
@@ -63,17 +65,26 @@ class Method
             }
         }
 
-
+        $this->type = $type;
         $this->body = isset($data['body']) ? $data['body'] : [];
     }
 
-    // ---
+    /**
+     * @return string
+     */
+    public function getType()
+    {
+        return $this->type;
+    }
 
+    /**
+     * @param string $type
+     * @return array
+     */
     public function getSchemaByType($type)
     {
         return $this->body[$type]['schema'];
     }
-
 
     /**
      * Get a response by the response code (200, 404,....)
@@ -87,6 +98,11 @@ class Method
         return $this->responses[$responseCode];
     }
 
+    /**
+     * Gets the query parameters of this method
+     *
+     * @return array
+     */
     public function getQueryParameters()
     {
         return $this->queryParameters;
