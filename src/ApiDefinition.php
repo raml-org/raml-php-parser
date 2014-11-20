@@ -1,6 +1,8 @@
 <?php
 namespace Raml;
 
+use Raml\Formatters\RouteFormatterInterface;
+
 /**
  * The API Definition
  *
@@ -106,39 +108,6 @@ class ApiDefinition
     }
 
     /**
-     * Get a resource by a uri
-     *
-     * @return \Raml\Resource
-     */
-    public function getResourceByUri($uri)
-    {
-        $uriParts = explode('/', preg_replace('/[\.|\?].*/', '', $uri));
-        $resources = $this->getResources();
-        $resource = null;
-
-        foreach ($uriParts as $part) {
-            // if part is empty
-            // exclude empty from beginning of string
-            // or from //
-            if (!$part) {
-                continue;
-            }
-
-            foreach ($resources as $potentialResource) {
-                if ('/'.$part === $potentialResource->getUri() || strpos($potentialResource->getUri(), '/{') === 0) {
-                    if ($part === $uriParts[count($uriParts)-1]) {
-                        $resource = $potentialResource;
-                    }
-                    $resources = $potentialResource->getResources();
-                }
-            }
-        }
-
-        return $resource;
-
-    }
-
-    /**
      * @return string
      */
     public function getTitle()
@@ -200,5 +169,65 @@ class ApiDefinition
     public function getResources()
     {
         return $this->resources;
+    }
+
+    /**
+     * Get a resource by a uri
+     *
+     * @return \Raml\Resource
+     */
+    public function getResourceByUri($uri)
+    {
+        $uriParts = explode('/', preg_replace('/[\.|\?].*/', '', $uri));
+        $resources = $this->getResources();
+        $resource = null;
+
+        foreach ($uriParts as $part) {
+            // if part is empty
+            // exclude empty from beginning of string
+            // or from //
+            if (!$part) {
+                continue;
+            }
+
+            foreach ($resources as $potentialResource) {
+                if ('/'.$part === $potentialResource->getUri() || strpos($potentialResource->getUri(), '/{') === 0) {
+                    if ($part === $uriParts[count($uriParts)-1]) {
+                        $resource = $potentialResource;
+                    }
+                    $resources = $potentialResource->getResources();
+                }
+            }
+        }
+
+        return $resource;
+    }
+
+    /**
+     * Returns all the resources as a URI, essentially documentating
+     * the entire API Definition.
+     *
+     * @param RouteFormatterInterface $formatter
+     * @return array
+     */
+    public function getResourcesAsUri(RouteFormatterInterface $formatter, $resources, $baseUri = '')
+    {
+        $all = [];
+
+        // Loop over each resource to build out the full URI's that it has.
+        foreach ($resources as $resource) {
+            $path = $baseUri . $resource->getUri();
+
+            foreach ($resource->getMethods() as $method) {
+                $all[$path] = [
+                    'method' => $method->getType(),
+                    'response' => $resource->getMethod($method->getType())
+                ];
+            }
+
+            $all = array_merge_recursive($all, $this->getResourcesAsUri($formatter, $resource->getResources(), $path));
+        }
+
+        return $formatter->format($all);
     }
 }

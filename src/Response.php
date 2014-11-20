@@ -47,6 +47,17 @@ class Response
      */
     public function getSchemaByType($type)
     {
-        return isset($this->body[$type]) ? $this->body[$type]['schema'] : null;
+        return isset($this->body[$type]['schema']) ? $this->body[$type]['schema'] : null;
+    }
+
+    /**
+     * Given a type (such as application/json), return the example.
+     *
+     * @param string $type
+     * @return array
+     */
+    public function getExampleByType($type)
+    {
+        return isset($this->body[$type]['example']) ? $this->body[$type]['example'] : null;
     }
 }

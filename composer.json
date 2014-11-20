@@ -26,6 +26,7 @@
 
   "require": {
     "justinrainbow/json-schema": "~1.3",
-    "symfony/yaml": "~2.5"
+    "symfony/yaml": "~2.5",
+    "symfony/routing": "~2.5"
   }
 }

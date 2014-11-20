@@ -65,7 +65,7 @@ class Method
             }
         }
 
-        $this->type = $type;
+        $this->type = strtoupper($type);
         $this->body = isset($data['body']) ? $data['body'] : [];
     }
 
@@ -75,6 +75,14 @@ class Method
     public function getType()
     {
         return $this->type;
+    }
+
+    /**
+     * @return string
+     */
+    public function getResponses()
+    {
+        return $this->responses;
     }
 
     /**

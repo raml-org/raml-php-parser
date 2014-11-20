@@ -55,7 +55,7 @@ class Resource
                 if (strpos($key, '/') === 0) {
                     $this->subResources[$key] = new Resource($key, $value, $baseUri.$uri);
                 } elseif (in_array($key, self::$knownMethods)) {
-                    $this->methods[$key] = new Method($key, $value);
+                    $this->methods[strtoupper($key)] = new Method($key, $value);
                 }
             }
         }
@@ -110,6 +110,7 @@ class Resource
      */
     public function getMethod($method)
     {
+        $method = strtoupper($method);
         return isset($this->methods[$method]) ? $this->methods[$method] : null;
     }
 

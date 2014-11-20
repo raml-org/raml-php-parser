@@ -23,7 +23,7 @@ class Parser
             throw new \Exception('File does not exist');
         }
 
-        $rootDir = dirname($fileName);
+        $rootDir = dirname(realpath($fileName));
 
         $array = $this->parseYaml($fileName);
 
@@ -167,17 +167,23 @@ class Parser
             return $this->cachedFiles[$fileName];
         }
 
+        $fullPath = $rootDir. '/'.$fileName;
+        if (is_readable($fullPath) === false) {
+            return false;
+        }
+
         switch(pathinfo($fileName, PATHINFO_EXTENSION)) {
             case 'json':
-                $fileData = $this->parseJsonSchema($rootDir. '/'.$fileName, null);
+                $fileData = $this->parseJsonSchema($fullPath, null);
                 break;
             case 'yaml':
             case 'yml':
             case 'raml':
             case 'rml':
-                $fileData = $this->parseYaml($rootDir. '/'.$fileName);
-                $rootDir = dirname($rootDir. '/'.$fileName);
-                $fileData = $this->includeAndParseFiles($fileData, $rootDir);
+                $fileData = $this->includeAndParseFiles(
+                    $this->parseYaml($fullPath),
+                    dirname($fullPath)
+                );
                 break;
             default:
                 throw new \Exception('Extension "' . pathinfo($fileName, PATHINFO_EXTENSION) . '" not supported (yet)');
