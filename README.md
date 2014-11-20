@@ -18,7 +18,7 @@ Converts JSON schemas into a PHP objects using https://github.com/justinrainbow/
 
 ```php
 $parser = new \Raml\Parser();
-$apiDef = $parser->parse($filename);
+$apiDef = $parser->parse($filename, true);
 
 $title = $apiDef->getTitle();
 ```

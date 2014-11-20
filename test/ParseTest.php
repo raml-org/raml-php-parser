@@ -133,6 +133,18 @@ class ParseTest extends PHPUnit_Framework_TestCase
     }
 
     /** @test */
+    public function shouldNotParseJsonIfNotRequested()
+    {
+        $simpleRaml = $this->parser->parse(__DIR__.'/fixture/simple.raml', false);
+        $resource = $simpleRaml->getResourceByUri('/songs/{songId]');
+        $method = $resource->getMethod('get');
+        $response = $method->getResponse(200);
+        $schema = $response->getSchemaByType('application/json');
+
+        $this->assertInternalType('string', $schema);
+    }
+
+    /** @test */
     public function shouldParseJsonRefs()
     {
         $simpleRaml = $this->parser->parse(__DIR__.'/fixture/simple.raml');
@@ -155,6 +167,19 @@ class ParseTest extends PHPUnit_Framework_TestCase
         $schema = $response->getSchemaByType('application/json');
 
         $this->assertInstanceOf('stdClass', $schema);
+    }
+
+    /** @test */
+    public function shouldNotParseIncludedJsonIfNotRequired()
+    {
+        $simpleRaml = $this->parser->parse(__DIR__.'/fixture/includeSchema.raml', false);
+
+        $resource = $simpleRaml->getResourceByUri('/songs');
+        $method = $resource->getMethod('get');
+        $response = $method->getResponse(200);
+        $schema = $response->getSchemaByType('application/json');
+
+        $this->assertInternalType('string', $schema);
     }
 
     /** @test */

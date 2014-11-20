@@ -12,18 +12,32 @@ class Parser
     private $cachedFiles = [];
 
     /**
+     * Should schemas be parsed into appropriate objects
+     *
+     * @var bool
+     */
+    private $parseSchemas = true;
+
+    // ---
+
+    /**
      * Parse a RAML file
      *
-     * @param string $fileName
+     * @param string   $fileName
+     * @param boolean $parseSchemas
+     *
      * @return \Raml\ApiDefinition
      */
-    public function parse($fileName)
+    public function parse($fileName, $parseSchemas = true)
     {
         if (!is_file($fileName)) {
             throw new \Exception('File does not exist');
         }
 
         $rootDir = dirname(realpath($fileName));
+
+        $this->parseSchemas = $parseSchemas;
+
 
         $array = $this->parseYaml($fileName);
 
@@ -65,23 +79,25 @@ class Parser
 
         // ---
 
-        $array = $this->arrayMapRecursive(
-            function ($data) use ($rootDir) {
-                if (is_string($data) && $this->isJson($data)) {
-                    $retriever = new \JsonSchema\Uri\UriRetriever;
-                    $jsonSchemaParser = new \JsonSchema\RefResolver($retriever);
+        if ($this->parseSchemas) {
+            $array = $this->arrayMapRecursive(
+                function ($data) use ($rootDir) {
+                    if (is_string($data) && $this->isJson($data)) {
+                        $retriever = new \JsonSchema\Uri\UriRetriever;
+                        $jsonSchemaParser = new \JsonSchema\RefResolver($retriever);
 
-                    $data = json_decode($data);
-                    $jsonSchemaParser->resolve($data, 'file:'.$rootDir.'/');
+                        $data = json_decode($data);
+                        $jsonSchemaParser->resolve($data, 'file:' . $rootDir . '/');
+
+                        return $data;
+                    }
 
                     return $data;
-                }
 
-                return $data;
-
-            },
-            $array
-        );
+                },
+                $array
+            );
+        }
 
         return new ApiDefinition($array);
     }
@@ -152,6 +168,7 @@ class Parser
      */
     private function loadAndParseFile($fileName, $rootDir)
     {
+        // cache based on file name, prevents including/parsing the same file multiple times
         if (isset($this->cachedFiles[$fileName])) {
             return $this->cachedFiles[$fileName];
         }
@@ -161,23 +178,29 @@ class Parser
             return false;
         }
 
-        switch(pathinfo($fileName, PATHINFO_EXTENSION)) {
-            case 'json':
-                $fileData = $this->parseJsonSchema($fullPath, null);
-                break;
-            case 'yaml':
-            case 'yml':
-            case 'raml':
-            case 'rml':
-                $fileData = $this->includeAndParseFiles(
-                    $this->parseYaml($fullPath),
-                    dirname($fullPath)
-                );
-                break;
-            default:
-                throw new \Exception('Extension "' . pathinfo($fileName, PATHINFO_EXTENSION) . '" not supported (yet)');
+        $fileExtension = (pathinfo($fileName, PATHINFO_EXTENSION));
+
+        if (in_array($fileExtension, ['yaml', 'yml', 'raml', 'rml'])) {
+            // RAML and YAML files are always parsed
+            $fileData = $this->includeAndParseFiles(
+                $this->parseYaml($fullPath),
+                dirname($fullPath)
+            );
+        } elseif ($this->parseSchemas) {
+            // Determine if we need to parse schemas
+            switch($fileExtension) {
+                case 'json':
+                    $fileData = $this->parseJsonSchema($fullPath, null);
+                    break;
+                default:
+                    throw new \Exception('Extension "' . $fileExtension . '" not supported (yet)');
+            }
+        } else {
+            // Or just include the string
+            return file_get_contents($fullPath);
         }
 
+        // cache before returning
         $this->cachedFiles[$fileName] = $fileData;
         return $fileData;
     }
