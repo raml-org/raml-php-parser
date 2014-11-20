@@ -80,9 +80,9 @@ class ApiDefinition
     /**
      * Create a new API Definition from an array
      *
-     * @param $data
+     * @param array $data
      */
-    public function __construct($data)
+    public function __construct(array $data)
     {
         $this->title = $data['title'];
         $this->version = isset($data['version']) ? $data['version'] : null;
@@ -204,10 +204,15 @@ class ApiDefinition
     }
 
     /**
-     * Returns all the resources as a URI, essentially documentating
-     * the entire API Definition.
+     * Returns all the resources as a URI, essentially documentating the entire API Definition.
+     * This will output, but default, an array that looks like:
+     *
+     * GET /songs => [/songs, GET, Raml\Method]
+     * GET /songs/{songId} => [/songs/{songId}, GET, Raml\Method]
      *
      * @param RouteFormatterInterface $formatter
+     * @param array $resources
+     * @param string $baseUri
      * @return array
      */
     public function getResourcesAsUri(RouteFormatterInterface $formatter, $resources, $baseUri = '')
@@ -219,7 +224,8 @@ class ApiDefinition
             $path = $baseUri . $resource->getUri();
 
             foreach ($resource->getMethods() as $method) {
-                $all[$path] = [
+                $all[$method->getType() . ' ' . $path] = [
+                    'path' => $path,
                     'method' => $method->getType(),
                     'response' => $resource->getMethod($method->getType())
                 ];
