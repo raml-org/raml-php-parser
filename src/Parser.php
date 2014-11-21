@@ -125,10 +125,6 @@ class Parser
      */
     private function parseYaml($fileName)
     {
-        if (function_exists('yaml_parse_file')) {
-            return yaml_parse_file($fileName);
-        }
-
         return \Symfony\Component\Yaml\Yaml::parse($fileName);
     }
 
