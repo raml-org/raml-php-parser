@@ -33,7 +33,7 @@ returned using:
 $parser = new Raml\Parser();
 $api = $parser->parse('test/fixture/simple.raml');
 
-$routes = $api->getResourcesAsUri(new Raml\Formatters\NoRouteFormatter(), $api-getResources());
+$routes = $api->getResourcesAsUri();
 
 [
 	GET /songs => ...
@@ -42,6 +42,7 @@ $routes = $api->getResourcesAsUri(new Raml\Formatters\NoRouteFormatter(), $api-g
 	DELETE /songs/{songId} => ...
 ]
 
+$routes = $api->getResourcesAsUri(new Raml\Formatters\NoRouteFormatter());
 ```
 
 #### Route Formatters
