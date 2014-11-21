@@ -10,8 +10,8 @@ interface RouteFormatterInterface
      * just /songs and then /{songId}.
      *
      * @param array $resources
-     *  Associative array where the key is the full path, and the value contains the
-     *  method type (GET/POST etc.) and then the Raml\Method object
+     *  Associative array where the key is the method and full path, and the value contains
+     *  the path, method type (GET/POST etc.) and then the Raml\Method object
      * @return array
      */
     public function format(array $resources);

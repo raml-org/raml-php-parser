@@ -16,20 +16,32 @@ traits:
       genre:
         description: filter the songs by genre
     responses:
-            200:
-              body:
-                application/json:
-                  schema: |
-                    {
-                      "$schema": "http://json-schema.org/schema",
-                      "type": "array",
-                      "description": "A list of songs",
-                      "items": {
-                        "$ref": "song.json"
-                      }
-                    }
-  post:
+        200:
+          body:
+            application/json:
+              schema: |
+                {
+                  "$schema": "http://json-schema.org/schema",
+                  "type": "array",
+                  "description": "A list of songs",
+                  "items": {
+                    "$ref": "song.json"
+                  }
+                }
   /{songId}:
+    post:
+      body:
+        application/json:
+          schema: |
+            { "$schema": "http://json-schema.org/schema",
+              "type": "object",
+              "description": "A canonical song",
+              "properties": {
+                "title":  { "type": "string" },
+                "artist": { "type": "string" }
+              },
+              "required": [ "title", "artist" ]
+            }
     get:
       responses:
         200:
@@ -44,6 +56,11 @@ traits:
                     "artist": { "type": "string" }
                   },
                   "required": [ "title", "artist" ]
+                }
+              example: |
+                {
+                  "title": "Wish You Were Here",
+                  "artist": "Pink Floyd"
                 }
             application/xml:
     delete:

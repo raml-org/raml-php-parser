@@ -20,6 +20,16 @@ class ParseTest extends PHPUnit_Framework_TestCase
     {
         $simpleRaml = $this->parser->parse(__DIR__.'/fixture/simple.raml');
         $this->assertEquals('World Music API', $simpleRaml->getTitle());
+        $this->assertEquals('v1', $simpleRaml->getVersion());
+        $this->assertEquals('http://example.api.com/{version}', $simpleRaml->getBaseUri());
+        $this->assertNull($simpleRaml->getDefaultMediaType());
+    }
+
+    /** @test */
+    public function shouldIgnoreBadIncludeForRamlFile()
+    {
+        $simpleRaml = $this->parser->parse(__DIR__.'/fixture/bad.raml');
+        $this->assertEquals('World Music API', $simpleRaml->getTitle());
     }
 
     /** @test */
@@ -27,6 +37,7 @@ class ParseTest extends PHPUnit_Framework_TestCase
     {
         $simpleRaml = $this->parser->parse(__DIR__.'/fixture/simple.raml');
         $this->assertTrue($simpleRaml->supportsHttp());
+        $this->assertFalse($simpleRaml->supportsHttps());
     }
 
     /** @test */
@@ -75,8 +86,13 @@ class ParseTest extends PHPUnit_Framework_TestCase
     {
         $simpleRaml = $this->parser->parse(__DIR__.'/fixture/simple.raml');
         $resource = $simpleRaml->getResourceByUri('/songs/{songId]');
-        $method = $resource->getMethod('get');
+        $method = $resource->getMethod('post');
+        $schema = $method->getSchemaByType('application/json');
+
+        $this->assertCount(3, $resource->getMethods());
         $this->assertInstanceOf('\Raml\Method', $method);
+        $this->assertEquals('POST', $method->getType());
+        $this->assertInstanceOf('stdClass', $schema);
     }
 
     /** @test */
@@ -86,8 +102,22 @@ class ParseTest extends PHPUnit_Framework_TestCase
         $resource = $simpleRaml->getResourceByUri('/songs/{songId]');
         $method = $resource->getMethod('get');
         $response = $method->getResponse(200);
-        $this->assertInstanceOf('\Raml\Response', $response);
 
+        $this->assertNotEmpty($method->getResponses());
+        $this->assertInstanceOf('\Raml\Response', $response);
+    }
+
+    /** @test **/
+    public function shouldReturnAnExampleForType()
+    {
+        $simpleRaml = $this->parser->parse(__DIR__.'/fixture/simple.raml');
+        $resource = $simpleRaml->getResourceByUri('/songs/{songId]');
+        $method = $resource->getMethod('get');
+        $response = $method->getResponse(200);
+
+        $schema = $response->getExampleByType('application/json');
+
+        $this->assertInstanceOf('stdClass', $schema);
     }
 
     /** @test */

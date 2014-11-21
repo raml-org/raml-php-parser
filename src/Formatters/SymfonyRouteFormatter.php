@@ -51,12 +51,12 @@ class SymfonyRouteFormatter implements RouteFormatterInterface
     public function format(array $resources)
     {
         foreach ($resources as $path => $resource) {
-            $path = ($this->addTrailingSlash) ? $resource['path'] . '/' : $path;
+            $path = ($this->addTrailingSlash) ? $resource['path'] . '/' : $resource['path'];
 
             $route = new Route($path);
             $route->setMethods($resource['method']);
 
-            $this->routes->add($path, $route);
+            $this->routes->add($resource['method'] . ' ' . $path, $route);
         }
 
         return $resources;

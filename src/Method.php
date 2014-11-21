@@ -91,7 +91,7 @@ class Method
      */
     public function getSchemaByType($type)
     {
-        return $this->body[$type]['schema'];
+        return isset($this->body[$type]['schema']) ? $this->body[$type]['schema'] : null;
     }
 
     /**

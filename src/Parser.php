@@ -142,17 +142,6 @@ class Parser
     }
 
     /**
-     * Convert a RAML file into an array
-     *
-     * @param string $fileName
-     * @return array
-     */
-    private function parseRaml($fileName)
-    {
-        return $this->parse($fileName);
-    }
-
-    /**
      * Load and parse a file
      *
      * @throws \Exception
