@@ -29,7 +29,6 @@ class Parser
 
         $rootDir = dirname(realpath($fileName));
 
-
         $array = $this->includeAndParseFiles(
             $this->parseYaml($fileName),
             $rootDir,
