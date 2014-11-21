@@ -1,6 +1,8 @@
 <?php
 namespace Raml;
 
+use Raml\Formatters\RouteFormatterInterface;
+
 /**
  * The API Definition
  *
@@ -11,10 +13,7 @@ class ApiDefinition
     const HTTP = 'http';
     const HTTPS = 'https';
 
-    // ---
-    // Root Section
-
-    /*
+    /**
      * The API Title (required)
      * {title}
      *
@@ -70,9 +69,6 @@ class ApiDefinition
      */
     private $documentation;
 
-    // ---
-    // Resources
-
     /**
      * The resources the API supplies
      * {/*}
@@ -81,14 +77,12 @@ class ApiDefinition
      */
     private $resources;
 
-    // ---
-
     /**
      * Create a new API Definition from an array
      *
-     * @param $data
+     * @param array $data
      */
-    public function __construct($data)
+    public function __construct(array $data)
     {
         $this->title = $data['title'];
         $this->version = isset($data['version']) ? $data['version'] : null;
@@ -112,43 +106,6 @@ class ApiDefinition
             }
         }
     }
-
-    // ---
-
-    /**
-     * Get a resource by a uri
-     *
-     * @return \Raml\Resource
-     */
-    public function getResourceByUri($uri)
-    {
-        $uriParts = explode('/', preg_replace('/[\.|\?].*/', '', $uri));
-        $resources = $this->getResources();
-        $resource = null;
-
-        foreach ($uriParts as $part) {
-            // if part is empty
-            // exclude empty from beginning of string
-            // or from //
-            if (!$part) {
-                continue;
-            }
-
-            foreach ($resources as $potentialResource) {
-                if ('/'.$part === $potentialResource->getUri() || strpos($potentialResource->getUri(), '/{') === 0) {
-                    if ($part === $uriParts[count($uriParts)-1]) {
-                        $resource = $potentialResource;
-                    }
-                    $resources = $potentialResource->getResources();
-                }
-            }
-        }
-
-        return $resource;
-
-    }
-
-    // ---
 
     /**
      * @return string
@@ -190,19 +147,21 @@ class ApiDefinition
         return $this->baseUri;
     }
 
-    // ---
-
-    public function supportsHTTP()
+    /**
+     * @return boolean
+     */
+    public function supportsHttp()
     {
-
+        return in_array(ApiDefinition::HTTP, $this->protocols);
     }
 
-    public function supportsHTTPs()
+    /**
+     * @return boolean
+     */
+    public function supportsHttps()
     {
-
+        return in_array(ApiDefinition::HTTPS, $this->protocols);
     }
-
-    // ---
 
     /**
      * @return array
@@ -210,5 +169,71 @@ class ApiDefinition
     public function getResources()
     {
         return $this->resources;
+    }
+
+    /**
+     * Get a resource by a uri
+     *
+     * @return \Raml\Resource
+     */
+    public function getResourceByUri($uri)
+    {
+        $uriParts = explode('/', preg_replace('/[\.|\?].*/', '', $uri));
+        $resources = $this->getResources();
+        $resource = null;
+
+        foreach ($uriParts as $part) {
+            // if part is empty
+            // exclude empty from beginning of string
+            // or from //
+            if (!$part) {
+                continue;
+            }
+
+            foreach ($resources as $potentialResource) {
+                if ('/'.$part === $potentialResource->getUri() || strpos($potentialResource->getUri(), '/{') === 0) {
+                    if ($part === $uriParts[count($uriParts)-1]) {
+                        $resource = $potentialResource;
+                    }
+                    $resources = $potentialResource->getResources();
+                }
+            }
+        }
+
+        return $resource;
+    }
+
+    /**
+     * Returns all the resources as a URI, essentially documentating the entire API Definition.
+     * This will output, but default, an array that looks like:
+     *
+     * GET /songs => [/songs, GET, Raml\Method]
+     * GET /songs/{songId} => [/songs/{songId}, GET, Raml\Method]
+     *
+     * @param RouteFormatterInterface $formatter
+     * @param array $resources
+     * @param string $baseUri
+     * @return array
+     */
+    public function getResourcesAsUri(RouteFormatterInterface $formatter, $resources, $baseUri = '')
+    {
+        $all = [];
+
+        // Loop over each resource to build out the full URI's that it has.
+        foreach ($resources as $resource) {
+            $path = $baseUri . $resource->getUri();
+
+            foreach ($resource->getMethods() as $method) {
+                $all[$method->getType() . ' ' . $path] = [
+                    'path' => $path,
+                    'method' => $method->getType(),
+                    'response' => $resource->getMethod($method->getType())
+                ];
+            }
+
+            $all = array_merge_recursive($all, $this->getResourcesAsUri($formatter, $resource->getResources(), $path));
+        }
+
+        return $formatter->format($all);
     }
 }

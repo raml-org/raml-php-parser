@@ -5,9 +5,16 @@
     convertNoticesToExceptions="true"
     convertWarningsToExceptions="true"
     stopOnFailure="false"
+    bootstrap="vendor/autoload.php"
     strict="true"
     verbose="true"
     syntaxCheck="true">
+
+    <testsuites>
+        <testsuite name="PHP Raml Parser">
+            <directory>./test</directory>
+        </testsuite>
+    </testsuites>
 
     <filter>
         <whitelist>

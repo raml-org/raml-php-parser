@@ -11,13 +11,10 @@ class Parser
      */
     private $cachedFiles = [];
 
-    // ---
-
     /**
      * Parse a RAML file
      *
-     * @param $fileName
-     *
+     * @param string $fileName
      * @return \Raml\ApiDefinition
      */
     public function parse($fileName)
@@ -26,7 +23,7 @@ class Parser
             throw new \Exception('File does not exist');
         }
 
-        $rootDir = dirname($fileName);
+        $rootDir = dirname(realpath($fileName));
 
         $array = $this->parseYaml($fileName);
 
@@ -89,14 +86,11 @@ class Parser
         return new ApiDefinition($array);
     }
 
-    // ---
-
     /**
      * Checks if a string is JSON
      *
-     * @param $string
-     *
-     * @return bool
+     * @param string $string
+     * @return boolean
      */
     private function isJson($string)
     {
@@ -109,7 +103,6 @@ class Parser
      *
      * @param callable $func
      * @param array $arr
-     *
      * @return array
      */
     private function arrayMapRecursive(callable $func, array $arr)
@@ -127,8 +120,7 @@ class Parser
     /**
      * Convert a yaml file into a string
      *
-     * @param $fileName
-     *
+     * @param string $fileName
      * @return array
      */
     private function parseYaml($fileName)
@@ -139,8 +131,7 @@ class Parser
     /**
      * Convert a JSON Schema file into a stdClass
      *
-     * @param $fileName
-     *
+     * @param string $fileName
      * @return \stdClass
      */
     private function parseJsonSchema($fileName)
@@ -151,25 +142,12 @@ class Parser
     }
 
     /**
-     * Convert a RAML file into an array
-     *
-     * @param $fileName
-     *
-     * @return array
-     */
-    private function parseRaml($fileName)
-    {
-        return $this->parse($fileName);
-    }
-
-    /**
      * Load and parse a file
-     *
-     * @param $fileName
-     * @param $rootDir
      *
      * @throws \Exception
      *
+     * @param string $fileName
+     * @param string $rootDir
      * @return array|\stdClass
      */
     private function loadAndParseFile($fileName, $rootDir)
@@ -178,17 +156,23 @@ class Parser
             return $this->cachedFiles[$fileName];
         }
 
+        $fullPath = $rootDir. '/'.$fileName;
+        if (is_readable($fullPath) === false) {
+            return false;
+        }
+
         switch(pathinfo($fileName, PATHINFO_EXTENSION)) {
             case 'json':
-                $fileData = $this->parseJsonSchema($rootDir. '/'.$fileName, null);
+                $fileData = $this->parseJsonSchema($fullPath, null);
                 break;
             case 'yaml':
             case 'yml':
             case 'raml':
             case 'rml':
-                $fileData = $this->parseYaml($rootDir. '/'.$fileName);
-                $rootDir = dirname($rootDir. '/'.$fileName);
-                $fileData = $this->includeAndParseFiles($fileData, $rootDir);
+                $fileData = $this->includeAndParseFiles(
+                    $this->parseYaml($fullPath),
+                    dirname($fullPath)
+                );
                 break;
             default:
                 throw new \Exception('Extension "' . pathinfo($fileName, PATHINFO_EXTENSION) . '" not supported (yet)');
@@ -201,33 +185,33 @@ class Parser
     /**
      * Recurse through the structure and load includes
      *
-     * @param $array
-     * @param $rootDir
-     *
+     * @param array|string $structure
+     * @param string $rootDir
      * @return array|\stdClass
      */
-    private function includeAndParseFiles($array, $rootDir)
+    private function includeAndParseFiles($structure, $rootDir)
     {
-        if (is_array($array)) {
+        if (is_array($structure)) {
             return array_map(
-                function ($array) use ($rootDir) {
-                    return $this->includeAndParseFiles($array, $rootDir);
+                function ($structure) use ($rootDir) {
+                    return $this->includeAndParseFiles($structure, $rootDir);
                 },
-                $array
+                $structure
             );
-        } elseif (strpos($array, '!include') === 0) {
-            return $this->loadAndParseFile(str_replace('!include ', '', $array), $rootDir);
+        } elseif (strpos($structure, '!include') === 0) {
+            return $this->loadAndParseFile(str_replace('!include ', '', $structure), $rootDir);
         } else {
-            return $array;
+            return $structure;
         }
     }
 
     /**
      * Insert the traits into the RAML file
      *
-     * @param $raml
-     * @param $traits
-     *
+     * @param array $raml
+     * @param array $traits
+     * @param string $path
+     * @param string $name
      * @return array
      */
     private function replaceTraits($raml, $traits, $path, $name)
@@ -272,9 +256,10 @@ class Parser
     /**
      * Insert the types into the RAML file
      *
-     * @param $raml
-     * @param $types
-     *
+     * @param array $raml
+     * @param array $types
+     * @param string $path
+     * @param string $name
      * @return array
      */
     private function replaceTypes($raml, $types, $path, $name)
@@ -317,16 +302,14 @@ class Parser
         return $newArray;
     }
 
-
     /**
      * Add trait variables
      *
-     * @param $values
-     * @param $trait
-     *
+     * @param array $values
+     * @param array $trait
      * @return mixed
      */
-    private function applyTraitVariables($values, $trait)
+    private function applyTraitVariables(array $values, array $trait)
     {
 
         $jsonString = json_encode($trait, true);
