@@ -11,13 +11,6 @@ class Parser
      */
     private $cachedFiles = [];
 
-    /**
-     * Should schemas be parsed into appropriate objects
-     *
-     * @var bool
-     */
-    private $parseSchemas = true;
-
     // ---
 
     /**
@@ -36,12 +29,12 @@ class Parser
 
         $rootDir = dirname(realpath($fileName));
 
-        $this->parseSchemas = $parseSchemas;
 
-
-        $array = $this->parseYaml($fileName);
-
-        $array = $this->includeAndParseFiles($array, $rootDir);
+        $array = $this->includeAndParseFiles(
+            $this->parseYaml($fileName),
+            $rootDir,
+            $parseSchemas
+        );
 
         if (isset($array['traits'])) {
             $keyedTraits = [];
@@ -79,7 +72,7 @@ class Parser
 
         // ---
 
-        if ($this->parseSchemas) {
+        if ($parseSchemas) {
             $array = $this->arrayMapRecursive(
                 function ($data) use ($rootDir) {
                     if (is_string($data) && $this->isJson($data)) {
@@ -166,7 +159,7 @@ class Parser
      * @param string $rootDir
      * @return array|\stdClass
      */
-    private function loadAndParseFile($fileName, $rootDir)
+    private function loadAndParseFile($fileName, $rootDir, $parseSchemas)
     {
         // cache based on file name, prevents including/parsing the same file multiple times
         if (isset($this->cachedFiles[$fileName])) {
@@ -184,9 +177,10 @@ class Parser
             // RAML and YAML files are always parsed
             $fileData = $this->includeAndParseFiles(
                 $this->parseYaml($fullPath),
-                dirname($fullPath)
+                dirname($fullPath),
+                $parseSchemas
             );
-        } elseif ($this->parseSchemas) {
+        } elseif ($parseSchemas) {
             // Determine if we need to parse schemas
             switch($fileExtension) {
                 case 'json':
@@ -212,17 +206,17 @@ class Parser
      * @param string $rootDir
      * @return array|\stdClass
      */
-    private function includeAndParseFiles($structure, $rootDir)
+    private function includeAndParseFiles($structure, $rootDir, $parseSchemas)
     {
         if (is_array($structure)) {
             return array_map(
-                function ($structure) use ($rootDir) {
-                    return $this->includeAndParseFiles($structure, $rootDir);
+                function ($structure) use ($rootDir, $parseSchemas) {
+                    return $this->includeAndParseFiles($structure, $rootDir, $parseSchemas);
                 },
                 $structure
             );
         } elseif (strpos($structure, '!include') === 0) {
-            return $this->loadAndParseFile(str_replace('!include ', '', $structure), $rootDir);
+            return $this->loadAndParseFile(str_replace('!include ', '', $structure), $rootDir, $parseSchemas);
         } else {
             return $structure;
         }

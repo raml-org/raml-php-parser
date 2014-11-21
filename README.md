@@ -25,7 +25,7 @@ $title = $apiDef->getTitle();
 
 ### Exporting routes
 It is possible to export the entire RAML file to an array of the full endpoints. For example, considering
-a [basic RAML](https://github.com/brendo/php-raml-parser/blob/master/test/fixture/simple.raml), this can be
+a [basic RAML](https://github.com/alecsammon/php-raml-parser/blob/master/test/fixture/simple.raml), this can be
 returned using:
 
 
@@ -33,7 +33,7 @@ returned using:
 $parser = new Raml\Parser();
 $api = $parser->parse('test/fixture/simple.raml');
 
-$routes = $api->getResourcesAsUri(new Raml\Formatters\NoRouteFormatter(), $api->getResources());
+$routes = $api->getResourcesAsUri(new Raml\Formatters\NoRouteFormatter(), $api-getResources());
 
 [
 	GET /songs => ...
@@ -41,6 +41,7 @@ $routes = $api->getResourcesAsUri(new Raml\Formatters\NoRouteFormatter(), $api->
 	GET /songs/{songId} => ...
 	DELETE /songs/{songId} => ...
 ]
+
 ```
 
 #### Route Formatters
@@ -51,7 +52,8 @@ There are two Route Formatters included in this package:
 
 ### Contributing
 ```
-./vendor/bin/phpunit test
+./vendor/bin/phpunit
+./vendor/bin/phpunit --coverage-text
 ./vendor/bin/phpcs --standard=PSR1,PSR2 src
 ```
 
@@ -62,6 +64,7 @@ There are two Route Formatters included in this package:
     - Markdown?
     - Date Representations?
 - Validation?
+- Parse RAML at URL instead of file?
 
 ### Supported (I Believe)
 - Includes

@@ -77,6 +77,8 @@ class ApiDefinition
      */
     private $resources;
 
+    // ---
+
     /**
      * Create a new API Definition from an array
      *
@@ -108,6 +110,8 @@ class ApiDefinition
     }
 
     /**
+     * Get the title of the API
+     *
      * @return string
      */
     public function getTitle()
@@ -116,6 +120,8 @@ class ApiDefinition
     }
 
     /**
+     * Get the version string of the API
+     *
      * @return string
      */
     public function getVersion()
@@ -124,6 +130,8 @@ class ApiDefinition
     }
 
     /**
+     * Get the documentation of the API
+     *
      * @return array
      */
     public function getDocumentation()
@@ -132,6 +140,8 @@ class ApiDefinition
     }
 
     /**
+     * Get the default media type
+     *
      * @return string
      */
     public function getDefaultMediaType()
@@ -140,6 +150,8 @@ class ApiDefinition
     }
 
     /**
+     * Get the base URI
+     *
      * @return string
      */
     public function getBaseUri()
@@ -148,6 +160,8 @@ class ApiDefinition
     }
 
     /**
+     * Does the API support HTTP (non SSL) requests?
+     *
      * @return boolean
      */
     public function supportsHttp()
@@ -156,6 +170,8 @@ class ApiDefinition
     }
 
     /**
+     * Does the API support HTTPS (SSL enabled) requests?
+     *
      * @return boolean
      */
     public function supportsHttps()
@@ -170,6 +186,8 @@ class ApiDefinition
     {
         return $this->resources;
     }
+
+    // ---
 
     /**
      * Get a resource by a uri
@@ -204,7 +222,7 @@ class ApiDefinition
     }
 
     /**
-     * Returns all the resources as a URI, essentially documentating the entire API Definition.
+     * Returns all the resources as a URI, essentially documenting the entire API Definition.
      * This will output, but default, an array that looks like:
      *
      * GET /songs => [/songs, GET, Raml\Method]
@@ -213,6 +231,7 @@ class ApiDefinition
      * @param RouteFormatterInterface $formatter
      * @param array $resources
      * @param string $baseUri
+     *
      * @return array
      */
     public function getResourcesAsUri(RouteFormatterInterface $formatter, $resources, $baseUri = '')

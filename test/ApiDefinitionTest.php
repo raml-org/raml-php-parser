@@ -22,7 +22,13 @@ class ApiDefinitionTest extends PHPUnit_Framework_TestCase
         $routes = $api->getResourcesAsUri($noFormatter, $api->getResources());
 
         $this->assertCount(4, $routes);
-        $this->assertCount(4, $noFormatter->getRoutes());
+        $this->assertEquals($routes, $noFormatter->getRoutes());
+        $this->assertEquals([
+            'GET /songs',
+            'POST /songs/{songId}',
+            'GET /songs/{songId}',
+            'DELETE /songs/{songId}'
+        ], array_keys($routes));
     }
 
     /** @test */
@@ -35,6 +41,9 @@ class ApiDefinitionTest extends PHPUnit_Framework_TestCase
         $routes = $api->getResourcesAsUri($routeFormatter, $api->getResources());
 
         $this->assertCount(4, $routes);
+
         $this->assertCount(4, $routeFormatter->getRoutes());
+        $this->assertInstanceOf('\Symfony\Component\Routing\RouteCollection', $routeFormatter->getRoutes());
+        $this->assertInstanceOf('\Symfony\Component\Routing\Route', $routeFormatter->getRoutes()->get('GET /songs/'));
     }
 }
