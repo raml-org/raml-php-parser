@@ -223,24 +223,46 @@ class ApiDefinition
 
     /**
      * Returns all the resources as a URI, essentially documenting the entire API Definition.
-     * This will output, but default, an array that looks like:
+     * This will output, by default, an array that looks like:
      *
      * GET /songs => [/songs, GET, Raml\Method]
      * GET /songs/{songId} => [/songs/{songId}, GET, Raml\Method]
      *
-     * @param RouteFormatterInterface $formatter
+     * @param \Raml\Formatters\RouteFormatterInterface $formatter
+     *
+     * @return \Raml\Formatters\RouteFormatterInterface
+     */
+    public function getResourcesAsUri(RouteFormatterInterface $formatter = null)
+    {
+        if(!$formatter) {
+            $formatter = new \Raml\Formatters\NoRouteFormatter();
+        }
+
+        $formatter->format($this->getResourcesAsArray($this->resources));
+
+        return $formatter;
+    }
+
+    // ---
+
+    /**
+     * Recursive function that generates a flat array of the  entire API Definition
+     *
+     * GET /songs => [/songs, GET, Raml\Method]
+     * GET /songs/{songId} => [/songs/{songId}, GET, Raml\Method]
+     *
      * @param array $resources
-     * @param string $baseUri
+     * @param string $path
      *
      * @return array
      */
-    public function getResourcesAsUri(RouteFormatterInterface $formatter, $resources, $baseUri = '')
+    private function getResourcesAsArray(array $resources, $path = '')
     {
         $all = [];
 
         // Loop over each resource to build out the full URI's that it has.
         foreach ($resources as $resource) {
-            $path = $baseUri . $resource->getUri();
+            $path = $path . $resource->getUri();
 
             foreach ($resource->getMethods() as $method) {
                 $all[$method->getType() . ' ' . $path] = [
@@ -250,9 +272,9 @@ class ApiDefinition
                 ];
             }
 
-            $all = array_merge_recursive($all, $this->getResourcesAsUri($formatter, $resource->getResources(), $path));
+            $all = array_merge_recursive($all, $this->getResourcesAsArray($resource->getResources(), $path));
         }
 
-        return $formatter->format($all);
+        return $all;
     }
 }

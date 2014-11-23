@@ -14,6 +14,21 @@ class ApiDefinitionTest extends PHPUnit_Framework_TestCase
     }
 
     /** @test */
+    public function shouldReturnFullResourcesForRamlFileWithDefaultFormatter()
+    {
+        $api = $this->parser->parse(__DIR__.'/fixture/includeSchema.raml');
+        $routes = $api->getResourcesAsUri();
+
+        $this->assertCount(4, $routes->getRoutes());
+        $this->assertEquals([
+                'GET /songs',
+                'POST /songs/{songId}',
+                'GET /songs/{songId}',
+                'DELETE /songs/{songId}'
+            ], array_keys($routes->getRoutes()));
+    }
+
+    /** @test */
     public function shouldReturnFullResourcesForRamlFileWithNoFormatter()
     {
         $api = $this->parser->parse(__DIR__.'/fixture/includeSchema.raml');
@@ -21,14 +36,13 @@ class ApiDefinitionTest extends PHPUnit_Framework_TestCase
         $noFormatter = new Raml\Formatters\NoRouteFormatter();
         $routes = $api->getResourcesAsUri($noFormatter, $api->getResources());
 
-        $this->assertCount(4, $routes);
-        $this->assertEquals($routes, $noFormatter->getRoutes());
+        $this->assertCount(4, $routes->getRoutes());
         $this->assertEquals([
             'GET /songs',
             'POST /songs/{songId}',
             'GET /songs/{songId}',
             'DELETE /songs/{songId}'
-        ], array_keys($routes));
+        ], array_keys($routes->getRoutes()));
     }
 
     /** @test */
@@ -40,7 +54,7 @@ class ApiDefinitionTest extends PHPUnit_Framework_TestCase
         $routeFormatter = new Raml\Formatters\SymfonyRouteFormatter($routeCollection);
         $routes = $api->getResourcesAsUri($routeFormatter, $api->getResources());
 
-        $this->assertCount(4, $routes);
+        $this->assertEquals($routeFormatter, $routes);
 
         $this->assertCount(4, $routeFormatter->getRoutes());
         $this->assertInstanceOf('\Symfony\Component\Routing\RouteCollection', $routeFormatter->getRoutes());
