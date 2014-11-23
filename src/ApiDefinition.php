@@ -234,7 +234,7 @@ class ApiDefinition
      */
     public function getResourcesAsUri(RouteFormatterInterface $formatter = null)
     {
-        if(!$formatter) {
+        if (!$formatter) {
             $formatter = new \Raml\Formatters\NoRouteFormatter();
         }
 
@@ -256,13 +256,13 @@ class ApiDefinition
      *
      * @return array
      */
-    private function getResourcesAsArray(array $resources, $path = '')
+    private function getResourcesAsArray(array $resources, $basePath = '')
     {
         $all = [];
 
         // Loop over each resource to build out the full URI's that it has.
         foreach ($resources as $resource) {
-            $path = $path . $resource->getUri();
+            $path = $basePath . $resource->getUri();
 
             foreach ($resource->getMethods() as $method) {
                 $all[$method->getType() . ' ' . $path] = [
