@@ -146,7 +146,11 @@ class Parser
     {
         $retriever = new \JsonSchema\Uri\UriRetriever;
         $jsonSchemaParser = new \JsonSchema\RefResolver($retriever);
-        return $jsonSchemaParser->fetchRef('file://' . $fileName, null);
+        try {
+            return $jsonSchemaParser->fetchRef('file://' . $fileName, null);
+        } catch(\Exception $e) {
+            throw new \Exception('Invalid JSON in '.$fileName);
+        }
     }
 
     /**

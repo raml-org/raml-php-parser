@@ -1,0 +1,12 @@
+#%RAML 0.8
+
+title: Bad Json
+baseUri: http://example.api.com/{version}
+version: v1
+/default:
+  get:
+    responses:
+        200:
+          body:
+            application/json:
+              schema: !include bad.json

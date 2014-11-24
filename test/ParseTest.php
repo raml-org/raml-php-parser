@@ -26,6 +26,13 @@ class ParseTest extends PHPUnit_Framework_TestCase
     }
 
     /** @test */
+    public function shouldThrowCorrectExceptionOnBadJson()
+    {
+        $this->setExpectedException('Exception', 'Invalid JSON in '.__DIR__.'/fixture/bad.json');
+        $this->parser->parse(__DIR__.'/fixture/badJson.raml');
+    }
+
+    /** @test */
     public function shouldIgnoreBadIncludeForRamlFile()
     {
         $simpleRaml = $this->parser->parse(__DIR__.'/fixture/bad.raml');
