@@ -12,9 +12,10 @@ Converts JSON schemas into a PHP objects using https://github.com/justinrainbow/
 
 ### Get started
 Requires:
-- composer (see https://getcomposer.org)
+
+- composer (see [https://getcomposer.org](https://getcomposer.org))
  
-```
+```bash
 composer install --dev
 ./vendor/bin/phpunit test
 ```
@@ -27,7 +28,7 @@ $title = $apiDef->getTitle();
 ```
 
 ### Exporting routes
-It is possible to export the entire RAML file to an array of the full endpoints. For example, considering
+It is also possible to export the entire RAML file to an array of the full endpoints. For example, considering
 a [basic RAML](https://github.com/alecsammon/php-raml-parser/blob/master/test/fixture/simple.raml), this can be
 returned using:
 
@@ -37,7 +38,10 @@ $parser = new Raml\Parser();
 $api = $parser->parse('test/fixture/simple.raml');
 
 $routes = $api->getResourcesAsUri();
+```
 
+To return:
+```php
 [
 	GET /songs => ...
 	POST /songs => ...
@@ -55,7 +59,7 @@ There are two Route Formatters included in this package:
 - `SymfonyRouteFormatter` which adds the routes to a Symfony `RouteCollection`
 
 ### Contributing
-```
+```bash
 ./vendor/bin/phpunit
 ./vendor/bin/phpunit --coverage-text
 ./vendor/bin/phpcs --standard=PSR1,PSR2 src
@@ -68,7 +72,7 @@ There are two Route Formatters included in this package:
     - Markdown?
     - Date Representations?
 - Validation?
-- Parse RAML at URL instead of file?
+- Parse RAML at provided URL
 
 ### Supported (I Believe)
 - Includes
