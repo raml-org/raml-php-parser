@@ -5,4 +5,5 @@
 # Test and composer files
 /vendor
 /build
+/composer.phar
 

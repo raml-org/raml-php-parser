@@ -7,7 +7,7 @@ php:
   - hhvm
 
 before_script:
-  - ./composer.phar install --dev --no-interaction
+  - composer install --dev --no-interaction
 
 script:
   - mkdir -p build/logs

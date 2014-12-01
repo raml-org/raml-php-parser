@@ -11,8 +11,11 @@ See the RAML spec here: https://github.com/raml-org/raml-spec
 Converts JSON schemas into a PHP objects using https://github.com/justinrainbow/json-schema
 
 ### Get started
+Requires:
+- composer (see https://getcomposer.org)
+ 
 ```
-./composer.phar install --dev
+composer install --dev
 ./vendor/bin/phpunit test
 ```
 
