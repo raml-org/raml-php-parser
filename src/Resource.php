@@ -34,6 +34,11 @@ class Resource
     private $baseUriParameters = [];
 
     /**
+     * @var string
+     */
+    private $description;
+
+    /**
      * Create a new Resource from an array
      *
      * @param $data
@@ -112,6 +117,16 @@ class Resource
     {
         $method = strtoupper($method);
         return isset($this->methods[$method]) ? $this->methods[$method] : null;
+    }
+
+    /**
+     * Gets description
+     *
+     * @return string
+     */
+    public function getDescription()
+    {
+        return $this->description;
     }
 
     /**
