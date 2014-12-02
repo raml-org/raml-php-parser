@@ -67,6 +67,7 @@ class Method
 
         $this->type = strtoupper($type);
         $this->body = isset($data['body']) ? $data['body'] : [];
+        $this->description = isset($data['description']) ? $data['description'] : null;
     }
 
     /**
@@ -114,5 +115,15 @@ class Method
     public function getQueryParameters()
     {
         return $this->queryParameters;
+    }
+
+    /**
+     * Gets description
+     *
+     * @return string
+     */
+    public function getDescription()
+    {
+        return $this->description;
     }
 }
