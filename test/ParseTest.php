@@ -281,4 +281,11 @@ class ParseTest extends PHPUnit_Framework_TestCase
         $hateoasRaml = $this->parser->parse(__DIR__.'/fixture/hateoas/example.raml');
         $this->assertInstanceOf('\Raml\ApiDefinition', $hateoasRaml);
     }
+
+    /** @test */
+    public function shouldParseMethodDescription()
+    {
+        $methodDescriptionRaml = $this->parser->parse(__DIR__.'/fixture/methodDescription.raml');
+        $this->assertEquals('Get a list of available songs', $methodDescriptionRaml->getResourceByUri('songs')->getMethod('get')->getDescription());
+    }
 }
