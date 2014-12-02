@@ -67,6 +67,7 @@ class Method
 
         $this->type = strtoupper($type);
         $this->body = isset($data['body']) ? $data['body'] : [];
+        $this->description = isset($data['description']) ? $data['description'] : null;
     }
 
     /**
