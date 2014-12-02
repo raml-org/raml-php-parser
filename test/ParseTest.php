@@ -288,4 +288,11 @@ class ParseTest extends PHPUnit_Framework_TestCase
         $methodDescriptionRaml = $this->parser->parse(__DIR__.'/fixture/methodDescription.raml');
         $this->assertEquals('Get a list of available songs', $methodDescriptionRaml->getResourceByUri('songs')->getMethod('get')->getDescription());
     }
+
+    /** @test */
+    public function shouldParseResourceDescription()
+    {
+        $resourceDescriptionRaml = $this->parser->parse(__DIR__.'/fixture/resourceDescription.raml');
+        $this->assertEquals('Collection of available songs resource', $resourceDescriptionRaml->getResourceByUri('songs')->getDescription());
+    }
 }
