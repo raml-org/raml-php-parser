@@ -116,4 +116,14 @@ class Method
     {
         return $this->queryParameters;
     }
+
+    /**
+     * Gets description
+     *
+     * @return string
+     */
+    public function getDescription()
+    {
+        return $this->description;
+    }
 }
