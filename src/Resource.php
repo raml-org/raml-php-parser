@@ -53,6 +53,8 @@ class Resource
             $this->displayName = $this->convertUriToDisplayName($uri);
         }
 
+        $this->description = isset($data['description']) ? $data['description'] : null;
+
         $this->baseUriParameters = (isset($data['baseUriParameters'])) ? $data['baseUriParameters'] : [];
 
         if ($data) {
