@@ -203,6 +203,20 @@ class ParseTest extends PHPUnit_Framework_TestCase
     }
 
     /** @test */
+    public function shouldThrowErrorIfEmpty()
+    {
+        $this->setExpectedException('Exception', 'RAML file appears to be empty');
+        $this->parser->parse(__DIR__.'/fixture/invalid/empty.raml');
+    }
+
+    /** @test */
+    public function shouldThrowErrorIfNoTitle()
+    {
+        $this->setExpectedException('Exception', 'No Title supplied in RAML');
+        $this->parser->parse(__DIR__.'/fixture/invalid/noTitle.raml');
+    }
+
+    /** @test */
     public function shouldThrowErrorIfUnknownIncluded()
     {
         $this->setExpectedException('Exception', 'Extension "ini" not supported (yet)');

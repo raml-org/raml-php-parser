@@ -35,6 +35,10 @@ class Parser
             $parseSchemas
         );
 
+        if(!$array) {
+            throw new \Exception('RAML file appears to be empty');
+        }
+
         if (isset($array['traits'])) {
             $keyedTraits = [];
             foreach ($array['traits'] as $trait) {
@@ -71,7 +75,7 @@ class Parser
 
         // ---
 
-        if ($parseSchemas) {
+        if ($parseSchemas && $array) {
             $array = $this->arrayMapRecursive(
                 function ($data) use ($rootDir) {
                     if (is_string($data) && $this->isJson($data)) {

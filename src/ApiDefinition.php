@@ -86,6 +86,10 @@ class ApiDefinition
      */
     public function __construct(array $data)
     {
+        if(!isset($data['title'])) {
+            throw new \Exception('No Title supplied in RAML');
+        }
+
         $this->title = $data['title'];
         $this->version = isset($data['version']) ? $data['version'] : null;
 
