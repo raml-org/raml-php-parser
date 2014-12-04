@@ -87,7 +87,7 @@ class ApiDefinition
      */
     public function __construct(array $data)
     {
-        if(!isset($data['title'])) {
+        if (!isset($data['title'])) {
             throw new \Exception('No Title supplied in RAML');
         }
 
