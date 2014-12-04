@@ -207,7 +207,7 @@ class ApiDefinition
 
         $uriParts = explode('/', preg_replace('/[\.|\?].*/', '', $testUri));
         $resources = $this->getResources();
-        $resource = null;
+        $resource = false;
         $previous = null;
 
         foreach ($uriParts as $part) {
@@ -225,13 +225,17 @@ class ApiDefinition
 
                 if ($uri === $resourceUri || strpos($resourceUri, '}') === strlen($resourceUri)-1) {
                     if ($part === $uriParts[count($uriParts)-1]) {
-                        return $potentialResource;
+                        $resource = $potentialResource;
                     }
                     $resources = $potentialResource->getResources();
                 }
             }
 
             $previous = $uri;
+        }
+
+        if ($resource) {
+            return $resource;
         }
 
 
