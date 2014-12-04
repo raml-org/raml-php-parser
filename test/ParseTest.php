@@ -56,6 +56,14 @@ class ParseTest extends PHPUnit_Framework_TestCase
     }
 
     /** @test */
+    public function shouldThrowExceptionIfUriNotFound()
+    {
+        $this->setExpectedException('Exception', 'Resource not found for uri "/invalid"');
+        $simpleRaml = $this->parser->parse(__DIR__.'/fixture/simple.raml');
+        $simpleRaml->getResourceByUri('/invalid');
+    }
+
+    /** @test */
     public function shouldGiveTheResourceTheCorrectDisplayNameIfNotProvided()
     {
         $simpleRaml = $this->parser->parse(__DIR__.'/fixture/simple.raml');
@@ -84,7 +92,7 @@ class ParseTest extends PHPUnit_Framework_TestCase
     {
         $simpleRaml = $this->parser->parse(__DIR__.'/fixture/simple.raml');
 
-        $resource = $simpleRaml->getResourceByUri('/songs/{songId]');
+        $resource = $simpleRaml->getResourceByUri('/songs/{songId}');
         $this->assertEquals('{songId}', $resource->getDisplayName());
     }
 

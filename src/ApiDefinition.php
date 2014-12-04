@@ -197,13 +197,18 @@ class ApiDefinition
     /**
      * Get a resource by a uri
      *
+     * @param string $testUri
+     *
      * @return \Raml\Resource
      */
-    public function getResourceByUri($uri)
+    public function getResourceByUri($testUri)
     {
-        $uriParts = explode('/', preg_replace('/[\.|\?].*/', '', $uri));
+        // @todo - optimise this method - must be a better way of doing it.
+
+        $uriParts = explode('/', preg_replace('/[\.|\?].*/', '', $testUri));
         $resources = $this->getResources();
         $resource = null;
+        $previous = null;
 
         foreach ($uriParts as $part) {
             // if part is empty
@@ -213,17 +218,24 @@ class ApiDefinition
                 continue;
             }
 
+            $uri = $previous.'/'.$part;
+
             foreach ($resources as $potentialResource) {
-                if ('/'.$part === $potentialResource->getUri() || strpos($potentialResource->getUri(), '/{') === 0) {
+                $resourceUri = $potentialResource->getUri();
+
+                if ($uri === $resourceUri || strpos($resourceUri, '}') === strlen($resourceUri)-1) {
                     if ($part === $uriParts[count($uriParts)-1]) {
-                        $resource = $potentialResource;
+                        return $potentialResource;
                     }
                     $resources = $potentialResource->getResources();
                 }
             }
+
+            $previous = $uri;
         }
 
-        return $resource;
+
+        throw new \Exception('Resource not found for uri "'.$uri.'"');
     }
 
     /**
@@ -261,13 +273,13 @@ class ApiDefinition
      *
      * @return array
      */
-    private function getResourcesAsArray(array $resources, $basePath = '')
+    private function getResourcesAsArray(array $resources)
     {
         $all = [];
 
         // Loop over each resource to build out the full URI's that it has.
         foreach ($resources as $resource) {
-            $path = $basePath . $resource->getUri();
+            $path = $resource->getUri();
 
             foreach ($resource->getMethods() as $method) {
                 $all[$method->getType() . ' ' . $path] = [
@@ -277,7 +289,7 @@ class ApiDefinition
                 ];
             }
 
-            $all = array_merge_recursive($all, $this->getResourcesAsArray($resource->getResources(), $path));
+            $all = array_merge_recursive($all, $this->getResourcesAsArray($resource->getResources()));
         }
 
         return $all;

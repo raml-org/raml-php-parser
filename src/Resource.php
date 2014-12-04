@@ -60,7 +60,7 @@ class Resource
         if ($data) {
             foreach ($data as $key => $value) {
                 if (strpos($key, '/') === 0) {
-                    $this->subResources[$key] = new Resource($key, $value, $baseUri.$uri);
+                    $this->subResources[$key] = new Resource($uri.$key, $value, $baseUri.$uri);
                 } elseif (in_array($key, self::$knownMethods)) {
                     $this->methods[strtoupper($key)] = new Method($key, $value);
                 }
@@ -140,6 +140,7 @@ class Resource
     private function convertUriToDisplayName($uri)
     {
         $separators = ['-', '_'];
-        return ucwords(str_replace($separators, ' ', substr($uri, 1)));
+        $uriParts = explode('/', $uri);
+        return ucwords(str_replace($separators, ' ', end($uriParts)));
     }
 }
