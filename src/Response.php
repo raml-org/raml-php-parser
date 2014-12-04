@@ -31,7 +31,7 @@ class Response
      * @param string $description
      * @param array $headers
      */
-    public function __construct($statusCode, $body = [], $description = null, $headers = [])
+    public function __construct($statusCode, $body = [], $description = null, array $headers = [])
     {
         $this->body = $body;
         $this->statusCode = $statusCode;
@@ -59,5 +59,31 @@ class Response
     public function getExampleByType($type)
     {
         return isset($this->body[$type]['example']) ? $this->body[$type]['example'] : null;
+    }
+
+    /**
+     * Returns the status code
+     */
+    public function getStatusCode()
+    {
+        return $this->statusCode;
+    }
+
+    /**
+     * Returns the description
+     * @param string
+     */
+    public function getDescription()
+    {
+        return $this->description;
+    }
+
+    /**
+     * Returns the headers
+     * @return array
+     */
+    public function getHeaders()
+    {
+        return $this->headers;
     }
 }

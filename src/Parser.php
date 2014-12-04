@@ -1,6 +1,10 @@
 <?php
 namespace Raml;
 
+use JsonSchema\Uri\UriRetriever;
+use JsonSchema\RefResolver;
+use Symfony\Component\Yaml\Yaml;
+
 class Parser
 {
     /**
@@ -16,7 +20,7 @@ class Parser
     /**
      * Parse a RAML file
      *
-     * @param string   $fileName
+     * @param string $fileName
      * @param boolean $parseSchemas
      *
      * @return \Raml\ApiDefinition
@@ -35,7 +39,7 @@ class Parser
             $parseSchemas
         );
 
-        if(!$array) {
+        if (!$array) {
             throw new \Exception('RAML file appears to be empty');
         }
 
@@ -79,8 +83,8 @@ class Parser
             $array = $this->arrayMapRecursive(
                 function ($data) use ($rootDir) {
                     if (is_string($data) && $this->isJson($data)) {
-                        $retriever = new \JsonSchema\Uri\UriRetriever;
-                        $jsonSchemaParser = new \JsonSchema\RefResolver($retriever);
+                        $retriever = new UriRetriever;
+                        $jsonSchemaParser = new RefResolver($retriever);
 
                         $data = json_decode($data);
                         $jsonSchemaParser->resolve($data, 'file:' . $rootDir . '/');
@@ -137,7 +141,7 @@ class Parser
      */
     private function parseYaml($fileName)
     {
-        return \Symfony\Component\Yaml\Yaml::parse($fileName);
+        return Yaml::parse($fileName);
     }
 
     /**
@@ -148,12 +152,12 @@ class Parser
      */
     private function parseJsonSchema($fileName)
     {
-        $retriever = new \JsonSchema\Uri\UriRetriever;
-        $jsonSchemaParser = new \JsonSchema\RefResolver($retriever);
+        $retriever = new UriRetriever;
+        $jsonSchemaParser = new RefResolver($retriever);
         try {
             return $jsonSchemaParser->fetchRef('file://' . $fileName, null);
         } catch (\Exception $e) {
-            throw new \Exception('Invalid JSON in '.$fileName);
+            throw new \Exception('Invalid JSON in ' . $fileName);
         }
     }
 
@@ -173,7 +177,7 @@ class Parser
             return $this->cachedFiles[$fileName];
         }
 
-        $fullPath = $rootDir. '/'.$fileName;
+        $fullPath = $rootDir . '/' . $fileName;
         if (is_readable($fullPath) === false) {
             return false;
         }
@@ -189,7 +193,7 @@ class Parser
             );
         } elseif ($parseSchemas) {
             // Determine if we need to parse schemas
-            switch($fileExtension) {
+            switch ($fileExtension) {
                 case 'json':
                     $fileData = $this->parseJsonSchema($fullPath, null);
                     break;
@@ -339,7 +343,7 @@ class Parser
         $jsonString = json_encode($trait, true);
 
         foreach ($values as $key => $value) {
-            $jsonString = str_replace('\u003C\u003C'.$key.'\u003E\u003E', $value, $jsonString);
+            $jsonString = str_replace('\u003C\u003C' . $key . '\u003E\u003E', $value, $jsonString);
         }
 
         return json_decode($jsonString, true);

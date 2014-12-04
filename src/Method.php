@@ -16,17 +16,7 @@ class Method
     /**
      * @var array
      */
-    private $headers;
-
-    /**
-     * @var array
-     */
-    private $protocols;
-
-    /**
-     * @var array
-     */
-    private $queryParameters;
+    private $queryParameters = null;
 
     /**
      * @var array
@@ -36,18 +26,18 @@ class Method
     /**
      * @var array
      */
-    private $responses;
+    private $responses = null;
 
     /**
      * Create a new Method from an array
      *
      * @param $data
      */
-    public function __construct($type, $data)
+    public function __construct($type, array $data)
     {
-        if (isset($data['responses'])) {
+        if (isset($data['responses']) && is_array($data['responses'])) {
             foreach ($data['responses'] as $responseCode => $responseData) {
-                $this->responses[$responseCode] = new \Raml\Response(
+                $this->responses[$responseCode] = new Response(
                     $responseCode,
                     isset($responseData['body']) ? $responseData['body'] : [],
                     isset($responseData['description']) ? $responseData['description'] : null,
@@ -56,18 +46,18 @@ class Method
             }
         }
 
-        if (isset($data['queryParameters'])) {
-            foreach ($data['queryParameters'] as $name => $data) {
-                $this->queryParameters[$name] = new \Raml\QueryParameter(
-                    isset($data['description']) ? $data['description'] : null,
-                    isset($data['type']) ? $data['type'] : 'string'
+        if (isset($data['queryParameters']) && is_array($data['queryParameters'])) {
+            foreach ($data['queryParameters'] as $name => $queryParameterData) {
+                $this->queryParameters[$name] = new QueryParameter(
+                    isset($queryParameterData['description']) ? $queryParameterData['description'] : null,
+                    isset($queryParameterData['type']) ? $queryParameterData['type'] : 'string'
                 );
             }
         }
 
         $this->type = strtoupper($type);
         $this->body = isset($data['body']) ? $data['body'] : [];
-        $this->description = isset($data['description']) ? $data['description'] : null;
+        $this->description = isset($data['description']) ? $data['description'] : '';
     }
 
     /**
@@ -104,7 +94,7 @@ class Method
      */
     public function getResponse($responseCode)
     {
-        return $this->responses[$responseCode];
+        return isset($this->responses[$responseCode]) ? $this->responses[$responseCode] : null;
     }
 
     /**

@@ -2,6 +2,7 @@
 namespace Raml;
 
 use Raml\Formatters\RouteFormatterInterface;
+use Raml\Formatters\NoRouteFormatter;
 
 /**
  * The API Definition
@@ -239,7 +240,7 @@ class ApiDefinition
     public function getResourcesAsUri(RouteFormatterInterface $formatter = null)
     {
         if (!$formatter) {
-            $formatter = new \Raml\Formatters\NoRouteFormatter();
+            $formatter = new NoRouteFormatter();
         }
 
         $formatter->format($this->getResourcesAsArray($this->resources));
