@@ -207,8 +207,7 @@ class ApiDefinition
 
         $uriParts = explode('/', preg_replace('/[\.|\?].*/', '', $testUri));
         $resources = $this->getResources();
-        $resource = false;
-        $previous = null;
+        $resource = null;
 
         foreach ($uriParts as $part) {
             // if part is empty
@@ -218,20 +217,17 @@ class ApiDefinition
                 continue;
             }
 
-            $uri = $previous.'/'.$part;
-
             foreach ($resources as $potentialResource) {
-                $resourceUri = $potentialResource->getUri();
+                $resourceUriParts = explode('/', $potentialResource->getUri());
+                $uri = '/'.end($resourceUriParts);
 
-                if ($uri === $resourceUri || strpos($resourceUri, '}') === strlen($resourceUri)-1) {
+                if ('/'.$part === $uri || strpos($uri, '/{') === 0) {
                     if ($part === $uriParts[count($uriParts)-1]) {
                         $resource = $potentialResource;
                     }
                     $resources = $potentialResource->getResources();
                 }
             }
-
-            $previous = $uri;
         }
 
         if ($resource) {
@@ -239,7 +235,7 @@ class ApiDefinition
         }
 
 
-        throw new \Exception('Resource not found for uri "'.$uri.'"');
+        throw new \Exception('Resource not found for uri "'.$testUri.'"');
     }
 
     /**
