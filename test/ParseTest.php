@@ -309,4 +309,40 @@ class ParseTest extends PHPUnit_Framework_TestCase
         $resourceDescriptionRaml = $this->parser->parse(__DIR__.'/fixture/resourceDescription.raml');
         $this->assertEquals('Collection of available songs resource', $resourceDescriptionRaml->getResourceByUri('songs')->getDescription());
     }
+
+    /** @test */
+    public function shouldParseStatusCode()
+    {
+        $simpleRaml = $this->parser->parse(__DIR__.'/fixture/simple.raml');
+        $resource = $simpleRaml->getResourceByUri('/songs/{songId]');
+        $response = $resource->getMethod('get')->getResponse(200);
+        $this->assertEquals(200, $response->getStatusCode());
+    }
+
+    /** @test */
+    public function shouldParseMethodHeaders()
+    {
+        $headersRaml = $this->parser->parse(__DIR__.'/fixture/headers.raml');
+        $resource = $headersRaml->getResourceByUri('/jobs');
+
+        $this->assertEquals(['Zencoder-Api-Key' => [
+            'displayName' => 'ZEncoder API Key'
+        ]], $resource->getMethod('post')->getHeaders());
+    }
+
+    /** @test */
+    public function shouldParseResponseHeaders()
+    {
+        $headersRaml = $this->parser->parse(__DIR__.'/fixture/headers.raml');
+        $resource = $headersRaml->getResourceByUri('/jobs');
+
+        $this->assertEquals(['X-waiting-period' => [
+            'description' => 'The number of seconds to wait before you can attempt to make a request again.'."\n",
+            'type' => 'integer',
+            'required' => 'yes',
+            'minimum' => 1,
+            'maximum' => 3600,
+            'example' => 34
+        ]], $resource->getMethod('post')->getResponse(503)->getHeaders());
+    }
 }

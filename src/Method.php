@@ -29,6 +29,11 @@ class Method
     private $responses = null;
 
     /**
+     * @var array
+     */
+    private $headers = [];
+
+    /**
      * Create a new Method from an array
      *
      * @param $data
@@ -57,6 +62,7 @@ class Method
 
         $this->type = strtoupper($type);
         $this->body = isset($data['body']) ? $data['body'] : [];
+        $this->headers = isset($data['headers']) ? $data['headers'] : [];
         $this->description = isset($data['description']) ? $data['description'] : '';
     }
 
@@ -115,5 +121,15 @@ class Method
     public function getDescription()
     {
         return $this->description;
+    }
+
+    /**
+     * Returns the headers
+     *
+     * @return array
+     */
+    public function getHeaders()
+    {
+        return $this->headers;
     }
 }
