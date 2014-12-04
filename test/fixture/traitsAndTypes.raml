@@ -13,11 +13,12 @@ resourceTypes:
       get:
         responses:
           200:
-            body: |
-              schema: {
-                "$schema": "http://json-schema.org/schema",
-                "type": "object"
-              }
+            body:
+              application/json: |
+                schema: {
+                  "$schema": "http://json-schema.org/schema",
+                  "type": "object"
+                }
 traits:
   - secured:
       queryParameters:

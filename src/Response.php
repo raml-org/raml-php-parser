@@ -31,7 +31,7 @@ class Response
      * @param string $description
      * @param array $headers
      */
-    public function __construct($statusCode, $body = [], $description = null, array $headers = [])
+    public function __construct($statusCode, array $body = [], $description = null, array $headers = [])
     {
         $this->body = $body;
         $this->statusCode = $statusCode;
