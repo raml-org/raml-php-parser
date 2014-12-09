@@ -87,23 +87,19 @@ class ApiDefinition
      */
     public function __construct(array $data)
     {
-        if (!isset($data['title'])) {
-            throw new \Exception('No Title supplied in RAML');
-        }
+        $this->title = $this->getArrayValue($data, 'title', true);
+        $this->version = $this->getArrayValue($data, 'version');
 
-        $this->title = $data['title'];
-        $this->version = isset($data['version']) ? $data['version'] : null;
+        $this->baseUri = $this->getArrayValue($data, 'baseUri');
+        $this->uriParameters = $this->getArrayValue($data, 'uriParameters');
 
-        $this->baseUri = isset($data['baseUri']) ? $data['baseUri'] : null;
-        $this->uriParameters = isset($data['uriParameters']) ? $data['uriParameters'] : null;
+        $this->defaultMediaType = $this->getArrayValue($data, 'defaultMediaType');
+        $this->documentation = $this->getArrayValue($data, 'documentation');
 
-        $this->defaultMediaType = isset($data['defaultMediaType']) ? $data['defaultMediaType'] : null;
-        $this->documentation = isset($data['documentation']) ? $data['documentation'] : null;
+        $this->protocols =$this->getArrayValue($data, 'protocols');
 
-        if (!isset($data['protocols']) && isset($data['baseUri'])) {
-            $this->protocols = [parse_url($data['baseUri'], PHP_URL_SCHEME)];
-        } else {
-            $this->protocols = isset($data['protocols']) ? $data['protocols'] : null;
+        if (!$this->protocols && $this->baseUri) {
+            $this->protocols = [parse_url($this->baseUri, PHP_URL_SCHEME)];
         }
 
         foreach ($data as $resourceName => $resource) {
@@ -113,6 +109,28 @@ class ApiDefinition
             }
         }
     }
+
+    /**
+     * Helper method to extract items from array
+     *
+     * @param array   $data
+     * @param string  $key
+     * @param boolean $required
+     *
+     * @throws \Exception
+     *
+     * @return null
+     */
+    private function getArrayValue($data, $key, $required = false)
+    {
+        if ($required && !isset($data[$key])) {
+            throw new \Exception('Key "'.$key.'" not found in RAML file');
+        }
+
+        return isset($data[$key]) ? $data[$key] : null;
+    }
+
+    // ---
 
     /**
      * Get the title of the API
@@ -263,7 +281,7 @@ class ApiDefinition
     // ---
 
     /**
-     * Recursive function that generates a flat array of the  entire API Definition
+     * Recursive function that generates a flat array of the entire API Definition
      *
      * GET /songs => [/songs, GET, Raml\Method]
      * GET /songs/{songId} => [/songs/{songId}, GET, Raml\Method]

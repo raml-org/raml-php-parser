@@ -4,9 +4,13 @@ namespace Raml;
 class Resource
 {
     /**
+     * Valid METHODS
+     * - Currently missing OPTIONS as this is unlikely to be specified in RAML
      * @var array
      */
-    private static $knownMethods = ['get', 'post', 'put', 'delete', 'patch'];
+    private static $knownMethods = ['GET', 'POST', 'PUT', 'DELETE', 'PATCH'];
+
+    // ---
 
     /**
      * @var array
@@ -38,34 +42,47 @@ class Resource
      */
     private $description;
 
+    // ---
+
     /**
      * Create a new Resource from an array
      *
-     * @param $data
+     * @param string $uri
+     * @param array  $data
+     * @param string $baseUri
      */
     public function __construct($uri, $data, $baseUri)
     {
         $this->uri = $uri;
-
-        if (isset($data['displayName'])) {
-            $this->displayName = $data['displayName'];
-        } else {
-            $this->displayName = $this->convertUriToDisplayName($uri);
-        }
-
-        $this->description = isset($data['description']) ? $data['description'] : null;
-
-        $this->baseUriParameters = (isset($data['baseUriParameters'])) ? $data['baseUriParameters'] : [];
+        $this->displayName = $this->getArrayValue($data, 'displayName', $this->convertUriToDisplayName($uri));
+        $this->description = $this->getArrayValue($data, 'description');
+        $this->baseUriParameters = $this->getArrayValue($data, 'baseUriParameters', []);
 
         if ($data) {
             foreach ($data as $key => $value) {
                 if (strpos($key, '/') === 0) {
                     $this->subResources[$key] = new Resource($uri.$key, $value, $baseUri.$uri);
-                } elseif (in_array($key, self::$knownMethods)) {
+                } elseif (in_array(strtoupper($key), self::$knownMethods)) {
                     $this->methods[strtoupper($key)] = new Method($key, $value);
                 }
             }
         }
+    }
+
+    /**
+     * Helper method to extract items from array
+     *
+     * @param array   $data
+     * @param string  $key
+     * @param boolean $required
+     *
+     * @throws \Exception
+     *
+     * @return null
+     */
+    private function getArrayValue($data, $key, $defaultValue = null)
+    {
+        return isset($data[$key]) ? $data[$key] : $defaultValue;
     }
 
     /**
@@ -117,8 +134,7 @@ class Resource
      */
     public function getMethod($method)
     {
-        $method = strtoupper($method);
-        return isset($this->methods[$method]) ? $this->methods[$method] : null;
+        return $this->getArrayValue($this->methods, strtoupper($method));
     }
 
     /**
@@ -132,7 +148,7 @@ class Resource
     }
 
     /**
-     * If a display name is not provided then we attempt to construct a decent on from the uri.
+     * If a display name is not provided then we attempt to construct a decent one from the uri.
      *
      * @param string $uri
      * @return string

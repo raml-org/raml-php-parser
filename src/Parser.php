@@ -339,7 +339,6 @@ class Parser
      */
     private function applyTraitVariables(array $values, array $trait)
     {
-
         $jsonString = json_encode($trait, true);
 
         foreach ($values as $key => $value) {

@@ -28,14 +28,14 @@ class ParseTest extends PHPUnit_Framework_TestCase
     /** @test */
     public function shouldThrowCorrectExceptionOnBadJson()
     {
-        $this->setExpectedException('Exception', 'Invalid JSON in '.__DIR__.'/fixture/bad.json');
-        $this->parser->parse(__DIR__.'/fixture/badJson.raml');
+        $this->setExpectedException('Exception', 'Invalid JSON in '.__DIR__.'/fixture/invalid/bad.json');
+        $this->parser->parse(__DIR__.'/fixture/invalid/badJson.raml');
     }
 
     /** @test */
     public function shouldIgnoreBadIncludeForRamlFile()
     {
-        $simpleRaml = $this->parser->parse(__DIR__.'/fixture/bad.raml');
+        $simpleRaml = $this->parser->parse(__DIR__.'/fixture/invalid/bad.raml');
         $this->assertEquals('World Music API', $simpleRaml->getTitle());
     }
 
@@ -220,7 +220,7 @@ class ParseTest extends PHPUnit_Framework_TestCase
     /** @test */
     public function shouldThrowErrorIfNoTitle()
     {
-        $this->setExpectedException('Exception', 'No Title supplied in RAML');
+        $this->setExpectedException('Exception', 'Key "title" not found in RAML');
         $this->parser->parse(__DIR__.'/fixture/invalid/noTitle.raml');
     }
 

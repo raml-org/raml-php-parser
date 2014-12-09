@@ -40,31 +40,51 @@ class Method
      */
     public function __construct($type, array $data)
     {
-        if (isset($data['responses']) && is_array($data['responses'])) {
-            foreach ($data['responses'] as $responseCode => $responseData) {
+        $responses = $this->getArrayValue($data, 'responses', []);
+        if (is_array($responses)) {
+            foreach ($responses as $responseCode => $responseData) {
                 $this->responses[$responseCode] = new Response(
                     $responseCode,
-                    isset($responseData['body']) ? $responseData['body'] : [],
-                    isset($responseData['description']) ? $responseData['description'] : null,
-                    isset($responseData['headers']) ? $responseData['headers'] : []
+                    $this->getArrayValue($responseData, 'body') ?: [],
+                    $this->getArrayValue($responseData, 'description'),
+                    $this->getArrayValue($responseData, 'headers') ?: []
                 );
             }
         }
 
-        if (isset($data['queryParameters']) && is_array($data['queryParameters'])) {
-            foreach ($data['queryParameters'] as $name => $queryParameterData) {
+        $queryParameters = $this->getArrayValue($data, 'queryParameters', []);
+        if (is_array($queryParameters)) {
+            foreach ($queryParameters as $name => $queryParameterData) {
                 $this->queryParameters[$name] = new QueryParameter(
-                    isset($queryParameterData['description']) ? $queryParameterData['description'] : null,
-                    isset($queryParameterData['type']) ? $queryParameterData['type'] : 'string'
+                    $this->getArrayValue($queryParameterData, 'description'),
+                    $this->getArrayValue($queryParameterData, 'type', 'string')
                 );
             }
         }
 
         $this->type = strtoupper($type);
-        $this->body = isset($data['body']) ? $data['body'] : [];
-        $this->headers = isset($data['headers']) ? $data['headers'] : [];
-        $this->description = isset($data['description']) ? $data['description'] : '';
+        $this->body = $this->getArrayValue($data, 'body', []);
+        $this->headers = $this->getArrayValue($data, 'headers', []);
+        $this->description = $this->getArrayValue($data, 'description', '');
     }
+
+    /**
+     * Helper method to extract items from array
+     *
+     * @param array   $data
+     * @param string  $key
+     * @param boolean $required
+     *
+     * @throws \Exception
+     *
+     * @return null
+     */
+    private function getArrayValue($data, $key, $defaultValue = null)
+    {
+        return isset($data[$key]) ? $data[$key] : $defaultValue;
+    }
+
+    // --
 
     /**
      * @return string
