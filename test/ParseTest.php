@@ -28,15 +28,15 @@ class ParseTest extends PHPUnit_Framework_TestCase
     /** @test */
     public function shouldThrowCorrectExceptionOnBadJson()
     {
-        $this->setExpectedException('Exception', 'Invalid JSON in '.__DIR__.'/fixture/invalid/bad.json');
+        $this->setExpectedException('Exception', 'Invalid JSON in schema');
         $this->parser->parse(__DIR__.'/fixture/invalid/badJson.raml');
     }
 
     /** @test */
-    public function shouldIgnoreBadIncludeForRamlFile()
+    public function shouldThrowCorrectExceptionOnBadRamlFile()
     {
+        $this->setExpectedException('Exception', 'Invalid JSON in schema');
         $simpleRaml = $this->parser->parse(__DIR__.'/fixture/invalid/bad.raml');
-        $this->assertEquals('World Music API', $simpleRaml->getTitle());
     }
 
     /** @test */
@@ -107,7 +107,7 @@ class ParseTest extends PHPUnit_Framework_TestCase
         $this->assertCount(3, $resource->getMethods());
         $this->assertInstanceOf('\Raml\Method', $method);
         $this->assertEquals('POST', $method->getType());
-        $this->assertInstanceOf('stdClass', $schema);
+        $this->assertInstanceOf('\Raml\Schema\Definition\JsonSchemaDefinition', $schema);
     }
 
     /** @test */
@@ -132,7 +132,10 @@ class ParseTest extends PHPUnit_Framework_TestCase
 
         $schema = $response->getExampleByType('application/json');
 
-        $this->assertInstanceOf('stdClass', $schema);
+        $this->assertEquals([
+          "title" => "Wish You Were Here",
+          "artist" => "Pink Floyd"
+        ], json_decode($schema, true));
     }
 
     /** @test */
@@ -144,7 +147,7 @@ class ParseTest extends PHPUnit_Framework_TestCase
         $response = $method->getResponse(200);
         $schema = $response->getSchemaByType('application/json');
 
-        $this->assertInstanceOf('stdClass', $schema);
+        $this->assertInstanceOf('\Raml\Schema\Definition\JsonSchemaDefinition', $schema);
     }
 
     /** @test */
@@ -166,10 +169,23 @@ class ParseTest extends PHPUnit_Framework_TestCase
         $resource = $simpleRaml->getResourceByUri('/songs');
         $method = $resource->getMethod('get');
         $response = $method->getResponse(200);
-        $schema = $response->getSchemaByType('application/json');
+        $schema = $response->getSchemaByType('application/json')->getJsonObject();
 
         $this->assertEquals('A canonical song', $schema->items->description);
     }
+
+    /** @test */
+    public function shouldParseJsonIntoArray()
+    {
+        $simpleRaml = $this->parser->parse(__DIR__.'/fixture/simple.raml');
+        $resource = $simpleRaml->getResourceByUri('/songs');
+        $method = $resource->getMethod('get');
+        $response = $method->getResponse(200);
+        $schema = $response->getSchemaByType('application/json')->getJsonArray();
+
+        $this->assertEquals('A canonical song', $schema['items']['description']);
+    }
+
 
     /** @test */
     public function shouldParseIncludedJson()
@@ -181,7 +197,7 @@ class ParseTest extends PHPUnit_Framework_TestCase
         $response = $method->getResponse(200);
         $schema = $response->getSchemaByType('application/json');
 
-        $this->assertInstanceOf('stdClass', $schema);
+        $this->assertInstanceOf('\Raml\Schema\Definition\JsonSchemaDefinition', $schema);
     }
 
     /** @test */
@@ -205,7 +221,7 @@ class ParseTest extends PHPUnit_Framework_TestCase
         $resource = $simpleRaml->getResourceByUri('/songs');
         $method = $resource->getMethod('get');
         $response = $method->getResponse(200);
-        $schema = $response->getSchemaByType('application/json');
+        $schema = $response->getSchemaByType('application/json')->getJsonObject();
 
         $this->assertEquals('A canonical song', $schema->items->description);
     }
@@ -227,8 +243,24 @@ class ParseTest extends PHPUnit_Framework_TestCase
     /** @test */
     public function shouldThrowErrorIfUnknownIncluded()
     {
-        $this->setExpectedException('Exception', 'Extension "ini" not supported (yet)');
-        $this->parser->parse(__DIR__.'/fixture/includeIni.raml');
+        $this->setExpectedException('Exception', 'Unknown schema type:application/vnd.api-v1+json');
+        $this->parser->parse(__DIR__.'/fixture/includeUnknownSchema.raml');
+    }
+
+    /** @test */
+    public function shouldBeAbleToAddAdditionalSchemaTypes()
+    {
+        $schemaParser = new \Raml\Schema\Parser\JsonSchemaParser();
+        $schemaParser->addCompatibleContentType('application/vnd.api-v1+json');
+        $this->parser->addSchemaParser($schemaParser);
+        $simpleRaml = $this->parser->parse(__DIR__.'/fixture/includeUnknownSchema.raml');
+
+        $resource = $simpleRaml->getResourceByUri('/songs');
+        $method = $resource->getMethod('get');
+        $response = $method->getResponse(200);
+        $schema = $response->getSchemaByType('application/vnd.api-v1+json');
+
+        $this->assertInstanceOf('\Raml\Schema\Definition\JsonSchemaDefinition', $schema);
     }
 
     /** @test */
@@ -407,10 +439,12 @@ class ParseTest extends PHPUnit_Framework_TestCase
     {
         $def = $this->parser->parse(__DIR__ . '/fixture/jsonStringExample.raml');
         $example = $def->getResourceByUri('/songs')->getMethod('get')->getResponse(200)->getExampleByType('application/json');
-        $this->assertTrue(is_object($example));
-        $this->assertInstanceOf('stdClass', $example);
-        $this->assertTrue(is_array($example->items));
-        $this->assertCount(1, $example->items);
-        $this->assertInstanceOf('stdClass', $example->items[0]);
+
+        $this->assertEquals([
+            'items' => [[
+                'id' => 2,
+                'title' => 'test'
+            ]]
+        ], json_decode($example, true));
     }
 }

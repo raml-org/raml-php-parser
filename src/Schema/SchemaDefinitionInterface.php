@@ -1,0 +1,27 @@
+<?php
+namespace Raml\Schema;
+
+/**
+ * Defines the interface for schema definitions.
+ * Each schema definition wraps or provides methods for parsing and validating schemas.
+ */
+interface SchemaDefinitionInterface
+{
+    /**
+     * Returns the schema as a string
+     *
+     * @return string
+     */
+    public function __toString();
+
+    /**
+     * Validates a string against the schema
+     *
+     * @param $string
+     *
+     * @throws \Exception
+     *
+     * @return boolean
+     */
+    public function validate($string);
+}
