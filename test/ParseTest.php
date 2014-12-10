@@ -360,4 +360,12 @@ class ParseTest extends PHPUnit_Framework_TestCase
         $def = $this->parser->parse(__DIR__.'/fixture/reservedParameter.raml');
         $this->assertEquals('Get list of songs at /songs', $def->getResourceByUri('/songs')->getMethod('get')->getDescription());
     }
+
+    /** @test */
+    public function shouldParameterTransformerWorks()
+    {
+        $def = $this->parser->parse(__DIR__.'/fixture/parameterTransformer.raml');
+        $this->assertEquals('Create one song', $def->getResourceByUri('/songs')->getMethod('post')->getDescription());
+        $this->assertEquals('Get one song from /songs', $def->getResourceByUri('/songs/{id}')->getMethod('get')->getDescription());
+    }
 }
