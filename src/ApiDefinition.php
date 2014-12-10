@@ -78,6 +78,14 @@ class ApiDefinition
      */
     private $resources;
 
+    /**
+     * The schemas the API supplies defined in the root
+     * {/*}
+     *
+     * @var array
+     */
+    private $schemas;
+
     // ---
 
     /**
@@ -101,6 +109,8 @@ class ApiDefinition
         if (!$this->protocols && $this->baseUri) {
             $this->protocols = [parse_url($this->baseUri, PHP_URL_SCHEME)];
         }
+
+        $this->schemas =$this->getArrayValue($data, 'schemas');
 
         foreach ($data as $resourceName => $resource) {
             // check if actually a resource
@@ -208,6 +218,14 @@ class ApiDefinition
     public function getResources()
     {
         return $this->resources;
+    }
+
+    /**
+     * @return array
+     */
+    public function getSchemas()
+    {
+        return $this->schemas;
     }
 
     // ---

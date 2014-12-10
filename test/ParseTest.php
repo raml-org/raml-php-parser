@@ -368,4 +368,12 @@ class ParseTest extends PHPUnit_Framework_TestCase
         $this->assertEquals('songs /songs song /song', $def->getResourceByUri('/songs')->getMethod('post')->getDescription());
         $this->assertEquals('song /song songs /songs', $def->getResourceByUri('/song')->getMethod('get')->getDescription());
     }
+
+    /** @test */
+    public function shouldParseSchemasDefinedInTheRoot()
+    {
+        $def = $this->parser->parse(__DIR__.'/fixture/rootSchemas.raml');
+
+        $this->assertCount(2, $def->getSchemas());
+    }
 }
