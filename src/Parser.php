@@ -5,6 +5,8 @@ use JsonSchema\Uri\UriRetriever;
 use JsonSchema\RefResolver;
 use Symfony\Component\Yaml\Yaml;
 
+use Inflect\Inflect;
+
 class Parser
 {
     /**
@@ -338,9 +340,13 @@ class Parser
     {
         $jsonString = json_encode($trait, true);
 
-        foreach ($values as $key => $value) {
-            $jsonString = str_replace('\u003C\u003C' . $key . '\u003E\u003E', $value, $jsonString);
-        }
+        $variables = implode('|', array_keys($values));
+
+        $jsonString = preg_replace_callback('/\\\u003C\\\u003C(' . $variables . ')([\s]*\|[\s]*!(singularize|pluralize))?\\\u003E\\\u003E/', function($matches) use ($values) {
+            $transformer = isset($matches[3]) ? $matches[3] : '';
+
+            return method_exists('Inflect\Inflect', $transformer) ? Inflect::{$transformer}($values[$matches[1]]) : $values[$matches[1]];
+        }, $jsonString);
 
         return json_decode($jsonString, true);
     }
