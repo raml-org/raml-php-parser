@@ -302,22 +302,19 @@ class Parser
             if ($key === 'type') {
                 $type = [];
 
+                $traitVariables = ['resourcePath' => $path, 'resourcePathName' => $name];
+
                 if (is_array($value)) {
-                    $traitVariables = current($value);
+                    $traitVariables = array_merge($traitVariables, current($value));
                     $traitName = key($value);
-
-                    $traitVariables['resourcePath'] = $path;
-                    $traitVariables['resourcePathName'] = $name;
-
                     $type = $this->applyTraitVariables($traitVariables, $types[$traitName]);
                 } elseif (isset($types[$value])) {
-                    $type = $types[$value];
+                    $type = $this->applyTraitVariables($traitVariables, $types[$value]);
                 }
 
                 $newArray = array_replace_recursive($newArray, $this->replaceTypes($type, $types, $path, $name));
             } else {
                 $newValue = $this->replaceTypes($value, $types, $path, $name);
-
 
                 if (isset($newArray[$key])) {
                     $newArray[$key] = array_replace_recursive($newArray[$key], $newValue);

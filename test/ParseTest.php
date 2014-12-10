@@ -353,4 +353,11 @@ class ParseTest extends PHPUnit_Framework_TestCase
             'example' => 34
         ]], $resource->getMethod('post')->getResponse(503)->getHeaders());
     }
+
+    /** @test */
+    public function shouldReplaceReservedParameter()
+    {
+        $def = $this->parser->parse(__DIR__.'/fixture/reservedParameter.raml');
+        $this->assertEquals('Get list of songs at /songs', $def->getResourceByUri('/songs')->getMethod('get')->getDescription());
+    }
 }
