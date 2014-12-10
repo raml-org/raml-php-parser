@@ -4,10 +4,10 @@ title: Parameter transformer
 resourceTypes:
   - collection:
       post:
-        description: Create one <<resourcePathName | !singularize>>
+        description: <<resourcePathName>> <<resourcePath>> <<resourcePathName | !singularize>> <<resourcePath | !singularize>>
   - item:
       get:
-        description: Get one <<resourcePathName>> from <<resourcePath | !pluralize>>
+        description: <<resourcePathName>> <<resourcePath>> <<resourcePathName | !pluralize>> <<resourcePath | !pluralize>>
 
 /songs:
   type: { collection: {} }

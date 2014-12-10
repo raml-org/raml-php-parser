@@ -364,8 +364,8 @@ class ParseTest extends PHPUnit_Framework_TestCase
     /** @test */
     public function shouldParameterTransformerWorks()
     {
-        $def = $this->parser->parse(__DIR__.'/fixture/parameterTransformer.raml');
-        $this->assertEquals('Create one song', $def->getResourceByUri('/songs')->getMethod('post')->getDescription());
-        $this->assertEquals('Get one song from /songs', $def->getResourceByUri('/songs/{id}')->getMethod('get')->getDescription());
+        $def = $this->parser->parse(__DIR__ . '/fixture/parameterTransformer.raml');
+        $this->assertEquals('songs /songs song /song', $def->getResourceByUri('/songs')->getMethod('post')->getDescription());
+        $this->assertEquals('song /song songs /songs', $def->getResourceByUri('/song')->getMethod('get')->getDescription());
     }
 }
