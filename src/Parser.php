@@ -74,7 +74,7 @@ class Parser
             foreach ($array as $key => $value) {
                 if (strpos($key, '/') === 0) {
                     $name = (isset($value['displayName'])) ? $value['displayName'] : substr($key, 1);
-                    $array[$key] = $this->replaceTypes($value, $keyedTraits, $key, $name);
+                    $array[$key] = $this->replaceTypes($value, $keyedTraits, $key, $name, $key);
                 }
             }
         }
@@ -292,16 +292,16 @@ class Parser
      * @param string $name
      * @return array
      */
-    private function replaceTypes($raml, $types, $path, $name)
+    private function replaceTypes($raml, $types, $path, $name, $parentKey = null)
     {
-        if (!is_array($raml)) {
+        if (strpos($path, '/') !== 0 || !is_array($raml)) {
             return $raml;
         }
 
         $newArray = [];
 
         foreach ($raml as $key => $value) {
-            if ($key === 'type') {
+            if ($key === 'type' && strpos($parentKey, '/') === 0) {
                 $type = [];
 
                 $traitVariables = ['resourcePath' => $path, 'resourcePathName' => $name];
@@ -314,9 +314,9 @@ class Parser
                     $type = $this->applyTraitVariables($traitVariables, $types[$value]);
                 }
 
-                $newArray = array_replace_recursive($newArray, $this->replaceTypes($type, $types, $path, $name));
+                $newArray = array_replace_recursive($newArray, $this->replaceTypes($type, $types, $path, $name, $key));
             } else {
-                $newValue = $this->replaceTypes($value, $types, $path, $name);
+                $newValue = $this->replaceTypes($value, $types, $path, $name, $key);
 
                 if (isset($newArray[$key])) {
                     $newArray[$key] = array_replace_recursive($newArray[$key], $newValue);

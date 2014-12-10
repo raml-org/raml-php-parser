@@ -57,7 +57,10 @@ class Method
             foreach ($queryParameters as $name => $queryParameterData) {
                 $this->queryParameters[$name] = new QueryParameter(
                     $this->getArrayValue($queryParameterData, 'description'),
-                    $this->getArrayValue($queryParameterData, 'type', 'string')
+                    $this->getArrayValue($queryParameterData, 'type', 'string'),
+                    $this->getArrayValue($queryParameterData, 'displayName', $this->convertKeyToDisplayName($name)),
+                    $this->getArrayValue($queryParameterData, 'example'),
+                    $this->getArrayValue($queryParameterData, 'required', false)
                 );
             }
         }
@@ -151,5 +154,20 @@ class Method
     public function getHeaders()
     {
         return $this->headers;
+    }
+
+    // ---
+
+    /**
+     * If a display name is not provided then we attempt to construct a decent one from the key.
+     *
+     * @param string $uri
+     * @return string
+     */
+    private function convertKeyToDisplayName($uri)
+    {
+        $separators = ['-', '_'];
+        $uriParts = explode('/', $uri);
+        return ucwords(str_replace($separators, ' ', end($uriParts)));
     }
 }

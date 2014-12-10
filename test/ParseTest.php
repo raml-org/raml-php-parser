@@ -372,8 +372,33 @@ class ParseTest extends PHPUnit_Framework_TestCase
     /** @test */
     public function shouldParseSchemasDefinedInTheRoot()
     {
-        $def = $this->parser->parse(__DIR__.'/fixture/rootSchemas.raml');
+        $def = $this->parser->parse(__DIR__ . '/fixture/rootSchemas.raml');
 
         $this->assertCount(2, $def->getSchemas());
+    }
+
+    /** @test */
+    public function shouldCorrectlyHandleQueryParameters()
+    {
+        $def = $this->parser->parse(__DIR__.'/fixture/queryParameters.raml');
+
+        $resource = $def->getResourceByUri('/books/{bookId}');
+        $method = $resource->getMethod('get');
+        $queryParameters = $method->getQueryParameters();
+
+        $this->assertEquals(3, count($queryParameters));
+
+        $this->assertEquals('integer', $queryParameters['page']->getType());
+        $this->assertEquals('Current Page', $queryParameters['page']->getDisplayName());
+        $this->assertNull($queryParameters['page']->getDescription());
+        $this->assertNull($queryParameters['page']->getExample());
+        $this->assertFalse($queryParameters['page']->isRequired());
+    }
+
+    /** @test */
+    public function shouldThrowExceptionOnBadQueryParameter()
+    {
+        $this->setExpectedException('Exception', '"invalid" is not a valid type');
+        $this->parser->parse(__DIR__.'/fixture/invalid/queryParameters.raml');
     }
 }
