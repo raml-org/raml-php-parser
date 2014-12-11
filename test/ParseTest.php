@@ -401,4 +401,16 @@ class ParseTest extends PHPUnit_Framework_TestCase
         $this->setExpectedException('Exception', '"invalid" is not a valid type');
         $this->parser->parse(__DIR__.'/fixture/invalid/queryParameters.raml');
     }
+
+    /** @test */
+    public function shouldReplaceParameterByJsonString()
+    {
+        $def = $this->parser->parse(__DIR__ . '/fixture/jsonStringExample.raml');
+        $example = $def->getResourceByUri('/songs')->getMethod('get')->getResponse(200)->getExampleByType('application/json');
+        $this->assertTrue(is_object($example));
+        $this->assertInstanceOf('stdClass', $example);
+        $this->assertTrue(is_array($example->items));
+        $this->assertCount(1, $example->items);
+        $this->assertInstanceOf('stdClass', $example->items[0]);
+    }
 }

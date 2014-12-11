@@ -1,0 +1,27 @@
+#%RAML 0.8
+title: json string example
+
+resourceTypes:
+ - collection:
+    get:
+      description: Get a collection of <<resourcePathName>>.
+      responses:
+        200:
+          body:
+            application/json:
+              example: |
+                {
+                  "items":
+                <<example>>
+                }
+
+/songs:
+  type:
+    collection:
+      example: |
+        [
+          {
+            "id": 2,
+            "title": "test"
+          }
+        ]
