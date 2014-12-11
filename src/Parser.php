@@ -338,16 +338,30 @@ class Parser
      */
     private function applyTraitVariables(array $values, array $trait)
     {
-        $jsonString = json_encode($trait, true);
-
         $variables = implode('|', array_keys($values));
 
-        $jsonString = preg_replace_callback('/\\\u003C\\\u003C(' . $variables . ')([\s]*\|[\s]*!(singularize|pluralize))?\\\u003E\\\u003E/', function($matches) use ($values) {
-            $transformer = isset($matches[3]) ? $matches[3] : '';
+        $newTrait = [];
 
-            return method_exists('Inflect\Inflect', $transformer) ? Inflect::{$transformer}($values[$matches[1]]) : $values[$matches[1]];
-        }, $jsonString);
+        foreach ($trait as $key => &$value) {
+            $newKey = preg_replace_callback('/<<(' . $variables . ')([\s]*\|[\s]*!(singularize|pluralize))?>>/', function($matches) use ($values) {
+                $transformer = isset($matches[3]) ? $matches[3] : '';
 
-        return json_decode($jsonString, true);
+                return method_exists('Inflect\Inflect', $transformer) ? Inflect::{$transformer}($values[$matches[1]]) : $values[$matches[1]];
+            }, $key);
+
+            if (is_array($value)) {
+                $value = $this->applyTraitVariables($values, $value);
+            } else {
+                $value = preg_replace_callback('/<<(' . $variables . ')([\s]*\|[\s]*!(singularize|pluralize))?>>/', function($matches) use ($values) {
+                    $transformer = isset($matches[3]) ? $matches[3] : '';
+
+                    return method_exists('Inflect\Inflect', $transformer) ? Inflect::{$transformer}($values[$matches[1]]) : $values[$matches[1]];
+                }, $value);
+            }
+
+            $newTrait[$newKey] = $value;
+        }
+
+        return $newTrait;
     }
 }
