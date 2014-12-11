@@ -3,6 +3,7 @@
 namespace Raml\Schema\Definition;
 
 use \Raml\Schema\SchemaDefinitionInterface;
+use \JsonSchema\Validator;
 
 class JsonSchemaDefinition implements SchemaDefinitionInterface
 {
@@ -66,7 +67,7 @@ class JsonSchemaDefinition implements SchemaDefinitionInterface
     /**
      * Validates a json object
      *
-     * @param $string
+     * @param string $json
      *
      * @throws \Exception
      *
@@ -74,9 +75,10 @@ class JsonSchemaDefinition implements SchemaDefinitionInterface
      */
     public function validateJsonObject($json)
     {
-        $validator = new \JsonSchema\Validator();
+        $validator = new Validator();
+        $jsonSchema = $this->json;
 
-        $validator->check($json, $this->json);
+        $validator->check($json, $jsonSchema);
 
         if (!$validator->isValid()) {
             throw new \Exception(json_encode($validator->getErrors(), true));
@@ -102,6 +104,7 @@ class JsonSchemaDefinition implements SchemaDefinitionInterface
      */
     public function getJsonArray()
     {
-        return json_decode(json_encode($this->json), true);
+        $jsonSchema = $this->json;
+        return json_decode(json_encode($jsonSchema), true);
     }
 }

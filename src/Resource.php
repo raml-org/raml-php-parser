@@ -1,89 +1,198 @@
 <?php
 namespace Raml;
 
-class Resource
+/**
+ * Named Parameters
+ *
+ * @see http://raml.org/spec.html#resources-and-nested-resources
+ */
+class Resource implements ArrayInstantiationInterface
 {
     /**
-     * Valid METHODS
-     * - Currently missing OPTIONS as this is unlikely to be specified in RAML
-     * @var array
-     */
-    private static $knownMethods = ['GET', 'POST', 'PUT', 'DELETE', 'PATCH'];
-
-    // ---
-
-    /**
-     * @var array
-     */
-    private $subResources = [];
-
-    /**
-     * @var array
-     */
-    private $methods = [];
-
-    /**
+     * The URI of this resource (required)
+     * - Must begin with a "/"
+     *
+     * @see http://raml.org/spec.html#resources-and-nested-resources
+     *
      * @var string
      */
     private $uri;
 
     /**
+     * The display name (optional)
+     * - defaults to URI
+     *
+     * @see http://raml.org/spec.html#display-name
+     *
      * @var string;
      */
     private $displayName;
 
     /**
-     * @var array
+     * The description of the resource (optional)
+     *
+     * @see http://raml.org/spec.html#description
+     *
+     * @var string
+     */
+    private $description;
+
+    /**
+     * Override for the Base Uri Parameters
+     *
+     * @see http://raml.org/spec.html#base-uri-parameters
+     *
+     * @var NamedParameter[]
      */
     private $baseUriParameters = [];
 
     /**
-     * @var string
+     * List of uri parameters
+     *
+     * @var NamedParameter[]
      */
-    private $description;
+    private $uriParameters = [];
+
+    // --
+
+    /**
+     * List of resources under this resource
+     *
+     * @var Resource[]
+     */
+    private $subResources = [];
+
+    /**
+     * List of methods on this resource
+     *
+     * @var Method[]
+     */
+    private $methods = [];
 
     // ---
 
     /**
      * Create a new Resource from an array
      *
-     * @param string $uri
-     * @param array  $data
-     * @param string $baseUri
+     * @param string        $uri
+     * @param ApiDefinition $apiDefinition
+     *
+     * @throws \Exception
      */
-    public function __construct($uri, $data, $baseUri)
+    public function __construct($uri, ApiDefinition $apiDefinition)
     {
-        $this->uri = $uri;
-        $this->displayName = $this->getArrayValue($data, 'displayName', $this->convertUriToDisplayName($uri));
-        $this->description = $this->getArrayValue($data, 'description');
-        $this->baseUriParameters = $this->getArrayValue($data, 'baseUriParameters', []);
+        if (strpos($uri, '/') !== 0) {
+            throw new \Exception('URI must begin with a /');
+        }
 
-        if ($data) {
-            foreach ($data as $key => $value) {
-                if (strpos($key, '/') === 0) {
-                    $this->subResources[$key] = new Resource($uri.$key, $value, $baseUri.$uri);
-                } elseif (in_array(strtoupper($key), self::$knownMethods)) {
-                    $this->methods[strtoupper($key)] = new Method($key, $value);
-                }
-            }
+        $this->uri = $uri;
+
+        foreach ($apiDefinition->getBaseUriParameters() as $baseUriParameter) {
+            $this->addBaseUriParameter($baseUriParameter);
         }
     }
 
     /**
-     * Helper method to extract items from array
+     * Create a Resource from an array
      *
-     * @param array   $data
-     * @param string  $key
-     * @param boolean $required
+     * @param string        $uri
+     * @param ApiDefinition $apiDefinition
+     * @param array         $data
+     * [
+     *  uri:               string
+     *  displayName:       ?string
+     *  description:       ?string
+     *  baseUriParameters: ?array
+     * ]
      *
-     * @throws \Exception
-     *
-     * @return null
+     * @return self
      */
-    private function getArrayValue($data, $key, $defaultValue = null)
+    public static function createFromArray($uri, array $data = [], ApiDefinition $apiDefinition = null)
     {
-        return isset($data[$key]) ? $data[$key] : $defaultValue;
+        $resource = new static($uri, $apiDefinition);
+
+        if (isset($data['displayName'])) {
+            $resource->setDisplayName($data['displayName']);
+        } else {
+            $resource->setDisplayName($uri);
+        }
+
+        if (isset($data['description'])) {
+            $resource->setDescription($data['description']);
+        }
+
+        if (isset($data['baseUriParameters'])) {
+            foreach ($data['baseUriParameters'] as $key => $baseUriParameter) {
+                $resource->addBaseUriParameter(
+                    NamedParameter::createFromArray($key, $baseUriParameter)
+                );
+            }
+        }
+
+        if (isset($data['uriParameters'])) {
+            foreach ($data['uriParameters'] as $key => $uriParameter) {
+                $resource->addUriParameter(
+                    NamedParameter::createFromArray($key, $uriParameter ?: [])
+                );
+            }
+        }
+
+        foreach ($data as $key => $value) {
+            if (strpos($key, '/') === 0) {
+                $resource->addResource(
+                    Resource::createFromArray(
+                        $uri.$key,
+                        $value ?: [],
+                        $apiDefinition
+                    )
+                );
+            } elseif (in_array(strtoupper($key), Method::$validMethods)) {
+                $resource->addMethod(
+                    Method::createFromArray(
+                        $key,
+                        $value,
+                        $apiDefinition
+                    )
+                );
+            }
+        }
+
+        return $resource;
     }
+
+    /**
+     * Does a uri match this resource
+     *
+     * @param $uri
+     *
+     * @return boolean
+     */
+    public function matchesUri($uri)
+    {
+        $regexUri = $this->uri;
+
+        foreach ($this->getUriParameters() as $uriParameter) {
+            $regexUri = str_replace(
+                '/{'.$uriParameter->getKey().'}',
+                '/'.$uriParameter->getValidationPattern(),
+                $regexUri
+            );
+
+            $regexUri = str_replace(
+                '/~{'.$uriParameter->getKey().'}',
+                '/(('.$uriParameter->getValidationPattern().')|())',
+                $regexUri
+            );
+        }
+
+        $regexUri = preg_replace('/\/{.*}/U', '\/([^/]+)', $regexUri);
+        $regexUri = preg_replace('/\/~{.*}/U', '\/([^/]*)', $regexUri);
+        $regexUri =  '|^' . $regexUri . '$|';
+
+        return (bool) preg_match($regexUri, $uri);
+    }
+
+    // ---
 
     /**
      * Returns the uri of the resource
@@ -94,6 +203,8 @@ class Resource
     {
         return $this->uri;
     }
+
+    // --
 
     /**
      * Returns the display name of the resource
@@ -106,36 +217,16 @@ class Resource
     }
 
     /**
-     * Returns all the child resources of this resource
+     * Set the display name
      *
-     * @return array
+     * @param string $displayName
      */
-    public function getResources()
+    public function setDisplayName($displayName)
     {
-        return $this->subResources;
+        $this->displayName = $displayName;
     }
 
-    /**
-     * Returns an associative array of the methods that this resource supports
-     * where the key is the method type, and the value is an instance of `\Raml\Method`
-     *
-     * @return array
-     */
-    public function getMethods()
-    {
-        return $this->methods;
-    }
-
-    /**
-     * Get a method by it's method name (get, post,...)
-     *
-     * @param string $method
-     * @return \Raml\Method
-     */
-    public function getMethod($method)
-    {
-        return $this->getArrayValue($this->methods, strtoupper($method));
-    }
+    // --
 
     /**
      * Gets description
@@ -148,15 +239,121 @@ class Resource
     }
 
     /**
-     * If a display name is not provided then we attempt to construct a decent one from the uri.
+     * Set the description
      *
-     * @param string $uri
-     * @return string
+     * @param string $description
      */
-    private function convertUriToDisplayName($uri)
+    public function setDescription($description)
     {
-        $separators = ['-', '_'];
-        $uriParts = explode('/', $uri);
-        return ucwords(str_replace($separators, ' ', end($uriParts)));
+        $this->description = $description;
+    }
+
+    // --
+
+    /**
+     * Get the base uri parameters
+     *
+     * @return NamedParameter[]
+     */
+    public function getBaseUriParameters()
+    {
+        return $this->baseUriParameters;
+    }
+
+    /**
+     * Add a new base uri parameter
+     *
+     * @param NamedParameter $namedParameter
+     */
+    public function addBaseUriParameter(NamedParameter $namedParameter)
+    {
+        $this->baseUriParameters[$namedParameter->getKey()] = $namedParameter;
+    }
+
+    // --
+
+    /**
+     * Get the uri parameters
+     *
+     * @return NamedParameter[]
+     */
+    public function getUriParameters()
+    {
+        return $this->uriParameters;
+    }
+
+    /**
+     * Add a new uri parameter
+     *
+     * @param NamedParameter $namedParameter
+     */
+    public function addUriParameter(NamedParameter $namedParameter)
+    {
+        $this->uriParameters[$namedParameter->getKey()] = $namedParameter;
+    }
+
+    // --
+
+    /**
+     * Returns all the child resources of this resource
+     *
+     * @return array
+     */
+    public function getResources()
+    {
+        return $this->subResources;
+    }
+
+    /**
+     * Add a resource
+     *
+     * @param self $resource
+     */
+    public function addResource(Resource $resource)
+    {
+        $this->subResources[$resource->getUri()] = $resource;
+    }
+
+    // --
+
+    /**
+     * Add a method
+     *
+     * @param Method $method
+     */
+    public function addMethod(Method $method)
+    {
+        $this->methods[$method->getType()] = $method;
+    }
+
+    /**
+     * Returns an associative array of the methods that this resource supports
+     * where the key is the method type, and the value is an instance of `\Raml\Method`
+     *
+     * @return \Raml\Method[]
+     */
+    public function getMethods()
+    {
+        return $this->methods;
+    }
+
+    /**
+     * Get a method by it's method name (get, post,...)
+     *
+     * @param string $method
+     *
+     * @throws \Exception
+     *
+     * @return Method
+     */
+    public function getMethod($method)
+    {
+        $method = strtoupper($method);
+
+        if (!isset($this->methods[$method])) {
+            throw new \Exception('Method not found');
+        }
+
+        return $this->methods[$method];
     }
 }

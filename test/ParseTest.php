@@ -21,7 +21,7 @@ class ParseTest extends PHPUnit_Framework_TestCase
         $simpleRaml = $this->parser->parse(__DIR__.'/fixture/simple.raml');
         $this->assertEquals('World Music API', $simpleRaml->getTitle());
         $this->assertEquals('v1', $simpleRaml->getVersion());
-        $this->assertEquals('http://example.api.com/v1', $simpleRaml->getBaseUri());
+        $this->assertEquals('http://example.api.com/v1', $simpleRaml->getBaseUrl());
         $this->assertEquals('application/json', $simpleRaml->getDefaultMediaType());
     }
 
@@ -84,7 +84,7 @@ class ParseTest extends PHPUnit_Framework_TestCase
     {
         $simpleRaml = $this->parser->parse(__DIR__.'/fixture/simple.raml');
         $resource = $simpleRaml->getResourceByUri('/songs');
-        $this->assertEquals('Songs', $resource->getDisplayName());
+        $this->assertEquals('/songs', $resource->getDisplayName());
     }
 
     /** @test */
@@ -92,7 +92,7 @@ class ParseTest extends PHPUnit_Framework_TestCase
     {
         $simpleRaml = $this->parser->parse(__DIR__.'/fixture/simple.raml');
         $resource = $simpleRaml->getResourceByUri('/songs?1');
-        $this->assertEquals('Songs', $resource->getDisplayName());
+        $this->assertEquals('/songs', $resource->getDisplayName());
     }
 
     /** @test */
@@ -109,7 +109,7 @@ class ParseTest extends PHPUnit_Framework_TestCase
         $simpleRaml = $this->parser->parse(__DIR__.'/fixture/simple.raml');
 
         $resource = $simpleRaml->getResourceByUri('/songs/1');
-        $this->assertEquals('{songId}', $resource->getDisplayName());
+        $this->assertEquals('/songs/{songId}', $resource->getDisplayName());
     }
 
 
@@ -119,7 +119,8 @@ class ParseTest extends PHPUnit_Framework_TestCase
         $simpleRaml = $this->parser->parse(__DIR__.'/fixture/simple.raml');
         $resource = $simpleRaml->getResourceByUri('/songs/1');
         $method = $resource->getMethod('post');
-        $schema = $method->getSchemaByType('application/json');
+        $body = $method->getBodyByType('application/json');
+        $schema = $body->getSchema();
 
         $this->assertCount(3, $resource->getMethods());
         $this->assertInstanceOf('\Raml\Method', $method);
@@ -147,7 +148,7 @@ class ParseTest extends PHPUnit_Framework_TestCase
         $method = $resource->getMethod('get');
         $response = $method->getResponse(200);
 
-        $schema = $response->getExampleByType('application/json');
+        $schema = $response->getBodyByType('application/json')->getExample();
 
         $this->assertEquals([
           "title" => "Wish You Were Here",
@@ -162,7 +163,36 @@ class ParseTest extends PHPUnit_Framework_TestCase
         $resource = $simpleRaml->getResourceByUri('/songs/1');
         $method = $resource->getMethod('get');
         $response = $method->getResponse(200);
-        $schema = $response->getSchemaByType('application/json');
+        $body = $response->getBodyByType('application/json');
+        $schema = $body->getSchema();
+
+        $this->assertInstanceOf('\Raml\Schema\Definition\JsonSchemaDefinition', $schema);
+    }
+
+    /** @test */
+    public function shouldParseJsonSchemaInRaml()
+    {
+        $simpleRaml = $this->parser->parse(__DIR__.'/fixture/schemaInRoot.raml');
+
+        $resource = $simpleRaml->getResourceByUri('/songs');
+        $method = $resource->getMethod('get');
+        $response = $method->getResponse(200);
+        $body = $response->getBodyByType('application/json');
+        $schema = $body->getSchema();
+
+        $this->assertInstanceOf('\Raml\Schema\Definition\JsonSchemaDefinition', $schema);
+    }
+
+    /** @test */
+    public function shouldIncludeChildJsonObjects()
+    {
+        $simpleRaml = $this->parser->parse(__DIR__.'/fixture/parentAndChildSchema.raml');
+
+        $resource = $simpleRaml->getResourceByUri('/');
+        $method = $resource->getMethod('get');
+        $response = $method->getResponse(200);
+        $body = $response->getBodyByType('application/json');
+        $schema = $body->getSchema();
 
         $this->assertInstanceOf('\Raml\Schema\Definition\JsonSchemaDefinition', $schema);
     }
@@ -174,7 +204,8 @@ class ParseTest extends PHPUnit_Framework_TestCase
         $resource = $simpleRaml->getResourceByUri('/songs/1');
         $method = $resource->getMethod('get');
         $response = $method->getResponse(200);
-        $schema = $response->getSchemaByType('application/json');
+        $body = $response->getBodyByType('application/json');
+        $schema = $body->getSchema();
 
         $this->assertInternalType('string', $schema);
     }
@@ -186,9 +217,11 @@ class ParseTest extends PHPUnit_Framework_TestCase
         $resource = $simpleRaml->getResourceByUri('/songs');
         $method = $resource->getMethod('get');
         $response = $method->getResponse(200);
-        $schema = $response->getSchemaByType('application/json')->getJsonObject();
+        $body = $response->getBodyByType('application/json');
+        $schema = $body->getSchema();
+        $schemaObject = $schema->getJsonObject();
 
-        $this->assertEquals('A canonical song', $schema->items->description);
+        $this->assertEquals('A canonical song', $schemaObject->items->description);
     }
 
     /** @test */
@@ -198,9 +231,11 @@ class ParseTest extends PHPUnit_Framework_TestCase
         $resource = $simpleRaml->getResourceByUri('/songs');
         $method = $resource->getMethod('get');
         $response = $method->getResponse(200);
-        $schema = $response->getSchemaByType('application/json')->getJsonArray();
+        $body = $response->getBodyByType('application/json');
+        $schema = $body->getSchema();
+        $schemaArray = $schema->getJsonArray();
 
-        $this->assertEquals('A canonical song', $schema['items']['description']);
+        $this->assertEquals('A canonical song', $schemaArray['items']['description']);
     }
 
 
@@ -212,7 +247,8 @@ class ParseTest extends PHPUnit_Framework_TestCase
         $resource = $simpleRaml->getResourceByUri('/songs');
         $method = $resource->getMethod('get');
         $response = $method->getResponse(200);
-        $schema = $response->getSchemaByType('application/json');
+        $body = $response->getBodyByType('application/json');
+        $schema = $body->getSchema();
 
         $this->assertInstanceOf('\Raml\Schema\Definition\JsonSchemaDefinition', $schema);
     }
@@ -225,7 +261,8 @@ class ParseTest extends PHPUnit_Framework_TestCase
         $resource = $simpleRaml->getResourceByUri('/songs');
         $method = $resource->getMethod('get');
         $response = $method->getResponse(200);
-        $schema = $response->getSchemaByType('application/json');
+        $body = $response->getBodyByType('application/json');
+        $schema = $body->getSchema();
 
         $this->assertInternalType('string', $schema);
     }
@@ -238,9 +275,11 @@ class ParseTest extends PHPUnit_Framework_TestCase
         $resource = $simpleRaml->getResourceByUri('/songs');
         $method = $resource->getMethod('get');
         $response = $method->getResponse(200);
-        $schema = $response->getSchemaByType('application/json')->getJsonObject();
+        $body = $response->getBodyByType('application/json');
+        $schema = $body->getSchema();
+        $schemaObject = $schema->getJsonObject();
 
-        $this->assertEquals('A canonical song', $schema->items->description);
+        $this->assertEquals('A canonical song', $schemaObject->items->description);
     }
 
     /** @test */
@@ -253,7 +292,7 @@ class ParseTest extends PHPUnit_Framework_TestCase
     /** @test */
     public function shouldThrowErrorIfNoTitle()
     {
-        $this->setExpectedException('Exception', 'Key "title" not found in RAML');
+        $this->setExpectedException('Exception', 'The "title" property is required');
         $this->parser->parse(__DIR__.'/fixture/invalid/noTitle.raml');
     }
 
@@ -275,7 +314,10 @@ class ParseTest extends PHPUnit_Framework_TestCase
         $resource = $simpleRaml->getResourceByUri('/songs');
         $method = $resource->getMethod('get');
         $response = $method->getResponse(200);
-        $schema = $response->getSchemaByType('application/vnd.api-v1+json');
+
+        $body = $response->getBodyByType('application/vnd.api-v1+json');
+        $schema = $body->getSchema();
+
 
         $this->assertInstanceOf('\Raml\Schema\Definition\JsonSchemaDefinition', $schema);
     }
@@ -311,7 +353,7 @@ class ParseTest extends PHPUnit_Framework_TestCase
     {
         $parent = $this->parser->parse(__DIR__.'/fixture/includeRaml.raml');
 
-        $documentation = $parent->getDocumentation();
+        $documentation = $parent->getDocumentationList();
         $this->assertEquals('Home', $documentation['title']);
         $this->assertEquals('Welcome to the _Zencoder API_ Documentation', $documentation['content']);
     }
@@ -321,7 +363,7 @@ class ParseTest extends PHPUnit_Framework_TestCase
     {
         $parent = $this->parser->parse(__DIR__.'/fixture/includeYaml.raml');
 
-        $documentation = $parent->getDocumentation();
+        $documentation = $parent->getDocumentationList();
         $this->assertEquals('Home', $documentation['title']);
         $this->assertEquals('Welcome to the _Zencoder API_ Documentation', $documentation['content']);
     }
@@ -330,7 +372,7 @@ class ParseTest extends PHPUnit_Framework_TestCase
     public function shouldIncludeTraits()
     {
         $simpleRaml = $this->parser->parse(__DIR__.'/fixture/simple.raml');
-        $resource = $simpleRaml->getResourceByUri('songs');
+        $resource = $simpleRaml->getResourceByUri('/songs');
         $method = $resource->getMethod('get');
         $queryParameters = $method->getQueryParameters();
         $queryParameter = $queryParameters['pages'];
@@ -357,14 +399,14 @@ class ParseTest extends PHPUnit_Framework_TestCase
     public function shouldParseMethodDescription()
     {
         $methodDescriptionRaml = $this->parser->parse(__DIR__.'/fixture/methodDescription.raml');
-        $this->assertEquals('Get a list of available songs', $methodDescriptionRaml->getResourceByUri('songs')->getMethod('get')->getDescription());
+        $this->assertEquals('Get a list of available songs', $methodDescriptionRaml->getResourceByUri('/songs')->getMethod('get')->getDescription());
     }
 
     /** @test */
     public function shouldParseResourceDescription()
     {
         $resourceDescriptionRaml = $this->parser->parse(__DIR__.'/fixture/resourceDescription.raml');
-        $this->assertEquals('Collection of available songs resource', $resourceDescriptionRaml->getResourceByUri('songs')->getDescription());
+        $this->assertEquals('Collection of available songs resource', $resourceDescriptionRaml->getResourceByUri('/songs')->getDescription());
     }
 
     /** @test */
@@ -382,9 +424,9 @@ class ParseTest extends PHPUnit_Framework_TestCase
         $headersRaml = $this->parser->parse(__DIR__.'/fixture/headers.raml');
         $resource = $headersRaml->getResourceByUri('/jobs');
 
-        $this->assertEquals(['Zencoder-Api-Key' => [
-            'displayName' => 'ZEncoder API Key'
-        ]], $resource->getMethod('post')->getHeaders());
+        $this->assertEquals(['Zencoder-Api-Key' =>
+            \Raml\NamedParameter::createFromArray('Zencoder-Api-Key', ['displayName'=>'ZEncoder API Key'])
+        ], $resource->getMethod('post')->getHeaders());
     }
 
     /** @test */
@@ -393,14 +435,14 @@ class ParseTest extends PHPUnit_Framework_TestCase
         $headersRaml = $this->parser->parse(__DIR__.'/fixture/headers.raml');
         $resource = $headersRaml->getResourceByUri('/jobs');
 
-        $this->assertEquals(['X-waiting-period' => [
+        $this->assertEquals(['X-waiting-period' => \Raml\NamedParameter::createFromArray('X-waiting-period', [
             'description' => 'The number of seconds to wait before you can attempt to make a request again.'."\n",
             'type' => 'integer',
             'required' => 'yes',
             'minimum' => 1,
             'maximum' => 3600,
             'example' => 34
-        ]], $resource->getMethod('post')->getResponse(503)->getHeaders());
+        ])], $resource->getMethod('post')->getResponse(503)->getHeaders());
     }
 
     /** @test */
@@ -423,7 +465,7 @@ class ParseTest extends PHPUnit_Framework_TestCase
     {
         $def = $this->parser->parse(__DIR__ . '/fixture/rootSchemas.raml');
 
-        $this->assertCount(2, $def->getSchemas());
+        $this->assertCount(2, $def->getSchemaCollections());
     }
 
     /** @test */
@@ -455,7 +497,7 @@ class ParseTest extends PHPUnit_Framework_TestCase
     public function shouldReplaceParameterByJsonString()
     {
         $def = $this->parser->parse(__DIR__ . '/fixture/jsonStringExample.raml');
-        $example = $def->getResourceByUri('/songs')->getMethod('get')->getResponse(200)->getExampleByType('application/json');
+        $example = $def->getResourceByUri('/songs')->getMethod('get')->getResponse(200)->getBodyByType('application/json')->getExample();
 
         $this->assertEquals([
             'items' => [[
@@ -464,13 +506,44 @@ class ParseTest extends PHPUnit_Framework_TestCase
             ]]
         ], json_decode($example, true));
     }
+    // ---
+
+    /** @test */
+    public function shouldParseSecuritySchemes()
+    {
+        $def = $this->parser->parse(__DIR__ . '/fixture/securitySchemes.raml');
+
+        $resource = $def->getResourceByUri('/users');
+        $method = $resource->getMethod('get');
+
+        $securitySchemes = $method->getSecuritySchemes();
+
+        $this->assertEquals(2, count($securitySchemes));
+        $this->assertInstanceOf('\Raml\SecurityScheme', $securitySchemes['oauth_1_0']);
+        $this->assertInstanceOf('\Raml\SecurityScheme', $securitySchemes['oauth_2_0']);
+    }
+
+    /** @test */
+    public function shouldAddHeadersOfSecuritySchemes()
+    {
+        $def = $this->parser->parse(__DIR__ . '/fixture/securitySchemes.raml');
+
+        $resource = $def->getResourceByUri('/users');
+        $method = $resource->getMethod('get');
+        $headers = $method->getHeaders();
+
+        $this->assertEquals(1, count($headers));
+        $this->assertInstanceOf('\Raml\NamedParameter', $headers['Authorization']);
+    }
 
     /** @test */
     public function shouldReplaceSchemaByRootSchema()
     {
         $def = $this->parser->parse(__DIR__ . '/fixture/replaceSchemaByRootSchema.raml');
+        $response = $def->getResourceByUri('/songs/{id}')->getMethod('get')->getResponse(200);
 
-        $schema = $def->getResourceByUri('/songs/{id}')->getMethod('get')->getResponse(200)->getSchemaByType('application/json');
+        $body = $response->getBodyByType('application/json');
+        $schema = $body->getSchema();
 
         $this->assertInstanceOf('Raml\Schema\Definition\JsonSchemaDefinition', $schema);
 
@@ -483,7 +556,7 @@ class ParseTest extends PHPUnit_Framework_TestCase
     public function shouldParseAndReplaceSchemaOnlyInResources()
     {
         $def = $this->parser->parse(__DIR__ . '/fixture/schemaInTypes.raml');
-        $schema = $def->getResourceByUri('/projects')->getMethod('post')->getSchemaByType('application/json');
+        $schema = $def->getResourceByUri('/projects')->getMethod('post')->getBodyByType('application/json')->getSchema();
         $this->assertInstanceOf('Raml\Schema\Definition\JsonSchemaDefinition', $schema);
     }
 }

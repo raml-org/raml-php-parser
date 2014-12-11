@@ -3,9 +3,21 @@ namespace Raml;
 
 use Raml\Schema\SchemaParserInterface;
 use Raml\Schema\Parser\JsonSchemaParser;
+
+use Raml\SecurityScheme\SecuritySettingsParser\OAuth1SecuritySettingsParser;
+use Raml\SecurityScheme\SecuritySettingsParser\OAuth2SecuritySettingsParser;
+use Raml\SecurityScheme\SecuritySettingsParserInterface;
+
+use Raml\FileLoader\DefaultFileLoader;
+use Raml\FileLoader\JsonFileLoader;
+use Raml\FileLoader\FileLoaderInterface;
+
 use Symfony\Component\Yaml\Yaml;
 use Inflect\Inflect;
 
+/**
+ * Converts a RAML file into a API Documentation tree
+ */
 class Parser
 {
     /**
@@ -19,9 +31,23 @@ class Parser
     /**
      * List of schema parsers, keyed by the supported content type
      *
-     * @var array
+     * @var SchemaParserInterface[]
      */
     private $schemaParsers = [];
+
+    /**
+     * List of security settings parsers
+     *
+     * @var SecuritySettingsParserInterface[]
+     */
+    private $securitySettingsParsers = [];
+
+    /**
+     * List of custom file loaders
+     *
+     * @var FileLoaderInterface[]
+     */
+    private $fileLoaders = [];
 
     // ---
 
@@ -31,20 +57,58 @@ class Parser
      * - If null is passed then the default schemaParsers are used
      *
      * @param array $schemaParsers
+     * @param array $securitySettingsParsers
+     * @param array $fileLoaders
      */
-    public function __construct(array $schemaParsers = null)
-    {
-        // if null then use the default list
+    public function __construct(
+        array $schemaParsers = null,
+        array $securitySettingsParsers = null,
+        array $fileLoaders = null
+    ) {
+        // ---
+        // add schema parsers
+
+        // if null then use a default list
         if ($schemaParsers === null) {
             $schemaParsers = [
                 new JsonSchemaParser()
             ];
         }
 
-        // loop through each parser and add
         foreach ($schemaParsers as $schemaParser) {
             $this->addSchemaParser($schemaParser);
         }
+
+        // ---
+        // add security setting parsers
+
+        // if null then use a default list
+        if ($securitySettingsParsers === null) {
+            $securitySettingsParsers = [
+                new OAuth1SecuritySettingsParser(),
+                new OAuth2SecuritySettingsParser()
+            ];
+        }
+
+        foreach ($securitySettingsParsers as $securitySettingParser) {
+            $this->addSecuritySettingParser($securitySettingParser);
+        }
+
+        // ---
+        // add file loaders
+
+        // if null then use a default list
+        if ($fileLoaders === null) {
+            $fileLoaders = [
+                new JsonFileLoader(),
+                new DefaultFileLoader()
+            ];
+        }
+
+        foreach ($fileLoaders as $fileLoader) {
+            $this->addFileLoader($fileLoader);
+        }
+
     }
 
     /**
@@ -60,10 +124,36 @@ class Parser
     }
 
     /**
+     * Add a new security scheme
+     *
+     * @param SecuritySettingsParserInterface $securitySettingsParser
+     */
+    public function addSecuritySettingParser(SecuritySettingsParserInterface $securitySettingsParser)
+    {
+        foreach ($securitySettingsParser->getCompatibleTypes() as $contentType) {
+            $this->securitySettingsParsers[$contentType] = $securitySettingsParser;
+        }
+    }
+
+    /**
+     * Add a file loader
+     *
+     * @param FileLoaderInterface $fileLoader
+     */
+    public function addFileLoader(FileLoaderInterface $fileLoader)
+    {
+        foreach ($fileLoader->getValidExtensions() as $extension) {
+            $this->fileLoaders[$extension] = $fileLoader;
+        }
+    }
+
+    /**
      * Parse a RAML file
      *
-     * @param string $fileName
+     * @param string  $fileName
      * @param boolean $parseSchemas
+     *
+     * @throws \Exception
      *
      * @return \Raml\ApiDefinition
      */
@@ -73,61 +163,27 @@ class Parser
             throw new \Exception('File does not exist');
         }
 
-        $rootDir = dirname(realpath($fileName));
+        $ramlData = $this->parseRamlFile($fileName, $parseSchemas);
 
-        $array = $this->includeAndParseFiles(
-            $this->parseYaml($fileName),
-            $rootDir,
-            $parseSchemas
-        );
-
-        if (!$array) {
-            throw new \Exception('RAML file appears to be empty');
+        if (!isset($ramlData['title'])) {
+            throw new \Exception('The "title" property is required');
         }
 
-        if (isset($array['traits'])) {
-            $keyedTraits = [];
-            foreach ($array['traits'] as $trait) {
-                foreach ($trait as $k => $t) {
-                    $keyedTraits[$k] = $t;
-                }
-            }
+        $ramlData = $this->parseTraits($ramlData);
 
-            foreach ($array as $key => $value) {
-                if (strpos($key, '/') === 0) {
-                    $name = (isset($value['displayName'])) ? $value['displayName'] : substr($key, 1);
-                    $array[$key] = $this->replaceTraits($value, $keyedTraits, $key, $name);
-                }
-            }
-        }
-
-        // ---
-
-        if (isset($array['resourceTypes'])) {
-            $keyedTraits = [];
-            foreach ($array['resourceTypes'] as $trait) {
-                foreach ($trait as $k => $t) {
-                    $keyedTraits[$k] = $t;
-                }
-            }
-
-            foreach ($array as $key => $value) {
-                if (strpos($key, '/') === 0) {
-                    $name = (isset($value['displayName'])) ? $value['displayName'] : substr($key, 1);
-                    $array[$key] = $this->replaceTypes($value, $keyedTraits, $key, $name, $key);
-                }
-            }
-        }
+        $ramlData = $this->parseResourceTypes($ramlData);
 
         if ($parseSchemas) {
-            if (isset($array['schemas'])) {
+            $rootDir = dirname($fileName);
+
+            if (isset($ramlData['schemas'])) {
                 $schemas = [];
-                    foreach ($array['schemas'] as $schema) {
-                        $schemaName = array_keys($schema)[0];
-                        $schemas[$schemaName] = $schema[$schemaName];
-                    }
+                foreach ($ramlData['schemas'] as $schema) {
+                    $schemaName = array_keys($schema)[0];
+                    $schemas[$schemaName] = $schema[$schemaName];
+                }
             }
-            foreach ($array as $key => $value) {
+            foreach ($ramlData as $key => $value) {
                 if (0 === strpos($key, '/')) {
                     if (isset($schemas)) {
                         $value = $this->replaceSchemas($value, $schemas);
@@ -135,17 +191,42 @@ class Parser
                     if (is_array($value)) {
                         $value = $this->recurseAndParseSchemas($value, $rootDir);
                     }
-                    $array[$key] = $value;
+                    $ramlData[$key] = $value;
                 }
             }
         }
 
-        // ---
 
-        return new ApiDefinition($array);
+        if (isset($ramlData['securitySchemes'])) {
+            $ramlData['securitySchemes'] = $this->parseSecuritySettings($ramlData['securitySchemes']);
+        }
+
+        return ApiDefinition::createFromArray($ramlData['title'], $ramlData);
     }
 
-    // ---
+    /**
+     * Replaces schema into the raml file
+     *
+     * @param  array $array
+     * @param  array $schemas List of available schema definition
+     * @return array
+     */
+    public function replaceSchemas($array, $schemas)
+    {
+        if (!is_array($array)) {
+            return $array;
+        }
+        foreach ($array as $key => $value) {
+            if ('schema' === $key) {
+                if (isset($schemas[$value])) {
+                    $array[$key] = $schemas[$value];
+                }
+            } else {
+                $array[$key] = $this->replaceSchemas($value, $schemas);
+            }
+        }
+        return $array;
+    }
 
     /**
      * Recurses though resources and replaces schema strings
@@ -174,30 +255,146 @@ class Parser
                 }
             }
         }
-
-
         return $array;
     }
 
     /**
-     * Convert a yaml file into a string
+     * Parse the security settings
      *
-     * @param string $fileName
+     * @param $securitySchemes
+     *
      * @return array
      */
-    private function parseYaml($fileName)
+    private function parseSecuritySettings($securitySchemes)
     {
-        return Yaml::parse($fileName);
+        foreach ($securitySchemes as $key => $securityScheme) {
+            if (isset($securityScheme['type']) && isset($this->securitySettingsParsers[$securityScheme['type']])) {
+                $parser = $this->securitySettingsParsers[$securityScheme['type']];
+                $securitySchemes[$key]['settings'] = $parser->createSecuritySettings($securityScheme['settings']);
+            }
+        }
+        return $securitySchemes;
+
+    }
+
+    /**
+     * Parse the resource types
+     *
+     * @param $ramlData
+     *
+     * @return array
+     */
+    private function parseResourceTypes($ramlData)
+    {
+        if (isset($ramlData['resourceTypes'])) {
+            $keyedTraits = [];
+            foreach ($ramlData['resourceTypes'] as $trait) {
+                foreach ($trait as $k => $t) {
+                    $keyedTraits[$k] = $t;
+                }
+            }
+
+            foreach ($ramlData as $key => $value) {
+                if (strpos($key, '/') === 0) {
+                    $name = (isset($value['displayName'])) ? $value['displayName'] : substr($key, 1);
+                    $ramlData[$key] = $this->replaceTypes($value, $keyedTraits, $key, $name, $key);
+                }
+            }
+        }
+
+        return $ramlData;
+    }
+
+    /**
+     * Parse the traits
+     *
+     * @param $ramlData
+     *
+     * @return array
+     */
+    private function parseTraits($ramlData)
+    {
+        if (isset($ramlData['traits'])) {
+            $keyedTraits = [];
+            foreach ($ramlData['traits'] as $trait) {
+                foreach ($trait as $k => $t) {
+                    $keyedTraits[$k] = $t;
+                }
+            }
+
+            foreach ($ramlData as $key => $value) {
+                if (strpos($key, '/') === 0) {
+                    $name = (isset($value['displayName'])) ? $value['displayName'] : substr($key, 1);
+                    $ramlData[$key] = $this->replaceTraits($value, $keyedTraits, $key, $name);
+                }
+            }
+        }
+
+        // ---
+
+        return $ramlData;
+    }
+
+    /**
+     * Parse a RAML or YAML file
+     *
+     * @param string  $filePath
+     * @param boolean $parseSchemas
+     *
+     * @throws \Exception
+     *
+     * @return array
+     */
+    private function parseRamlFile($filePath, $parseSchemas)
+    {
+        $rootDir = dirname($filePath);
+        $ramlString = file_get_contents($filePath);
+
+        // get the header
+        $header = strtok($ramlString, "\n");
+
+        $data = $this->parseYaml($ramlString);
+
+        if (!$data) {
+            throw new \Exception('RAML file appears to be empty');
+        }
+
+        if (strpos($header, '#%RAML') === 0) {
+            // @todo extract the vesion of the raml and do something with it
+
+            $data = $this->includeAndParseFiles(
+                $data,
+                $rootDir,
+                $parseSchemas
+            );
+        }
+
+        return $data;
+    }
+
+    // ---
+
+    /**
+     * Convert a yaml string into an array
+     *
+     * @param string $fileData
+     * @return array
+     */
+    private function parseYaml($fileData)
+    {
+        return Yaml::parse($fileData, true, true);
     }
 
     /**
      * Load and parse a file
      *
+     * @param string  $fileName
+     * @param string  $rootDir
+     * @param boolean $parseSchemas
+     *
      * @throws \Exception
      *
-     * @param string $fileName
-     * @param string $rootDir
-     * @return array|\stdClass
+     * @return array
      */
     private function loadAndParseFile($fileName, $rootDir, $parseSchemas)
     {
@@ -213,18 +410,18 @@ class Parser
 
         $fileExtension = (pathinfo($fileName, PATHINFO_EXTENSION));
 
-        $fileData = null;
-
-        if (in_array($fileExtension, ['yaml', 'yml', 'raml', 'rml'])) {
+        if (in_array($fileExtension, ['yaml', 'yml', 'raml'])) {
             // RAML and YAML files are always parsed
-            $fileData = $this->includeAndParseFiles(
-                $this->parseYaml($fullPath),
-                dirname($fullPath),
-                $parseSchemas
-            );
+            $fileData = $this->parseRamlFile($fullPath, $parseSchemas);
+            $fileData = $this->includeAndParseFiles($fileData, $rootDir, $parseSchemas);
         } else {
-            // Or just include the string
-            $fileData = file_get_contents($fullPath);
+            if (in_array($fileExtension, array_keys($this->fileLoaders))) {
+                $loader = $this->fileLoaders[$fileExtension];
+            } else {
+                $loader = $this->fileLoaders['*'];
+            }
+
+            $fileData = $loader->loadFile($fullPath);
         }
 
         // cache before returning
@@ -236,8 +433,10 @@ class Parser
      * Recurse through the structure and load includes
      *
      * @param array|string $structure
-     * @param string $rootDir
-     * @return array|\stdClass
+     * @param string        $rootDir
+     * @param boolean       $parseSchemas
+     *
+     * @return array
      */
     private function includeAndParseFiles($structure, $rootDir, $parseSchemas)
     {
@@ -262,6 +461,7 @@ class Parser
      * @param array $traits
      * @param string $path
      * @param string $name
+     *
      * @return array
      */
     private function replaceTraits($raml, $traits, $path, $name)
@@ -310,6 +510,8 @@ class Parser
      * @param array $types
      * @param string $path
      * @param string $name
+     * @param string $parentKey
+     *
      * @return array
      */
     private function replaceTypes($raml, $types, $path, $name, $parentKey = null)
@@ -350,32 +552,6 @@ class Parser
     }
 
     /**
-     * Replaces schema into the raml file
-     *
-     * @param  array $array
-     * @param  array $schemas List of available schema definition
-     * @return array
-     */
-    public function replaceSchemas($array, $schemas)
-    {
-        if (!is_array($array)) {
-            return $array;
-        }
-
-        foreach ($array as $key => $value) {
-            if ('schema' === $key) {
-                if (isset($schemas[$value])) {
-                    $array[$key] = $schemas[$value];
-                }
-            } else {
-                $array[$key] = $this->replaceSchemas($value, $schemas);
-            }
-        }
-
-        return $array;
-    }
-
-    /**
      * Add trait variables
      *
      * @param array $values
@@ -392,9 +568,18 @@ class Parser
                 '/<<(' . $variables . ')([\s]*\|[\s]*!(singularize|pluralize))?>>/',
                 function($matches) use ($values) {
                     $transformer = isset($matches[3]) ? $matches[3] : '';
-                    return method_exists('Inflect\Inflect', $transformer) ?
-                            Inflect::{$transformer}($values[$matches[1]]) :
-                            $values[$matches[1]];
+
+                    switch($transformer) {
+                        case 'singularize':
+                            return Inflect::singularize($values[$matches[1]]);
+                            break;
+                        case 'pluralize':
+                            return Inflect::pluralize($values[$matches[1]]);
+                            break;
+                        default:
+                            return $values[$matches[1]];
+                    }
+
                 },
                 $key
             );
@@ -406,9 +591,17 @@ class Parser
                     '/<<(' . $variables . ')([\s]*\|[\s]*!(singularize|pluralize))?>>/',
                     function($matches) use ($values) {
                         $transformer = isset($matches[3]) ? $matches[3] : '';
-                        return method_exists('Inflect\Inflect', $transformer) ?
-                                Inflect::{$transformer}($values[$matches[1]]) :
-                                $values[$matches[1]];
+
+                        switch($transformer) {
+                            case 'singularize':
+                                return Inflect::singularize($values[$matches[1]]);
+                                break;
+                            case 'pluralize':
+                                return Inflect::pluralize($values[$matches[1]]);
+                                break;
+                            default:
+                                return $values[$matches[1]];
+                        }
                     },
                     $value
                 );

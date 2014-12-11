@@ -14,11 +14,12 @@ resourceTypes:
         responses:
           200:
             body:
-              application/json: |
-                schema: {
-                  "$schema": "http://json-schema.org/schema",
-                  "type": "object"
-                }
+              application/json:
+                schema: |
+                  {
+                    "$schema": "http://json-schema.org/schema",
+                    "type": "object"
+                  }
 traits:
   - secured:
       queryParameters:

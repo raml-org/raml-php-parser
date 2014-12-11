@@ -1,0 +1,51 @@
+#%RAML 0.8
+title: Dropbox API
+version: 1
+baseUri: https://api.dropbox.com/{version}
+securitySchemes:
+    oauth_2_0:
+        description: |
+            Dropbox supports OAuth 2.0 for authenticating all API requests.
+        type: OAuth 2.0
+        describedBy:
+            headers:
+                Authorization:
+                    description: |
+                       Used to send a valid OAuth 2 access token. Do not use
+                       with the "access_token" query string parameter.
+                    type: string
+            queryParameters:
+                access_token:
+                    description: |
+                       Used to send a valid OAuth 2 access token. Do not use together with
+                       the "Authorization" header
+                    type: string
+            responses:
+                401:
+                    description: |
+                        Bad or expired token. This can happen if the user or Dropbox
+                        revoked or expired an access token. To fix, you should re-
+                        authenticate the user.
+                403:
+                    description: |
+                        Bad OAuth request (wrong consumer key, bad nonce, expired
+                        timestamp...). Unfortunately, re-authenticating the user won't help here.
+        settings:
+          authorizationUri: https://www.dropbox.com/1/oauth2/authorize
+          accessTokenUri: https://api.dropbox.com/1/oauth2/token
+          authorizationGrants: [ code, token ]
+    oauth_1_0:
+        description: |
+            OAuth 1.0 continues to be supported for all API requests, but OAuth 2.0 is now preferred.
+        type: OAuth 1.0
+        settings:
+          requestTokenUri: https://api.dropbox.com/1/oauth/request_token
+          authorizationUri: https://www.dropbox.com/1/oauth/authorize
+          tokenCredentialsUri: https://api.dropbox.com/1/oauth/access_token
+    customHeader:
+        description: |
+            A custom
+
+/users:
+    get:
+        securedBy: [oauth_2_0, oauth_1_0]

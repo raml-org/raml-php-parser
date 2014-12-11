@@ -1,22 +1,27 @@
 <?php
 namespace Raml;
 
-use Raml\Formatters\RouteFormatterInterface;
-use Raml\Formatters\NoRouteFormatter;
+use Raml\RouteFormatter\RouteFormatterInterface;
+use Raml\RouteFormatter\NoRouteFormatter;
+use Raml\Schema\SchemaDefinitionInterface;
+use Raml\RouteFormatter\BasicRoute;
 
 /**
  * The API Definition
  *
- * @package Raml
+ * @see http://raml.org/spec.html
  */
-class ApiDefinition
+class ApiDefinition implements ArrayInstantiationInterface
 {
-    const HTTP = 'http';
-    const HTTPS = 'https';
+    const PROTOCOL_HTTP = 'http';
+    const PROTOCOL_HTTPS = 'https';
+
+    // ---
 
     /**
      * The API Title (required)
-     * {title}
+     *
+     * @see http://raml.org/spec.html#api-title
      *
      * @var string
      */
@@ -24,124 +29,280 @@ class ApiDefinition
 
     /**
      * The API Version (optional)
-     * {version}
+     *
+     * @see http://raml.org/spec.html#api-version
      *
      * @var string
      */
     private $version;
 
     /**
-     * The Base URI (optional)
-     * {baseUri}
+     * The Base URL (optional for development, required in production)
+     *
+     * @see http://raml.org/spec.html#base-uri-and-baseuriparameters
      *
      * @var string
      */
-    private $baseUri;
+    private $baseUrl;
 
     /**
-     * The Uri Parameters (optional)
-     * {uriParameters}
+     * Parameters defined in the Base URI
+     * - There appears to be a bug in the RAML 0.8 spec related to this,
+     * however the baseUriParameters appears to be correct
+     *
+     * @see http://raml.org/spec.html#base-uri-and-baseuriparameters
+     * @see http://raml.org/spec.html#uri-parameters
+     *
+     * @var NamedParameter[]
+     */
+    private $baseUriParameters = [];
+
+    /**
+     * The supported protocols (default to protocol on baseUrl)
+     *
+     * @see http://raml.org/spec.html#protocols
      *
      * @var array
      */
-    private $uriParameters;
-
-    /**
-     * The supported protocols (required)
-     * {protocols}
-     *
-     * @var array
-     */
-    private $protocols;
+    private $protocols = [];
 
     /**
      * The default media type (optional)
-     * {defaultMediaType}
+     * - text/yaml
+     * - text/x-yaml
+     * - application/yaml
+     *  - application/x-yaml
+     *  - Any type from the list of IANA MIME Media Types, http://www.iana.org/assignments/media-types
+     *  - A custom type that conforms to the regular expression, "application\/[A-Za-z.-0-1]*+?(json|xml)"
+     *
+     * @see http://raml.org/spec.html#default-media-type
      *
      * @var string
      */
     private $defaultMediaType;
 
     /**
+     * The schemas the API supplies defined in the root (optional)
+     *
+     * @see http://raml.org/spec.html#schemas
+     *
+     * @var array[]
+     */
+    private $schemaCollections = [];
+
+    /**
      * The documentation for the API (optional)
-     * {documentation}
+     *
+     * @see http://raml.org/spec.html#user-documentation
      *
      * @var array
      */
-    private $documentation;
+    private $documentationList;
 
     /**
      * The resources the API supplies
      * {/*}
      *
-     * @var array
+     * @see http://raml.org/spec.html#resources-and-nested-resources
+     *
+     * @var Resource[]
      */
-    private $resources;
+    private $resources = [];
 
     /**
-     * The schemas the API supplies defined in the root
-     * {/*}
+     * A list of security schemes
      *
-     * @var array
+     * @see http://raml.org/spec.html#declaration
+     *
+     * @var SecurityScheme[]
      */
-    private $schemas;
+    private $securitySchemes = [];
 
     // ---
 
     /**
+     * Create a new API Definition
+     *
+     * @param string $title
+     */
+    public function __construct($title)
+    {
+        $this->title = $title;
+    }
+
+    /**
      * Create a new API Definition from an array
      *
-     * @param array $data
+     * @param string $title
+     * @param array  $data
+     * [
+     *  title:              string
+     *  version:            ?string
+     *  baseUrl:            ?string
+     *  baseUriParameters:  ?array
+     *  protocols:          ?array
+     *  defaultMediaType:   ?string
+     *  schemas:            ?array
+     *  securitySchemes:    ?array
+     *  documentation:      ?array
+     *  /*
+     * ]
+     *
+     * @throws \Exception
+     *
+     * @return ApiDefinition
      */
-    public function __construct(array $data)
+    public static function createFromArray($title, array $data = [])
     {
-        $this->title = $this->getArrayValue($data, 'title', true);
-        $this->version = $this->getArrayValue($data, 'version');
+        $apiDefinition = new static($title);
 
-        $this->baseUri = $this->getArrayValue($data, 'baseUri');
-        $this->uriParameters = $this->getArrayValue($data, 'uriParameters');
+        // --
 
-        $this->defaultMediaType = $this->getArrayValue($data, 'mediaType');
-        // Keep BC
-        if (!$this->defaultMediaType) {
-            $this->defaultMediaType = $this->getArrayValue($data, 'defaultMediaType');
-        }
-        $this->documentation = $this->getArrayValue($data, 'documentation');
 
-        $this->protocols =$this->getArrayValue($data, 'protocols');
-
-        if (!$this->protocols && $this->baseUri) {
-            $this->protocols = [parse_url($this->baseUri, PHP_URL_SCHEME)];
+        if (isset($data['version'])) {
+            $apiDefinition->setVersion($data['version']);
         }
 
-        $this->schemas =$this->getArrayValue($data, 'schemas');
+        if (isset($data['baseUrl'])) {
+            $apiDefinition->setBaseUrl($data['baseUrl']);
+        }
+
+        // support for RAML 0.8
+        if (isset($data['baseUri'])) {
+            $apiDefinition->setBaseUrl($data['baseUri']);
+        }
+
+        if (isset($data['baseUriParameters'])) {
+            foreach ($data['baseUriParameters'] as $key => $baseUriParameter) {
+                $apiDefinition->addBaseUriParameter(
+                    NamedParameter::createFromArray($key, $baseUriParameter)
+                );
+            }
+        }
+        
+        if (isset($data['mediaType'])) {
+            $apiDefinition->setDefaultMediaType($data['mediaType']);
+        }
+
+        if (isset($data['protocols'])) {
+            foreach ($data['protocols'] as $protocol) {
+                $apiDefinition->addProtocol($protocol);
+            }
+        }
+
+        if (isset($data['defaultMediaType'])) {
+            $apiDefinition->setDefaultMediaType($data['defaultMediaType']);
+        }
+
+        if (isset($data['schemas'])) {
+            foreach ($data['schemas'] as $name => $schema) {
+                $apiDefinition->addSchemaCollection($name, $schema);
+            }
+        }
+
+        if (isset($data['securitySchemes'])) {
+            foreach ($data['securitySchemes'] as $name => $securityScheme) {
+                $apiDefinition->addSecurityScheme(SecurityScheme::createFromArray($name, $securityScheme));
+            }
+        }
+
+        if (isset($data['documentation'])) {
+            foreach ($data['documentation'] as $title => $documentation) {
+                $apiDefinition->addDocumentation($title, $documentation);
+            }
+        }
+
+        // ---
 
         foreach ($data as $resourceName => $resource) {
             // check if actually a resource
             if (strpos($resourceName, '/') === 0) {
-                $this->resources[$resourceName] = new Resource($resourceName, $resource, $this->baseUri);
+                $apiDefinition->addResource(
+                    Resource::createFromArray(
+                        $resourceName,
+                        $resource,
+                        $apiDefinition
+                    )
+                );
             }
         }
+
+        return $apiDefinition;
     }
 
+    // ---
+
     /**
-     * Helper method to extract items from array
+     * Get a resource by a uri
      *
-     * @param array   $data
-     * @param string  $key
-     * @param boolean $required
+     * @param string $uri
      *
      * @throws \Exception
      *
-     * @return null
+     * @return \Raml\Resource
      */
-    private function getArrayValue($data, $key, $required = false)
+    public function getResourceByUri($uri)
     {
-        if ($required && !isset($data[$key])) {
-            throw new \Exception('Key "'.$key.'" not found in RAML file');
+        // get rid of everything after the ?
+        $uri = strtok($uri, '?');
+
+        $potentialResource = null;
+
+        $resources = $this->getResourcesAsArray($this->resources);
+        foreach ($resources as $resource) {
+            if ($resource->matchesUri($uri)) {
+                $potentialResource = $resource;
+            }
         }
 
-        return isset($data[$key]) ? $data[$key] : null;
+        if (!$potentialResource) {
+            // we never returned so throw exception
+            throw new \Exception('Resource not found for uri "' . $uri . '"');
+        }
+
+        return $potentialResource;
+    }
+
+
+    /**
+     * Returns all the resources as a URI, essentially documenting the entire API Definition.
+     * This will output, by default, an array that looks like:
+     *
+     * GET /songs => [/songs, GET, Raml\Method]
+     * GET /songs/{songId} => [/songs/{songId}, GET, Raml\Method]
+     *
+     * @param RouteFormatterInterface $formatter
+     *
+     * @return RouteFormatterInterface
+     */
+    public function getResourcesAsUri(RouteFormatterInterface $formatter = null)
+    {
+        if (!$formatter) {
+            $formatter = new NoRouteFormatter();
+        }
+
+        $formatter->format($this->geMethodsAsArray($this->resources));
+
+        return $formatter;
+    }
+
+    /**
+     * @param $resources
+     *
+     * @return Resource[]
+     */
+    private function getResourcesAsArray($resources)
+    {
+        $resourceMap = [];
+
+        // Loop over each resource to build out the full URI's that it has.
+        foreach ($resources as $resource) {
+            $resourceMap[$resource->getUri()] = $resource;
+
+            $resourceMap = array_merge_recursive($resourceMap, $this->getResourcesAsArray($resource->getResources()));
+        }
+
+        return $resourceMap;
     }
 
     // ---
@@ -156,6 +317,8 @@ class ApiDefinition
         return $this->title;
     }
 
+    // --
+
     /**
      * Get the version string of the API
      *
@@ -167,14 +330,114 @@ class ApiDefinition
     }
 
     /**
-     * Get the documentation of the API
+     * Set the version
+     *
+     * @param $version
+     */
+    public function setVersion($version)
+    {
+        $this->version = $version;
+    }
+
+    // --
+
+    /**
+     * Get the base URI
+     *
+     * @return string
+     */
+    public function getBaseUrl()
+    {
+        return ($this->version) ? str_replace('{version}', $this->version, $this->baseUrl) : $this->baseUrl;
+    }
+
+    /**
+     * Set the base url
+     *
+     * @param string $baseUrl
+     */
+    public function setBaseUrl($baseUrl)
+    {
+        $this->baseUrl = $baseUrl;
+
+        if (!$this->protocols) {
+            $this->protocols = [parse_url($this->baseUrl, PHP_URL_SCHEME)];
+        }
+    }
+
+    // --
+
+    /**
+     * Get the base uri parameters
+     *
+     * @return NamedParameter[]
+     */
+    public function getBaseUriParameters()
+    {
+        return $this->baseUriParameters;
+    }
+
+    /**
+     * Add a new base uri parameter
+     *
+     * @param NamedParameter $namedParameter
+     */
+    public function addBaseUriParameter(NamedParameter $namedParameter)
+    {
+        $this->baseUriParameters[$namedParameter->getKey()] = $namedParameter;
+    }
+
+    // --
+
+    /**
+     * Does the API support HTTP (non SSL) requests?
+     *
+     * @return boolean
+     */
+    public function supportsHttp()
+    {
+        return in_array(self::PROTOCOL_HTTP, $this->protocols);
+    }
+
+    /**
+     * Does the API support HTTPS (SSL enabled) requests?
+     *
+     * @return boolean
+     */
+    public function supportsHttps()
+    {
+        return in_array(self::PROTOCOL_HTTPS, $this->protocols);
+    }
+
+    /**
+     * Get the list of support protocols
      *
      * @return array
      */
-    public function getDocumentation()
+    public function getProtocols()
     {
-        return $this->documentation;
+        return $this->protocols;
     }
+
+    /**
+     * Add a supported protocol
+     *
+     * @param string $protocol
+     *
+     * @throws \Exception
+     */
+    public function addProtocol($protocol)
+    {
+        if (!in_array($protocol, [self::PROTOCOL_HTTP, self::PROTOCOL_HTTPS])) {
+            throw new \Exception('Not a valid protocol');
+        }
+
+        if (in_array($protocol, $this->protocols)) {
+            $this->protocols[] = $protocol;
+        }
+    }
+
+    // --
 
     /**
      * Get the default media type
@@ -187,37 +450,90 @@ class ApiDefinition
     }
 
     /**
-     * Get the base URI
+     * Set a default media type
      *
-     * @return string
+     * @param $defaultMediaType
      */
-    public function getBaseUri()
+    public function setDefaultMediaType($defaultMediaType)
     {
-        return str_replace('{version}', $this->version, $this->baseUri);
+        // @todo - Should this validate?
+        $this->defaultMediaType = $defaultMediaType;
+    }
+
+    // --
+
+    /**
+     * Get the schemas defined in the root of the API
+     *
+     * @return array[]
+     */
+    public function getSchemaCollections()
+    {
+        return $this->schemaCollections;
     }
 
     /**
-     * Does the API support HTTP (non SSL) requests?
+     * Add an schema
      *
-     * @return boolean
+     * @param string $collectionName
+     * @param array  $schemas
      */
-    public function supportsHttp()
+    public function addSchemaCollection($collectionName, $schemas)
     {
-        return in_array(ApiDefinition::HTTP, $this->protocols);
+        $this->schemaCollections[$collectionName]  = [];
+
+        foreach ($schemas as $schemaName => $schema) {
+            $this->addSchema($collectionName, $schemaName, $schema);
+        }
     }
 
     /**
-     * Does the API support HTTPS (SSL enabled) requests?
+     * Add a new schema to a collection
      *
-     * @return boolean
+     * @param string                            $collectionName
+     * @param string                            $schemaName
+     * @param string|SchemaDefinitionInterface  $schema
+     *
+     * @throws \Exception
      */
-    public function supportsHttps()
+    private function addSchema($collectionName, $schemaName, $schema)
     {
-        return in_array(ApiDefinition::HTTPS, $this->protocols);
+        if (!is_string($schema) && !$schema instanceof SchemaDefinitionInterface) {
+            throw new \Exception('Not a valid schema, must be string or instance of SchemaDefinitionInterface');
+        }
+
+        $this->schemaCollections[$collectionName][$schemaName] = $schema;
     }
 
+    // --
+
     /**
+     * Get the documentation of the API
+     *
      * @return array
+     */
+    public function getDocumentationList()
+    {
+        return $this->documentationList;
+    }
+
+    /**
+     * Add a piece of documentation to the documentation list
+     *
+     * @param string $title
+     * @param string $documentation
+     */
+    public function addDocumentation($title, $documentation)
+    {
+        $this->documentationList[$title] = $documentation;
+    }
+
+    // --
+
+    /**
+     * Get the resources tree
+     *
+     * @return \Raml\Resource[]
      */
     public function getResources()
     {
@@ -225,83 +541,37 @@ class ApiDefinition
     }
 
     /**
-     * @return array
+     * Add an additional resource
+     *
+     * @param \Raml\Resource $resource
      */
-    public function getSchemas()
+    public function addResource(Resource $resource)
     {
-        return $this->schemas;
+        $this->resources[$resource->getUri()] = $resource;
     }
 
-    // ---
+    // --
 
     /**
-     * Get a resource by a uri
+     * Get a security scheme by it's name
      *
-     * @param string $testUri
+     * @param $schemeName
      *
-     * @return \Raml\Resource
+     * @return SecurityScheme
      */
-    public function getResourceByUri($testUri)
+    public function getSecurityScheme($schemeName)
     {
-        // @todo - optimise this method - must be a better way of doing it.
-
-        $uriParts = explode('/', preg_replace('/[\.|\?].*/', '', $testUri));
-        $resources = $this->getResources();
-        $resource = null;
-
-        $count = 0;
-
-        foreach ($uriParts as $part) {
-            ++$count;
-
-            // if part is empty
-            // exclude empty from beginning of string
-            // or from //
-            if (!$part) {
-                continue;
-            }
-
-            foreach ($resources as $potentialResource) {
-                $resourceUriParts = explode('/', $potentialResource->getUri());
-                $uri = '/'.end($resourceUriParts);
-
-                if ('/'.$part === $uri || strpos($uri, '/{') === 0) {
-                    if ($count === count($uriParts)) {
-                        $resource = $potentialResource;
-                    }
-                    $resources = $potentialResource->getResources();
-                }
-            }
-        }
-
-        if ($resource) {
-            return $resource;
-        }
-
-
-        throw new \Exception('Resource not found for uri "'.$testUri.'"');
+        return $this->securitySchemes[$schemeName];
     }
 
     /**
-     * Returns all the resources as a URI, essentially documenting the entire API Definition.
-     * This will output, by default, an array that looks like:
+     * Add an additional security scheme
      *
-     * GET /songs => [/songs, GET, Raml\Method]
-     * GET /songs/{songId} => [/songs/{songId}, GET, Raml\Method]
-     *
-     * @param \Raml\Formatters\RouteFormatterInterface $formatter
-     *
-     * @return \Raml\Formatters\RouteFormatterInterface
+     * @param SecurityScheme $securityScheme
      */
-    public function getResourcesAsUri(RouteFormatterInterface $formatter = null)
+    public function addSecurityScheme(SecurityScheme $securityScheme)
     {
-        if (!$formatter) {
-            $formatter = new NoRouteFormatter();
-        }
-
-        $formatter->format($this->getResourcesAsArray($this->resources));
-
-        return $formatter;
+        $this->securitySchemes[$securityScheme->getKey()] = $securityScheme;
     }
 
     // ---
@@ -312,12 +582,11 @@ class ApiDefinition
      * GET /songs => [/songs, GET, Raml\Method]
      * GET /songs/{songId} => [/songs/{songId}, GET, Raml\Method]
      *
-     * @param array $resources
-     * @param string $path
+     * @param \Raml\Resource[] $resources
      *
      * @return array
      */
-    private function getResourcesAsArray(array $resources)
+    private function geMethodsAsArray(array $resources)
     {
         $all = [];
 
@@ -326,14 +595,15 @@ class ApiDefinition
             $path = $resource->getUri();
 
             foreach ($resource->getMethods() as $method) {
-                $all[$method->getType() . ' ' . $path] = [
-                    'path' => $path,
-                    'method' => $method->getType(),
-                    'response' => $resource->getMethod($method->getType())
-                ];
+                $all[$method->getType() . ' ' . $path] = new BasicRoute(
+                    $path,
+                    $method->getType(),
+                    $resource->getMethod($method->getType())
+                );
             }
 
-            $all = array_merge_recursive($all, $this->getResourcesAsArray($resource->getResources()));
+
+            $all = array_merge_recursive($all, $this->geMethodsAsArray($resource->getResources()));
         }
 
         return $all;

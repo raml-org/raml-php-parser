@@ -5,55 +5,70 @@ class MethodTest extends PHPUnit_Framework_TestCase
     /** @test */
     public function shouldGetTheTypeInUpperCase()
     {
-        $method = new \Raml\Method('get', []);
+        $apiDefinition = new \Raml\ApiDefinition('The title');
+
+        $method = \Raml\Method::createFromArray('get', [], $apiDefinition);
         $this->assertSame('GET', $method->getType());
 
-        $method = new \Raml\Method('Post', []);
+        $method = \Raml\Method::createFromArray('Post', [], $apiDefinition);
         $this->assertSame('POST', $method->getType());
     }
 
     /** @test */
     public function shouldGetTheDescriptionIfPassedInTheDataArray()
     {
-        $method = new \Raml\Method('get', ['description' => 'A dummy description']);
+        $apiDefinition = new \Raml\ApiDefinition('The title');
+
+        $method = \Raml\Method::createFromArray('get', ['description' => 'A dummy description'], $apiDefinition);
         $this->assertSame('A dummy description', $method->getDescription());
 
-        $method = new \Raml\Method('get', []);
-        $this->assertSame('', $method->getDescription());
+        $method = \Raml\Method::createFromArray('get', [], $apiDefinition);
+        $this->assertNull($method->getDescription());
     }
 
     /** @test */
     public function shouldGetNullForResponseIfNoneIsExists()
     {
-        $method = new \Raml\Method('get', []);
-        $this->assertSame(null, $method->getResponses());
+        $apiDefinition = new \Raml\ApiDefinition('The title');
+
+        $method = \Raml\Method::createFromArray('get', [], $apiDefinition);
+        $this->assertSame([], $method->getResponses());
         $this->assertSame(null, $method->getResponse(200));
     }
 
     /** @test */
     public function shouldGetNullForResponseIfNotAnArrayIsPassed()
     {
-        $method = new \Raml\Method('get', ['responses' => 'invalid']);
-        $this->assertSame(null, $method->getResponses());
+        $apiDefinition = new \Raml\ApiDefinition('The title');
+
+        $method = \Raml\Method::createFromArray('get', ['responses' => 'invalid'], $apiDefinition);
+        $this->assertSame([], $method->getResponses());
         $this->assertSame(null, $method->getResponse(200));
     }
 
     /** @test */
     public function shouldGetValidResponsesIfPassedExpectedValues()
     {
-        $method = new \Raml\Method('get', [
-            'description' => 'A dummy method',
-            'responses' => [
-                200 => [
-                    'body' => [
-                        'text/xml' => 'xml body',
-                        'text/txt' => 'plain text'
-                    ],
-                    'description' => 'A dummy response',
-                    'headers' => []
+        $apiDefinition = new \Raml\ApiDefinition('The title');
+
+        $method = \Raml\Method::createFromArray(
+            'get',
+            [
+                'description' => 'A dummy method',
+                'responses' => [
+                    200 => [
+                        'body' => [
+                            'text/xml' => ['description' => 'xml body'],
+                            'text/txt' => ['description' => 'plain text']
+                        ],
+                        'description' => 'A dummy response',
+                        'headers' => []
+                    ]
                 ]
-            ]
-        ]);
+            ],
+            $apiDefinition
+        );
+
         $this->assertInternalType('array', $method->getResponses());
         $this->assertCount(1, $method->getResponses());
 
@@ -67,9 +82,10 @@ class MethodTest extends PHPUnit_Framework_TestCase
     }
 
     /** @test */
-    public function shouldGetNullForQueryParametersIfNoneIsExists()
+    public function shouldGetEmptyArrayForQueryParametersIfNoneIsExists()
     {
-        $method = new \Raml\Method('get', []);
-        $this->assertSame(null, $method->getQueryParameters());
+        $apiDefinition = new \Raml\ApiDefinition('The title');
+        $method = \Raml\Method::createFromArray('get', [], $apiDefinition);
+        $this->assertEquals([], $method->getQueryParameters());
     }
 }

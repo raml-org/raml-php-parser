@@ -54,7 +54,7 @@ To return:
 	DELETE /songs/{songId} => ...
 ]
 
-$routes = $api->getResourcesAsUri(new Raml\Formatters\NoRouteFormatter());
+$routes = $api->getResourcesAsUri(new Raml\RouteFormatter\NoRouteFormatter());
 ```
 
 #### Route Formatters
@@ -71,12 +71,8 @@ There are two Route Formatters included in this package:
 ```
 
 ### TODO
-- Make the code prettier
-- Add support for the complete raml spec
-    - SecuredBy
-    - Markdown?
-    - Date Representations?
-- Validation?
+- Documentation/Markdown parser
+- Date Representations?
 - Parse RAML at provided URL
 
 ### Supported (I Believe)

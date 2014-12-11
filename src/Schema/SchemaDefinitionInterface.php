@@ -8,13 +8,6 @@ namespace Raml\Schema;
 interface SchemaDefinitionInterface
 {
     /**
-     * Returns the schema as a string
-     *
-     * @return string
-     */
-    public function __toString();
-
-    /**
      * Validates a string against the schema
      *
      * @param $string
@@ -24,4 +17,11 @@ interface SchemaDefinitionInterface
      * @return boolean
      */
     public function validate($string);
+
+    /**
+     * Returns the schema as a string
+     *
+     * @return string
+     */
+    public function __toString();
 }

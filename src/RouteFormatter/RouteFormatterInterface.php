@@ -1,6 +1,6 @@
 <?php
 
-namespace Raml\Formatters;
+namespace Raml\RouteFormatter;
 
 interface RouteFormatterInterface
 {
@@ -12,6 +12,7 @@ interface RouteFormatterInterface
      * @param array $resources
      *  Associative array where the key is the method and full path, and the value contains
      *  the path, method type (GET/POST etc.) and then the Raml\Method object
+     *
      * @return array
      */
     public function format(array $resources);

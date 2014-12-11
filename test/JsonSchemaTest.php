@@ -20,7 +20,8 @@ class JsonSchemaTest extends PHPUnit_Framework_TestCase
         $resource = $simpleRaml->getResourceByUri('/songs');
         $method = $resource->getMethod('get');
         $response = $method->getResponse(200);
-        $schema = $response->getSchemaByType('application/json');
+        $body = $response->getBodyByType('application/json');
+        $schema = $body->getSchema();
 
         $schemaString = (string) $schema;
         $this->assertInternalType('string', $schemaString);
@@ -34,7 +35,8 @@ class JsonSchemaTest extends PHPUnit_Framework_TestCase
         $resource = $simpleRaml->getResourceByUri('/songs');
         $method = $resource->getMethod('get');
         $response = $method->getResponse(200);
-        $schema = $response->getSchemaByType('application/json');
+        $body = $response->getBodyByType('application/json');
+        $schema = $body->getSchema();
 
         $this->assertTrue($schema->validate('[{"title":"Good Song","artist":"An artist"}]'));
     }
@@ -48,7 +50,8 @@ class JsonSchemaTest extends PHPUnit_Framework_TestCase
         $resource = $simpleRaml->getResourceByUri('/songs');
         $method = $resource->getMethod('get');
         $response = $method->getResponse(200);
-        $schema = $response->getSchemaByType('application/json');
+        $body = $response->getBodyByType('application/json');
+        $schema = $body->getSchema();
 
         $schema->validate('{}');
     }
@@ -61,7 +64,8 @@ class JsonSchemaTest extends PHPUnit_Framework_TestCase
         $resource = $simpleRaml->getResourceByUri('/songs');
         $method = $resource->getMethod('get');
         $response = $method->getResponse(200);
-        $schema = $response->getSchemaByType('application/json');
+        $body = $response->getBodyByType('application/json');
+        $schema = $body->getSchema();
 
         $schema->validate('{');
     }

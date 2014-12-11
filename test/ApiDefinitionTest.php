@@ -33,7 +33,7 @@ class ApiDefinitionTest extends PHPUnit_Framework_TestCase
     {
         $api = $this->parser->parse(__DIR__.'/fixture/includeSchema.raml');
 
-        $noFormatter = new Raml\Formatters\NoRouteFormatter();
+        $noFormatter = new Raml\RouteFormatter\NoRouteFormatter();
         $routes = $api->getResourcesAsUri($noFormatter, $api->getResources());
 
         $this->assertCount(4, $routes->getRoutes());
@@ -51,7 +51,7 @@ class ApiDefinitionTest extends PHPUnit_Framework_TestCase
         $api = $this->parser->parse(__DIR__.'/fixture/includeSchema.raml');
 
         $routeCollection= new Symfony\Component\Routing\RouteCollection();
-        $routeFormatter = new Raml\Formatters\SymfonyRouteFormatter($routeCollection);
+        $routeFormatter = new Raml\RouteFormatter\SymfonyRouteFormatter($routeCollection);
         $routes = $api->getResourcesAsUri($routeFormatter, $api->getResources());
 
         $this->assertEquals($routeFormatter, $routes);
