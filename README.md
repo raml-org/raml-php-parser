@@ -8,8 +8,6 @@ Parses a RAML file into a PHP object.
 
 See the RAML spec here: https://github.com/raml-org/raml-spec
 
-Converts JSON schemas into a PHP objects using https://github.com/justinrainbow/json-schema
-
 ### Get started
 Requires:
 
@@ -26,6 +24,13 @@ $apiDef = $parser->parse($filename, true);
 
 $title = $apiDef->getTitle();
 ```
+
+### Parsing schemas
+The library can convert schemas into an validation object. There is a default list, or they can be configured manually.
+Each schema parser needs to conform to `\Raml\Schema\SchemaParserInterface` and will return a instance of 
+`\Raml\Schema\SchemaDefinitionInterface`.
+
+Additional parsers and schema definitions can be created and passed into the `\Raml\Parser` constructor
 
 ### Exporting routes
 It is also possible to export the entire RAML file to an array of the full endpoints. For example, considering

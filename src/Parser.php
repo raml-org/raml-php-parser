@@ -1,10 +1,9 @@
 <?php
 namespace Raml;
 
-use JsonSchema\Uri\UriRetriever;
-use JsonSchema\RefResolver;
+use Raml\Schema\SchemaParserInterface;
+use Raml\Schema\Parser\JsonSchemaParser;
 use Symfony\Component\Yaml\Yaml;
-
 use Inflect\Inflect;
 
 class Parser
@@ -17,7 +16,48 @@ class Parser
      */
     private $cachedFiles = [];
 
+    /**
+     * List of schema parsers, keyed by the supported content type
+     *
+     * @var array
+     */
+    private $schemaParsers = [];
+
     // ---
+
+    /**
+     * Create a new parser object
+     * - Optionally pass a list of parsers to use
+     * - If null is passed then the default schemaParsers are used
+     *
+     * @param array $schemaParsers
+     */
+    public function __construct(array $schemaParsers = null)
+    {
+        // if null then use the default list
+        if ($schemaParsers === null) {
+            $schemaParsers = [
+                new JsonSchemaParser()
+            ];
+        }
+
+        // loop through each parser and add
+        foreach ($schemaParsers as $schemaParser) {
+            $this->addSchemaParser($schemaParser);
+        }
+    }
+
+    /**
+     * Add a new schema parser
+     *
+     * @param SchemaParserInterface $schemaParser
+     */
+    public function addSchemaParser(SchemaParserInterface $schemaParser)
+    {
+        foreach ($schemaParser->getCompatibleContentTypes() as $contentType) {
+            $this->schemaParsers[$contentType] = $schemaParser;
+        }
+    }
 
     /**
      * Parse a RAML file
@@ -79,60 +119,47 @@ class Parser
             }
         }
 
-        // ---
-
-        if ($parseSchemas && $array) {
-            $array = $this->arrayMapRecursive(
-                function ($data) use ($rootDir) {
-                    if (is_string($data) && $this->isJson($data)) {
-                        $retriever = new UriRetriever;
-                        $jsonSchemaParser = new RefResolver($retriever);
-
-                        $data = json_decode($data);
-                        $jsonSchemaParser->resolve($data, 'file:' . $rootDir . '/');
-
-                        return $data;
-                    }
-
-                    return $data;
-
-                },
-                $array
-            );
+        if ($parseSchemas) {
+            $array = $this->recurseAndParseSchemas($array, $rootDir);
         }
+
+        // ---
 
         return new ApiDefinition($array);
     }
 
-    /**
-     * Checks if a string is JSON
-     *
-     * @param string $string
-     * @return boolean
-     */
-    private function isJson($string)
-    {
-        json_decode($string);
-        return (json_last_error() == JSON_ERROR_NONE);
-    }
+    // ---
 
     /**
-     * Apply a callback to all elements of a recursive array
+     * Recurses though the complete definition and replaces schema strings
      *
-     * @param callable $func
-     * @param array $arr
+     * @param array  $array
+     * @param string $rootDir
+     *
+     * @throws \Exception
+     *
      * @return array
      */
-    private function arrayMapRecursive(callable $func, array $arr)
+    private function recurseAndParseSchemas($array, $rootDir)
     {
-        array_walk_recursive(
-            $arr,
-            function (&$v) use ($func) {
-                $v = $func($v);
+        foreach ($array as $key => &$value) {
+            if (is_array($value) && isset($value['schema'])) {
+                if (in_array($key, array_keys($this->schemaParsers))) {
+                    $schemaParser = $this->schemaParsers[$key];
+                    $schemaParser->setSourceUri('file:' . $rootDir . DIRECTORY_SEPARATOR);
+                    $value['schema'] = $schemaParser->createSchemaDefinition($value['schema'], $rootDir);
+                } else {
+                    throw new \Exception('Unknown schema type:'. $key);
+                }
             }
-        );
 
-        return $arr;
+            if (is_array($value)) {
+                $value = $this->recurseAndParseSchemas($value, $rootDir);
+            }
+        }
+
+
+        return $array;
     }
 
     /**
@@ -144,23 +171,6 @@ class Parser
     private function parseYaml($fileName)
     {
         return Yaml::parse($fileName);
-    }
-
-    /**
-     * Convert a JSON Schema file into a stdClass
-     *
-     * @param string $fileName
-     * @return \stdClass
-     */
-    private function parseJsonSchema($fileName)
-    {
-        $retriever = new UriRetriever;
-        $jsonSchemaParser = new RefResolver($retriever);
-        try {
-            return $jsonSchemaParser->fetchRef('file://' . $fileName, null);
-        } catch (\Exception $e) {
-            throw new \Exception('Invalid JSON in ' . $fileName);
-        }
     }
 
     /**
@@ -186,6 +196,8 @@ class Parser
 
         $fileExtension = (pathinfo($fileName, PATHINFO_EXTENSION));
 
+        $fileData = null;
+
         if (in_array($fileExtension, ['yaml', 'yml', 'raml', 'rml'])) {
             // RAML and YAML files are always parsed
             $fileData = $this->includeAndParseFiles(
@@ -193,18 +205,9 @@ class Parser
                 dirname($fullPath),
                 $parseSchemas
             );
-        } elseif ($parseSchemas) {
-            // Determine if we need to parse schemas
-            switch ($fileExtension) {
-                case 'json':
-                    $fileData = $this->parseJsonSchema($fullPath, null);
-                    break;
-                default:
-                    throw new \Exception('Extension "' . $fileExtension . '" not supported (yet)');
-            }
         } else {
             // Or just include the string
-            return file_get_contents($fullPath);
+            $fileData = file_get_contents($fullPath);
         }
 
         // cache before returning
@@ -339,29 +342,36 @@ class Parser
     private function applyTraitVariables(array $values, array $trait)
     {
         $variables = implode('|', array_keys($values));
-
         $newTrait = [];
 
         foreach ($trait as $key => &$value) {
-            $newKey = preg_replace_callback('/<<(' . $variables . ')([\s]*\|[\s]*!(singularize|pluralize))?>>/', function($matches) use ($values) {
-                $transformer = isset($matches[3]) ? $matches[3] : '';
-
-                return method_exists('Inflect\Inflect', $transformer) ? Inflect::{$transformer}($values[$matches[1]]) : $values[$matches[1]];
-            }, $key);
+            $newKey = preg_replace_callback(
+                '/<<(' . $variables . ')([\s]*\|[\s]*!(singularize|pluralize))?>>/',
+                function($matches) use ($values) {
+                    $transformer = isset($matches[3]) ? $matches[3] : '';
+                    return method_exists('Inflect\Inflect', $transformer) ?
+                            Inflect::{$transformer}($values[$matches[1]]) :
+                            $values[$matches[1]];
+                },
+                $key
+            );
 
             if (is_array($value)) {
                 $value = $this->applyTraitVariables($values, $value);
             } else {
-                $value = preg_replace_callback('/<<(' . $variables . ')([\s]*\|[\s]*!(singularize|pluralize))?>>/', function($matches) use ($values) {
-                    $transformer = isset($matches[3]) ? $matches[3] : '';
-
-                    return method_exists('Inflect\Inflect', $transformer) ? Inflect::{$transformer}($values[$matches[1]]) : $values[$matches[1]];
-                }, $value);
+                $value = preg_replace_callback(
+                    '/<<(' . $variables . ')([\s]*\|[\s]*!(singularize|pluralize))?>>/',
+                    function($matches) use ($values) {
+                        $transformer = isset($matches[3]) ? $matches[3] : '';
+                        return method_exists('Inflect\Inflect', $transformer) ?
+                                Inflect::{$transformer}($values[$matches[1]]) :
+                                $values[$matches[1]];
+                    },
+                    $value
+                );
             }
-
             $newTrait[$newKey] = $value;
         }
-
         return $newTrait;
     }
 }
