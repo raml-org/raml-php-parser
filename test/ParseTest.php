@@ -21,7 +21,7 @@ class ParseTest extends PHPUnit_Framework_TestCase
         $simpleRaml = $this->parser->parse(__DIR__.'/fixture/simple.raml');
         $this->assertEquals('World Music API', $simpleRaml->getTitle());
         $this->assertEquals('v1', $simpleRaml->getVersion());
-        $this->assertEquals('http://example.api.com/{version}', $simpleRaml->getBaseUri());
+        $this->assertEquals('http://example.api.com/v1', $simpleRaml->getBaseUri());
         $this->assertNull($simpleRaml->getDefaultMediaType());
     }
 
@@ -64,6 +64,22 @@ class ParseTest extends PHPUnit_Framework_TestCase
     }
 
     /** @test */
+    public function shouldNotMatchForwardSlashInURIParameter()
+    {
+        $this->setExpectedException('Exception', '/songs/1/e');
+        $simpleRaml = $this->parser->parse(__DIR__.'/fixture/simple.raml');
+        $simpleRaml->getResourceByUri('/songs/1/e');
+    }
+
+    /** @test */
+    public function shouldNotMatchForwardSlashAndDuplicationInURIParameter()
+    {
+        $this->setExpectedException('Exception', '/songs/1/1');
+        $simpleRaml = $this->parser->parse(__DIR__.'/fixture/simple.raml');
+        $simpleRaml->getResourceByUri('/songs/1/1');
+    }
+
+    /** @test */
     public function shouldGiveTheResourceTheCorrectDisplayNameIfNotProvided()
     {
         $simpleRaml = $this->parser->parse(__DIR__.'/fixture/simple.raml');
@@ -92,15 +108,16 @@ class ParseTest extends PHPUnit_Framework_TestCase
     {
         $simpleRaml = $this->parser->parse(__DIR__.'/fixture/simple.raml');
 
-        $resource = $simpleRaml->getResourceByUri('/songs/{songId}');
+        $resource = $simpleRaml->getResourceByUri('/songs/1');
         $this->assertEquals('{songId}', $resource->getDisplayName());
     }
+
 
     /** @test */
     public function shouldReturnAMethodObjectForAMethod()
     {
         $simpleRaml = $this->parser->parse(__DIR__.'/fixture/simple.raml');
-        $resource = $simpleRaml->getResourceByUri('/songs/{songId]');
+        $resource = $simpleRaml->getResourceByUri('/songs/1');
         $method = $resource->getMethod('post');
         $schema = $method->getSchemaByType('application/json');
 
@@ -114,7 +131,7 @@ class ParseTest extends PHPUnit_Framework_TestCase
     public function shouldReturnAResponseForAResponse()
     {
         $simpleRaml = $this->parser->parse(__DIR__.'/fixture/simple.raml');
-        $resource = $simpleRaml->getResourceByUri('/songs/{songId]');
+        $resource = $simpleRaml->getResourceByUri('/songs/1');
         $method = $resource->getMethod('get');
         $response = $method->getResponse(200);
 
@@ -126,7 +143,7 @@ class ParseTest extends PHPUnit_Framework_TestCase
     public function shouldReturnAnExampleForType()
     {
         $simpleRaml = $this->parser->parse(__DIR__.'/fixture/simple.raml');
-        $resource = $simpleRaml->getResourceByUri('/songs/{songId]');
+        $resource = $simpleRaml->getResourceByUri('/songs/1');
         $method = $resource->getMethod('get');
         $response = $method->getResponse(200);
 
@@ -142,7 +159,7 @@ class ParseTest extends PHPUnit_Framework_TestCase
     public function shouldParseJson()
     {
         $simpleRaml = $this->parser->parse(__DIR__.'/fixture/simple.raml');
-        $resource = $simpleRaml->getResourceByUri('/songs/{songId]');
+        $resource = $simpleRaml->getResourceByUri('/songs/1');
         $method = $resource->getMethod('get');
         $response = $method->getResponse(200);
         $schema = $response->getSchemaByType('application/json');
@@ -154,7 +171,7 @@ class ParseTest extends PHPUnit_Framework_TestCase
     public function shouldNotParseJsonIfNotRequested()
     {
         $simpleRaml = $this->parser->parse(__DIR__.'/fixture/simple.raml', false);
-        $resource = $simpleRaml->getResourceByUri('/songs/{songId]');
+        $resource = $simpleRaml->getResourceByUri('/songs/1');
         $method = $resource->getMethod('get');
         $response = $method->getResponse(200);
         $schema = $response->getSchemaByType('application/json');
@@ -354,7 +371,7 @@ class ParseTest extends PHPUnit_Framework_TestCase
     public function shouldParseStatusCode()
     {
         $simpleRaml = $this->parser->parse(__DIR__.'/fixture/simple.raml');
-        $resource = $simpleRaml->getResourceByUri('/songs/{songId]');
+        $resource = $simpleRaml->getResourceByUri('/songs/1');
         $response = $resource->getMethod('get')->getResponse(200);
         $this->assertEquals(200, $response->getStatusCode());
     }
@@ -414,7 +431,7 @@ class ParseTest extends PHPUnit_Framework_TestCase
     {
         $def = $this->parser->parse(__DIR__.'/fixture/queryParameters.raml');
 
-        $resource = $def->getResourceByUri('/books/{bookId}');
+        $resource = $def->getResourceByUri('/books/1');
         $method = $resource->getMethod('get');
         $queryParameters = $method->getQueryParameters();
 

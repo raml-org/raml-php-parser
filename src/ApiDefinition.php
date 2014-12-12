@@ -189,7 +189,7 @@ class ApiDefinition
      */
     public function getBaseUri()
     {
-        return $this->baseUri;
+        return str_replace('{version}', $this->version, $this->baseUri);
     }
 
     /**
@@ -245,7 +245,11 @@ class ApiDefinition
         $resources = $this->getResources();
         $resource = null;
 
+        $count = 0;
+
         foreach ($uriParts as $part) {
+            ++$count;
+
             // if part is empty
             // exclude empty from beginning of string
             // or from //
@@ -258,7 +262,7 @@ class ApiDefinition
                 $uri = '/'.end($resourceUriParts);
 
                 if ('/'.$part === $uri || strpos($uri, '/{') === 0) {
-                    if ($part === $uriParts[count($uriParts)-1]) {
+                    if ($count === count($uriParts)) {
                         $resource = $potentialResource;
                     }
                     $resources = $potentialResource->getResources();
