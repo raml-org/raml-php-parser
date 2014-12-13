@@ -42,7 +42,7 @@ class JsonSchemaTest extends PHPUnit_Framework_TestCase
     /** @test */
     public function shouldCorrectlyValidateIncorrectJson()
     {
-        $this->setExpectedException('Exception', '[{"property":"","message":"object value found, but an array is required"}');
+        $this->setExpectedException('\Raml\Exception\InvalidJsonException');
 
         $simpleRaml = $this->parser->parse(__DIR__ . '/fixture/simple.raml');
         $resource = $simpleRaml->getResourceByUri('/songs');
@@ -56,7 +56,7 @@ class JsonSchemaTest extends PHPUnit_Framework_TestCase
     /** @test */
     public function shouldCorrectlyValidateInvalidJson()
     {
-        $this->setExpectedException('Exception', 'Invalid JSON: Error 4');
+        $this->setExpectedException('\Raml\Exception\InvalidJsonException');
         $simpleRaml = $this->parser->parse(__DIR__ . '/fixture/simple.raml');
         $resource = $simpleRaml->getResourceByUri('/songs');
         $method = $resource->getMethod('get');

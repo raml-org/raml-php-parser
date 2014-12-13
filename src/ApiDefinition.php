@@ -1,6 +1,8 @@
 <?php
 namespace Raml;
 
+use Raml\Exception\InvalidKeyException;
+use Raml\Exception\ResourceNotFoundException;
 use Raml\Formatters\RouteFormatterInterface;
 use Raml\Formatters\NoRouteFormatter;
 
@@ -127,14 +129,14 @@ class ApiDefinition
      * @param string  $key
      * @param boolean $required
      *
-     * @throws \Exception
+     * @throws InvalidKeyException
      *
      * @return null
      */
     private function getArrayValue($data, $key, $required = false)
     {
         if ($required && !isset($data[$key])) {
-            throw new \Exception('Key "'.$key.'" not found in RAML file');
+            throw new InvalidKeyException($key);
         }
 
         return isset($data[$key]) ? $data[$key] : null;
@@ -234,7 +236,7 @@ class ApiDefinition
      * Get a resource by a uri
      *
      * @param string $testUri
-     *
+     * @throws ResourceNotFoundException
      * @return \Raml\Resource
      */
     public function getResourceByUri($testUri)
@@ -275,7 +277,7 @@ class ApiDefinition
         }
 
 
-        throw new \Exception('Resource not found for uri "'.$testUri.'"');
+        throw new ResourceNotFoundException($testUri);
     }
 
     /**

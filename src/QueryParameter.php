@@ -1,6 +1,8 @@
 <?php
 namespace Raml;
 
+use Raml\Exception\InvalidQueryParameterTypeException;
+
 class QueryParameter
 {
     private $validTypes = ['string', 'number', 'integer', 'date', 'boolean', 'file'];
@@ -47,7 +49,7 @@ class QueryParameter
     public function __construct($description, $type = 'string', $displayName = null, $example = null, $required = false)
     {
         if (!in_array($type, $this->validTypes)) {
-            throw new \Exception('"'.$type.'" is not a valid type');
+            throw new InvalidQueryParameterTypeException($type, $this->validTypes);
         }
 
         $this->displayName = $displayName;
