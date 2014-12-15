@@ -119,6 +119,21 @@ class Parser
             }
         }
 
+        if (isset($array['schemas'])) {
+
+            $schemas = [];
+            foreach ($array['schemas'] as $schema) {
+                $schemaName = array_keys($schema)[0];
+                $schemas[$schemaName] = $schema[$schemaName];
+            }
+
+            foreach ($array as $key => $value) {
+                if (strpos($key, '/') === 0) {
+                    $array[$key] = $this->replaceSchemas($value, $schemas);
+                }
+            }
+        }
+
         if ($parseSchemas) {
             $array = $this->recurseAndParseSchemas($array, $rootDir);
         }
@@ -330,6 +345,32 @@ class Parser
 
         }
         return $newArray;
+    }
+
+    /**
+     * Replaces schema into the raml file
+     *
+     * @param  array $array
+     * @param  array $schemas List of available schema definition
+     * @return array
+     */
+    public function replaceSchemas($array, $schemas)
+    {
+        if (!is_array($array)) {
+            return $array;
+        }
+
+        foreach ($array as $key => $value) {
+            if ('schema' === $key) {
+                if (isset($schemas[$value])) {
+                    $array[$key] = $schemas[$value];
+                }
+            } else {
+                $array[$key] = $this->replaceSchemas($value, $schemas);
+            }
+        }
+
+        return $array;
     }
 
     /**
