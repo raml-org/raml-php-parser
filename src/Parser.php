@@ -119,6 +119,21 @@ class Parser
             }
         }
 
+        if (isset($array['schemas'])) {
+
+            $schemas = [];
+            foreach ($array['schemas'] as $schema) {
+                $schemaName = array_keys($schema)[0];
+                $schemas[$schemaName] = $schema[$schemaName];
+            }
+
+            foreach ($array as $key => $value) {
+                if (strpos($key, '/') === 0) {
+                    $array[$key] = $this->replaceSchemas($value, $schemas);
+                }
+            }
+        }
+
         if ($parseSchemas) {
             $array = $this->recurseAndParseSchemas($array, $rootDir);
         }
@@ -143,18 +158,18 @@ class Parser
     private function recurseAndParseSchemas($array, $rootDir)
     {
         foreach ($array as $key => &$value) {
-            if (is_array($value) && isset($value['schema'])) {
-                if (in_array($key, array_keys($this->schemaParsers))) {
-                    $schemaParser = $this->schemaParsers[$key];
-                    $schemaParser->setSourceUri('file:' . $rootDir . DIRECTORY_SEPARATOR);
-                    $value['schema'] = $schemaParser->createSchemaDefinition($value['schema'], $rootDir);
-                } else {
-                    throw new \Exception('Unknown schema type:'. $key);
-                }
-            }
-
             if (is_array($value)) {
-                $value = $this->recurseAndParseSchemas($value, $rootDir);
+                if (isset($value['schema'])) {
+                    if (in_array($key, array_keys($this->schemaParsers))) {
+                        $schemaParser = $this->schemaParsers[$key];
+                        $schemaParser->setSourceUri('file:' . $rootDir . DIRECTORY_SEPARATOR);
+                        $value['schema'] = $schemaParser->createSchemaDefinition($value['schema'], $rootDir);
+                    } else {
+                        throw new \Exception('Unknown schema type:'. $key);
+                    }
+                } else {
+                    $value = $this->recurseAndParseSchemas($value, $rootDir);
+                }
             }
         }
 
@@ -330,6 +345,32 @@ class Parser
 
         }
         return $newArray;
+    }
+
+    /**
+     * Replaces schema into the raml file
+     *
+     * @param  array $array
+     * @param  array $schemas List of available schema definition
+     * @return array
+     */
+    public function replaceSchemas($array, $schemas)
+    {
+        if (!is_array($array)) {
+            return $array;
+        }
+
+        foreach ($array as $key => $value) {
+            if ('schema' === $key) {
+                if (isset($schemas[$value])) {
+                    $array[$key] = $schemas[$value];
+                }
+            } else {
+                $array[$key] = $this->replaceSchemas($value, $schemas);
+            }
+        }
+
+        return $array;
     }
 
     /**
