@@ -464,4 +464,18 @@ class ParseTest extends PHPUnit_Framework_TestCase
             ]]
         ], json_decode($example, true));
     }
+
+    /** @test */
+    public function shouldReplaceSchemaByRootSchema()
+    {
+        $def = $this->parser->parse(__DIR__ . '/fixture/replaceSchemaByRootSchema.raml');
+
+        $schema = $def->getResourceByUri('/songs/{id}')->getMethod('get')->getResponse(200)->getSchemaByType('application/json');
+
+        $this->assertInstanceOf('Raml\Schema\Definition\JsonSchemaDefinition', $schema);
+
+        $schema = $schema->getJsonArray();
+
+        $this->assertCount(2, $schema['properties']);
+    }
 }
