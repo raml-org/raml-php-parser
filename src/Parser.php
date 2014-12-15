@@ -143,18 +143,18 @@ class Parser
     private function recurseAndParseSchemas($array, $rootDir)
     {
         foreach ($array as $key => &$value) {
-            if (is_array($value) && isset($value['schema'])) {
-                if (in_array($key, array_keys($this->schemaParsers))) {
-                    $schemaParser = $this->schemaParsers[$key];
-                    $schemaParser->setSourceUri('file:' . $rootDir . DIRECTORY_SEPARATOR);
-                    $value['schema'] = $schemaParser->createSchemaDefinition($value['schema'], $rootDir);
-                } else {
-                    throw new \Exception('Unknown schema type:'. $key);
-                }
-            }
-
             if (is_array($value)) {
-                $value = $this->recurseAndParseSchemas($value, $rootDir);
+                if (isset($value['schema'])) {
+                    if (in_array($key, array_keys($this->schemaParsers))) {
+                        $schemaParser = $this->schemaParsers[$key];
+                        $schemaParser->setSourceUri('file:' . $rootDir . DIRECTORY_SEPARATOR);
+                        $value['schema'] = $schemaParser->createSchemaDefinition($value['schema'], $rootDir);
+                    } else {
+                        throw new \Exception('Unknown schema type:'. $key);
+                    }
+                } else {
+                    $value = $this->recurseAndParseSchemas($value, $rootDir);
+                }
             }
         }
 
