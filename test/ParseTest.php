@@ -478,4 +478,12 @@ class ParseTest extends PHPUnit_Framework_TestCase
 
         $this->assertCount(2, $schema['properties']);
     }
+
+    /** @test */
+    public function shouldParseAndReplaceSchemaOnlyInResources()
+    {
+        $def = $this->parser->parse(__DIR__ . '/fixture/schemaInTypes.raml');
+        $schema = $def->getResourceByUri('/projects')->getMethod('post')->getSchemaByType('application/json');
+        $this->assertInstanceOf('Raml\Schema\Definition\JsonSchemaDefinition', $schema);
+    }
 }

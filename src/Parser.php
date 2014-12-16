@@ -119,23 +119,25 @@ class Parser
             }
         }
 
-        if (isset($array['schemas'])) {
-
-            $schemas = [];
-            foreach ($array['schemas'] as $schema) {
-                $schemaName = array_keys($schema)[0];
-                $schemas[$schemaName] = $schema[$schemaName];
+        if ($parseSchemas) {
+            if (isset($array['schemas'])) {
+                $schemas = [];
+                    foreach ($array['schemas'] as $schema) {
+                        $schemaName = array_keys($schema)[0];
+                        $schemas[$schemaName] = $schema[$schemaName];
+                    }
             }
-
             foreach ($array as $key => $value) {
-                if (strpos($key, '/') === 0) {
-                    $array[$key] = $this->replaceSchemas($value, $schemas);
+                if (0 === strpos($key, '/')) {
+                    if (isset($schemas)) {
+                        $value = $this->replaceSchemas($value, $schemas);
+                    }
+                    if (is_array($value)) {
+                        $value = $this->recurseAndParseSchemas($value, $rootDir);
+                    }
+                    $array[$key] = $value;
                 }
             }
-        }
-
-        if ($parseSchemas) {
-            $array = $this->recurseAndParseSchemas($array, $rootDir);
         }
 
         // ---
@@ -146,7 +148,7 @@ class Parser
     // ---
 
     /**
-     * Recurses though the complete definition and replaces schema strings
+     * Recurses though resources and replaces schema strings
      *
      * @param array  $array
      * @param string $rootDir

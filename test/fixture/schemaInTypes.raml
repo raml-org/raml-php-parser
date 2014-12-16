@@ -1,0 +1,43 @@
+#%RAML 0.8
+title: Schema in resource types
+
+resourceTypes:
+ - collection:
+    post:
+      description: Create a new <<resourcePathName | !singularize>>
+      body:
+        application/json:
+          schema: <<resourcePathName | !singularize>>
+schemas:
+ - project: |
+    {
+      "$schema": "http://json-schema.org/draft-04/schema",
+      "type": "object",
+      "properties": {
+        "code": {
+          "type": "string",
+          "readOnly": true
+        },
+        "created_at": {
+          "type": "date-time",
+          "readOnly": true
+        }
+      }
+    }
+/projects:
+  description: Searchable, pageable and orderable collection of projets
+  type:
+    collection:
+      example: |
+        [
+          {
+            "code": "2f33b672fd",
+            "created_at": "2014-09-08T22:47:31-07:00",
+          }
+  post:
+    body:
+      application/json:
+        example: |
+          {
+            "title": "My title",
+          }
