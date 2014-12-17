@@ -22,7 +22,7 @@ class ParseTest extends PHPUnit_Framework_TestCase
         $this->assertEquals('World Music API', $simpleRaml->getTitle());
         $this->assertEquals('v1', $simpleRaml->getVersion());
         $this->assertEquals('http://example.api.com/v1', $simpleRaml->getBaseUri());
-        $this->assertNull($simpleRaml->getDefaultMediaType());
+        $this->assertEquals('application/json', $simpleRaml->getDefaultMediaType());
     }
 
     /** @test */
