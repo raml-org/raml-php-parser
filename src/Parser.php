@@ -1,6 +1,9 @@
 <?php
 namespace Raml;
 
+use Raml\Exception\FileNotFoundException;
+use Raml\Exception\InvalidSchemaTypeException;
+use Raml\Exception\RamlParserException;
 use Raml\Schema\SchemaParserInterface;
 use Raml\Schema\Parser\JsonSchemaParser;
 use Symfony\Component\Yaml\Yaml;
@@ -70,7 +73,7 @@ class Parser
     public function parse($fileName, $parseSchemas = true)
     {
         if (!is_file($fileName)) {
-            throw new \Exception('File does not exist');
+            throw new FileNotFoundException($fileName);
         }
 
         $rootDir = dirname(realpath($fileName));
@@ -82,7 +85,7 @@ class Parser
         );
 
         if (!$array) {
-            throw new \Exception('RAML file appears to be empty');
+            throw new RamlParserException('RAML file appears to be empty');
         }
 
         if (isset($array['traits'])) {
@@ -122,10 +125,10 @@ class Parser
         if ($parseSchemas) {
             if (isset($array['schemas'])) {
                 $schemas = [];
-                    foreach ($array['schemas'] as $schema) {
-                        $schemaName = array_keys($schema)[0];
-                        $schemas[$schemaName] = $schema[$schemaName];
-                    }
+                foreach ($array['schemas'] as $schema) {
+                    $schemaName = array_keys($schema)[0];
+                    $schemas[$schemaName] = $schema[$schemaName];
+                }
             }
             foreach ($array as $key => $value) {
                 if (0 === strpos($key, '/')) {
@@ -150,10 +153,10 @@ class Parser
     /**
      * Recurses though resources and replaces schema strings
      *
-     * @param array  $array
+     * @param array $array
      * @param string $rootDir
      *
-     * @throws \Exception
+     * @throws InvalidSchemaTypeException
      *
      * @return array
      */
@@ -167,14 +170,13 @@ class Parser
                         $schemaParser->setSourceUri('file:' . $rootDir . DIRECTORY_SEPARATOR);
                         $value['schema'] = $schemaParser->createSchemaDefinition($value['schema'], $rootDir);
                     } else {
-                        throw new \Exception('Unknown schema type:'. $key);
+                        throw new InvalidSchemaTypeException($key);
                     }
                 } else {
                     $value = $this->recurseAndParseSchemas($value, $rootDir);
                 }
             }
         }
-
 
         return $array;
     }
@@ -390,11 +392,11 @@ class Parser
         foreach ($trait as $key => &$value) {
             $newKey = preg_replace_callback(
                 '/<<(' . $variables . ')([\s]*\|[\s]*!(singularize|pluralize))?>>/',
-                function($matches) use ($values) {
+                function ($matches) use ($values) {
                     $transformer = isset($matches[3]) ? $matches[3] : '';
                     return method_exists('Inflect\Inflect', $transformer) ?
-                            Inflect::{$transformer}($values[$matches[1]]) :
-                            $values[$matches[1]];
+                        Inflect::$transformer($values[$matches[1]]) :
+                        $values[$matches[1]];
                 },
                 $key
             );
@@ -404,11 +406,11 @@ class Parser
             } else {
                 $value = preg_replace_callback(
                     '/<<(' . $variables . ')([\s]*\|[\s]*!(singularize|pluralize))?>>/',
-                    function($matches) use ($values) {
+                    function ($matches) use ($values) {
                         $transformer = isset($matches[3]) ? $matches[3] : '';
                         return method_exists('Inflect\Inflect', $transformer) ?
-                                Inflect::{$transformer}($values[$matches[1]]) :
-                                $values[$matches[1]];
+                            Inflect::$transformer($values[$matches[1]]) :
+                            $values[$matches[1]];
                     },
                     $value
                 );

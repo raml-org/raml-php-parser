@@ -2,6 +2,7 @@
 
 namespace Raml\Schema\Parser;
 
+use Raml\Exception\InvalidJsonException;
 use Raml\Schema\SchemaParserAbstract;
 use Raml\Schema\Definition\JsonSchemaDefinition;
 use JsonSchema\Uri\UriRetriever;
@@ -26,7 +27,7 @@ class JsonSchemaParser extends SchemaParserAbstract
      *
      * @param $schemaString
      *
-     * @throws \Exception
+     * @throws InvalidJsonException
      *
      * @return \Raml\Schema\Definition\JsonSchemaDefinition
      */
@@ -38,7 +39,7 @@ class JsonSchemaParser extends SchemaParserAbstract
         $data = json_decode($schemaString);
 
         if (!$data) {
-            throw new \Exception('Invalid JSON in schema');
+            throw new InvalidJsonException(json_last_error());
         }
 
         $jsonSchemaParser->resolve($data, $this->getSourceUri());

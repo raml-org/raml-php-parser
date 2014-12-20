@@ -28,14 +28,14 @@ class ParseTest extends PHPUnit_Framework_TestCase
     /** @test */
     public function shouldThrowCorrectExceptionOnBadJson()
     {
-        $this->setExpectedException('Exception', 'Invalid JSON in schema');
+        $this->setExpectedException('\Raml\Exception\InvalidJsonException');
         $this->parser->parse(__DIR__.'/fixture/invalid/badJson.raml');
     }
 
     /** @test */
     public function shouldThrowCorrectExceptionOnBadRamlFile()
     {
-        $this->setExpectedException('Exception', 'Invalid JSON in schema');
+        $this->setExpectedException('\Raml\Exception\InvalidJsonException');
         $simpleRaml = $this->parser->parse(__DIR__.'/fixture/invalid/bad.raml');
     }
 
@@ -58,7 +58,7 @@ class ParseTest extends PHPUnit_Framework_TestCase
     /** @test */
     public function shouldThrowExceptionIfUriNotFound()
     {
-        $this->setExpectedException('Exception', 'Resource not found for uri "/invalid"');
+        $this->setExpectedException('\Raml\Exception\ResourceNotFoundException');
         $simpleRaml = $this->parser->parse(__DIR__.'/fixture/simple.raml');
         $simpleRaml->getResourceByUri('/invalid');
     }
@@ -66,7 +66,7 @@ class ParseTest extends PHPUnit_Framework_TestCase
     /** @test */
     public function shouldNotMatchForwardSlashInURIParameter()
     {
-        $this->setExpectedException('Exception', '/songs/1/e');
+        $this->setExpectedException('\Raml\Exception\ResourceNotFoundException');
         $simpleRaml = $this->parser->parse(__DIR__.'/fixture/simple.raml');
         $simpleRaml->getResourceByUri('/songs/1/e');
     }
@@ -74,7 +74,7 @@ class ParseTest extends PHPUnit_Framework_TestCase
     /** @test */
     public function shouldNotMatchForwardSlashAndDuplicationInURIParameter()
     {
-        $this->setExpectedException('Exception', '/songs/1/1');
+        $this->setExpectedException('\Raml\Exception\ResourceNotFoundException');
         $simpleRaml = $this->parser->parse(__DIR__.'/fixture/simple.raml');
         $simpleRaml->getResourceByUri('/songs/1/1');
     }
@@ -253,14 +253,14 @@ class ParseTest extends PHPUnit_Framework_TestCase
     /** @test */
     public function shouldThrowErrorIfNoTitle()
     {
-        $this->setExpectedException('Exception', 'Key "title" not found in RAML');
+        $this->setExpectedException('\Raml\Exception\RamlParserException');
         $this->parser->parse(__DIR__.'/fixture/invalid/noTitle.raml');
     }
 
     /** @test */
     public function shouldThrowErrorIfUnknownIncluded()
     {
-        $this->setExpectedException('Exception', 'Unknown schema type:application/vnd.api-v1+json');
+        $this->setExpectedException('\Raml\Exception\InvalidSchemaTypeException');
         $this->parser->parse(__DIR__.'/fixture/includeUnknownSchema.raml');
     }
 
@@ -342,7 +342,7 @@ class ParseTest extends PHPUnit_Framework_TestCase
     /** @test */
     public function shouldThrowErrorIfPassedFileDoesNotExist()
     {
-        $this->setExpectedException('Exception', 'File does not exist');
+        $this->setExpectedException('\Raml\Exception\FileNotFoundException');
         $this->parser->parse(__DIR__.'/fixture/gone.raml');
     }
 
@@ -447,7 +447,7 @@ class ParseTest extends PHPUnit_Framework_TestCase
     /** @test */
     public function shouldThrowExceptionOnBadQueryParameter()
     {
-        $this->setExpectedException('Exception', '"invalid" is not a valid type');
+        $this->setExpectedException('\Raml\Exception\InvalidQueryParameterTypeException');
         $this->parser->parse(__DIR__.'/fixture/invalid/queryParameters.raml');
     }
 

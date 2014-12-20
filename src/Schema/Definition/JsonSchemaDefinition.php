@@ -2,6 +2,8 @@
 
 namespace Raml\Schema\Definition;
 
+use Raml\Exception\InvalidJsonException;
+use Raml\Exception\InvalidSchemaException;
 use \Raml\Schema\SchemaDefinitionInterface;
 
 class JsonSchemaDefinition implements SchemaDefinitionInterface
@@ -42,10 +44,8 @@ class JsonSchemaDefinition implements SchemaDefinitionInterface
     {
         $json = json_decode($string);
 
-        // @todo Find a nice way of showing errors
-
         if (json_last_error() !== JSON_ERROR_NONE) {
-            throw new \Exception('Invalid JSON: Error '.json_last_error());
+            throw new InvalidJsonException(json_last_error());
         }
 
         return $this->validateJsonObject($json);
@@ -79,7 +79,7 @@ class JsonSchemaDefinition implements SchemaDefinitionInterface
         $validator->check($json, $this->json);
 
         if (!$validator->isValid()) {
-            throw new \Exception(json_encode($validator->getErrors(), true));
+            throw new InvalidSchemaException($validator->getErrors());
         }
 
         return true;
