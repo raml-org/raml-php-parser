@@ -39,7 +39,7 @@ class JsonSchemaParser extends SchemaParserAbstract
         $data = json_decode($schemaString);
 
         if (!$data) {
-            throw new InvalidJsonException([json_last_error_msg()]);
+            throw new InvalidJsonException(json_last_error());
         }
 
         $jsonSchemaParser->resolve($data, $this->getSourceUri());

@@ -4,7 +4,7 @@ namespace Raml\Exception;
 
 use RuntimeException;
 
-class InvalidQueryParameterTypeException extends RuntimeException
+class InvalidQueryParameterTypeException extends RuntimeException implements ExceptionInterface
 {
     /**
      * @var string

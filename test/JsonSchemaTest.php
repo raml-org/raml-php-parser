@@ -42,7 +42,7 @@ class JsonSchemaTest extends PHPUnit_Framework_TestCase
     /** @test */
     public function shouldCorrectlyValidateIncorrectJson()
     {
-        $this->setExpectedException('\Raml\Exception\InvalidJsonException');
+        $this->setExpectedException('\Raml\Exception\InvalidSchemaException');
 
         $simpleRaml = $this->parser->parse(__DIR__ . '/fixture/simple.raml');
         $resource = $simpleRaml->getResourceByUri('/songs');

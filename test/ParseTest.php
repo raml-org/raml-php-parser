@@ -22,7 +22,7 @@ class ParseTest extends PHPUnit_Framework_TestCase
         $this->assertEquals('World Music API', $simpleRaml->getTitle());
         $this->assertEquals('v1', $simpleRaml->getVersion());
         $this->assertEquals('http://example.api.com/v1', $simpleRaml->getBaseUri());
-        $this->assertNull($simpleRaml->getDefaultMediaType());
+        $this->assertEquals('application/json', $simpleRaml->getDefaultMediaType());
     }
 
     /** @test */
@@ -463,5 +463,27 @@ class ParseTest extends PHPUnit_Framework_TestCase
                 'title' => 'test'
             ]]
         ], json_decode($example, true));
+    }
+
+    /** @test */
+    public function shouldReplaceSchemaByRootSchema()
+    {
+        $def = $this->parser->parse(__DIR__ . '/fixture/replaceSchemaByRootSchema.raml');
+
+        $schema = $def->getResourceByUri('/songs/{id}')->getMethod('get')->getResponse(200)->getSchemaByType('application/json');
+
+        $this->assertInstanceOf('Raml\Schema\Definition\JsonSchemaDefinition', $schema);
+
+        $schema = $schema->getJsonArray();
+
+        $this->assertCount(2, $schema['properties']);
+    }
+
+    /** @test */
+    public function shouldParseAndReplaceSchemaOnlyInResources()
+    {
+        $def = $this->parser->parse(__DIR__ . '/fixture/schemaInTypes.raml');
+        $schema = $def->getResourceByUri('/projects')->getMethod('post')->getSchemaByType('application/json');
+        $this->assertInstanceOf('Raml\Schema\Definition\JsonSchemaDefinition', $schema);
     }
 }

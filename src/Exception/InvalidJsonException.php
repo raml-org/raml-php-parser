@@ -4,19 +4,19 @@ namespace Raml\Exception;
 
 use RuntimeException;
 
-class InvalidJsonException extends RuntimeException
+class InvalidJsonException extends RuntimeException implements ExceptionInterface
 {
-    protected $errors;
+    protected $errorCode;
 
-    public function __construct(array $errors)
+    public function __construct($errorCode)
     {
-        $this->errors = $errors;
+        $this->errorCode = $errorCode;
 
         parent::__construct('Invalid JSON.');
     }
 
-    public function getErrors()
+    public function getErrorCode()
     {
-        return $this->errors;
+        return $this->errorCode;
     }
 }

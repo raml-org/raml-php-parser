@@ -4,7 +4,7 @@ namespace Raml\Exception;
 
 use RuntimeException;
 
-class FileNotFoundException extends RuntimeException
+class FileNotFoundException extends RuntimeException implements ExceptionInterface
 {
     protected $fileName;
 
