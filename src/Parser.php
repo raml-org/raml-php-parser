@@ -123,7 +123,24 @@ class Parser
         }
 
         if ($parseSchemas) {
-            $array = $this->recurseAndParseSchemas($array, $rootDir);
+            if (isset($array['schemas'])) {
+                $schemas = [];
+                foreach ($array['schemas'] as $schema) {
+                    $schemaName = array_keys($schema)[0];
+                    $schemas[$schemaName] = $schema[$schemaName];
+                }
+            }
+            foreach ($array as $key => $value) {
+                if (0 === strpos($key, '/')) {
+                    if (isset($schemas)) {
+                        $value = $this->replaceSchemas($value, $schemas);
+                    }
+                    if (is_array($value)) {
+                        $value = $this->recurseAndParseSchemas($value, $rootDir);
+                    }
+                    $array[$key] = $value;
+                }
+            }
         }
 
         // ---
@@ -134,9 +151,9 @@ class Parser
     // ---
 
     /**
-     * Recurses though the complete definition and replaces schema strings
+     * Recurses though resources and replaces schema strings
      *
-     * @param array  $array
+     * @param array $array
      * @param string $rootDir
      *
      * @throws InvalidSchemaTypeException
@@ -146,21 +163,20 @@ class Parser
     private function recurseAndParseSchemas($array, $rootDir)
     {
         foreach ($array as $key => &$value) {
-            if (is_array($value) && isset($value['schema'])) {
-                if (in_array($key, array_keys($this->schemaParsers))) {
-                    $schemaParser = $this->schemaParsers[$key];
-                    $schemaParser->setSourceUri('file:' . $rootDir . DIRECTORY_SEPARATOR);
-                    $value['schema'] = $schemaParser->createSchemaDefinition($value['schema'], $rootDir);
+            if (is_array($value)) {
+                if (isset($value['schema'])) {
+                    if (in_array($key, array_keys($this->schemaParsers))) {
+                        $schemaParser = $this->schemaParsers[$key];
+                        $schemaParser->setSourceUri('file:' . $rootDir . DIRECTORY_SEPARATOR);
+                        $value['schema'] = $schemaParser->createSchemaDefinition($value['schema'], $rootDir);
+                    } else {
+                        throw new InvalidSchemaTypeException($key);
+                    }
                 } else {
-                    throw new InvalidSchemaTypeException($key);
+                    $value = $this->recurseAndParseSchemas($value, $rootDir);
                 }
             }
-
-            if (is_array($value)) {
-                $value = $this->recurseAndParseSchemas($value, $rootDir);
-            }
         }
-
 
         return $array;
     }
@@ -336,6 +352,32 @@ class Parser
     }
 
     /**
+     * Replaces schema into the raml file
+     *
+     * @param  array $array
+     * @param  array $schemas List of available schema definition
+     * @return array
+     */
+    public function replaceSchemas($array, $schemas)
+    {
+        if (!is_array($array)) {
+            return $array;
+        }
+
+        foreach ($array as $key => $value) {
+            if ('schema' === $key) {
+                if (isset($schemas[$value])) {
+                    $array[$key] = $schemas[$value];
+                }
+            } else {
+                $array[$key] = $this->replaceSchemas($value, $schemas);
+            }
+        }
+
+        return $array;
+    }
+
+    /**
      * Add trait variables
      *
      * @param array $values
@@ -350,11 +392,11 @@ class Parser
         foreach ($trait as $key => &$value) {
             $newKey = preg_replace_callback(
                 '/<<(' . $variables . ')([\s]*\|[\s]*!(singularize|pluralize))?>>/',
-                function($matches) use ($values) {
+                function ($matches) use ($values) {
                     $transformer = isset($matches[3]) ? $matches[3] : '';
                     return method_exists('Inflect\Inflect', $transformer) ?
-                            Inflect::$transformer($values[$matches[1]]) :
-                            $values[$matches[1]];
+                        Inflect::$transformer($values[$matches[1]]) :
+                        $values[$matches[1]];
                 },
                 $key
             );
@@ -364,11 +406,11 @@ class Parser
             } else {
                 $value = preg_replace_callback(
                     '/<<(' . $variables . ')([\s]*\|[\s]*!(singularize|pluralize))?>>/',
-                    function($matches) use ($values) {
+                    function ($matches) use ($values) {
                         $transformer = isset($matches[3]) ? $matches[3] : '';
                         return method_exists('Inflect\Inflect', $transformer) ?
-                                Inflect::$transformer($values[$matches[1]]) :
-                                $values[$matches[1]];
+                            Inflect::$transformer($values[$matches[1]]) :
+                            $values[$matches[1]];
                     },
                     $value
                 );

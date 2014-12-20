@@ -103,7 +103,11 @@ class ApiDefinition
         $this->baseUri = $this->getArrayValue($data, 'baseUri');
         $this->uriParameters = $this->getArrayValue($data, 'uriParameters');
 
-        $this->defaultMediaType = $this->getArrayValue($data, 'defaultMediaType');
+        $this->defaultMediaType = $this->getArrayValue($data, 'mediaType');
+        // Keep BC
+        if (!$this->defaultMediaType) {
+            $this->defaultMediaType = $this->getArrayValue($data, 'defaultMediaType');
+        }
         $this->documentation = $this->getArrayValue($data, 'documentation');
 
         $this->protocols =$this->getArrayValue($data, 'protocols');

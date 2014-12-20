@@ -2,7 +2,7 @@
 
 namespace Raml\Exception;
 
-class ResourceNotFoundException extends RamlParserException
+class ResourceNotFoundException extends RamlParserException implements ExceptionInterface
 {
     protected $uri;
 

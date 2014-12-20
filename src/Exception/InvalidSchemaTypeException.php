@@ -4,7 +4,7 @@ namespace Raml\Exception;
 
 use RuntimeException;
 
-class InvalidSchemaTypeException extends RuntimeException
+class InvalidSchemaTypeException extends RuntimeException implements ExceptionInterface
 {
     protected $type;
 
