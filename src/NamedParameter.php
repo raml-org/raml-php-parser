@@ -1,6 +1,8 @@
 <?php
 namespace Raml;
 
+use \Raml\Exception\InvalidQueryParameterTypeException;
+
 /**
  * Named Parameters
  *
@@ -347,7 +349,7 @@ class NamedParameter implements ArrayInstantiationInterface
     public function setType($type = 'string')
     {
         if (!in_array($type, $this->validTypes)) {
-            throw new \Exception('"'.$type.'" is not a valid type');
+            throw new InvalidQueryParameterTypeException($type, $this->validTypes);
         }
 
         $this->type = $type;

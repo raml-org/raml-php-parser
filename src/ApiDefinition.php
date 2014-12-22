@@ -3,8 +3,12 @@ namespace Raml;
 
 use Raml\RouteFormatter\RouteFormatterInterface;
 use Raml\RouteFormatter\NoRouteFormatter;
+
 use Raml\Schema\SchemaDefinitionInterface;
 use Raml\RouteFormatter\BasicRoute;
+
+use Raml\Exception\InvalidKeyException;
+use Raml\Exception\ResourceNotFoundException;
 
 /**
  * The API Definition
@@ -148,8 +152,6 @@ class ApiDefinition implements ArrayInstantiationInterface
      *  /*
      * ]
      *
-     * @throws \Exception
-     *
      * @return ApiDefinition
      */
     public static function createFromArray($title, array $data = [])
@@ -179,7 +181,7 @@ class ApiDefinition implements ArrayInstantiationInterface
                 );
             }
         }
-        
+
         if (isset($data['mediaType'])) {
             $apiDefinition->setDefaultMediaType($data['mediaType']);
         }
@@ -237,7 +239,7 @@ class ApiDefinition implements ArrayInstantiationInterface
      *
      * @param string $uri
      *
-     * @throws \Exception
+     * @throws InvalidKeyException
      *
      * @return \Raml\Resource
      */
@@ -257,7 +259,7 @@ class ApiDefinition implements ArrayInstantiationInterface
 
         if (!$potentialResource) {
             // we never returned so throw exception
-            throw new \Exception('Resource not found for uri "' . $uri . '"');
+            throw new ResourceNotFoundException($uri);
         }
 
         return $potentialResource;
@@ -424,12 +426,12 @@ class ApiDefinition implements ArrayInstantiationInterface
      *
      * @param string $protocol
      *
-     * @throws \Exception
+     * @throws RamlParserException
      */
     public function addProtocol($protocol)
     {
         if (!in_array($protocol, [self::PROTOCOL_HTTP, self::PROTOCOL_HTTPS])) {
-            throw new \Exception('Not a valid protocol');
+            throw new RamlParserException('Not a valid protocol');
         }
 
         if (in_array($protocol, $this->protocols)) {

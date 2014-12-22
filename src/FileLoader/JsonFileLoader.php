@@ -4,6 +4,7 @@ namespace Raml\FileLoader;
 
 use JsonSchema\Uri\UriRetriever;
 use JsonSchema\RefResolver;
+use \Raml\Exception\InvalidJsonException;
 
 /**
  * Fetches JSON schema as a string, included refs
@@ -26,7 +27,7 @@ class JsonFileLoader implements FileLoaderInterface
         try {
             return json_encode($jsonSchemaParser->fetchRef('file://' . $filePath, null));
         } catch (\Exception $e) {
-            throw new \Exception('Invalid JSON in schema');
+            throw new InvalidJsonException(json_last_error());
         }
     }
 

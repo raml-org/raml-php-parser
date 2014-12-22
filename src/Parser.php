@@ -1,6 +1,9 @@
 <?php
 namespace Raml;
 
+use Raml\Exception\FileNotFoundException;
+use Raml\Exception\InvalidSchemaTypeException;
+use Raml\Exception\RamlParserException;
 use Raml\Schema\SchemaParserInterface;
 use Raml\Schema\Parser\JsonSchemaParser;
 
@@ -160,13 +163,14 @@ class Parser
     public function parse($fileName, $parseSchemas = true)
     {
         if (!is_file($fileName)) {
-            throw new \Exception('File does not exist');
+            throw new FileNotFoundException($fileName);
         }
 
         $ramlData = $this->parseRamlFile($fileName, $parseSchemas);
 
+
         if (!isset($ramlData['title'])) {
-            throw new \Exception('The "title" property is required');
+            throw new RamlParserException();
         }
 
         $ramlData = $this->parseTraits($ramlData);
@@ -231,10 +235,10 @@ class Parser
     /**
      * Recurses though resources and replaces schema strings
      *
-     * @param array  $array
+     * @param array $array
      * @param string $rootDir
      *
-     * @throws \Exception
+     * @throws InvalidSchemaTypeException
      *
      * @return array
      */
@@ -248,7 +252,7 @@ class Parser
                         $schemaParser->setSourceUri('file:' . $rootDir . DIRECTORY_SEPARATOR);
                         $value['schema'] = $schemaParser->createSchemaDefinition($value['schema'], $rootDir);
                     } else {
-                        throw new \Exception('Unknown schema type:'. $key);
+                        throw new InvalidSchemaTypeException($key);
                     }
                 } else {
                     $value = $this->recurseAndParseSchemas($value, $rootDir);
@@ -566,9 +570,8 @@ class Parser
         foreach ($trait as $key => &$value) {
             $newKey = preg_replace_callback(
                 '/<<(' . $variables . ')([\s]*\|[\s]*!(singularize|pluralize))?>>/',
-                function($matches) use ($values) {
+                function ($matches) use ($values) {
                     $transformer = isset($matches[3]) ? $matches[3] : '';
-
                     switch($transformer) {
                         case 'singularize':
                             return Inflect::singularize($values[$matches[1]]);
@@ -579,7 +582,6 @@ class Parser
                         default:
                             return $values[$matches[1]];
                     }
-
                 },
                 $key
             );
@@ -589,7 +591,7 @@ class Parser
             } else {
                 $value = preg_replace_callback(
                     '/<<(' . $variables . ')([\s]*\|[\s]*!(singularize|pluralize))?>>/',
-                    function($matches) use ($values) {
+                    function ($matches) use ($values) {
                         $transformer = isset($matches[3]) ? $matches[3] : '';
 
                         switch($transformer) {
