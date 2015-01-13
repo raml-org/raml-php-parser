@@ -1,7 +1,6 @@
 <?php
 namespace Raml;
 
-use Raml\Exception\RamlParserException;
 use Raml\RouteFormatter\RouteFormatterInterface;
 use Raml\RouteFormatter\NoRouteFormatter;
 
@@ -18,8 +17,8 @@ use Raml\Exception\ResourceNotFoundException;
  */
 class ApiDefinition implements ArrayInstantiationInterface
 {
-    const PROTOCOL_HTTP = 'http';
-    const PROTOCOL_HTTPS = 'https';
+    const PROTOCOL_HTTP = 'HTTP';
+    const PROTOCOL_HTTPS = 'HTTPS';
 
     // ---
 
@@ -364,7 +363,7 @@ class ApiDefinition implements ArrayInstantiationInterface
         $this->baseUrl = $baseUrl;
 
         if (!$this->protocols) {
-            $this->protocols = [parse_url($this->baseUrl, PHP_URL_SCHEME)];
+            $this->protocols = [strtoupper(parse_url($this->baseUrl, PHP_URL_SCHEME))];
         }
     }
 
@@ -427,15 +426,15 @@ class ApiDefinition implements ArrayInstantiationInterface
      *
      * @param string $protocol
      *
-     * @throws RamlParserException
+     * @throws \InvalidArgumentException
      */
     public function addProtocol($protocol)
     {
         if (!in_array($protocol, [self::PROTOCOL_HTTP, self::PROTOCOL_HTTPS])) {
-            throw new RamlParserException('Not a valid protocol');
+            throw new \InvalidArgumentException(sprintf('"%s" is not a valid protocol', $protocol));
         }
 
-        if (in_array($protocol, $this->protocols)) {
+        if (!in_array($protocol, $this->protocols)) {
             $this->protocols[] = $protocol;
         }
     }
