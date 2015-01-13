@@ -60,4 +60,33 @@ class ApiDefinitionTest extends PHPUnit_Framework_TestCase
         $this->assertInstanceOf('\Symfony\Component\Routing\RouteCollection', $routeFormatter->getRoutes());
         $this->assertInstanceOf('\Symfony\Component\Routing\Route', $routeFormatter->getRoutes()->get('GET /songs/'));
     }
+
+    /** @test */
+    public function shouldReturnURIProtocol()
+    {
+        $api = $this->parser->parse(__DIR__.'/fixture/protocols/noProtocolSpecified.raml');
+        $this->assertCount(1, $api->getProtocols());
+        $this->assertSame(array(
+            'HTTP',
+        ), $api->getProtocols());
+    }
+
+    /** @test */
+    public function shouldReturnProtocolsIfSpecified()
+    {
+        $api = $this->parser->parse(__DIR__.'/fixture/protocols/protocolsSpecified.raml');
+        $this->assertCount(2, $api->getProtocols());
+        $this->assertSame(array(
+            'HTTP',
+            'HTTPS'
+        ), $api->getProtocols());
+    }
+
+    /** @test */
+    public function shouldThrowInvalidArgumentExceptionIfWrongProtocol()
+    {
+        $this->setExpectedException('\InvalidArgumentException');
+
+        $this->parser->parse(__DIR__.'/fixture/protocols/invalidProtocolsSpecified.raml');
+    }
 }
