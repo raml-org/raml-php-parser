@@ -283,7 +283,7 @@ class ApiDefinition implements ArrayInstantiationInterface
             $formatter = new NoRouteFormatter();
         }
 
-        $formatter->format($this->geMethodsAsArray($this->resources));
+        $formatter->format($this->getMethodsAsArray($this->resources));
 
         return $formatter;
     }
@@ -588,7 +588,7 @@ class ApiDefinition implements ArrayInstantiationInterface
      *
      * @return array
      */
-    private function geMethodsAsArray(array $resources)
+    private function getMethodsAsArray(array $resources)
     {
         $all = [];
 
@@ -605,7 +605,7 @@ class ApiDefinition implements ArrayInstantiationInterface
             }
 
 
-            $all = array_merge_recursive($all, $this->geMethodsAsArray($resource->getResources()));
+            $all = array_merge_recursive($all, $this->getMethodsAsArray($resource->getResources()));
         }
 
         return $all;
