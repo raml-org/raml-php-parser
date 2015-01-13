@@ -1,6 +1,7 @@
 <?php
 namespace Raml;
 
+use Raml\Exception\RamlParserException;
 use Raml\RouteFormatter\RouteFormatterInterface;
 use Raml\RouteFormatter\NoRouteFormatter;
 
