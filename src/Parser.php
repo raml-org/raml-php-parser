@@ -445,12 +445,12 @@ class Parser
     private function includeAndParseFiles($structure, $rootDir, $parseSchemas)
     {
         if (is_array($structure)) {
-            return array_map(
-                function ($structure) use ($rootDir, $parseSchemas) {
-                    return $this->includeAndParseFiles($structure, $rootDir, $parseSchemas);
-                },
-                $structure
-            );
+            $result = array();
+            foreach ($structure as $key => $structureElement) {
+                $result[$key] = $this->includeAndParseFiles($structureElement, $rootDir, $parseSchemas);
+            }
+
+            return $result;
         } elseif (strpos($structure, '!include') === 0) {
             return $this->loadAndParseFile(str_replace('!include ', '', $structure), $rootDir, $parseSchemas);
         } else {
