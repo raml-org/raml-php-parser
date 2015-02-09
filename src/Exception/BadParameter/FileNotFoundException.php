@@ -1,10 +1,12 @@
 <?php
 
-namespace Raml\Exception;
+namespace Raml\Exception\BadParameter;
 
 use RuntimeException;
+use Raml\Exception\ExceptionInterface;
+use Raml\Exception\BadParameterExceptionInterface;
 
-class FileNotFoundException extends RuntimeException implements ExceptionInterface
+class FileNotFoundException extends RuntimeException implements ExceptionInterface, BadParameterExceptionInterface
 {
     protected $fileName;
 

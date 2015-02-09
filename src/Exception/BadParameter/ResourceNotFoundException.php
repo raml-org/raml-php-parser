@@ -1,8 +1,11 @@
 <?php
 
-namespace Raml\Exception;
+namespace Raml\Exception\BadParameter;
 
-class ResourceNotFoundException extends RamlParserException implements ExceptionInterface
+use Raml\Exception\RamlParserException;
+use Raml\Exception\BadParameterExceptionInterface;
+
+class ResourceNotFoundException extends RamlParserException implements BadParameterExceptionInterface
 {
     protected $uri;
 

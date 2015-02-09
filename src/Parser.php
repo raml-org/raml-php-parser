@@ -1,9 +1,10 @@
 <?php
 namespace Raml;
 
-use Raml\Exception\FileNotFoundException;
+use Raml\Exception\BadParameter\FileNotFoundException;
 use Raml\Exception\InvalidSchemaTypeException;
 use Raml\Exception\RamlParserException;
+
 use Raml\Schema\SchemaParserInterface;
 use Raml\Schema\Parser\JsonSchemaParser;
 
@@ -156,7 +157,8 @@ class Parser
      * @param string  $fileName
      * @param boolean $parseSchemas
      *
-     * @throws \Exception
+     * @throws FileNotFoundException
+     * @throws RamlParserException
      *
      * @return \Raml\ApiDefinition
      */

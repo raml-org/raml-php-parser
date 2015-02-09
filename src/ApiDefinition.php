@@ -8,7 +8,9 @@ use Raml\Schema\SchemaDefinitionInterface;
 use Raml\RouteFormatter\BasicRoute;
 
 use Raml\Exception\InvalidKeyException;
-use Raml\Exception\ResourceNotFoundException;
+use Raml\Exception\BadParameter\ResourceNotFoundException;
+use Raml\Exception\BadParameter\InvalidSchemaDefinitionException;
+use Raml\Exception\BadParameter\InvalidProtocolException;
 
 /**
  * The API Definition
@@ -431,7 +433,7 @@ class ApiDefinition implements ArrayInstantiationInterface
     public function addProtocol($protocol)
     {
         if (!in_array($protocol, [self::PROTOCOL_HTTP, self::PROTOCOL_HTTPS])) {
-            throw new RamlParserException('Not a valid protocol');
+            throw new InvalidProtocolException('Not a valid protocol');
         }
 
         if (in_array($protocol, $this->protocols)) {
@@ -496,12 +498,12 @@ class ApiDefinition implements ArrayInstantiationInterface
      * @param string                            $schemaName
      * @param string|SchemaDefinitionInterface  $schema
      *
-     * @throws \Exception
+     * @throws InvalidSchemaDefinitionException
      */
     private function addSchema($collectionName, $schemaName, $schema)
     {
         if (!is_string($schema) && !$schema instanceof SchemaDefinitionInterface) {
-            throw new \Exception('Not a valid schema, must be string or instance of SchemaDefinitionInterface');
+            throw new InvalidSchemaDefinitionException();
         }
 
         $this->schemaCollections[$collectionName][$schemaName] = $schema;

@@ -384,7 +384,7 @@ class ParseTest extends PHPUnit_Framework_TestCase
     /** @test */
     public function shouldThrowErrorIfPassedFileDoesNotExist()
     {
-        $this->setExpectedException('\Raml\Exception\FileNotFoundException');
+        $this->setExpectedException('\Raml\Exception\BadParameter\FileNotFoundException');
         $this->parser->parse(__DIR__.'/fixture/gone.raml');
     }
 

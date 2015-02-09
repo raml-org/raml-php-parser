@@ -4,6 +4,8 @@ namespace Raml;
 
 use Raml\Schema\SchemaDefinitionInterface;
 
+use Raml\Exception\BadParameter\InvalidSchemaDefinitionException;
+
 /**
  * A body
  *
@@ -47,7 +49,7 @@ class Body implements BodyInterface, ArrayInstantiationInterface
      *
      * @param string $mediaType
      *
-     * @throws \Exception
+     * @throws InvalidSchemaDefinitionException
      */
     public function __construct($mediaType)
     {
@@ -127,7 +129,7 @@ class Body implements BodyInterface, ArrayInstantiationInterface
     public function setSchema($schema)
     {
         if (!is_string($schema) && !$schema instanceof SchemaDefinitionInterface) {
-            throw new \Exception('Not a valid schema, must be string or instance of SchemaDefinitionInterface');
+            throw new InvalidSchemaDefinitionException('Not a valid schema, must be string or instance of SchemaDefinitionInterface');
         }
 
         $this->schema = $schema;
