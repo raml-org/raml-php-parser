@@ -69,7 +69,7 @@ class Response implements ArrayInstantiationInterface
     {
         $response = new static($statusCode);
 
-        if (isset($data['body'])) {
+        if (isset($data['body']) && is_array($data['body'])) {
             foreach ($data['body'] as $key => $bodyData) {
                 $response->addBody(Body::createFromArray($key, $bodyData ?: []));
             }

@@ -9,7 +9,7 @@ use \Raml\Exception\InvalidJsonException;
 /**
  * Fetches JSON schema as a string, included refs
  */
-class JsonFileLoader implements FileLoaderInterface
+class JsonSchemaFileLoader implements FileLoaderInterface
 {
     /**
      * Load a json from a path and resolve references
@@ -25,7 +25,13 @@ class JsonFileLoader implements FileLoaderInterface
         $retriever = new UriRetriever;
         $jsonSchemaParser = new RefResolver($retriever);
         try {
-            return json_encode($jsonSchemaParser->fetchRef('file://' . $filePath, null));
+            $json = $jsonSchemaParser->fetchRef('file://' . $filePath, null);
+        } catch (\Exception $e) {
+            $json = json_decode(file_get_contents($filePath));
+        }
+        
+        try {
+            return json_encode($json);
         } catch (\Exception $e) {
             throw new InvalidJsonException(json_last_error());
         }

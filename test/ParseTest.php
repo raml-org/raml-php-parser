@@ -58,7 +58,7 @@ class ParseTest extends PHPUnit_Framework_TestCase
     /** @test */
     public function shouldThrowExceptionIfUriNotFound()
     {
-        $this->setExpectedException('\Raml\Exception\ResourceNotFoundException');
+        $this->setExpectedException('Raml\Exception\BadParameter\ResourceNotFoundException');
         $simpleRaml = $this->parser->parse(__DIR__.'/fixture/simple.raml');
         $simpleRaml->getResourceByUri('/invalid');
     }
@@ -66,7 +66,7 @@ class ParseTest extends PHPUnit_Framework_TestCase
     /** @test */
     public function shouldNotMatchForwardSlashInURIParameter()
     {
-        $this->setExpectedException('\Raml\Exception\ResourceNotFoundException');
+        $this->setExpectedException('\Raml\Exception\BadParameter\ResourceNotFoundException');
         $simpleRaml = $this->parser->parse(__DIR__.'/fixture/simple.raml');
         $simpleRaml->getResourceByUri('/songs/1/e');
     }
@@ -74,7 +74,7 @@ class ParseTest extends PHPUnit_Framework_TestCase
     /** @test */
     public function shouldNotMatchForwardSlashAndDuplicationInURIParameter()
     {
-        $this->setExpectedException('\Raml\Exception\ResourceNotFoundException');
+        $this->setExpectedException('\Raml\Exception\BadParameter\ResourceNotFoundException');
         $simpleRaml = $this->parser->parse(__DIR__.'/fixture/simple.raml');
         $simpleRaml->getResourceByUri('/songs/1/1');
     }

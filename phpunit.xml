@@ -6,7 +6,6 @@
     convertWarningsToExceptions="true"
     stopOnFailure="false"
     bootstrap="vendor/autoload.php"
-    strict="true"
     verbose="true"
     syntaxCheck="true">
 

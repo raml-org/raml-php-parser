@@ -13,7 +13,7 @@ use Raml\SecurityScheme\SecuritySettingsParser\OAuth2SecuritySettingsParser;
 use Raml\SecurityScheme\SecuritySettingsParserInterface;
 
 use Raml\FileLoader\DefaultFileLoader;
-use Raml\FileLoader\JsonFileLoader;
+use Raml\FileLoader\JsonSchemaFileLoader;
 use Raml\FileLoader\FileLoaderInterface;
 
 use Symfony\Component\Yaml\Yaml;
@@ -104,7 +104,7 @@ class Parser
         // if null then use a default list
         if ($fileLoaders === null) {
             $fileLoaders = [
-                new JsonFileLoader(),
+                new JsonSchemaFileLoader(),
                 new DefaultFileLoader()
             ];
         }
@@ -184,9 +184,10 @@ class Parser
 
             if (isset($ramlData['schemas'])) {
                 $schemas = [];
-                foreach ($ramlData['schemas'] as $schema) {
-                    $schemaName = array_keys($schema)[0];
-                    $schemas[$schemaName] = $schema[$schemaName];
+                foreach ($ramlData['schemas'] as $schemaCollection) {
+                    foreach($schemaCollection as $schemaName => $schema) {
+                        $schemas[$schemaName] = $schema;
+                    }
                 }
             }
             foreach ($ramlData as $key => $value) {
