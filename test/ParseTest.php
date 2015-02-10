@@ -486,4 +486,11 @@ class ParseTest extends PHPUnit_Framework_TestCase
         $schema = $def->getResourceByUri('/projects')->getMethod('post')->getSchemaByType('application/json');
         $this->assertInstanceOf('Raml\Schema\Definition\JsonSchemaDefinition', $schema);
     }
+
+    /** @test */
+    public function shouldParseInfoQExample()
+    {
+        $infoQ = $this->parser->parse(__DIR__ . '/fixture/infoq/eventlog.raml');
+        $this->assertEquals('Eventlog API', $infoQ->getTitle());
+    }
 }

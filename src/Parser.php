@@ -294,7 +294,7 @@ class Parser
             } else {
                 $newValue = $this->replaceTraits($value, $traits, $path, $name);
 
-                if (isset($newArray[$key])) {
+                if (isset($newArray[$key]) && is_array($newArray[$key])) {
                     $newArray[$key] = array_replace_recursive($newArray[$key], $newValue);
                 } else {
                     $newArray[$key] = $newValue;
