@@ -448,12 +448,12 @@ class Parser
     private function includeAndParseFiles($structure, $rootDir, $parseSchemas)
     {
         if (is_array($structure)) {
-            return array_map(
-                function ($structure) use ($rootDir, $parseSchemas) {
-                    return $this->includeAndParseFiles($structure, $rootDir, $parseSchemas);
-                },
-                $structure
-            );
+            $result = array();
+            foreach ($structure as $key => $structureElement) {
+                $result[$key] = $this->includeAndParseFiles($structureElement, $rootDir, $parseSchemas);
+            }
+
+            return $result;
         } elseif (strpos($structure, '!include') === 0) {
             return $this->loadAndParseFile(str_replace('!include ', '', $structure), $rootDir, $parseSchemas);
         } else {
@@ -547,7 +547,7 @@ class Parser
             } else {
                 $newValue = $this->replaceTypes($value, $types, $path, $name, $key);
 
-                if (isset($newArray[$key])) {
+                if (isset($newArray[$key]) && is_array($newArray[$key])) {
                     $newArray[$key] = array_replace_recursive($newArray[$key], $newValue);
                 } else {
                     $newArray[$key] = $newValue;

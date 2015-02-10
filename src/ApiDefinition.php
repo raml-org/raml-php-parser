@@ -19,8 +19,8 @@ use Raml\Exception\BadParameter\InvalidProtocolException;
  */
 class ApiDefinition implements ArrayInstantiationInterface
 {
-    const PROTOCOL_HTTP = 'http';
-    const PROTOCOL_HTTPS = 'https';
+    const PROTOCOL_HTTP = 'HTTP';
+    const PROTOCOL_HTTPS = 'HTTPS';
 
     // ---
 
@@ -285,7 +285,7 @@ class ApiDefinition implements ArrayInstantiationInterface
             $formatter = new NoRouteFormatter();
         }
 
-        $formatter->format($this->geMethodsAsArray($this->resources));
+        $formatter->format($this->getMethodsAsArray($this->resources));
 
         return $formatter;
     }
@@ -365,7 +365,7 @@ class ApiDefinition implements ArrayInstantiationInterface
         $this->baseUrl = $baseUrl;
 
         if (!$this->protocols) {
-            $this->protocols = [parse_url($this->baseUrl, PHP_URL_SCHEME)];
+            $this->protocols = [strtoupper(parse_url($this->baseUrl, PHP_URL_SCHEME))];
         }
     }
 
@@ -428,15 +428,15 @@ class ApiDefinition implements ArrayInstantiationInterface
      *
      * @param string $protocol
      *
-     * @throws RamlParserException
+     * @throws \InvalidArgumentException
      */
     public function addProtocol($protocol)
     {
         if (!in_array($protocol, [self::PROTOCOL_HTTP, self::PROTOCOL_HTTPS])) {
-            throw new InvalidProtocolException('Not a valid protocol');
+            throw new InvalidProtocolException(sprintf('"%s" is not a valid protocol', $protocol));
         }
 
-        if (in_array($protocol, $this->protocols)) {
+        if (!in_array($protocol, $this->protocols)) {
             $this->protocols[] = $protocol;
         }
     }
@@ -590,7 +590,7 @@ class ApiDefinition implements ArrayInstantiationInterface
      *
      * @return array
      */
-    private function geMethodsAsArray(array $resources)
+    private function getMethodsAsArray(array $resources)
     {
         $all = [];
 
@@ -607,7 +607,7 @@ class ApiDefinition implements ArrayInstantiationInterface
             }
 
 
-            $all = array_merge_recursive($all, $this->geMethodsAsArray($resource->getResources()));
+            $all = array_merge_recursive($all, $this->getMethodsAsArray($resource->getResources()));
         }
 
         return $all;

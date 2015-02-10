@@ -270,12 +270,12 @@ class Method implements ArrayInstantiationInterface
      *
      * @param string $protocol
      *
-     * @throws \Exception
+     * @throws \InvalidArgumentException
      */
     public function addProtocol($protocol)
     {
         if (!in_array($protocol, [ApiDefinition::PROTOCOL_HTTP, ApiDefinition::PROTOCOL_HTTPS])) {
-            throw new \Exception('Not a valid protocol');
+            throw new \InvalidArgumentException(sprintf('"%s" is not a valid protocol', $protocol));
         }
 
         if (in_array($protocol, $this->protocols)) {

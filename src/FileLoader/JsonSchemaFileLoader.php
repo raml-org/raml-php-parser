@@ -29,7 +29,7 @@ class JsonSchemaFileLoader implements FileLoaderInterface
         } catch (\Exception $e) {
             $json = json_decode(file_get_contents($filePath));
         }
-        
+
         try {
             return json_encode($json);
         } catch (\Exception $e) {
