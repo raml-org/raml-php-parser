@@ -115,6 +115,17 @@ class Method
     }
 
     /**
+     * Get example by type (application/json, text/plain, ...)
+     *
+     * @param string $type
+     * @return array
+     */
+    public function getExampleByType($type)
+    {
+        return isset($this->body[$type]['example']) ? $this->body[$type]['example'] : null;
+    }
+
+    /**
      * Get a response by the response code (200, 404,....)
      *
      * @param integer $responseCode
