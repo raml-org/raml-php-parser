@@ -62,6 +62,16 @@ class Response
     }
 
     /**
+     * Returns all supported types in response
+     *
+     * @return array
+     */
+    public function getTypes()
+    {
+        return array_keys($this->body);
+    }
+
+    /**
      * Returns the status code
      */
     public function getStatusCode()
