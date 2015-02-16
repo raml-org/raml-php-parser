@@ -16,6 +16,52 @@ class ParseTest extends PHPUnit_Framework_TestCase
     // ---
 
     /** @test */
+    public function shouldCorrectlyLoadASimpleRamlString()
+    {
+        $raml = <<<RAML
+#%RAML 0.8
+title: ZEncoder API
+documentation:
+ - title: Home
+   content: |
+     Welcome to the _Zencoder API_ Documentation. The _Zencoder API_
+     allows you to connect your application to our encoding service
+     and encode videos without going through the web  interface. You
+     may also benefit from one of our
+     [integration libraries](https://app.zencoder.com/docs/faq/basics/libraries)
+     for different languages.
+version: v2
+baseUri: https://app.zencoder.com/api/{version}
+RAML;
+
+        $simpleRaml = $this->parser->parseFromString($raml, '');
+        $docList = $simpleRaml->getDocumentationList();
+
+        $this->assertEquals('ZEncoder API', $simpleRaml->getTitle());
+        $this->assertEquals('Home', $docList[0]['title']);
+        $this->assertEquals('v2', $simpleRaml->getVersion());
+    }
+
+    /** @test */
+    public function shouldCorrectlyLoadASimpleRamlStringWithInclude()
+    {
+        $raml = <<<RAML
+#%RAML 0.8
+title: ZEncoder API
+documentation: !include child.raml
+version: v2
+baseUri: https://app.zencoder.com/api/{version}
+RAML;
+
+        $simpleRaml = $this->parser->parseFromString($raml, __DIR__ . '/fixture');
+        $docList = $simpleRaml->getDocumentationList();
+
+        $this->assertEquals('ZEncoder API', $simpleRaml->getTitle());
+        $this->assertEquals('Home', $docList['title']);
+        $this->assertEquals('v2', $simpleRaml->getVersion());
+    }
+
+    /** @test */
     public function shouldCorrectlyLoadASimpleRamlFile()
     {
         $simpleRaml = $this->parser->parse(__DIR__.'/fixture/simple.raml');
