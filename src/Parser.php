@@ -152,7 +152,7 @@ class Parser
     }
 
     /**
-     * Parse a RAML file
+     * Parse a RAML spec from a file
      *
      * @param string  $fileName
      * @param boolean $parseSchemas
@@ -168,9 +168,45 @@ class Parser
             throw new FileNotFoundException($fileName);
         }
 
-        $ramlData = $this->parseRamlFile($fileName, $parseSchemas);
+        $rootDir = dirname($fileName);
+        $ramlString = file_get_contents($fileName);
 
+        $ramlData = $this->parseRamlString($ramlString, $rootDir, $parseSchemas);
 
+        return $this->parseRamlData($ramlData, $rootDir, $parseSchemas);
+    }
+
+    /**
+     * Parse a RAML spec from a string
+     *
+     * @param string  $ramlString
+     * @param string  $rootDir
+     * @param boolean $parseSchemas
+     *
+     * @throws RamlParserException
+     *
+     * @return \Raml\ApiDefinition
+     */
+    public function parseFromString($ramlString, $rootDir, $parseSchemas = true)
+    {
+        $ramlData = $this->parseRamlString($ramlString, $rootDir, $parseSchemas);
+
+        return $this->parseRamlData($ramlData, $rootDir, $parseSchemas);
+    }
+
+    /**
+     * Parse RAML data
+     *
+     * @param string  $ramlData
+     * @param string  $rootDir
+     * @param boolean $parseSchemas
+     *
+     * @throws RamlParserException
+     *
+     * @return \Raml\ApiDefinition
+     */
+    private function parseRamlData($ramlData, $rootDir, $parseSchemas = true)
+    {
         if (!isset($ramlData['title'])) {
             throw new RamlParserException();
         }
@@ -180,8 +216,6 @@ class Parser
         $ramlData = $this->parseResourceTypes($ramlData);
 
         if ($parseSchemas) {
-            $rootDir = dirname($fileName);
-
             if (isset($ramlData['schemas'])) {
                 $schemas = [];
                 foreach ($ramlData['schemas'] as $schemaCollection) {
@@ -343,20 +377,18 @@ class Parser
     }
 
     /**
-     * Parse a RAML or YAML file
+     * Parse a RAML or YAML content
      *
-     * @param string  $filePath
+     * @param string $ramlString
+     * @param string  $rootDir
      * @param boolean $parseSchemas
      *
      * @throws \Exception
      *
      * @return array
      */
-    private function parseRamlFile($filePath, $parseSchemas)
+    private function parseRamlString($ramlString, $rootDir, $parseSchemas)
     {
-        $rootDir = dirname($filePath);
-        $ramlString = file_get_contents($filePath);
-
         // get the header
         $header = strtok($ramlString, "\n");
 
@@ -387,7 +419,7 @@ class Parser
      * @param string $fileData
      * @return array
      */
-    private function parseYaml($fileData)
+    protected function parseYaml($fileData)
     {
         return Yaml::parse($fileData, true, true);
     }
@@ -419,7 +451,11 @@ class Parser
 
         if (in_array($fileExtension, ['yaml', 'yml', 'raml'])) {
             // RAML and YAML files are always parsed
-            $fileData = $this->parseRamlFile($fullPath, $parseSchemas);
+            $fileData = $this->parseRamlString(
+                $fullPath,
+                $rootDir,
+                $parseSchemas
+            );
             $fileData = $this->includeAndParseFiles($fileData, $rootDir, $parseSchemas);
         } else {
             if (in_array($fileExtension, array_keys($this->fileLoaders))) {
