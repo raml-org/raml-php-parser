@@ -266,6 +266,17 @@ class Method implements ArrayInstantiationInterface
     }
 
     /**
+     * Get example by type (application/json, text/plain, ...)
+     *
+     * @param string $type
+     * @return array
+     */
+    public function getExampleByType($type)
+    {
+        return isset($this->body[$type]['example']) ? $this->body[$type]['example'] : null;
+    }
+
+    /**
      * Add a supported protocol
      *
      * @param string $protocol

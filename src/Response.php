@@ -123,6 +123,16 @@ class Response implements ArrayInstantiationInterface
     }
 
     /**
+     * Returns all supported types in response
+     *
+     * @return array
+     */
+    public function getTypes()
+    {
+        return array_keys($this->body);
+    }
+
+    /**
      * Add a new body
      *
      * @param Body $body
