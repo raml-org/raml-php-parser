@@ -612,4 +612,11 @@ RAML;
         $infoQ = $this->parser->parse(__DIR__ . '/fixture/infoq/eventlog.raml');
         $this->assertEquals('Eventlog API', $infoQ->getTitle());
     }
+
+    /** @test */
+    public function shouldLoadATree()
+    {
+        $infoQ = $this->parser->parse(__DIR__ . '/fixture/includeTreeRaml.raml');
+        $this->assertEquals('Eventlog API', $infoQ->getTitle());
+    }
 }
