@@ -616,7 +616,8 @@ RAML;
     /** @test */
     public function shouldLoadATree()
     {
-        $infoQ = $this->parser->parse(__DIR__ . '/fixture/includeTreeRaml.raml');
-        $this->assertEquals('Eventlog API', $infoQ->getTitle());
+        $tree = $this->parser->parse(__DIR__ . '/fixture/includeTreeRaml.raml');
+        $response = $tree->getResourceByUri('/songs')->getMethod('get')->getResponse(200);
+        $this->assertEquals('Test', $tree->getTitle());
     }
 }

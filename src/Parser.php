@@ -60,9 +60,9 @@ class Parser
      * - Optionally pass a list of parsers to use
      * - If null is passed then the default schemaParsers are used
      *
-     * @param array $schemaParsers
-     * @param array $securitySettingsParsers
-     * @param array $fileLoaders
+     * @param SchemaParserInterface[]           $schemaParsers
+     * @param SecuritySettingsParserInterface[] $securitySettingsParsers
+     * @param FileLoaderInterface[]             $fileLoaders
      */
     public function __construct(
         array $schemaParsers = null,
@@ -437,12 +437,14 @@ class Parser
      */
     private function loadAndParseFile($fileName, $rootDir, $parseSchemas)
     {
+        $fullPath = $rootDir . '/' . $fileName;
+        $cacheKey = md5($fullPath);
+
         // cache based on file name, prevents including/parsing the same file multiple times
-        if (isset($this->cachedFiles[$fileName])) {
-            return $this->cachedFiles[$fileName];
+        if (isset($this->cachedFiles[$cacheKey])) {
+            return $this->cachedFiles[$cacheKey];
         }
 
-        $fullPath = $rootDir . '/' . $fileName;
         if (is_readable($fullPath) === false) {
             return false;
         }
@@ -450,6 +452,8 @@ class Parser
         $fileExtension = (pathinfo($fileName, PATHINFO_EXTENSION));
 
         if (in_array($fileExtension, ['yaml', 'yml', 'raml'])) {
+            $rootDir = dirname($rootDir.'/'.$fileName);
+
             // RAML and YAML files are always parsed
             $fileData = $this->parseRamlString(
                 $fullPath,
@@ -468,7 +472,7 @@ class Parser
         }
 
         // cache before returning
-        $this->cachedFiles[$fileName] = $fileData;
+        $this->cachedFiles[$cacheKey] = $fileData;
         return $fileData;
     }
 
