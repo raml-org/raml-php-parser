@@ -617,7 +617,26 @@ RAML;
     public function shouldLoadATree()
     {
         $tree = $this->parser->parse(__DIR__ . '/fixture/includeTreeRaml.raml');
-        $response = $tree->getResourceByUri('/songs')->getMethod('get')->getResponse(200);
         $this->assertEquals('Test', $tree->getTitle());
+
+        $resource = $tree->getResourceByUri('/songs');
+        $methods = $resource->getMethods();
+
+        $this->assertCount(1, $methods);
+        $this->assertArrayHasKey('GET', $methods);
+
+        $responses = $methods['GET']->getResponses();
+
+        $this->assertCount(1, $responses);
+        $this->assertArrayHasKey(200, $responses);
+
+        $types = $responses[200]->getTypes();
+
+        $this->assertCount(1, $types);
+        $this->assertContains('application/json', $types);
+
+        $jsonBody = $responses[200]->getBodyByType('application/json');
+
+        $this->assertEquals('application/json', $jsonBody->getMediaType());
     }
 }

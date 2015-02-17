@@ -129,7 +129,7 @@ class Response implements ArrayInstantiationInterface
      */
     public function getTypes()
     {
-        return array_keys($this->body);
+        return array_keys($this->bodyList);
     }
 
     /**
