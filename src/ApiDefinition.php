@@ -234,6 +234,15 @@ class ApiDefinition
         return $this->schemas;
     }
 
+    /**
+     * @return array
+     */
+    public function getProtocols()
+    {
+        return $this->protocols;
+    }
+
+
     // ---
 
     /**
@@ -311,8 +320,8 @@ class ApiDefinition
     /**
      * Recursive function that generates a flat array of the entire API Definition
      *
-     * GET /songs => [/songs, GET, Raml\Method]
-     * GET /songs/{songId} => [/songs/{songId}, GET, Raml\Method]
+     * GET /songs => [api.example.org, /songs, GET, [https], Raml\Method]
+     * GET /songs/{songId} => [api.example.org, /songs/{songId}, GET, [https], Raml\Method]
      *
      * @param array $resources
      * @param string $path
@@ -322,6 +331,8 @@ class ApiDefinition
     private function getResourcesAsArray(array $resources)
     {
         $all = [];
+        $baseUri = $this->getBaseUri();
+        $protocols = $this->protocols;
 
         // Loop over each resource to build out the full URI's that it has.
         foreach ($resources as $resource) {
@@ -329,7 +340,9 @@ class ApiDefinition
 
             foreach ($resource->getMethods() as $method) {
                 $all[$method->getType() . ' ' . $path] = [
+                    'baseUri' => $baseUri,
                     'path' => $path,
+                    'protocols' => $protocols,
                     'method' => $method->getType(),
                     'response' => $resource->getMethod($method->getType())
                 ];
