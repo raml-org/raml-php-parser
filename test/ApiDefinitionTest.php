@@ -59,6 +59,6 @@ class ApiDefinitionTest extends PHPUnit_Framework_TestCase
         $this->assertCount(4, $routeFormatter->getRoutes());
         $this->assertInstanceOf('\Symfony\Component\Routing\RouteCollection', $routeFormatter->getRoutes());
         $this->assertInstanceOf('\Symfony\Component\Routing\Route', $routeFormatter->getRoutes()->get('GET /songs/'));
-        $this->assertEquals('http://example.api.com/v1', $routeFormatter->getRoutes()->get('GET /songs/')->getHost());
+        $this->assertEquals(['http'], $routeFormatter->getRoutes()->get('GET /songs/')->getSchemes());
     }
 }
