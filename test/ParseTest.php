@@ -147,6 +147,8 @@ class ParseTest extends PHPUnit_Framework_TestCase
         $method = $resource->getMethod('get');
         $response = $method->getResponse(200);
 
+        $this->assertEquals(['application/json', 'application/xml'], $response->getTypes());
+
         $schema = $response->getExampleByType('application/json');
 
         $this->assertEquals([
