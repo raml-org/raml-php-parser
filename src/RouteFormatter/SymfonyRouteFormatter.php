@@ -49,10 +49,23 @@ class SymfonyRouteFormatter implements RouteFormatterInterface
     public function format(array $resources)
     {
         foreach ($resources as $path => $resource) {
-            $path = ($this->addTrailingSlash) ? $resource->getUri() . '/' : $resource->getUri();
+            // This is the path from the RAML, with or without a /.
+            $path = $resource->getUri() . ($this->addTrailingSlash ? '/' : '');
 
-            $route = new Route($path);
-            $route->setMethods($resource->getType());
+            // This is the baseUri + path, the complete URL.
+            $url = $resource->getBaseUrl() . $path;
+
+            // Now remove the host away, so we have the FULL path to the resource.
+            // baseUri may also contain path that has been omitted for brevity in the
+            // RAML creation.
+            $host = parse_url($url, PHP_URL_HOST);
+            $fullPath = substr($url, strpos($url, $host) + strlen($host));
+
+            // Now build our Route class.
+
+            $route = new Route($fullPath);
+            $route->setMethods($resource->getMethod()->getType());
+            $route->setSchemes($resource->getProtocols());
 
             $this->routes->add($resource->getType() . ' ' . $path, $route);
         }

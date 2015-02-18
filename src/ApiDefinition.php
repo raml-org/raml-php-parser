@@ -441,7 +441,7 @@ class ApiDefinition implements ArrayInstantiationInterface
         }
     }
 
-    // --
+    // ---
 
     /**
      * Get the default media type
@@ -583,8 +583,8 @@ class ApiDefinition implements ArrayInstantiationInterface
     /**
      * Recursive function that generates a flat array of the entire API Definition
      *
-     * GET /songs => [/songs, GET, Raml\Method]
-     * GET /songs/{songId} => [/songs/{songId}, GET, Raml\Method]
+     * GET /songs => [api.example.org, /songs, GET, [https], Raml\Method]
+     * GET /songs/{songId} => [api.example.org, /songs/{songId}, GET, [https], Raml\Method]
      *
      * @param \Raml\Resource[] $resources
      *
@@ -593,6 +593,8 @@ class ApiDefinition implements ArrayInstantiationInterface
     private function getMethodsAsArray(array $resources)
     {
         $all = [];
+        $baseUrl = $this->getBaseUrl();
+        $protocols = $this->protocols;
 
         // Loop over each resource to build out the full URI's that it has.
         foreach ($resources as $resource) {
@@ -600,7 +602,9 @@ class ApiDefinition implements ArrayInstantiationInterface
 
             foreach ($resource->getMethods() as $method) {
                 $all[$method->getType() . ' ' . $path] = new BasicRoute(
+                    $baseUrl,
                     $path,
+                    $protocols,
                     $method->getType(),
                     $resource->getMethod($method->getType())
                 );

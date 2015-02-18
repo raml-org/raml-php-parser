@@ -6,12 +6,16 @@ use \Raml\Method;
 
 class BasicRoute
 {
+    private $baseUrl;
+
     /**
      * The full uri of the route
      *
      * @var string
      */
     private $uri;
+
+    private $protocols;
 
     /**
      * The verb of the Route
@@ -37,14 +41,21 @@ class BasicRoute
      * @param string $type
      * @param Method $method
      */
-    public function __construct($uri, $type, Method $method)
+    public function __construct($baseUrl, $uri, $protocols, $type, Method $method)
     {
+        $this->baseUrl = $baseUrl;
         $this->uri = $uri;
+        $this->protocols = $protocols;
         $this->method = $method;
         $this->type = $type;
     }
 
     // --
+
+    public function getBaseUrl()
+    {
+        return $this->baseUrl;
+    }
 
     /**
      * Get the URI of the route
@@ -54,6 +65,11 @@ class BasicRoute
     public function getUri()
     {
         return $this->uri;
+    }
+
+    public function getProtocols()
+    {
+        return $this->protocols;
     }
 
     /**

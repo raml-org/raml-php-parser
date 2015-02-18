@@ -194,6 +194,8 @@ RAML;
         $method = $resource->getMethod('get');
         $response = $method->getResponse(200);
 
+        $this->assertEquals(['application/json', 'application/xml'], $response->getTypes());
+
         $schema = $response->getBodyByType('application/json')->getExample();
 
         $this->assertEquals([
