@@ -321,6 +321,7 @@ class ApiDefinition
      */
     private function getResourcesAsArray(array $resources)
     {
+        $host = $this->getBaseUri();
         $all = [];
 
         // Loop over each resource to build out the full URI's that it has.
@@ -329,6 +330,7 @@ class ApiDefinition
 
             foreach ($resource->getMethods() as $method) {
                 $all[$method->getType() . ' ' . $path] = [
+                    'host' => $host,
                     'path' => $path,
                     'method' => $method->getType(),
                     'response' => $resource->getMethod($method->getType())

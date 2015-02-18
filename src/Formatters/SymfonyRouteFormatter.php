@@ -55,6 +55,7 @@ class SymfonyRouteFormatter implements RouteFormatterInterface
 
             $route = new Route($path);
             $route->setMethods($resource['method']);
+            $route->setHost($resource['host']);
 
             $this->routes->add($resource['method'] . ' ' . $path, $route);
         }
