@@ -456,7 +456,7 @@ class NamedParameter implements ArrayInstantiationInterface
      */
     public function setMinLength($minLength)
     {
-        if (!$this->type !== self::TYPE_STRING) {
+        if ($this->type !== self::TYPE_STRING) {
             throw new \Exception('minLength can only be set on type "string"');
         }
 
