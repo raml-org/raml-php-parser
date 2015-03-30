@@ -124,6 +124,15 @@ class ApiDefinition implements ArrayInstantiationInterface
      */
     private $securitySchemes = [];
 
+    /**
+     * A list of security schemes that the whole API is secured by
+     *
+     * @link http://raml.org/spec.html#usage-applying-a-security-scheme-to-an-api
+     *
+     * @var SecurityScheme[]
+     */
+    private $securedBy = [];
+
     // ---
 
     /**
@@ -208,6 +217,12 @@ class ApiDefinition implements ArrayInstantiationInterface
             foreach ($data['securitySchemes'] as $name => $securityScheme) {
                 $apiDefinition->addSecurityScheme(SecurityScheme::createFromArray($name, $securityScheme));
             }
+        }
+        
+        if (isset($data['securedBy'])) {
+        	foreach ($data['securedBy'] as $securedBy) {
+        		$apiDefinition->addSecuredBy($apiDefinition->getSecurityScheme($securedBy));
+        	}
         }
 
         if (isset($data['documentation'])) {
@@ -576,6 +591,26 @@ class ApiDefinition implements ArrayInstantiationInterface
     public function addSecurityScheme(SecurityScheme $securityScheme)
     {
         $this->securitySchemes[$securityScheme->getKey()] = $securityScheme;
+    }
+
+    /**
+     * Get a list of security schemes that the whole API is secured by
+     *
+     * @return SecurityScheme
+     */
+    public function getSecuredBy()
+    {
+        return $this->securedBy;
+    }
+
+    /**
+     * Add an additional security scheme to the list of schemes the whole API is secured by
+     *
+     * @param SecurityScheme $securityScheme
+     */
+    public function addSecuredBy(SecurityScheme $securityScheme)
+    {
+        $this->securedBy[$securityScheme->getKey()] = $securityScheme;
     }
 
     // ---

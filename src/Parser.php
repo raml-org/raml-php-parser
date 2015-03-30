@@ -437,7 +437,14 @@ class Parser
      */
     private function loadAndParseFile($fileName, $rootDir, $parseSchemas)
     {
-        $fullPath = $rootDir . '/' . $fileName;
+    	$rootDir = realpath($rootDir);
+        $fullPath = realpath($rootDir . '/' . $fileName);
+        
+        // Prevent LFI directory traversal attacks
+        if (substr($fullPath, 0, strlen($rootDir)) !== $rootDir) {
+        	return false;
+        }
+        
         $cacheKey = md5($fullPath);
 
         // cache based on file name, prevents including/parsing the same file multiple times

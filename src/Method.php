@@ -172,7 +172,11 @@ class Method implements ArrayInstantiationInterface
 
         if (isset($data['securedBy'])) {
             foreach ($data['securedBy'] as $key => $securedBy) {
-                $method->addSecurityScheme($apiDefinition->getSecurityScheme($securedBy));
+            	if (empty($securedBy)) {
+            		$method->addSecurityScheme(SecurityScheme::createFromArray('null', array(), $apiDefinition));
+            	} else {
+            		$method->addSecurityScheme($apiDefinition->getSecurityScheme($securedBy));
+            	}
             }
         }
 
@@ -335,6 +339,16 @@ class Method implements ArrayInstantiationInterface
 
         return $this->bodyList[$type];
     }
+    
+    /**
+     * Get an array of all bodies
+     *
+     * @return array The array of bodies
+     */
+    public function getBodies()
+    {
+    	return $this->bodyList;
+    }
 
     /**
      * Add a body
@@ -411,6 +425,22 @@ class Method implements ArrayInstantiationInterface
 
             foreach ($describedBy->getQueryParameters() as $queryParameter) {
                 $this->addQueryParameter($queryParameter);
+            }
+
+            foreach ($this->getBodies() as $bodyType => $body) {
+            	
+            	try {
+            		
+            		$params = $describedBy->getBodyByType($bodyType)->getParameters();
+            		
+            		foreach ($params as $parameterName => $namedParameter) {
+            			$body->addParameter($namedParameter);
+            		}
+            		
+            		$this->addBody($body);
+            		
+            	} catch (InvalidKeyException $e) {}
+                
             }
 
         }
