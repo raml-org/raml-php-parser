@@ -222,9 +222,9 @@ class ApiDefinition implements ArrayInstantiationInterface
         if (isset($data['securedBy'])) {
         	foreach ($data['securedBy'] as $securedBy) {
         		if (empty($securedBy)) {
-        			$apiDefinition->addSecurityScheme(SecurityScheme::createFromArray('null', array(), $apiDefinition));
+        			$apiDefinition->addSecuredBy(SecurityScheme::createFromArray('null', array(), $apiDefinition));
         		} else {
-        			$apiDefinition->addSecurityScheme($apiDefinition->getSecurityScheme($securedBy));
+        			$apiDefinition->addSecuredBy($apiDefinition->getSecurityScheme($securedBy));
         		}
         	}
         }
