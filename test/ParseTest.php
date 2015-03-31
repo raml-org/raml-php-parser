@@ -82,7 +82,38 @@ RAML;
     public function shouldThrowCorrectExceptionOnBadRamlFile()
     {
         $this->setExpectedException('\Raml\Exception\InvalidJsonException');
-        $simpleRaml = $this->parser->parse(__DIR__.'/fixture/invalid/bad.raml');
+        $this->parser->parse(__DIR__.'/fixture/invalid/bad.raml');
+    }
+
+    /** @test */
+    public function shouldThrowExceptionOnPathManipulationIfNotAllowed()
+    {
+        $this->parser->preventDirectoryTraversal();
+        $this->setExpectedException('\Raml\Exception\InvalidJsonException');
+        $this->parser->parse(__DIR__.'/fixture/treeTraversal/bad.raml');
+    }
+
+    /** @test */
+    public function shouldAllowDirectoryTraversalByDefault()
+    {
+        // @todo - switch this test in v2.0
+        $this->parser->parse(__DIR__.'/fixture/treeTraversal/bad.raml');
+    }
+
+
+    /** @test */
+    public function shouldNotThrowExceptionOnPathManipulationIfAllowed()
+    {
+        $this->parser->allowDirectoryTraversal();
+        $simpleRaml = $this->parser->parse(__DIR__.'/fixture/treeTraversal/bad.raml');
+
+        $resource = $simpleRaml->getResourceByUri('/songs');
+        $method = $resource->getMethod('get');
+        $response = $method->getResponse(200);
+        $body = $response->getBodyByType('application/json');
+
+        $schema = $body->getSchema();
+        $this->assertInstanceOf('\Raml\Schema\Definition\JsonSchemaDefinition', $schema);
     }
 
     /** @test */
@@ -569,6 +600,27 @@ RAML;
         $this->assertEquals(2, count($securitySchemes));
         $this->assertInstanceOf('\Raml\SecurityScheme', $securitySchemes['oauth_1_0']);
         $this->assertInstanceOf('\Raml\SecurityScheme', $securitySchemes['oauth_2_0']);
+
+        $this->assertEquals(
+            'OAuth 1.0 continues to be supported for all API requests, but OAuth 2.0 is now preferred.',
+            trim($securitySchemes['oauth_1_0']->getDescription())
+        );
+
+        $this->assertEquals(
+            'OAuth 1.0',
+            $securitySchemes['oauth_1_0']->getType()
+        );
+
+        $settings = new \Raml\SecurityScheme\SecuritySettings\OAuth1SecuritySettings();
+        $settings->setRequestTokenUri('https://api.dropbox.com/1/oauth/request_token');
+        $settings->setAuthorizationUri('https://www.dropbox.com/1/oauth/authorize');
+        $settings->setTokenCredentialsUri('https://api.dropbox.com/1/oauth/access_token');
+
+        $this->assertEquals(
+            $settings,
+            $securitySchemes['oauth_1_0']->getSettings()
+        );
+
     }
 
     /** @test */

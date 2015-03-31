@@ -172,7 +172,11 @@ class Method implements ArrayInstantiationInterface
 
         if (isset($data['securedBy'])) {
             foreach ($data['securedBy'] as $key => $securedBy) {
-                $method->addSecurityScheme($apiDefinition->getSecurityScheme($securedBy));
+                if ($securedBy) {
+                    $method->addSecurityScheme($apiDefinition->getSecurityScheme($securedBy));
+                } else {
+                    $method->addSecurityScheme(SecurityScheme::createFromArray('null', array(), $apiDefinition));
+                }
             }
         }
 
@@ -330,10 +334,20 @@ class Method implements ArrayInstantiationInterface
     public function getBodyByType($type)
     {
         if (!isset($this->bodyList[$type])) {
-            throw new \Exception('No body of type "'.$type.'"');
+            throw new \Exception('No body of type "' . $type . '"');
         }
 
         return $this->bodyList[$type];
+    }
+
+    /**
+     * Get an array of all bodies
+     *
+     * @return array The array of bodies
+     */
+    public function getBodies()
+    {
+        return $this->bodyList;
     }
 
     /**
@@ -411,6 +425,18 @@ class Method implements ArrayInstantiationInterface
 
             foreach ($describedBy->getQueryParameters() as $queryParameter) {
                 $this->addQueryParameter($queryParameter);
+            }
+
+            foreach ($this->getBodies() as $bodyType => $body) {
+                if (in_array($bodyType, array_keys($describedBy->getBodies()))) {
+                    $params = $describedBy->getBodyByType($bodyType)->getParameters();
+
+                    foreach ($params as $parameterName => $namedParameter) {
+                        $body->addParameter($namedParameter);
+                    }
+                }
+
+                $this->addBody($body);
             }
 
         }

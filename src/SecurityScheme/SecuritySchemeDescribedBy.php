@@ -48,6 +48,13 @@ class SecuritySchemeDescribedBy implements ArrayInstantiationInterface
      */
     private $responses = [];
 
+    /**
+     * A list of the bodies of this method
+     *
+     * @var BodyInterface[]
+     */
+    private $bodyList = [];
+
 
     // ---
 
@@ -64,8 +71,8 @@ class SecuritySchemeDescribedBy implements ArrayInstantiationInterface
     /**
      * Create a new SecuritySchemeDescribedBy from an array of data
      *
-     * @param string $key
-     * @param array $data
+     * @param string    $key
+     * @param array     $data
      * [
      *  headers:            ?array
      *  queryParameters:    ?array
@@ -77,6 +84,18 @@ class SecuritySchemeDescribedBy implements ArrayInstantiationInterface
     public static function createFromArray($key, array $data = [])
     {
         $describedBy = new static($key);
+
+        if (isset($data['body'])) {
+            foreach ($data['body'] as $key => $bodyData) {
+                if (in_array($key, \Raml\WebFormBody::$validMediaTypes)) {
+                    $body = \Raml\WebFormBody::createFromArray($key, $bodyData);
+                } else {
+                    $body = \Raml\Body::createFromArray($key, $bodyData);
+                }
+
+                $describedBy->addBody($body);
+            }
+        }
 
         if (isset($data['headers'])) {
             foreach ($data['headers'] as $key => $header) {
@@ -104,6 +123,44 @@ class SecuritySchemeDescribedBy implements ArrayInstantiationInterface
     }
 
     // --
+
+    /**
+     * Get the body by type
+     *
+     * @param string $type
+     *
+     * @throws \Exception
+     *
+     * @return BodyInterface
+     */
+    public function getBodyByType($type)
+    {
+        if (!isset($this->bodyList[$type])) {
+            throw new \Exception('No body of type "' . $type . '"');
+        }
+
+        return $this->bodyList[$type];
+    }
+
+    /**
+     * Get an array of all bodies
+     *
+     * @return array The array of bodies
+     */
+    public function getBodies()
+    {
+        return $this->bodyList;
+    }
+
+    /**
+     * Add a body
+     *
+     * @param BodyInterface $body
+     */
+    public function addBody(\Raml\BodyInterface $body)
+    {
+        $this->bodyList[$body->getMediaType()] = $body;
+    }
 
 
     /**

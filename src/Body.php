@@ -64,7 +64,7 @@ class Body implements BodyInterface, ArrayInstantiationInterface
      * Create a new body from an array
      *
      * @param string $mediaType
-     * @param array  $data
+     * @param array $data
      * [
      *  schema:     ?string
      *  example:    ?string
@@ -129,7 +129,9 @@ class Body implements BodyInterface, ArrayInstantiationInterface
     public function setSchema($schema)
     {
         if (!is_string($schema) && !$schema instanceof SchemaDefinitionInterface) {
-            throw new InvalidSchemaDefinitionException('Not a valid schema, must be string or instance of SchemaDefinitionInterface');
+            throw new InvalidSchemaDefinitionException(
+                'Not a valid schema, must be string or instance of SchemaDefinitionInterface'
+            );
         }
 
         $this->schema = $schema;
