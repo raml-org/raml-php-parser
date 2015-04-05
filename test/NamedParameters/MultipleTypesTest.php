@@ -1,7 +1,7 @@
 <?php
 namespace Raml\Test\NamedParameters;
 
-class MutlipleTypesTest extends \PHPUnit_Framework_TestCase
+class MultipleTypesTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var \Raml\Parser

@@ -277,7 +277,11 @@ class NamedParameter implements ArrayInstantiationInterface
         }
 
         if (isset($data['default'])) {
-            $namedParameter->setDefault($data['default']);
+            if ($namedParameter->getType() === self::TYPE_DATE) {
+                $namedParameter->setDefault(\DateTime::createFromFormat('D, d M Y H:i:s T', $data['default']));
+            } else {
+                $namedParameter->setDefault($data['default']);
+            }
         }
 
         return $namedParameter;
@@ -634,38 +638,35 @@ class NamedParameter implements ArrayInstantiationInterface
      */
     public function setDefault($default)
     {
-        if ($default) {
-            switch ($this->type) {
-                case self::TYPE_STRING:
-                    if (!is_string($default)) {
-                        throw new \Exception('Default parameter is not a string');
-                    }
-                    break;
-                case self::TYPE_NUMBER:
-                    if (!is_numeric($default)) {
-                        throw new \Exception('Default parameter is not a number');
-                    }
-                    break;
-                case self::TYPE_INTEGER:
-                    if (!is_integer($default)) {
-                        throw new \Exception('Default parameter is not a integer');
-                    }
-                    break;
-                case self::TYPE_DATE:
-                    if (!$default instanceof \DateTime) {
-                        throw new \Exception('Default parameter is not a dateTime object');
-                    }
-                    break;
-                case self::TYPE_BOOLEAN:
-                    if (!is_bool($default)) {
-                        throw new \Exception('Default parameter is not a boolean');
-                    }
-                    break;
-                case self::TYPE_FILE:
-                    throw new \Exception('A default value cannot be set for a file');
-                    break;
-                default:
-            }
+        switch ($this->type) {
+            case self::TYPE_STRING:
+                if (!is_string($default)) {
+                    throw new \Exception('Default parameter is not a string');
+                }
+                break;
+            case self::TYPE_NUMBER:
+                if (!is_numeric($default)) {
+                    throw new \Exception('Default parameter is not a number');
+                }
+                break;
+            case self::TYPE_INTEGER:
+                if (!is_integer($default)) {
+                    throw new \Exception('Default parameter is not an integer');
+                }
+                break;
+            case self::TYPE_DATE:
+                if (!$default instanceof \DateTime) {
+                    throw new \Exception('Default parameter is not a dateTime object');
+                }
+                break;
+            case self::TYPE_BOOLEAN:
+                if (!is_bool($default)) {
+                    throw new \Exception('Default parameter is not a boolean');
+                }
+                break;
+            case self::TYPE_FILE:
+                throw new \Exception('A default value cannot be set for a file');
+                break;
         }
 
         $this->default = $default;

@@ -53,6 +53,15 @@ class Parser
      */
     private $fileLoaders = [];
 
+    /**
+     * If directory tree traversal is allowed
+     *
+     * @todo change to "false" in v2.0.0
+     *
+     * @var boolean
+     */
+    private $allowDirectoryTraversal = true;
+
     // ---
 
     /**
@@ -112,7 +121,22 @@ class Parser
         foreach ($fileLoaders as $fileLoader) {
             $this->addFileLoader($fileLoader);
         }
+    }
 
+    /**
+     * Allow directory tree traversal
+     */
+    public function allowDirectoryTraversal()
+    {
+        $this->allowDirectoryTraversal = true;
+    }
+
+    /**
+     * Allow directory tree traversal
+     */
+    public function preventDirectoryTraversal()
+    {
+        $this->allowDirectoryTraversal = false;
     }
 
     /**
@@ -219,7 +243,7 @@ class Parser
             if (isset($ramlData['schemas'])) {
                 $schemas = [];
                 foreach ($ramlData['schemas'] as $schemaCollection) {
-                    foreach($schemaCollection as $schemaName => $schema) {
+                    foreach ($schemaCollection as $schemaName => $schema) {
                         $schemas[$schemaName] = $schema;
                     }
                 }
@@ -437,23 +461,23 @@ class Parser
      */
     private function loadAndParseFile($fileName, $rootDir, $parseSchemas)
     {
-    	$rootDir = realpath($rootDir);
+        $rootDir = realpath($rootDir);
         $fullPath = realpath($rootDir . '/' . $fileName);
-        
-        // Prevent LFI directory traversal attacks
-        if (substr($fullPath, 0, strlen($rootDir)) !== $rootDir) {
-        	return false;
+
+        if (is_readable($fullPath) === false) {
+            return false;
         }
-        
+
+        // Prevent LFI directory traversal attacks
+        if (!$this->allowDirectoryTraversal && substr($fullPath, 0, strlen($rootDir)) !== $rootDir) {
+            return false;
+        }
+
         $cacheKey = md5($fullPath);
 
         // cache based on file name, prevents including/parsing the same file multiple times
         if (isset($this->cachedFiles[$cacheKey])) {
             return $this->cachedFiles[$cacheKey];
-        }
-
-        if (is_readable($fullPath) === false) {
-            return false;
         }
 
         $fileExtension = (pathinfo($fileName, PATHINFO_EXTENSION));

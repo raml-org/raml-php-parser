@@ -39,6 +39,15 @@ class Method implements ArrayInstantiationInterface
     private $description;
 
     /**
+     * Override for the Base Uri Parameters
+     *
+     * @see http://raml.org/spec.html#base-uri-parameters
+     *
+     * @var NamedParameter[]
+     */
+    private $baseUriParameters = [];
+
+    /**
      * A list of non default headers (optional)
      *
      * @see http://raml.org/spec.html#headers
@@ -148,6 +157,14 @@ class Method implements ArrayInstantiationInterface
             $method->setDescription($data['description']);
         }
 
+        if (isset($data['baseUriParameters'])) {
+            foreach ($data['baseUriParameters'] as $key => $baseUriParameter) {
+                $method->addBaseUriParameter(
+                    NamedParameter::createFromArray($key, $baseUriParameter)
+                );
+            }
+        }
+
         if (isset($data['protocols'])) {
             foreach ($data['protocols'] as $protocol) {
                 $method->addProtocol($protocol);
@@ -172,11 +189,11 @@ class Method implements ArrayInstantiationInterface
 
         if (isset($data['securedBy'])) {
             foreach ($data['securedBy'] as $key => $securedBy) {
-            	if (empty($securedBy)) {
-            		$method->addSecurityScheme(SecurityScheme::createFromArray('null', array(), $apiDefinition));
-            	} else {
-            		$method->addSecurityScheme($apiDefinition->getSecurityScheme($securedBy));
-            	}
+                if ($securedBy) {
+                    $method->addSecurityScheme($apiDefinition->getSecurityScheme($securedBy));
+                } else {
+                    $method->addSecurityScheme(SecurityScheme::createFromArray('null', array(), $apiDefinition));
+                }
             }
         }
 
@@ -213,6 +230,28 @@ class Method implements ArrayInstantiationInterface
     public function setDescription($description)
     {
         $this->description = $description;
+    }
+
+    // --
+
+    /**
+     * Get the base uri parameters
+     *
+     * @return NamedParameter[]
+     */
+    public function getBaseUriParameters()
+    {
+        return $this->baseUriParameters;
+    }
+
+    /**
+     * Add a new base uri parameter
+     *
+     * @param NamedParameter $namedParameter
+     */
+    public function addBaseUriParameter(NamedParameter $namedParameter)
+    {
+        $this->baseUriParameters[$namedParameter->getKey()] = $namedParameter;
     }
 
     // --
@@ -334,12 +373,12 @@ class Method implements ArrayInstantiationInterface
     public function getBodyByType($type)
     {
         if (!isset($this->bodyList[$type])) {
-            throw new \Exception('No body of type "'.$type.'"');
+            throw new \Exception('No body of type "' . $type . '"');
         }
 
         return $this->bodyList[$type];
     }
-    
+
     /**
      * Get an array of all bodies
      *
@@ -347,7 +386,7 @@ class Method implements ArrayInstantiationInterface
      */
     public function getBodies()
     {
-    	return $this->bodyList;
+        return $this->bodyList;
     }
 
     /**
@@ -428,19 +467,15 @@ class Method implements ArrayInstantiationInterface
             }
 
             foreach ($this->getBodies() as $bodyType => $body) {
-            	
-            	try {
-            		
-            		$params = $describedBy->getBodyByType($bodyType)->getParameters();
-            		
-            		foreach ($params as $parameterName => $namedParameter) {
-            			$body->addParameter($namedParameter);
-            		}
-            		
-            		$this->addBody($body);
-            		
-            	} catch (InvalidKeyException $e) {}
-                
+                if (in_array($bodyType, array_keys($describedBy->getBodies()))) {
+                    $params = $describedBy->getBodyByType($bodyType)->getParameters();
+
+                    foreach ($params as $parameterName => $namedParameter) {
+                        $body->addParameter($namedParameter);
+                    }
+                }
+
+                $this->addBody($body);
             }
 
         }

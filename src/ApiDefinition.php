@@ -218,15 +218,15 @@ class ApiDefinition implements ArrayInstantiationInterface
                 $apiDefinition->addSecurityScheme(SecurityScheme::createFromArray($name, $securityScheme));
             }
         }
-        
+
         if (isset($data['securedBy'])) {
-        	foreach ($data['securedBy'] as $securedBy) {
-        		if (empty($securedBy)) {
-        			$apiDefinition->addSecuredBy(SecurityScheme::createFromArray('null', array(), $apiDefinition));
-        		} else {
-        			$apiDefinition->addSecuredBy($apiDefinition->getSecurityScheme($securedBy));
-        		}
-        	}
+            foreach ($data['securedBy'] as $securedBy) {
+                if ($securedBy) {
+                    $apiDefinition->addSecuredBy($apiDefinition->getSecurityScheme($securedBy));
+                } else {
+                    $apiDefinition->addSecuredBy(SecurityScheme::createFromArray('null', [], $apiDefinition));
+                }
+            }
         }
 
         if (isset($data['documentation'])) {
@@ -503,7 +503,7 @@ class ApiDefinition implements ArrayInstantiationInterface
      */
     public function addSchemaCollection($collectionName, $schemas)
     {
-        $this->schemaCollections[$collectionName]  = [];
+        $this->schemaCollections[$collectionName] = [];
 
         foreach ($schemas as $schemaName => $schema) {
             $this->addSchema($collectionName, $schemaName, $schema);
