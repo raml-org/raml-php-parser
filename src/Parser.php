@@ -7,6 +7,7 @@ use Raml\Exception\RamlParserException;
 
 use Raml\Schema\SchemaParserInterface;
 use Raml\Schema\Parser\JsonSchemaParser;
+use Raml\Schema\Parser\XmlSchemaParser;
 
 use Raml\SecurityScheme\SecuritySettingsParser\OAuth1SecuritySettingsParser;
 use Raml\SecurityScheme\SecuritySettingsParser\OAuth2SecuritySettingsParser;
@@ -84,7 +85,8 @@ class Parser
         // if null then use a default list
         if ($schemaParsers === null) {
             $schemaParsers = [
-                new JsonSchemaParser()
+                new JsonSchemaParser(),
+                new XmlSchemaParser()
             ];
         }
 

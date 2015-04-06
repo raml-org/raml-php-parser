@@ -12,12 +12,13 @@ class JsonSchemaParser extends SchemaParserAbstract
 {
 
     /**
-     * List of known content JSON content types
+     * List of known JSON content types
      *
      * @var array
      */
     protected $compatibleContentTypes = [
-        'application/json'
+        'application/json',
+ 		'text/json'
     ];
 
     // ---
