@@ -467,7 +467,10 @@ class Method implements ArrayInstantiationInterface
             }
 
             foreach ($this->getBodies() as $bodyType => $body) {
-                if (in_array($bodyType, array_keys($describedBy->getBodies()))) {
+                if (
+                	in_array($bodyType, array_keys($describedBy->getBodies())) &&
+                	in_array($bodyType, WebFormBody::$validMediaTypes)
+                ) {
                     $params = $describedBy->getBodyByType($bodyType)->getParameters();
 
                     foreach ($params as $parameterName => $namedParameter) {
