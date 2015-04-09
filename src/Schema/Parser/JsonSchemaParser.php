@@ -18,7 +18,7 @@ class JsonSchemaParser extends SchemaParserAbstract
      */
     protected $compatibleContentTypes = [
         'application/json',
- 		'text/json'
+        'text/json'
     ];
 
     // ---

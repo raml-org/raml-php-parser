@@ -15,8 +15,8 @@ class XmlSchemaParser extends SchemaParserAbstract
      */
     protected $compatibleContentTypes = [
         'application/xml',
- 		'text/xml',
- 		'application/soap+xml'
+        'text/xml',
+        'application/soap+xml'
     ];
 
     // ---

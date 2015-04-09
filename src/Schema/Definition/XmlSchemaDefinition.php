@@ -41,28 +41,26 @@ class XmlSchemaDefinition implements SchemaDefinitionInterface
      */
     public function validate($string)
     {
-    	$dom = new \DOMDocument;
-    	
-    	try {
-    		 
-    		if ($dom->loadXML($string) === false) {
-    			throw new InvalidXmlException(2);
-    		}
-    		
-    		if ($dom->schemaValidateSource($this->xml) === false) {
-    			throw new InvalidSchemaException(array());
-    		}
-    		 
-    		 
-    	} catch (\Exception $e) {
-    		
-    		/*
+        $dom = new \DOMDocument;
+        
+        try {
+            if ($dom->loadXML($string) === false) {
+                throw new InvalidXmlException(2);
+            }
+            
+            if ($dom->schemaValidateSource($this->xml) === false) {
+                throw new InvalidSchemaException(array());
+            }
+             
+             
+        } catch (\Exception $e) {
+            /*
     		 * DOMDocument might issue a warning, and some frameworks might turn warnings into exceptions.
     		 * We'll keep things consistent.
     		 */
-    		throw new InvalidSchemaException(array($e->getCode(), $e->getMessage()));
-    		 
-    	}
+            throw new InvalidSchemaException(array($e->getCode(), $e->getMessage()));
+             
+        }
 
         return true;
     }
@@ -88,6 +86,6 @@ class XmlSchemaDefinition implements SchemaDefinitionInterface
      */
     public function getXmlArray()
     {
-		return json_decode(json_encode(simplexml_load_string($this->xml)), true);
+        return json_decode(json_encode(simplexml_load_string($this->xml)), true);
     }
 }
