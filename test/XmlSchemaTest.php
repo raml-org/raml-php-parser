@@ -14,8 +14,6 @@ class XmlSchemaTest extends PHPUnit_Framework_TestCase
     }
 
     /**
-     * @throws Exception
-     *
      * @return \Raml\Schema\Definition\XmlSchemaDefinition
      */
     private function getSchema()
@@ -91,9 +89,11 @@ XML;
         try {
             $this->assertTrue($this->getSchema()->validate($xml));
         } catch (\Raml\Exception\InvalidSchemaException $e) {
-            $this->assertEquals([
-                'DOMDocument::schemaValidateSource(): Element \'api-response\': No matching global declaration available for the validation root.'
-            ], $e->getErrors());
+            $this->assertEquals(1, count($e->getErrors()));
+            $this->assertEquals(
+                'Element \'api-response\': No matching global declaration available for the validation root.',
+                trim($e->getErrors()[0]->message)
+            );
             throw $e;
         }
     }
@@ -101,30 +101,73 @@ XML;
     /** @test */
     public function shouldCorrectlyValidateInvalidXml()
     {
-        $this->setExpectedException(
-            '\Raml\Exception\InvalidXmlException',
-            'DOMDocument::loadXML(): Premature end of data in tag api-response line 2 in Entity, line: 2'
-        );
+        $this->setExpectedException('\Raml\Exception\InvalidXmlException', 'Invalid Xml.');
 
         $xml = <<<'XML'
 <?xml version="1.0"?>
 <api-response>
 XML;
 
-        $this->assertTrue($this->getSchema()->validate($xml));
+        // using a try catch to validate the errors
+        try {
+            $this->assertTrue($this->getSchema()->validate($xml));
+        } catch (\Raml\Exception\InvalidXmlException $e) {
+            $this->assertEquals(1, count($e->getErrors()));
+            $this->assertEquals(
+                'Premature end of data in tag api-response line 2',
+                trim($e->getErrors()[0]->message)
+            );
+            throw $e;
+        }
     }
 
-    /** @test */
-    public function shouldReturnTheSchemaAsAnArray()
+    // ---
+
+    /**
+     * Common to all tests
+     * @return \Raml\Schema\Definition\XmlSchemaDefinition
+     */
+    private function loadXmlSchema()
     {
+        $xmlRaml = $this->parser->parse(__DIR__ . '/fixture/xmlSchema.raml');
+        return $xmlRaml->getResourceByUri('/jobs')
+            ->getMethod('get')
+            ->getResponse(200)
+            ->getBodyByType('text/xml')
+            ->getSchema();
+    }
 
-        $expected = [
-'@attributes' => [
-    'attributeFormDefault' => 'unqualified',
-    'elementFormDefault' => 'qualified'
-]
-        ];
+    /**
+     * Test __toString()
+     * @test
+     */
+    public function shouldConvertXmlToString()
+    {
+        $this->assertInternalType('string', (string) $this->loadXmlSchema());
+    }
 
-        $this->assertEquals($expected, $this->getSchema()->getXmlArray());
+    /**
+     * Test validate()
+     * @test
+     */
+    public function shouldThrowExceptionOnIncorrectXml()
+    {
+        $badXml = '<api-request></api-request>';
+
+
+        $this->setExpectedException('\Raml\Exception\InvalidSchemaException');
+
+        $this->loadXmlSchema()->validate($badXml);
+    }
+
+    /**
+     * Test validate()
+     * @test
+     */
+    public function shouldThrowExceptionOnInvalidXml()
+    {
+        $invalidXml = 'api-request></api-request';
+        $this->setExpectedException('\Raml\Exception\InvalidXmlException');
+        $this->loadXmlSchema()->validate($invalidXml);
     }
 }

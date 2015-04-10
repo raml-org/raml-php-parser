@@ -23,7 +23,8 @@ class ParameterTypesTest extends \PHPUnit_Framework_TestCase
      *
      * @return \Raml\WebFormBody
      */
-    private function getValidBody() {
+    private function getValidBody()
+    {
         $raml =  <<<RAML
 #%RAML 0.8
 title: Test named parameters
@@ -79,7 +80,7 @@ RAML;
         $namedParameter = $this->getValidBody()->getParameter('string');
 
         $this->assertEquals('string', $namedParameter->getType());
-        $this->assertEquals('A string', $namedParameter->getDefault() );
+        $this->assertEquals('A string', $namedParameter->getDefault());
     }
 
     /** @test */
@@ -122,7 +123,8 @@ RAML;
 
     /** @test */
     public function shouldThrowExceptionOnInvalidString()
-    {        $raml =  <<<RAML
+    {
+        $raml =  <<<RAML
 #%RAML 0.8
 title: Test named parameters
 /:
@@ -142,7 +144,8 @@ RAML;
 
     /** @test */
     public function shouldThrowExceptionOnInvalidNumber()
-    {        $raml =  <<<RAML
+    {
+        $raml =  <<<RAML
 #%RAML 0.8
 title: Test named parameters
 /:
@@ -162,7 +165,8 @@ RAML;
 
     /** @test */
     public function shouldThrowExceptionOnInvalidInteger()
-    {        $raml =  <<<RAML
+    {
+        $raml =  <<<RAML
 #%RAML 0.8
 title: Test named parameters
 /:
@@ -182,7 +186,8 @@ RAML;
 
     /** @test */
     public function shouldThrowExceptionOnInvalidDate()
-    {        $raml =  <<<RAML
+    {
+        $raml =  <<<RAML
 #%RAML 0.8
 title: Test named parameters
 /:
@@ -202,7 +207,8 @@ RAML;
 
     /** @test */
     public function shouldThrowExceptionOnInvalidBoolean()
-    {        $raml =  <<<RAML
+    {
+        $raml =  <<<RAML
 #%RAML 0.8
 title: Test named parameters
 /:
@@ -222,7 +228,8 @@ RAML;
 
     /** @test */
     public function shouldThrowExceptionOnInvalidFile()
-    {        $raml =  <<<RAML
+    {
+        $raml =  <<<RAML
 #%RAML 0.8
 title: Test named parameters
 /:

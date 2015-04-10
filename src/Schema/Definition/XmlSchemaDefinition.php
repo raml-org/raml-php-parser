@@ -43,21 +43,25 @@ class XmlSchemaDefinition implements SchemaDefinitionInterface
     {
         $dom = new \DOMDocument;
 
-        // DomDocument has warnings, not exceptions. Need to convert these
+        $originalErrorLevel = libxml_use_internal_errors(true);
 
-        set_error_handler(function ($errno, $errstr, $errfile, $errline) {
-            throw new InvalidXmlException($errstr);
-        });
         $dom->loadXML($string);
-        restore_error_handler();
+        $errors = libxml_get_errors();
+        libxml_clear_errors();
+        if($errors) {
+            throw new InvalidXmlException($errors);
+        }
 
         // ---
 
-        set_error_handler(function ($errno, $errstr, $errfile, $errline) {
-            throw new InvalidSchemaException([$errstr]);
-        });
         $dom->schemaValidateSource($this->xml);
-        restore_error_handler();
+        $errors = libxml_get_errors();
+        libxml_clear_errors();
+        if($errors) {
+            throw new InvalidSchemaException($errors);
+        }
+        
+        libxml_use_internal_errors($originalErrorLevel);
 
         return true;
     }
@@ -70,19 +74,5 @@ class XmlSchemaDefinition implements SchemaDefinitionInterface
     public function __toString()
     {
         return $this->xml;
-    }
-
-    // ---
-
-    /**
-     * Returns the XML Schema as an array
-     *
-     * Credit: @link http://php.net/manual/en/book.simplexml.php#105330
-     *
-     * @return array
-     */
-    public function getXmlArray()
-    {
-        return json_decode(json_encode(simplexml_load_string($this->xml)), true);
     }
 }
