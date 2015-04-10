@@ -74,18 +74,4 @@ class XmlSchemaDefinition implements SchemaDefinitionInterface
     {
         return $this->xml;
     }
-
-    // ---
-
-    /**
-     * Returns the XML Schema as an array
-     *
-     * Credit: @link http://php.net/manual/en/book.simplexml.php#105330
-     *
-     * @return array
-     */
-    public function getXmlArray()
-    {
-        return json_decode(json_encode(simplexml_load_string($this->xml)), true);
-    }
 }

@@ -1,0 +1,25 @@
+#%RAML 0.8
+
+title: Jobs
+baseUri: http://example.api.com/{version}
+version: v1
+mediaType: text/xml
+/jobs:
+  displayName: Jobs
+  get:
+    responses:
+      200:
+        body:
+          text/xml:
+            schema: |
+              <xs:schema attributeFormDefault="unqualified"
+                         elementFormDefault="qualified"
+                         xmlns:xs="http://www.w3.org/2001/XMLSchema">
+                <xs:element name="api-request">
+                  <xs:complexType>
+                    <xs:sequence>
+                      <xs:element type="xs:string" name="input"/>
+                    </xs:sequence>
+                  </xs:complexType>
+                </xs:element>
+              </xs:schema>
