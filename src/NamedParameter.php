@@ -25,7 +25,7 @@ class NamedParameter implements ArrayInstantiationInterface
      *
      * @var array
      */
-    private $validTypes = [
+    protected $validTypes = [
         self::TYPE_STRING,
         self::TYPE_NUMBER,
         self::TYPE_INTEGER,
@@ -151,7 +151,7 @@ class NamedParameter implements ArrayInstantiationInterface
      *
      * @var boolean
      */
-    private $required = false;
+    protected $required = false;
 
     /**
      * A default value used by the server if not provided
