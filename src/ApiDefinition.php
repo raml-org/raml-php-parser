@@ -188,7 +188,7 @@ class ApiDefinition implements ArrayInstantiationInterface
         if (isset($data['baseUriParameters'])) {
             foreach ($data['baseUriParameters'] as $key => $baseUriParameter) {
                 $apiDefinition->addBaseUriParameter(
-                    NamedParameter::createFromArray($key, $baseUriParameter)
+                    BaseUriParameter::createFromArray($key, $baseUriParameter)
                 );
             }
         }
