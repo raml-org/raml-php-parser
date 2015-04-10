@@ -42,25 +42,22 @@ class XmlSchemaDefinition implements SchemaDefinitionInterface
     public function validate($string)
     {
         $dom = new \DOMDocument;
-        
-        try {
-            if ($dom->loadXML($string) === false) {
-                throw new InvalidXmlException(2);
-            }
-            
-            if ($dom->schemaValidateSource($this->xml) === false) {
-                throw new InvalidSchemaException(array());
-            }
-             
-             
-        } catch (\Exception $e) {
-            /*
-    		 * DOMDocument might issue a warning, and some frameworks might turn warnings into exceptions.
-    		 * We'll keep things consistent.
-    		 */
-            throw new InvalidSchemaException(array($e->getCode(), $e->getMessage()));
-             
-        }
+
+        // DomDocument has warnings, not exceptions. Need to convert these
+
+        set_error_handler(function ($errno, $errstr, $errfile, $errline) {
+            throw new InvalidXmlException($errstr);
+        });
+        $dom->loadXML($string);
+        restore_error_handler();
+
+        // ---
+
+        set_error_handler(function ($errno, $errstr, $errfile, $errline) {
+            throw new InvalidSchemaException([$errstr]);
+        });
+        $dom->schemaValidateSource($this->xml);
+        restore_error_handler();
 
         return true;
     }
