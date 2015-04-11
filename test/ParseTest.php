@@ -693,4 +693,62 @@ RAML;
 
         $this->assertEquals('application/json', $jsonBody->getMediaType());
     }
+
+    /** @test */
+    public function shouldThrowExceptionOnInvalidBodyType()
+    {
+        $raml =  <<<'RAML'
+#%RAML 0.8
+title: Test body
+/:
+  get:
+    description: A post to do something
+    responses:
+      200:
+        body:
+          application/json:
+            schema: |
+              {
+                "$schema": "http://json-schema.org/schema",
+                "type": "array"
+              }
+RAML;
+
+
+        $apiDefinition = $this->parser->parseFromString($raml, '');
+        $resource = $apiDefinition->getResourceByUri('/');
+        $method = $resource->getMethod('get');
+        $response = $method->getResponse(200);
+
+        $response->getBodyByType('application/json');
+
+        $this->setExpectedException('\Exception', 'No body found for type "text/xml"');
+        $response->getBodyByType('text/xml');
+    }
+
+    /** @test */
+    public function shouldSupportGenericResponseType()
+    {
+        $raml =  <<<'RAML'
+#%RAML 0.8
+title: Test body
+/:
+  get:
+    description: A post to do something
+    responses:
+      200:
+        body:
+          "*/*":
+            description: A generic description
+RAML;
+
+
+        $apiDefinition = $this->parser->parseFromString($raml, '');
+        $resource = $apiDefinition->getResourceByUri('/');
+        $method = $resource->getMethod('get');
+        $response = $method->getResponse(200);
+        $body = $response->getBodyByType('text/xml');
+        $this->assertEquals('A generic description', $body->getDescription());
+    }
 }
+
