@@ -93,7 +93,13 @@ RAML;
         $body = $method->getBodyByType('multipart/form-data');
 
         $this->setExpectedException('\Raml\Exception\InvalidKeyException', 'The key badKey does not exist.');
-        $body->getParameter('badKey');
+
+        try {
+            $body->getParameter('badKey');
+        } catch (\Raml\Exception\InvalidKeyException $e) {
+            $this->assertEquals('badKey', $e->getKey());
+            throw $e;
+        }
     }
 
     /** @test */

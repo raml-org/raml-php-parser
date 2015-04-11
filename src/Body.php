@@ -164,9 +164,7 @@ class Body implements BodyInterface, ArrayInstantiationInterface
     public function setSchema($schema)
     {
         if (!is_string($schema) && !$schema instanceof SchemaDefinitionInterface) {
-            throw new InvalidSchemaDefinitionException(
-                'Not a valid schema, must be string or instance of SchemaDefinitionInterface'
-            );
+            throw new InvalidSchemaDefinitionException();
         }
 
         $this->schema = $schema;

@@ -396,33 +396,31 @@ class NamedParameter implements ArrayInstantiationInterface
             switch($this->getType()) {
                 case self::TYPE_NUMBER:
                     // @see http://www.regular-expressions.info/floatingpoint.html
-                    $pattern = '[-+]?[0-9]*\.?[0-9]+';
+                    $pattern = '^[-+]?[0-9]*\.?[0-9]+$';
                     break;
                 case self::TYPE_INTEGER:
-                    $pattern = '[-+]?[0-9]+';
+                    $pattern = '^[-+]?[0-9]+$';
                     break;
                 case self::TYPE_DATE:
-                    // @see https://plus.google.com/+NathanOsman/posts/
-                    //              5zJAR3SSi8e?pid=5970357977048310818&oid=109692134350783862945
+                    // @see https://snipt.net/DamienGarrido/http-date-regular-expression-validation-rfc-1123rfc-850asctime-f64e6aa3/
 
-                    $pattern = '([\w!#$%&\'*+.A1--]+)/(EW!#$%&\'*+.*-1--11-)(?:\s*As*([\w!#$%&\'*+.*-1-- ]+)'
-                                .'\s*=\s*Mw!#$%&\'*+.A1-1+1"(?:[^V00-\xlf\x7f19\[\x00-\x7f])*"))*';
+                    $pattern = '^(?:(?:Mon|Tue|Wed|Thu|Fri|Sat|Sun), (?:[0-2][0-9]|3[01]) (?:Jan|Feb|Mar|Apr|May|Jun|Jul|Aug|Sep|Oct|Nov|Dec) \d{4} (?:[01][0-9]|2[0-3]):[012345][0-9]:[012345][0-9] GMT|(?:Monday|Tuesday|Wednesday|Thursday|Friday|Saturday|Sunday), (?:[0-2][0-9]|3[01])-(?:Jan|Feb|Mar|Apr|May|Jun|Jul|Aug|Sep|Oct|Nov|Dec)-\d{2} (?:[01][0-9]|2[0-3]):[012345][0-9]:[012345][0-9] GMT|(?:Mon|Tue|Wed|Thu|Fri|Sat|Sun) (?:Jan|Feb|Mar|Apr|May|Jun|Jul|Aug|Sep|Oct|Nov|Dec) (?:[ 1-2][0-9]|3[01]) (?:[01][0-9]|2[0-3]):[012345][0-9]:[012345][0-9] \d{4})$';
                     break;
                 case self::TYPE_BOOLEAN:
-                    $pattern = '(true|false)';
+                    $pattern = '^(true|false)$';
                     break;
                 case self::TYPE_FILE:
-                    $pattern = '([^/]+)';
+                    $pattern = '^([^/]+)$';
                     break;
                 case self::TYPE_STRING:
                     if ($this->getMinLength() || $this->getMaxLength()) {
-                        $pattern = '([^/]{'.$this->getMinLength().','.$this->getMaxLength().'})';
+                        $pattern = '^((?!\/).){'.$this->getMinLength().','.$this->getMaxLength().'}$';
                     } else {
-                        $pattern = '([^/]+)';
+                        $pattern = '^([^/]+)$';
                     }
                     break;
                 default:
-                    $pattern = '([^/]+)';
+                    $pattern = '^([^/]+)$';
             }
         }
 
@@ -488,7 +486,7 @@ class NamedParameter implements ArrayInstantiationInterface
      */
     public function setMaxLength($maxLength)
     {
-        if (!$this->type !== self::TYPE_STRING) {
+        if ($this->type !== self::TYPE_STRING) {
             throw new \Exception('maxLength can only be set on type "string"');
         }
 
@@ -548,7 +546,7 @@ class NamedParameter implements ArrayInstantiationInterface
             throw new \Exception('maximum can only be set on type "integer" or "number');
         }
 
-        $this->minimum = (int) $maximum;
+        $this->maximum = (int) $maximum;
     }
 
     // --

@@ -137,7 +137,13 @@ RAML;
     {
         $this->setExpectedException('Raml\Exception\BadParameter\ResourceNotFoundException');
         $simpleRaml = $this->parser->parse(__DIR__.'/fixture/simple.raml');
-        $simpleRaml->getResourceByUri('/invalid');
+
+        try {
+            $simpleRaml->getResourceByUri('/invalid');
+        } catch (\Raml\Exception\BadParameter\ResourceNotFoundException $e) {
+            $this->assertEquals('/invalid', $e->getUri());
+            throw $e;
+        }
     }
 
     /** @test */
@@ -379,7 +385,13 @@ RAML;
     public function shouldThrowErrorIfUnknownIncluded()
     {
         $this->setExpectedException('\Raml\Exception\InvalidSchemaTypeException');
-        $this->parser->parse(__DIR__.'/fixture/includeUnknownSchema.raml');
+
+        try {
+            $this->parser->parse(__DIR__.'/fixture/includeUnknownSchema.raml');
+        } catch (\Raml\Exception\InvalidSchemaTypeException $e) {
+            $this->assertEquals('application/vnd.api-v1+json', $e->getType());
+            throw $e;
+        }
     }
 
     /** @test */
@@ -463,8 +475,19 @@ RAML;
     /** @test */
     public function shouldThrowErrorIfPassedFileDoesNotExist()
     {
-        $this->setExpectedException('\Raml\Exception\BadParameter\FileNotFoundException');
-        $this->parser->parse(__DIR__.'/fixture/gone.raml');
+        $fileName = __DIR__.'/fixture/gone.raml';
+
+        $this->setExpectedException(
+            '\Raml\Exception\BadParameter\FileNotFoundException',
+            'The file '.$fileName.' does not exist or is unreadable.'
+        );
+
+        try {
+            $this->parser->parse($fileName);
+        } catch (\Raml\Exception\BadParameter\FileNotFoundException $e) {
+            $this->assertEquals($fileName, $e->getFileName());
+            throw $e;
+        }
     }
 
     /** @test */
@@ -569,7 +592,16 @@ RAML;
     public function shouldThrowExceptionOnBadQueryParameter()
     {
         $this->setExpectedException('\Raml\Exception\InvalidQueryParameterTypeException');
-        $this->parser->parse(__DIR__.'/fixture/invalid/queryParameters.raml');
+
+        try {
+            $this->parser->parse(__DIR__ . '/fixture/invalid/queryParameters.raml');
+        } catch (\Raml\Exception\InvalidQueryParameterTypeException $e) {
+            $this->assertEquals('invalid', $e->getType());
+            $this->assertEquals([
+                'string', 'number', 'integer', 'date', 'boolean', 'file'
+            ], $e->getValidTypes());
+            throw $e;
+        }
     }
 
     /** @test */
