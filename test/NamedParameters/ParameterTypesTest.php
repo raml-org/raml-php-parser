@@ -7,11 +7,53 @@ class ParameterTypesTest extends \PHPUnit_Framework_TestCase
      * @var \Raml\Parser
      */
     private $parser;
+    
+    /**
+     * @var object Used in multiple tests
+     */
+    private $validateBody;
 
     public function setUp()
     {
         parent::setUp();
         $this->parser = new \Raml\Parser();
+        
+        $validateRaml =  <<<RAML
+#%RAML 0.8
+title: Test named parameters
+/:
+  post:
+    body:
+      application/x-www-form-urlencoded:
+        formParameters:
+          requiredstring:
+            type: string
+            required: true
+          string:
+            type: string
+            minLength: 3
+            maxLength: 5
+          number:
+            type: number
+            minimum: 1
+            maximum: 10
+          integer:
+            type: integer
+          pattern:
+            type: integer
+            pattern: '^[-+]?[0-5]+$'
+          enum:
+            type: string
+            enum: ['laughing', 'my', 'butt', 'off']
+          boolean:
+            type: boolean
+          date:
+            type: date
+RAML;
+        $apiDefinition = $this->parser->parseFromString($validateRaml, '');
+        $resource = $apiDefinition->getResourceByUri('/');
+        $method = $resource->getMethod('post');
+        $this->validateBody = $method->getBodyByType('application/x-www-form-urlencoded');
     }
 
     // ---
@@ -355,13 +397,135 @@ RAML;
             (bool) preg_match('|'.$namedParameter->getValidationPattern().'|', 'aaaaa')
         );
 
-        foreach($validations as $string => $shouldMatch) {
+        foreach ($validations as $string => $shouldMatch) {
             $this->assertSame(
                 $shouldMatch,
                 (bool) preg_match('|'.$namedParameter->getValidationPattern().'|', $string),
                 $string
             );
         }
+    }
+
+    // ---
+    
+    /** @test */
+    public function shouldValidateWithoutExceptions()
+    {
+        // Not Required
+        $namedParameter = $this->validateBody->getParameter('string');
+        $namedParameter->validate(null);
+        
+        // Valid date
+        $namedParameter = $this->validateBody->getParameter('date');
+        $namedParameter->validate('Sun, 06 Nov 1994 08:49:37 GMT');
+    }
+    
+    /** @test */
+    public function shouldValidateRequired()
+    {
+        // Required
+        $this->setExpectedException('Exception', 'requiredstring is required');
+        $namedParameter = $this->validateBody->getParameter('requiredstring');
+        $namedParameter->validate(null);
+    }
+    
+    /** @test */
+    public function shouldValidateString()
+    {
+        // When is a string not a string? When it's an integer.
+        $this->setExpectedException('Exception', 'string is not a string');
+        $namedParameter = $this->validateBody->getParameter('string');
+        $namedParameter->validate(1);
+    }
+    
+    /** @test */
+    public function shouldValidateShortString()
+    {
+        // String is too short
+        $this->setExpectedException('Exception', 'string must be at least 3 characters long');
+        $namedParameter = $this->validateBody->getParameter('string');
+        $namedParameter->validate('a');
+    }
+    
+    /** @test */
+    public function shouldValidateLongString()
+    {
+        // String is too long
+        $this->setExpectedException('Exception', 'string must be no more than 5 characters long');
+        $namedParameter = $this->validateBody->getParameter('string');
+        $namedParameter->validate('aaaaaa');
+    }
+    
+    /** @test */
+    public function shouldValidateNumber()
+    {
+        // When is a number not a number? When it's an... array!
+        $this->setExpectedException('Exception', 'number is not a number');
+        $namedParameter = $this->validateBody->getParameter('number');
+        $namedParameter->validate(array());
+    }
+    
+    /** @test */
+    public function shouldValidateSmallNumber()
+    {
+        // Number is less than the minimum value
+        $this->setExpectedException('Exception', 'number must be greater than or equal to 1');
+        $namedParameter = $this->validateBody->getParameter('number');
+        $namedParameter->validate(0);
+    }
+    
+    /** @test */
+    public function shouldValidateLargeNumber()
+    {
+        // Number is more than the maximum value
+        $this->setExpectedException('Exception', 'number must be less than or equal to 10');
+        $namedParameter = $this->validateBody->getParameter('number');
+        $namedParameter->validate(11);
+    }
+    
+    /** @test */
+    public function shouldValidateInteger()
+    {
+        // When is aniteger not an integer? Well... you get the picture.
+        $this->setExpectedException('Exception', 'integer is not an integer');
+        $namedParameter = $this->validateBody->getParameter('integer');
+        $namedParameter->validate('a');
+    }
+    
+    /** @test */
+    public function shouldValidatePattern()
+    {
+        // Pattern validation
+        $this->setExpectedException('Exception', 'pattern does not match the specified pattern');
+        $namedParameter = $this->validateBody->getParameter('pattern');
+        $namedParameter->validate(6);
+    }
+    
+    /** @test */
+    public function shouldValidateEnum()
+    {
+        // Enum validation
+        $this->setExpectedException('Exception', 'enum must be one of the following: laughing, my, butt, off');
+        $namedParameter = $this->validateBody->getParameter('enum');
+        $namedParameter->validate('Grandma');
+    }
+    
+    /** @test */
+    public function shouldValidateBoolean()
+    {
+        // Boolean validation
+        $this->setExpectedException('Exception', 'boolean is not boolean');
+        $namedParameter = $this->validateBody->getParameter('boolean');
+        $namedParameter->validate(1);
+    }
+    
+    /** @test */
+    public function shouldValidateDate()
+    {
+        // Date validation
+        $this->setExpectedException('Exception', 'date is not a valid date');
+        $namedParameter = $this->validateBody->getParameter('date');
+        $namedParameter->validate('Sun, 06 Nov 1994 08:49:37 BUNS');
     }
 
     // ---
