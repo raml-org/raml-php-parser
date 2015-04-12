@@ -6,17 +6,18 @@ use RuntimeException;
 
 class InvalidXmlException extends RuntimeException implements ExceptionInterface
 {
-    protected $errorCode;
+    protected $errors;
 
-    public function __construct($errorCode)
+    public function __construct(array $errors)
     {
-        $this->errorCode = $errorCode;
+        $this->errors = $errors;
 
-        parent::__construct('Invalid XML.');
+        parent::__construct('Invalid Xml.');
     }
 
-    public function getErrorCode()
+    public function getErrors()
     {
-        return $this->errorCode;
+        return $this->errors;
     }
 }
+

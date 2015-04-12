@@ -44,7 +44,6 @@ class JsonSchemaTest extends PHPUnit_Framework_TestCase
     /** @test */
     public function shouldCorrectlyValidateIncorrectJson()
     {
-        $this->setExpectedException('\Raml\Exception\InvalidSchemaException');
 
         $simpleRaml = $this->parser->parse(__DIR__ . '/fixture/simple.raml');
         $resource = $simpleRaml->getResourceByUri('/songs');
@@ -53,13 +52,13 @@ class JsonSchemaTest extends PHPUnit_Framework_TestCase
         $body = $response->getBodyByType('application/json');
         $schema = $body->getSchema();
 
+        $this->setExpectedException('\Raml\Exception\InvalidSchemaException');
         $schema->validate('{}');
     }
 
     /** @test */
     public function shouldCorrectlyValidateInvalidJson()
     {
-        $this->setExpectedException('\Raml\Exception\InvalidJsonException');
         $simpleRaml = $this->parser->parse(__DIR__ . '/fixture/simple.raml');
         $resource = $simpleRaml->getResourceByUri('/songs');
         $method = $resource->getMethod('get');
@@ -67,6 +66,12 @@ class JsonSchemaTest extends PHPUnit_Framework_TestCase
         $body = $response->getBodyByType('application/json');
         $schema = $body->getSchema();
 
-        $schema->validate('{');
+        $this->setExpectedException('\Raml\Exception\InvalidJsonException');
+        try {
+            $schema->validate('{');
+        } catch (\Raml\Exception\InvalidJsonException $e) {
+            $this->assertEquals(4, $e->getErrorCode());
+            throw $e;
+        }
     }
 }

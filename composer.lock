@@ -12,12 +12,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/alecsammon/json-schema.git",
-                "reference": "d2d892c5320b3f43bb2cb1f8903c640dde3ca6d9"
+                "reference": "1a7d655a489f44aab20b66f9320e6be88cb2f249"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/alecsammon/json-schema/zipball/d2d892c5320b3f43bb2cb1f8903c640dde3ca6d9",
-                "reference": "d2d892c5320b3f43bb2cb1f8903c640dde3ca6d9",
+                "url": "https://api.github.com/repos/alecsammon/json-schema/zipball/1a7d655a489f44aab20b66f9320e6be88cb2f249",
+                "reference": "1a7d655a489f44aab20b66f9320e6be88cb2f249",
                 "shasum": ""
             },
             "require": {

@@ -160,7 +160,7 @@ class Method implements ArrayInstantiationInterface
         if (isset($data['baseUriParameters'])) {
             foreach ($data['baseUriParameters'] as $key => $baseUriParameter) {
                 $method->addBaseUriParameter(
-                    NamedParameter::createFromArray($key, $baseUriParameter)
+                    BaseUriParameter::createFromArray($key, $baseUriParameter)
                 );
             }
         }

@@ -137,7 +137,13 @@ RAML;
     {
         $this->setExpectedException('Raml\Exception\BadParameter\ResourceNotFoundException');
         $simpleRaml = $this->parser->parse(__DIR__.'/fixture/simple.raml');
-        $simpleRaml->getResourceByUri('/invalid');
+
+        try {
+            $simpleRaml->getResourceByUri('/invalid');
+        } catch (\Raml\Exception\BadParameter\ResourceNotFoundException $e) {
+            $this->assertEquals('/invalid', $e->getUri());
+            throw $e;
+        }
     }
 
     /** @test */
@@ -379,7 +385,13 @@ RAML;
     public function shouldThrowErrorIfUnknownIncluded()
     {
         $this->setExpectedException('\Raml\Exception\InvalidSchemaTypeException');
-        $this->parser->parse(__DIR__.'/fixture/includeUnknownSchema.raml');
+
+        try {
+            $this->parser->parse(__DIR__.'/fixture/includeUnknownSchema.raml');
+        } catch (\Raml\Exception\InvalidSchemaTypeException $e) {
+            $this->assertEquals('application/vnd.api-v1+json', $e->getType());
+            throw $e;
+        }
     }
 
     /** @test */
@@ -463,8 +475,19 @@ RAML;
     /** @test */
     public function shouldThrowErrorIfPassedFileDoesNotExist()
     {
-        $this->setExpectedException('\Raml\Exception\BadParameter\FileNotFoundException');
-        $this->parser->parse(__DIR__.'/fixture/gone.raml');
+        $fileName = __DIR__.'/fixture/gone.raml';
+
+        $this->setExpectedException(
+            '\Raml\Exception\BadParameter\FileNotFoundException',
+            'The file '.$fileName.' does not exist or is unreadable.'
+        );
+
+        try {
+            $this->parser->parse($fileName);
+        } catch (\Raml\Exception\BadParameter\FileNotFoundException $e) {
+            $this->assertEquals($fileName, $e->getFileName());
+            throw $e;
+        }
     }
 
     /** @test */
@@ -569,7 +592,16 @@ RAML;
     public function shouldThrowExceptionOnBadQueryParameter()
     {
         $this->setExpectedException('\Raml\Exception\InvalidQueryParameterTypeException');
-        $this->parser->parse(__DIR__.'/fixture/invalid/queryParameters.raml');
+
+        try {
+            $this->parser->parse(__DIR__ . '/fixture/invalid/queryParameters.raml');
+        } catch (\Raml\Exception\InvalidQueryParameterTypeException $e) {
+            $this->assertEquals('invalid', $e->getType());
+            $this->assertEquals([
+                'string', 'number', 'integer', 'date', 'boolean', 'file'
+            ], $e->getValidTypes());
+            throw $e;
+        }
     }
 
     /** @test */
@@ -693,4 +725,62 @@ RAML;
 
         $this->assertEquals('application/json', $jsonBody->getMediaType());
     }
+
+    /** @test */
+    public function shouldThrowExceptionOnInvalidBodyType()
+    {
+        $raml =  <<<'RAML'
+#%RAML 0.8
+title: Test body
+/:
+  get:
+    description: A post to do something
+    responses:
+      200:
+        body:
+          application/json:
+            schema: |
+              {
+                "$schema": "http://json-schema.org/schema",
+                "type": "array"
+              }
+RAML;
+
+
+        $apiDefinition = $this->parser->parseFromString($raml, '');
+        $resource = $apiDefinition->getResourceByUri('/');
+        $method = $resource->getMethod('get');
+        $response = $method->getResponse(200);
+
+        $response->getBodyByType('application/json');
+
+        $this->setExpectedException('\Exception', 'No body found for type "text/xml"');
+        $response->getBodyByType('text/xml');
+    }
+
+    /** @test */
+    public function shouldSupportGenericResponseType()
+    {
+        $raml =  <<<'RAML'
+#%RAML 0.8
+title: Test body
+/:
+  get:
+    description: A post to do something
+    responses:
+      200:
+        body:
+          "*/*":
+            description: A generic description
+RAML;
+
+
+        $apiDefinition = $this->parser->parseFromString($raml, '');
+        $resource = $apiDefinition->getResourceByUri('/');
+        $method = $resource->getMethod('get');
+        $response = $method->getResponse(200);
+        $body = $response->getBodyByType('text/xml');
+        $this->assertEquals('A generic description', $body->getDescription());
+    }
 }
+

@@ -14,6 +14,15 @@ use Raml\Exception\BadParameter\InvalidSchemaDefinitionException;
 class Body implements BodyInterface, ArrayInstantiationInterface
 {
     /**
+     * The description of the method (optional)
+     *
+     * @see http://raml.org/spec.html#description
+     *
+     * @var string
+     */
+    private $description;
+
+    /**
      * The media type of the body
      *
      * @see http://raml.org/spec.html#body
@@ -79,6 +88,10 @@ class Body implements BodyInterface, ArrayInstantiationInterface
     {
         $body = new static($mediaType);
 
+        if (isset($data['description'])) {
+            $body->setDescription($data['description']);
+        }
+
         if (isset($data['schema'])) {
             $body->setSchema($data['schema']);
         }
@@ -110,6 +123,28 @@ class Body implements BodyInterface, ArrayInstantiationInterface
     // --
 
     /**
+     * Get the description
+     * 
+     * @return string
+     */
+    public function getDescription()
+    {
+        return $this->description;
+    }
+
+    /**
+     * Set the description
+     *
+     * @param string $description
+     */
+    public function setDescription($description)
+    {
+        $this->description = $description;
+    }
+
+    // --
+
+    /**
      * Get the schema
      *
      * @return SchemaDefinitionInterface|string
@@ -129,9 +164,7 @@ class Body implements BodyInterface, ArrayInstantiationInterface
     public function setSchema($schema)
     {
         if (!is_string($schema) && !$schema instanceof SchemaDefinitionInterface) {
-            throw new InvalidSchemaDefinitionException(
-                'Not a valid schema, must be string or instance of SchemaDefinitionInterface'
-            );
+            throw new InvalidSchemaDefinitionException();
         }
 
         $this->schema = $schema;
