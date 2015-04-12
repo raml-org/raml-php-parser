@@ -386,11 +386,14 @@ class NamedParameter implements ArrayInstantiationInterface
     /**
      * Get the pattern regular expression
      *
+     * @param boolean $typeCheck Set to false to only return the "pattern" value from the RAML data (Defaults to
+     *                           true for backwards compatability to return type checking strings when a validation
+     *                           pattern is not present in the RAML data)
      * @return string
      */
-    public function getValidationPattern()
+    public function getValidationPattern($typeCheck = true)
     {
-        if ($this->validationPattern) {
+        if ($this->validationPattern || $typeCheck === false) {
             $pattern = $this->validationPattern;
         } else {
             switch($this->getType()) {
