@@ -783,4 +783,3 @@ RAML;
         $this->assertEquals('A generic description', $body->getDescription());
     }
 }
-

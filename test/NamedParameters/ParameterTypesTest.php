@@ -424,7 +424,7 @@ RAML;
     public function shouldValidateRequired()
     {
         // Required
-        $this->setExpectedException('Exception', 'requiredstring is required');
+        $this->setExpectedException('\Raml\Exception\ValidationException', 'requiredstring is required', 7);
         $namedParameter = $this->validateBody->getParameter('requiredstring');
         $namedParameter->validate(null);
     }
@@ -433,7 +433,7 @@ RAML;
     public function shouldValidateString()
     {
         // When is a string not a string? When it's an integer.
-        $this->setExpectedException('Exception', 'string is not a string');
+        $this->setExpectedException('\Raml\Exception\ValidationException', 'string is not a string', 3);
         $namedParameter = $this->validateBody->getParameter('string');
         $namedParameter->validate(1);
     }
@@ -442,7 +442,7 @@ RAML;
     public function shouldValidateShortString()
     {
         // String is too short
-        $this->setExpectedException('Exception', 'string must be at least 3 characters long');
+        $this->setExpectedException('\Raml\Exception\ValidationException', 'string must be at least 3 characters long', 8);
         $namedParameter = $this->validateBody->getParameter('string');
         $namedParameter->validate('a');
     }
@@ -451,7 +451,7 @@ RAML;
     public function shouldValidateLongString()
     {
         // String is too long
-        $this->setExpectedException('Exception', 'string must be no more than 5 characters long');
+        $this->setExpectedException('\Raml\Exception\ValidationException', 'string must be no more than 5 characters long', 9);
         $namedParameter = $this->validateBody->getParameter('string');
         $namedParameter->validate('aaaaaa');
     }
@@ -460,7 +460,7 @@ RAML;
     public function shouldValidateNumber()
     {
         // When is a number not a number? When it's an... array!
-        $this->setExpectedException('Exception', 'number is not a number');
+        $this->setExpectedException('\Raml\Exception\ValidationException', 'number is not a number', 5);
         $namedParameter = $this->validateBody->getParameter('number');
         $namedParameter->validate(array());
     }
@@ -469,7 +469,7 @@ RAML;
     public function shouldValidateSmallNumber()
     {
         // Number is less than the minimum value
-        $this->setExpectedException('Exception', 'number must be greater than or equal to 1');
+        $this->setExpectedException('\Raml\Exception\ValidationException', 'number must be greater than or equal to 1', 10);
         $namedParameter = $this->validateBody->getParameter('number');
         $namedParameter->validate(0);
     }
@@ -478,7 +478,7 @@ RAML;
     public function shouldValidateLargeNumber()
     {
         // Number is more than the maximum value
-        $this->setExpectedException('Exception', 'number must be less than or equal to 10');
+        $this->setExpectedException('\Raml\Exception\ValidationException', 'number must be less than or equal to 10', 11);
         $namedParameter = $this->validateBody->getParameter('number');
         $namedParameter->validate(11);
     }
@@ -487,7 +487,7 @@ RAML;
     public function shouldValidateInteger()
     {
         // When is aniteger not an integer? Well... you get the picture.
-        $this->setExpectedException('Exception', 'integer is not an integer');
+        $this->setExpectedException('\Raml\Exception\ValidationException', 'integer is not an integer', 4);
         $namedParameter = $this->validateBody->getParameter('integer');
         $namedParameter->validate('a');
     }
@@ -496,7 +496,7 @@ RAML;
     public function shouldValidatePattern()
     {
         // Pattern validation
-        $this->setExpectedException('Exception', 'pattern does not match the specified pattern');
+        $this->setExpectedException('\Raml\Exception\ValidationException', 'pattern does not match the specified pattern', 12);
         $namedParameter = $this->validateBody->getParameter('pattern');
         $namedParameter->validate(6);
     }
@@ -505,7 +505,7 @@ RAML;
     public function shouldValidateEnum()
     {
         // Enum validation
-        $this->setExpectedException('Exception', 'enum must be one of the following: laughing, my, butt, off');
+        $this->setExpectedException('\Raml\Exception\ValidationException', 'enum must be one of the following: laughing, my, butt, off', 13);
         $namedParameter = $this->validateBody->getParameter('enum');
         $namedParameter->validate('Grandma');
     }
@@ -514,7 +514,7 @@ RAML;
     public function shouldValidateBoolean()
     {
         // Boolean validation
-        $this->setExpectedException('Exception', 'boolean is not boolean');
+        $this->setExpectedException('\Raml\Exception\ValidationException', 'boolean is not boolean', 1);
         $namedParameter = $this->validateBody->getParameter('boolean');
         $namedParameter->validate(1);
     }
@@ -523,7 +523,7 @@ RAML;
     public function shouldValidateDate()
     {
         // Date validation
-        $this->setExpectedException('Exception', 'date is not a valid date');
+        $this->setExpectedException('\Raml\Exception\ValidationException', 'date is not a valid date', 2);
         $namedParameter = $this->validateBody->getParameter('date');
         $namedParameter->validate('Sun, 06 Nov 1994 08:49:37 BUNS');
     }

@@ -2,6 +2,7 @@
 namespace Raml;
 
 use \Raml\Exception\InvalidQueryParameterTypeException;
+use \Raml\Exception\ValidationException;
 
 /**
  * Named Parameters
@@ -19,6 +20,23 @@ class NamedParameter implements ArrayInstantiationInterface
     const TYPE_DATE     = 'date';
     const TYPE_BOOLEAN  = 'boolean';
     const TYPE_FILE     = 'file';
+    
+    // ---
+    // Validation exception codes
+    
+    const VAL_NOTBOOLEAN   = 1;
+    const VAL_NOTDATE      = 2;
+    const VAL_NOTSTRING    = 3;
+    const VAL_NOTINT       = 4;
+    const VAL_NOTNUMBER    = 5;
+    const VAL_NOTFILE      = 6; // Unused
+    const VAL_ISREQUIRED   = 7;
+    const VAL_TOOSHORT     = 8;
+    const VAL_TOOLONG      = 9;
+    const VAL_NUMLESSTHAN  = 10;
+    const VAL_GREATERTHAN  = 11;
+    const VAL_PATTERNFAIL  = 12;
+    const VAL_NOTENUMVALUE = 13;
 
     /**
      * Valid types
@@ -688,7 +706,7 @@ class NamedParameter implements ArrayInstantiationInterface
          */
         if (in_array($param, array(null, ''), true)) {
             if ($this->isRequired()) {
-                throw new \Exception($this->getKey().' is required', 1);
+                throw new ValidationException($this->getKey().' is required', static::VAL_ISREQUIRED);
             }
                 
             return;
@@ -697,27 +715,27 @@ class NamedParameter implements ArrayInstantiationInterface
         
         switch($this->getType()) {
             
-            case 'boolean':
+            case static::TYPE_BOOLEAN:
                 
                 // Must be boolean
                 if (!is_bool($param)) {
-                    throw new \Exception($this->getKey().' is not boolean', 11);
+                    throw new ValidationException($this->getKey().' is not boolean', static::VAL_NOTBOOLEAN);
                 }
                 
                 break;
                 
-            case 'date':
+            case static::TYPE_DATE:
                 
                 // Must be a valid date
                 if (\DateTime::createFromFormat('D, d M Y H:i:s T', $param) === false) {
-                    throw new \Exception($this->getKey().' is not a valid date', 12);
+                    throw new ValidationException($this->getKey().' is not a valid date', static::VAL_NOTDATE);
                 }
     
-            case 'string':
+            case static::TYPE_STRING:
     
                 // Must be a string
                 if (!is_string($param)) {
-                    throw new \Exception($this->getKey().' is not a string', 2);
+                    throw new ValidationException($this->getKey().' is not a string', static::VAL_NOTSTRING);
                 }
     
                 /**
@@ -725,8 +743,11 @@ class NamedParameter implements ArrayInstantiationInterface
                  *
                  * @link http://raml.org/spec.html#minlength
                  */
-                if (!empty($min_len = $this->getMinLength()) && strlen($param) < $min_len) {
-                    throw new \Exception($this->getKey().' must be at least '.$min_len.' characters long', 3);
+                if (!empty($this->getMinLength()) && strlen($param) < $this->getMinLength()) {
+                    throw new ValidationException(
+                        $this->getKey().' must be at least '.$this->getMinLength().' characters long',
+                        static::VAL_TOOSHORT
+                    );
                 }
                 
                 /**
@@ -734,13 +755,30 @@ class NamedParameter implements ArrayInstantiationInterface
                  *
                  * @link http://raml.org/spec.html#maxlength
                  */
-                if (!empty($max_len = $this->getMaxLength()) && strlen($param) > $max_len) {
-                    throw new \Exception($this->getKey().' must be no more than '.$max_len.' characters long', 4);
+                if (!empty($this->getMaxLength()) && strlen($param) > $this->getMaxLength()) {
+                    throw new ValidationException(
+                        $this->getKey().' must be no more than '.$this->getMaxLength().' characters long',
+                        static::VAL_TOOLONG
+                    );
                 }
     
                 break;
-                    
-            case 'number':
+                
+
+
+            case static::TYPE_INTEGER:
+                
+                /**
+                 * Integers must be of type integer.
+                 *
+                 * @link http://raml.org/spec.html#type
+                 */
+                if (!is_int($param)) {
+                    throw new ValidationException($this->getKey().' is not an integer', static::VAL_NOTINT);
+                }
+                // No break
+                
+            case static::TYPE_NUMBER:
     
                 /**
                  * Number types must be numeric. ;)
@@ -748,20 +786,7 @@ class NamedParameter implements ArrayInstantiationInterface
                  * @link http://raml.org/spec.html#type
                  */
                 if (!is_numeric($param)) {
-                    throw new \Exception($this->getKey().' is not a number', 5);
-                }
-    
-                // No break
-    
-            case 'integer':
-    
-                /**
-                 * Integers must be of type integer.
-                 *
-                 * @link http://raml.org/spec.html#type
-                 */
-                if ($this->getType() === 'integer' && !is_int($param)) {
-                    throw new \Exception($this->getKey().' is not an integer', 6);
+                    throw new ValidationException($this->getKey().' is not a number', static::VAL_NOTNUMBER);
                 }
     
                 /**
@@ -769,8 +794,11 @@ class NamedParameter implements ArrayInstantiationInterface
                  *
                  * @link http://raml.org/spec.html#minimum
                  */
-                if (!empty($min = $this->getMinimum()) && $param < $min) {
-                    throw new \Exception($this->getKey().' must be greater than or equal to '.$min, 7);
+                if (!empty($this->getMinimum()) && $param < $this->getMinimum()) {
+                    throw new ValidationException(
+                        $this->getKey().' must be greater than or equal to '.$this->getMinimum(),
+                        static::VAL_NUMLESSTHAN
+                    );
                 }
                 
                 /**
@@ -778,13 +806,16 @@ class NamedParameter implements ArrayInstantiationInterface
                  *
                  * @link http://raml.org/spec.html#maximum
                  */
-                if (!empty($max = $this->getMaximum()) && $param > $max) {
-                    throw new \Exception($this->getKey().' must be less than or equal to '.$max, 8);
+                if (!empty($this->getMaximum()) && $param > $this->getMaximum()) {
+                    throw new ValidationException(
+                        $this->getKey().' must be less than or equal to '.$this->getMaximum(),
+                        static::VAL_GREATERTHAN
+                    );
                 }
     
                 break;
                 
-            case 'file':
+            case static::TYPE_FILE:
                 
                 // File type cannot be reliably validated based on its type alone.
                 
@@ -797,10 +828,13 @@ class NamedParameter implements ArrayInstantiationInterface
          *
          * @link http://raml.org/spec.html#pattern
          */
-        if (!empty($pattern = $this->getValidationPattern(false)) &&
-            preg_match('|'.$pattern.'|', $param) !== 1
+        if (!empty($this->getValidationPattern(false)) &&
+            preg_match('|'.$this->getValidationPattern(false).'|', $param) !== 1
         ) {
-            throw new \Exception($this->getKey().' does not match the specified pattern', 9);
+            throw new ValidationException(
+                $this->getKey().' does not match the specified pattern',
+                static::VAL_PATTERNFAIL
+            );
         }
     
         /**
@@ -815,7 +849,10 @@ class NamedParameter implements ArrayInstantiationInterface
         if (is_array($enum = $this->getEnum()) &&
             !in_array($param, $enum)
         ) {
-            throw new \Exception($this->getKey().' must be one of the following: '.implode(', ', $enum), 10);
+            throw new ValidationException(
+                $this->getKey().' must be one of the following: '.implode(', ', $enum),
+                static::VAL_NOTENUMVALUE
+            );
         }
     
     }

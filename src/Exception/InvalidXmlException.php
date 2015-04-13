@@ -20,4 +20,3 @@ class InvalidXmlException extends RuntimeException implements ExceptionInterface
         return $this->errors;
     }
 }
-
