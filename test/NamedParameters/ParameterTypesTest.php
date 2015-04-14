@@ -178,6 +178,34 @@ RAML;
 
     // ---
     /** @test */
+    public function shouldIgnoreTypeCheckValidation()
+    {
+        $raml =  <<<RAML
+#%RAML 0.8
+title: Test named parameters
+/:
+  post:
+    body:
+      application/x-www-form-urlencoded:
+        formParameters:
+          param:
+            type: string
+            default: abcde
+RAML;
+
+        $apiDefinition = $this->parser->parseFromString($raml, '');
+        $resource = $apiDefinition->getResourceByUri('/');
+        $method = $resource->getMethod('post');
+        $body = $method->getBodyByType('application/x-www-form-urlencoded');
+
+        $namedParameter = $body->getParameter('param');
+        $this->assertEquals('string', $namedParameter->getType());
+        $this->assertEquals('abcde', $namedParameter->getDefault());
+        $this->assertEquals(null, $namedParameter->getValidationPattern(false));
+    }
+
+    // ---
+    /** @test */
     public function shouldParseCustomValidation()
     {
         $raml =  <<<RAML
