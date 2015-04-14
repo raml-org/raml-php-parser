@@ -743,9 +743,10 @@ class NamedParameter implements ArrayInstantiationInterface
                  *
                  * @link http://raml.org/spec.html#minlength
                  */
-                if (!empty($this->getMinLength()) && strlen($param) < $this->getMinLength()) {
+                $minLength = $this->getMinLength();
+                if (!empty($minLength) && strlen($param) < $minLength) {
                     throw new ValidationException(
-                        $this->getKey().' must be at least '.$this->getMinLength().' characters long',
+                        $this->getKey().' must be at least '.$minLength.' characters long',
                         static::VAL_TOOSHORT
                     );
                 }
@@ -755,9 +756,10 @@ class NamedParameter implements ArrayInstantiationInterface
                  *
                  * @link http://raml.org/spec.html#maxlength
                  */
-                if (!empty($this->getMaxLength()) && strlen($param) > $this->getMaxLength()) {
+                $maxLength = $this->getMaxLength();
+                if (!empty($maxLength) && strlen($param) > $maxLength) {
                     throw new ValidationException(
-                        $this->getKey().' must be no more than '.$this->getMaxLength().' characters long',
+                        $this->getKey().' must be no more than '.$maxLength.' characters long',
                         static::VAL_TOOLONG
                     );
                 }
@@ -794,9 +796,10 @@ class NamedParameter implements ArrayInstantiationInterface
                  *
                  * @link http://raml.org/spec.html#minimum
                  */
-                if (!empty($this->getMinimum()) && $param < $this->getMinimum()) {
+                $min = $this->getMinimum();
+                if (!empty($min) && $param < $min) {
                     throw new ValidationException(
-                        $this->getKey().' must be greater than or equal to '.$this->getMinimum(),
+                        $this->getKey().' must be greater than or equal to '.$min,
                         static::VAL_NUMLESSTHAN
                     );
                 }
@@ -806,9 +809,10 @@ class NamedParameter implements ArrayInstantiationInterface
                  *
                  * @link http://raml.org/spec.html#maximum
                  */
-                if (!empty($this->getMaximum()) && $param > $this->getMaximum()) {
+                $max = $this->getMaximum();
+                if (!empty($max) && $param > $max) {
                     throw new ValidationException(
-                        $this->getKey().' must be less than or equal to '.$this->getMaximum(),
+                        $this->getKey().' must be less than or equal to '.$max,
                         static::VAL_GREATERTHAN
                     );
                 }
@@ -828,8 +832,9 @@ class NamedParameter implements ArrayInstantiationInterface
          *
          * @link http://raml.org/spec.html#pattern
          */
-        if (!empty($this->getValidationPattern(false)) &&
-            preg_match('|'.$this->getValidationPattern(false).'|', $param) !== 1
+        $validationPattern = $this->getValidationPattern(false);
+        if (!empty($validationPattern) &&
+            preg_match('|'.$validationPattern.'|', $param) !== 1
         ) {
             throw new ValidationException(
                 $this->getKey().' does not match the specified pattern',
