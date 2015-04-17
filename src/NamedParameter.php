@@ -2,6 +2,7 @@
 namespace Raml;
 
 use \Raml\Exception\InvalidQueryParameterTypeException;
+use \Raml\Exception\ValidationException;
 
 /**
  * Named Parameters
@@ -19,6 +20,23 @@ class NamedParameter implements ArrayInstantiationInterface
     const TYPE_DATE     = 'date';
     const TYPE_BOOLEAN  = 'boolean';
     const TYPE_FILE     = 'file';
+    
+    // ---
+    // Validation exception codes
+    
+    const VAL_NOTBOOLEAN   = 1;
+    const VAL_NOTDATE      = 2;
+    const VAL_NOTSTRING    = 3;
+    const VAL_NOTINT       = 4;
+    const VAL_NOTNUMBER    = 5;
+    const VAL_NOTFILE      = 6; // Unused
+    const VAL_ISREQUIRED   = 7;
+    const VAL_TOOSHORT     = 8;
+    const VAL_TOOLONG      = 9;
+    const VAL_NUMLESSTHAN  = 10;
+    const VAL_GREATERTHAN  = 11;
+    const VAL_PATTERNFAIL  = 12;
+    const VAL_NOTENUMVALUE = 13;
 
     /**
      * Valid types
@@ -671,5 +689,176 @@ class NamedParameter implements ArrayInstantiationInterface
         }
 
         $this->default = $default;
+    }
+    
+    /**
+     * Validate a paramater via RAML specifications
+     *
+     * @param mixed $param The value of the paramater to validate
+     * @throws \Exception The code corresponds to the error that occured.
+     */
+    public function validate($param)
+    {
+        /**
+         * If we don't have a value to validate, check if it's required.
+         *
+         * @link http://raml.org/spec.html#required
+         */
+        if (in_array($param, array(null, ''), true)) {
+            if ($this->isRequired()) {
+                throw new ValidationException($this->getKey().' is required', static::VAL_ISREQUIRED);
+            }
+                
+            return;
+                
+        }
+        
+        switch($this->getType()) {
+            
+            case static::TYPE_BOOLEAN:
+                
+                // Must be boolean
+                if (!is_bool($param)) {
+                    throw new ValidationException($this->getKey().' is not boolean', static::VAL_NOTBOOLEAN);
+                }
+                
+                break;
+                
+            case static::TYPE_DATE:
+                
+                // Must be a valid date
+                if (\DateTime::createFromFormat('D, d M Y H:i:s T', $param) === false) {
+                    throw new ValidationException($this->getKey().' is not a valid date', static::VAL_NOTDATE);
+                }
+    
+            case static::TYPE_STRING:
+    
+                // Must be a string
+                if (!is_string($param)) {
+                    throw new ValidationException($this->getKey().' is not a string', static::VAL_NOTSTRING);
+                }
+    
+                /**
+                 * Check the length of a string.
+                 *
+                 * @link http://raml.org/spec.html#minlength
+                 */
+                $minLength = $this->getMinLength();
+                if (!empty($minLength) && strlen($param) < $minLength) {
+                    throw new ValidationException(
+                        $this->getKey().' must be at least '.$minLength.' characters long',
+                        static::VAL_TOOSHORT
+                    );
+                }
+                
+                /**
+                 * Check the length of a string.
+                 *
+                 * @link http://raml.org/spec.html#maxlength
+                 */
+                $maxLength = $this->getMaxLength();
+                if (!empty($maxLength) && strlen($param) > $maxLength) {
+                    throw new ValidationException(
+                        $this->getKey().' must be no more than '.$maxLength.' characters long',
+                        static::VAL_TOOLONG
+                    );
+                }
+    
+                break;
+                
+
+
+            case static::TYPE_INTEGER:
+                
+                /**
+                 * Integers must be of type integer.
+                 *
+                 * @link http://raml.org/spec.html#type
+                 */
+                if (!is_int($param)) {
+                    throw new ValidationException($this->getKey().' is not an integer', static::VAL_NOTINT);
+                }
+                // No break
+                
+            case static::TYPE_NUMBER:
+    
+                /**
+                 * Number types must be numeric. ;)
+                 *
+                 * @link http://raml.org/spec.html#type
+                 */
+                if (!is_numeric($param)) {
+                    throw new ValidationException($this->getKey().' is not a number', static::VAL_NOTNUMBER);
+                }
+    
+                /**
+                 * Check the value constraints if specified.
+                 *
+                 * @link http://raml.org/spec.html#minimum
+                 */
+                $min = $this->getMinimum();
+                if (!empty($min) && $param < $min) {
+                    throw new ValidationException(
+                        $this->getKey().' must be greater than or equal to '.$min,
+                        static::VAL_NUMLESSTHAN
+                    );
+                }
+                
+                /**
+                 * Check the value constraints if specified.
+                 *
+                 * @link http://raml.org/spec.html#maximum
+                 */
+                $max = $this->getMaximum();
+                if (!empty($max) && $param > $max) {
+                    throw new ValidationException(
+                        $this->getKey().' must be less than or equal to '.$max,
+                        static::VAL_GREATERTHAN
+                    );
+                }
+    
+                break;
+                
+            case static::TYPE_FILE:
+                
+                // File type cannot be reliably validated based on its type alone.
+                
+                break;
+                
+        }
+    
+        /**
+         * Validate against the RAML specified pattern if it exists.
+         *
+         * @link http://raml.org/spec.html#pattern
+         */
+        $validationPattern = $this->getValidationPattern(false);
+        if (!empty($validationPattern) &&
+            preg_match('|'.$validationPattern.'|', $param) !== 1
+        ) {
+            throw new ValidationException(
+                $this->getKey().' does not match the specified pattern',
+                static::VAL_PATTERNFAIL
+            );
+        }
+    
+        /**
+         * If we have an enum (array), then it must be a specified value.
+         *
+         * NOTE: The RAML spec states that "enum" only applies to strings. However, it
+         * could just as easily apply to integers or any other data type that an array
+         * can hold in a YAML structure.
+         *
+         * @link http://raml.org/spec.html#enum
+         */
+        if (is_array($enum = $this->getEnum()) &&
+            !in_array($param, $enum)
+        ) {
+            throw new ValidationException(
+                $this->getKey().' must be one of the following: '.implode(', ', $enum),
+                static::VAL_NOTENUMVALUE
+            );
+        }
+    
     }
 }

@@ -124,7 +124,7 @@ class Body implements BodyInterface, ArrayInstantiationInterface
 
     /**
      * Get the description
-     * 
+     *
      * @return string
      */
     public function getDescription()

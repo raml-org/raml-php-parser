@@ -32,7 +32,7 @@
   },
 
   "require": {
-    "justinrainbow/json-schema": "@dev",
+    "alecsammon/json-schema": "@dev",
     "symfony/yaml": "~2.5",
     "symfony/routing": "~2.5",
     "oodle/inflect": "0.2.0"

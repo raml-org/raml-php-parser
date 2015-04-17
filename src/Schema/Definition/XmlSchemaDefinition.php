@@ -48,7 +48,7 @@ class XmlSchemaDefinition implements SchemaDefinitionInterface
         $dom->loadXML($string);
         $errors = libxml_get_errors();
         libxml_clear_errors();
-        if($errors) {
+        if ($errors) {
             throw new InvalidXmlException($errors);
         }
 
@@ -57,7 +57,7 @@ class XmlSchemaDefinition implements SchemaDefinitionInterface
         $dom->schemaValidateSource($this->xml);
         $errors = libxml_get_errors();
         libxml_clear_errors();
-        if($errors) {
+        if ($errors) {
             throw new InvalidSchemaException($errors);
         }
         
