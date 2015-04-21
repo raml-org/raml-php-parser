@@ -139,7 +139,11 @@ class Resource implements ArrayInstantiationInterface
 
         if (isset($data['securedBy'])) {
             foreach ($data['securedBy'] as $securedBy) {
-                $resource->addSecurityScheme($apiDefinition->getSecurityScheme($securedBy));
+                if ($securedBy) {
+                    $resource->addSecurityScheme($apiDefinition->getSecurityScheme($securedBy));
+                } else {
+                    $resource->addSecurityScheme(SecurityScheme::createFromArray('null', [], $apiDefinition));
+                }
             }
         }
 
