@@ -782,4 +782,37 @@ RAML;
         $body = $response->getBodyByType('text/xml');
         $this->assertEquals('A generic description', $body->getDescription());
     }
+    
+    /** @test */
+    public function shouldMergeMethodSecurityScheme()
+    {
+        $apiDefinition = $this->parser->parse(__DIR__ . '/fixture/securitySchemes.raml');
+        $resource = $apiDefinition->getResourceByUri('/users');
+        $method = $resource->getMethod('get');
+        $headers = $method->getHeaders();
+        $this->assertFalse(empty($headers['Authorization']));
+    }
+    
+    /** @test */
+    public function shouldNotMergeMethodSecurityScheme()
+    {
+        $this->parser->set_merge_security();
+        $apiDefinition = $this->parser->parse(__DIR__ . '/fixture/securitySchemes.raml');
+        $resource = $apiDefinition->getResourceByUri('/users');
+        $method = $resource->getMethod('get');
+        $headers = $method->getHeaders();
+        $this->assertTrue(empty($headers['Authorization']));
+        
+        // Reset the value.
+        $this->parser->set_merge_security(true);
+    }
+    
+    /** @test */
+    public function shouldAddSecuritySchemeToResource()
+    {
+        $apiDefinition = $this->parser->parse(__DIR__ . '/fixture/resourceSecuritySchemes.raml');
+        $resource = $apiDefinition->getResourceByUri('/users');
+        $schemes = $resource->getSecuritySchemes();
+        $this->assertFalse(empty($schemes['oauth_2_0']));
+    }
 }

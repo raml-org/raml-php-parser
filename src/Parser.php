@@ -62,6 +62,15 @@ class Parser
      * @var boolean
      */
     private $allowDirectoryTraversal = true;
+    
+    /**
+     * Should security scheme structures merge with methods implementing the schemes?
+     *
+     * @TODO Change to false in version 2.0.0
+     *
+     * @var bool
+     */
+    private $merge_security = true;
 
     // ---
 
@@ -131,6 +140,27 @@ class Parser
     public function allowDirectoryTraversal()
     {
         $this->allowDirectoryTraversal = true;
+    }
+    
+    /**
+     * Choose whether or not to merge security schemes with the method's data when using securedBy
+     *
+     * @param bool $merge_security True to enable merging, or false to disable merging (Function
+     *                             default is false, script default is true)
+     */
+    public function set_merge_security($merge_security = false)
+    {
+        $this->merge_security = $merge_security;
+    }
+    
+    /**
+     * Check if security schemes must be merged with methods when the method uses securedBy
+     *
+     * @return boolean
+     */
+    public function get_merge_security()
+    {
+        return $this->merge_security;
     }
 
     /**
@@ -268,7 +298,7 @@ class Parser
             $ramlData['securitySchemes'] = $this->parseSecuritySettings($ramlData['securitySchemes']);
         }
 
-        return ApiDefinition::createFromArray($ramlData['title'], $ramlData);
+        return ApiDefinition::createFromArray($ramlData['title'], $ramlData, $this->merge_security);
     }
 
     /**

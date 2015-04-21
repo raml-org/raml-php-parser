@@ -137,6 +137,12 @@ class Resource implements ArrayInstantiationInterface
             }
         }
 
+        if (isset($data['securedBy'])) {
+            foreach ($data['securedBy'] as $securedBy) {
+                $resource->addSecurityScheme($apiDefinition->getSecurityScheme($securedBy));
+            }
+        }
+
         foreach ($data as $key => $value) {
             if (strpos($key, '/') === 0) {
                 $resource->addResource(
@@ -355,5 +361,25 @@ class Resource implements ArrayInstantiationInterface
         }
 
         return $this->methods[$method];
+    }
+
+    // --
+
+    /**
+     * Get the list of security schemes
+     *
+     * @return SecurityScheme[]
+     */
+    public function getSecuritySchemes()
+    {
+        return $this->securitySchemes;
+    }
+
+    /**
+     * @param SecurityScheme $securityScheme
+     */
+    public function addSecurityScheme(SecurityScheme $securityScheme)
+    {
+        $this->securitySchemes[$securityScheme->getKey()] = $securityScheme;
     }
 }
