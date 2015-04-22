@@ -69,6 +69,13 @@ class Resource implements ArrayInstantiationInterface
      */
     private $methods = [];
 
+    /**
+     * A list of security schemes
+     *
+     * @var SecurityScheme[]
+     */
+    private $securitySchemes = [];
+
     // ---
 
     /**
