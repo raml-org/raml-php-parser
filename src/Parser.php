@@ -70,7 +70,7 @@ class Parser
      *
      * @var bool
      */
-    private $merge_security = true;
+    private $mergeSecurity = true;
 
     // ---
 
@@ -145,12 +145,12 @@ class Parser
     /**
      * Choose whether or not to merge security schemes with the method's data when using securedBy
      *
-     * @param bool $merge_security True to enable merging, or false to disable merging (Function
+     * @param bool $mergeSecurity True to enable merging, or false to disable merging (Function
      *                             default is false, script default is true)
      */
-    public function set_merge_security($merge_security = false)
+    public function setMergeSecurity($mergeSecurity = false)
     {
-        $this->merge_security = $merge_security;
+        $this->mergeSecurity = $mergeSecurity;
     }
     
     /**
@@ -158,9 +158,9 @@ class Parser
      *
      * @return boolean
      */
-    public function get_merge_security()
+    public function getMergeSecurity()
     {
-        return $this->merge_security;
+        return $this->mergeSecurity;
     }
 
     /**
@@ -298,7 +298,7 @@ class Parser
             $ramlData['securitySchemes'] = $this->parseSecuritySettings($ramlData['securitySchemes']);
         }
 
-        return ApiDefinition::createFromArray($ramlData['title'], $ramlData, $this->merge_security);
+        return ApiDefinition::createFromArray($ramlData['title'], $ramlData, $this->mergeSecurity);
     }
 
     /**

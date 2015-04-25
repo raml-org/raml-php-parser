@@ -192,12 +192,12 @@ class Method implements ArrayInstantiationInterface
                 if ($securedBy) {
                     $method->addSecurityScheme(
                         $apiDefinition->getSecurityScheme($securedBy),
-                        $apiDefinition->get_merge_security()
+                        $apiDefinition->getMergeSecurity()
                     );
                 } else {
                     $method->addSecurityScheme(
                         SecurityScheme::createFromArray('null', [], $apiDefinition),
-                        $apiDefinition->get_merge_security()
+                        $apiDefinition->getMergeSecurity()
                     );
                 }
             }

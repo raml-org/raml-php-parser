@@ -140,7 +140,7 @@ class ApiDefinition implements ArrayInstantiationInterface
      *
      * @var bool
      */
-    private $merge_security = true;
+    private $mergeSecurity = true;
 
     // ---
 
@@ -174,13 +174,13 @@ class ApiDefinition implements ArrayInstantiationInterface
      *
      * @return ApiDefinition
      */
-    public static function createFromArray($title, array $data = [], $merge_security = true)
+    public static function createFromArray($title, array $data = [], $mergeSecurity = true)
     {
         $apiDefinition = new static($title);
 
         // --
 
-        $apiDefinition->merge_security = $merge_security;
+        $apiDefinition->mergeSecurity = $mergeSecurity;
 
         if (isset($data['version'])) {
             $apiDefinition->setVersion($data['version']);
@@ -671,8 +671,8 @@ class ApiDefinition implements ArrayInstantiationInterface
      *
      * @return boolean
      */
-    public function get_merge_security()
+    public function getMergeSecurity()
     {
-        return $this->merge_security;
+        return $this->mergeSecurity;
     }
 }

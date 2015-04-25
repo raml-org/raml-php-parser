@@ -796,7 +796,7 @@ RAML;
     /** @test */
     public function shouldNotMergeMethodSecurityScheme()
     {
-        $this->parser->set_merge_security();
+        $this->parser->setMergeSecurity();
         $apiDefinition = $this->parser->parse(__DIR__ . '/fixture/securitySchemes.raml');
         $resource = $apiDefinition->getResourceByUri('/users');
         $method = $resource->getMethod('get');
@@ -804,7 +804,7 @@ RAML;
         $this->assertTrue(empty($headers['Authorization']));
         
         // Reset the value.
-        $this->parser->set_merge_security(true);
+        $this->parser->setMergeSecurity(true);
     }
     
     /** @test */
