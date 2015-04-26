@@ -12,6 +12,8 @@ use Raml\Exception\BadParameter\ResourceNotFoundException;
 use Raml\Exception\BadParameter\InvalidSchemaDefinitionException;
 use Raml\Exception\BadParameter\InvalidProtocolException;
 
+use Symfony\Component\Yaml\Yaml;
+
 /**
  * The API Definition
  *
@@ -594,6 +596,44 @@ class ApiDefinition implements ArrayInstantiationInterface
      */
     public function getSecurityScheme($schemeName)
     {
+        if (is_array($schemeName) && count($schemeName) === 1) {
+            $schemeKey = key($schemeName);
+            
+            if (!empty($schemeName[$schemeKey]) &&
+                !empty($this->securitySchemes[$schemeKey])
+            ) {
+                $schemeValues = $schemeName[$schemeKey];
+                
+                // Assign new values to the security scheme.
+                $scheme = $this->securitySchemes[$schemeKey];
+                $currentSettings = $scheme->getSettings();
+                
+                if (is_object($currentSettings)) {
+                    if (method_exists($currentSettings, 'getSettings') &&
+                        method_exists($currentSettings, 'createFromArray')
+                    ) {
+                        // Preserve
+                        $settingsObject = $currentSettings;
+                
+                        // Pull the settings data from the settings object.
+                        $currentSettings = $settingsObject->getSettings();
+                        $settings = array_replace($currentSettings, $schemeValues);
+                        $settingsObject->createFromArray($settings);
+                
+                    }
+                     
+                } else {
+                    $settings = array_replace($currentSettings, $schemeValues);
+                    $scheme->setSettings($settings);
+                     
+                }
+                
+            }
+            
+            $schemeName = $schemeKey;
+            
+        }
+        
         return $this->securitySchemes[$schemeName];
     }
 

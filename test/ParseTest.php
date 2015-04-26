@@ -815,4 +815,26 @@ RAML;
         $schemes = $resource->getSecuritySchemes();
         $this->assertFalse(empty($schemes['oauth_2_0']));
     }
+    
+    /** @test */
+    public function shouldParseCustomSettingsOnResource()
+    {
+        $apiDefinition = $this->parser->parse(__DIR__ . '/fixture/securedByCustomProps.raml');
+        $resource = $apiDefinition->getResourceByUri('/test');
+        $schemes = $resource->getSecuritySchemes();
+        $settings = $schemes['custom']->getSettings();
+        $this->assertSame($settings['myKey'], 'heLikesItNotSoMuch');
+    }
+    
+    /** @test */
+    public function shouldParseCustomSettingsOnMethodWithOAuthParser()
+    {
+        $apiDefinition = $this->parser->parse(__DIR__ . '/fixture/securedByCustomProps.raml');
+        $resource = $apiDefinition->getResourceByUri('/users');
+        $method = $resource->getMethod('get');
+        $schemes = $method->getSecuritySchemes();
+        $settingsObject = $schemes['oauth_2_0']->getSettings();
+        $settingsArray = $settingsObject->getSettings();
+        $this->assertSame($settingsArray['scopes'], array('ADMINISTRATOR'));
+    }
 }
