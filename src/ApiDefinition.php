@@ -597,6 +597,7 @@ class ApiDefinition implements ArrayInstantiationInterface
     public function getSecurityScheme($schemeName)
     {
         if (is_array($schemeName) && count($schemeName) === 1) {
+            reset($schemeName);
             $schemeKey = key($schemeName);
             
             if (!empty($schemeName[$schemeKey]) &&
@@ -627,10 +628,10 @@ class ApiDefinition implements ArrayInstantiationInterface
                     $scheme->setSettings($settings);
                      
                 }
-            
-                $schemeName = $schemeKey;
                 
             }
+            
+            $schemeName = $schemeKey;
             
         }
         
