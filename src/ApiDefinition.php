@@ -627,10 +627,10 @@ class ApiDefinition implements ArrayInstantiationInterface
                     $scheme->setSettings($settings);
                      
                 }
+            
+                $schemeName = $schemeKey;
                 
             }
-            
-            $schemeName = $schemeKey;
             
         }
         
