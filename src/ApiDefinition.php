@@ -132,6 +132,15 @@ class ApiDefinition implements ArrayInstantiationInterface
      * @var SecurityScheme[]
      */
     private $securedBy = [];
+    
+    /**
+     * Should security scheme structures merge with methods implementing the schemes?
+     *
+     * @TODO Change to false in version 2.0.0
+     *
+     * @var bool
+     */
+    private $mergeSecurity = true;
 
     // ---
 
@@ -165,12 +174,13 @@ class ApiDefinition implements ArrayInstantiationInterface
      *
      * @return ApiDefinition
      */
-    public static function createFromArray($title, array $data = [])
+    public static function createFromArray($title, array $data = [], $mergeSecurity = true)
     {
         $apiDefinition = new static($title);
 
         // --
 
+        $apiDefinition->mergeSecurity = $mergeSecurity;
 
         if (isset($data['version'])) {
             $apiDefinition->setVersion($data['version']);
@@ -654,5 +664,15 @@ class ApiDefinition implements ArrayInstantiationInterface
         }
 
         return $all;
+    }
+    
+    /**
+     * Check if security schemes must be merged with methods when the method uses securedBy
+     *
+     * @return boolean
+     */
+    public function getMergeSecurity()
+    {
+        return $this->mergeSecurity;
     }
 }

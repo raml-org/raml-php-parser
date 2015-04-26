@@ -21,7 +21,7 @@
   "repositories": [
     {
       "type": "vcs",
-      "url": "https://github.com/alecsammon/json-schema.git"
+      "url": "https://github.com/justinrainbow/json-schema.git"
     }
   ],
 
@@ -32,7 +32,7 @@
   },
 
   "require": {
-    "alecsammon/json-schema": "@dev",
+    "justinrainbow/json-schema": "@dev",
     "symfony/yaml": "~2.5",
     "symfony/routing": "~2.5",
     "oodle/inflect": "0.2.0"
