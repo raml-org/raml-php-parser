@@ -9,27 +9,23 @@ class OAuth1SecuritySettings
     // --
 
     /**
-     * The URI of the Temporary Credential Request endpoint as defined in RFC5849 Section 2.1
-     *
-     * @var string
+     * The array of settings data
+     * @var array
      */
-    private $requestTokenUri;
-
-    /**
-     * The URI of the Resource Owner Authorization endpoint as defined in RFC5849 Section 2.2
-     *
-     * @var string
-     */
-    private $authorizationUri;
-
-    /**
-     * The URI of the Token Request endpoint as defined in RFC5849 Section 2.3
-     *
-     * @var string
-     */
-    private $tokenCredentialsUri;
+    private $settings;
 
     // ---
+    
+    /**
+     * Flesh out the settings
+     *
+     * @param array $settings
+     */
+    public function createFromArray(array $settings)
+    {
+        $defaults = array_fill_keys(array('tokenCredentialsUri', 'requestTokenUri', 'authorizationUri'), null);
+        $this->settings = array_replace($defaults, $settings);
+    }
 
     /**
      * Get the Token Credentials URI
@@ -38,7 +34,7 @@ class OAuth1SecuritySettings
      */
     public function getTokenCredentialsUri()
     {
-        return $this->tokenCredentialsUri;
+        return $this->settings['tokenCredentialsUri'];
     }
 
     /**
@@ -48,7 +44,7 @@ class OAuth1SecuritySettings
      */
     public function setTokenCredentialsUri($tokenCredentialsUri)
     {
-        $this->tokenCredentialsUri = $tokenCredentialsUri;
+        $this->settings['tokenCredentialsUri'] = $tokenCredentialsUri;
     }
 
     // --
@@ -60,7 +56,7 @@ class OAuth1SecuritySettings
      */
     public function getRequestTokenUri()
     {
-        return $this->requestTokenUri;
+        return $this->settings['requestTokenUri'];
     }
 
     /**
@@ -70,7 +66,7 @@ class OAuth1SecuritySettings
      */
     public function setRequestTokenUri($requestTokenUri)
     {
-        $this->requestTokenUri = $requestTokenUri;
+        $this->settings['requestTokenUri'] = $requestTokenUri;
     }
 
     // --
@@ -82,7 +78,7 @@ class OAuth1SecuritySettings
      */
     public function getAuthorizationUri()
     {
-        return $this->authorizationUri;
+        return $this->settings['authorizationUri'];
     }
 
     /**
@@ -92,6 +88,18 @@ class OAuth1SecuritySettings
      */
     public function setAuthorizationUri($authorizationUri)
     {
-        $this->authorizationUri = $authorizationUri;
+        $this->settings['authorizationUri'] = $authorizationUri;
+    }
+    
+    // --
+    
+    /**
+     * Get the array of configured settings
+     *
+     * @return array The array of settings data
+     */
+    public function getSettings()
+    {
+        return $this->settings;
     }
 }

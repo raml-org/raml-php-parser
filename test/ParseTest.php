@@ -782,4 +782,59 @@ RAML;
         $body = $response->getBodyByType('text/xml');
         $this->assertEquals('A generic description', $body->getDescription());
     }
+    
+    /** @test */
+    public function shouldMergeMethodSecurityScheme()
+    {
+        $apiDefinition = $this->parser->parse(__DIR__ . '/fixture/securitySchemes.raml');
+        $resource = $apiDefinition->getResourceByUri('/users');
+        $method = $resource->getMethod('get');
+        $headers = $method->getHeaders();
+        $this->assertFalse(empty($headers['Authorization']));
+    }
+    
+    /** @test */
+    public function shouldNotMergeMethodSecurityScheme()
+    {
+        $this->parser->setMergeSecurity();
+        $apiDefinition = $this->parser->parse(__DIR__ . '/fixture/securitySchemes.raml');
+        $resource = $apiDefinition->getResourceByUri('/users');
+        $method = $resource->getMethod('get');
+        $headers = $method->getHeaders();
+        $this->assertTrue(empty($headers['Authorization']));
+        
+        // Reset the value.
+        $this->parser->setMergeSecurity(true);
+    }
+    
+    /** @test */
+    public function shouldAddSecuritySchemeToResource()
+    {
+        $apiDefinition = $this->parser->parse(__DIR__ . '/fixture/resourceSecuritySchemes.raml');
+        $resource = $apiDefinition->getResourceByUri('/users');
+        $schemes = $resource->getSecuritySchemes();
+        $this->assertFalse(empty($schemes['oauth_2_0']));
+    }
+    
+    /** @test */
+    public function shouldParseCustomSettingsOnResource()
+    {
+        $apiDefinition = $this->parser->parse(__DIR__ . '/fixture/securedByCustomProps.raml');
+        $resource = $apiDefinition->getResourceByUri('/test');
+        $schemes = $resource->getSecuritySchemes();
+        $settings = $schemes['custom']->getSettings();
+        $this->assertSame($settings['myKey'], 'heLikesItNotSoMuch');
+    }
+    
+    /** @test */
+    public function shouldParseCustomSettingsOnMethodWithOAuthParser()
+    {
+        $apiDefinition = $this->parser->parse(__DIR__ . '/fixture/securedByCustomProps.raml');
+        $resource = $apiDefinition->getResourceByUri('/users');
+        $method = $resource->getMethod('get');
+        $schemes = $method->getSecuritySchemes();
+        $settingsObject = $schemes['oauth_2_0']->getSettings();
+        $settingsArray = $settingsObject->getSettings();
+        $this->assertSame($settingsArray['scopes'], array('ADMINISTRATOR'));
+    }
 }

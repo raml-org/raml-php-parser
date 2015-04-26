@@ -12,6 +12,8 @@ use Raml\Exception\BadParameter\ResourceNotFoundException;
 use Raml\Exception\BadParameter\InvalidSchemaDefinitionException;
 use Raml\Exception\BadParameter\InvalidProtocolException;
 
+use Symfony\Component\Yaml\Yaml;
+
 /**
  * The API Definition
  *
@@ -132,6 +134,15 @@ class ApiDefinition implements ArrayInstantiationInterface
      * @var SecurityScheme[]
      */
     private $securedBy = [];
+    
+    /**
+     * Should security scheme structures merge with methods implementing the schemes?
+     *
+     * @TODO Change to false in version 2.0.0
+     *
+     * @var bool
+     */
+    private $mergeSecurity = true;
 
     // ---
 
@@ -165,12 +176,13 @@ class ApiDefinition implements ArrayInstantiationInterface
      *
      * @return ApiDefinition
      */
-    public static function createFromArray($title, array $data = [])
+    public static function createFromArray($title, array $data = [], $mergeSecurity = true)
     {
         $apiDefinition = new static($title);
 
         // --
 
+        $apiDefinition->mergeSecurity = $mergeSecurity;
 
         if (isset($data['version'])) {
             $apiDefinition->setVersion($data['version']);
@@ -584,6 +596,45 @@ class ApiDefinition implements ArrayInstantiationInterface
      */
     public function getSecurityScheme($schemeName)
     {
+        if (is_array($schemeName) && count($schemeName) === 1) {
+            reset($schemeName);
+            $schemeKey = key($schemeName);
+            
+            if (!empty($schemeName[$schemeKey]) &&
+                !empty($this->securitySchemes[$schemeKey])
+            ) {
+                $schemeValues = $schemeName[$schemeKey];
+                
+                // Assign new values to the security scheme.
+                $scheme = $this->securitySchemes[$schemeKey];
+                $currentSettings = $scheme->getSettings();
+                
+                if (is_object($currentSettings)) {
+                    if (method_exists($currentSettings, 'getSettings') &&
+                        method_exists($currentSettings, 'createFromArray')
+                    ) {
+                        // Preserve
+                        $settingsObject = $currentSettings;
+                
+                        // Pull the settings data from the settings object.
+                        $currentSettings = $settingsObject->getSettings();
+                        $settings = array_replace($currentSettings, $schemeValues);
+                        $settingsObject->createFromArray($settings);
+                
+                    }
+                     
+                } else {
+                    $settings = array_replace($currentSettings, $schemeValues);
+                    $scheme->setSettings($settings);
+                     
+                }
+                
+            }
+            
+            $schemeName = $schemeKey;
+            
+        }
+        
         return $this->securitySchemes[$schemeName];
     }
 
@@ -654,5 +705,15 @@ class ApiDefinition implements ArrayInstantiationInterface
         }
 
         return $all;
+    }
+    
+    /**
+     * Check if security schemes must be merged with methods when the method uses securedBy
+     *
+     * @return boolean
+     */
+    public function getMergeSecurity()
+    {
+        return $this->mergeSecurity;
     }
 }
