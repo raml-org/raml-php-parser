@@ -67,3 +67,5 @@ securitySchemes:
         
 /test:
     securedBy: [null, {custom: { myKey: heLikesItNotSoMuch }}]
+    get:
+        securedBy: [null, {oauth_2_0: { scopes: [ADMINISTRATOR, USER] }}]

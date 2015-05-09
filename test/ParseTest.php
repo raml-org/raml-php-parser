@@ -648,9 +648,20 @@ RAML;
         $settings->setAuthorizationUri('https://www.dropbox.com/1/oauth/authorize');
         $settings->setTokenCredentialsUri('https://api.dropbox.com/1/oauth/access_token');
 
+        // Get the settings array and remove the key used for internal processing.
+        $oauthSettings = $securitySchemes['oauth_1_0']->getSettings()->getSettings();
+        unset($oauthSettings['_PRP_ORIGINAL_SETTINGS_']);
+        
+        // Make the settings data an array.
+        $settings = (array) $settings;
+        reset($settings);
+        
+        // Loose the class name key.
+        $settings = $settings[key($settings)];
+        
         $this->assertEquals(
             $settings,
-            $securitySchemes['oauth_1_0']->getSettings()
+            $oauthSettings
         );
 
     }
@@ -830,11 +841,11 @@ RAML;
     public function shouldParseCustomSettingsOnMethodWithOAuthParser()
     {
         $apiDefinition = $this->parser->parse(__DIR__ . '/fixture/securedByCustomProps.raml');
-        $resource = $apiDefinition->getResourceByUri('/users');
+        $resource = $apiDefinition->getResourceByUri('/test');
         $method = $resource->getMethod('get');
         $schemes = $method->getSecuritySchemes();
         $settingsObject = $schemes['oauth_2_0']->getSettings();
         $settingsArray = $settingsObject->getSettings();
-        $this->assertSame($settingsArray['scopes'], array('ADMINISTRATOR'));
+        $this->assertSame($settingsArray['scopes'], array('ADMINISTRATOR', 'USER'));
     }
 }

@@ -596,46 +596,65 @@ class ApiDefinition implements ArrayInstantiationInterface
      */
     public function getSecurityScheme($schemeName)
     {
+        $newSettings = array();
         if (is_array($schemeName) && count($schemeName) === 1) {
             reset($schemeName);
             $schemeKey = key($schemeName);
             
-            if (!empty($schemeName[$schemeKey]) &&
-                !empty($this->securitySchemes[$schemeKey])
-            ) {
-                $schemeValues = $schemeName[$schemeKey];
-                
-                // Assign new values to the security scheme.
-                $scheme = $this->securitySchemes[$schemeKey];
-                $currentSettings = $scheme->getSettings();
-                
-                if (is_object($currentSettings)) {
-                    if (method_exists($currentSettings, 'getSettings') &&
-                        method_exists($currentSettings, 'createFromArray')
-                    ) {
-                        // Preserve
-                        $settingsObject = $currentSettings;
-                
-                        // Pull the settings data from the settings object.
-                        $currentSettings = $settingsObject->getSettings();
-                        $settings = array_replace($currentSettings, $schemeValues);
-                        $settingsObject->createFromArray($settings);
-                
-                    }
-                     
-                } else {
-                    $settings = array_replace($currentSettings, $schemeValues);
-                    $scheme->setSettings($settings);
-                     
-                }
-                
+            if (!empty($schemeName[$schemeKey]) && !empty($this->securitySchemes[$schemeKey])) {
+                $newSettings = $schemeName[$schemeKey];
             }
             
             $schemeName = $schemeKey;
             
         }
         
+        $this->securitySettings($this->securitySchemes[$schemeName], $newSettings);
         return $this->securitySchemes[$schemeName];
+    }
+    
+    /**
+     * Set new settings on the security scheme object
+     *
+     * @param SecurityScheme $securityScheme    The SecurityScheme object we're changing the settings for
+     * @param array $newSettings                The array of settings to merge into the existing settings
+     */
+    private function securitySettings(SecurityScheme $securityScheme, array $newSettings = array())
+    {
+        // Assign new values to the security scheme.
+        $currentSettings = $securityScheme->getSettings();
+        
+        if (is_object($currentSettings) &&
+            method_exists($currentSettings, 'getSettings') &&
+            method_exists($currentSettings, 'createFromArray')
+        ) {
+            // Preserve
+            $settingsObject = $currentSettings;
+        
+            /*
+    		 * Pull the settings data from the settings object. _PRP_ORIGINAL_SETTINGS_ holds the
+    		 * root specified values.
+    		 */
+            $currentSettings = $settingsObject->getSettings();
+        
+            if (!empty($currentSettings['_PRP_ORIGINAL_SETTINGS_'])) {
+                $currentSettings = $currentSettings['_PRP_ORIGINAL_SETTINGS_'];
+            }
+        
+            $currentSettings['_PRP_ORIGINAL_SETTINGS_'] = $currentSettings;
+            $settings = array_replace($currentSettings, $newSettings);
+            $settingsObject->createFromArray($settings);
+             
+        } else {
+            if (!empty($currentSettings['_PRP_ORIGINAL_SETTINGS_'])) {
+                $currentSettings = $currentSettings['_PRP_ORIGINAL_SETTINGS_'];
+            }
+             
+            $currentSettings['_PRP_ORIGINAL_SETTINGS_'] = $currentSettings;
+            $settings = array_replace($currentSettings, $newSettings);
+            $securityScheme->setSettings($settings);
+             
+        }
     }
 
     /**
