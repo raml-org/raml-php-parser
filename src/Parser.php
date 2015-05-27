@@ -328,16 +328,24 @@ class Parser
     /**
      * Parse the security settings
      *
-     * @param $securitySchemes
+     * @param array $array
      *
      * @return array
      */
-    private function parseSecuritySettings($securitySchemes)
+    private function parseSecuritySettings($array)
     {
-        foreach ($securitySchemes as $key => $securityScheme) {
-            if (isset($securityScheme['type']) && isset($this->securitySettingsParsers[$securityScheme['type']])) {
-                $parser = $this->securitySettingsParsers[$securityScheme['type']];
-                $securitySchemes[$key]['settings'] = $parser->createSecuritySettings($securityScheme['settings']);
+        $securitySchemes = [];
+        foreach ($array as $securitySchemeData) {
+
+            $key = array_keys($securitySchemeData)[0];
+            $securitySchemes[$key] = $securitySchemeData[$key];
+
+            if (
+                isset($securitySchemeData[$key]['type'])
+                && isset($this->securitySettingsParsers[$securitySchemeData[$key]['type']])
+            ) {
+                $parser = $this->securitySettingsParsers[$securitySchemeData[$key]['type']];
+                $securitySchemes[$key]['settings'] = $parser->createSecuritySettings($securitySchemeData[$key]['settings']);
             }
         }
         return $securitySchemes;

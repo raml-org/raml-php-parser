@@ -3,7 +3,7 @@ title: Dropbox API
 version: 1
 baseUri: https://api.dropbox.com/{version}
 securitySchemes:
-    oauth_2_0:
+    - oauth_2_0:
         description: |
             Dropbox supports OAuth 2.0 for authenticating all API requests.
         type: OAuth 2.0
@@ -34,7 +34,7 @@ securitySchemes:
           authorizationUri: https://www.dropbox.com/1/oauth2/authorize
           accessTokenUri: https://api.dropbox.com/1/oauth2/token
           authorizationGrants: [ code, token ]
-    oauth_1_0:
+    - oauth_1_0:
         description: |
             OAuth 1.0 continues to be supported for all API requests, but OAuth 2.0 is now preferred.
         type: OAuth 1.0
@@ -42,7 +42,7 @@ securitySchemes:
           requestTokenUri: https://api.dropbox.com/1/oauth/request_token
           authorizationUri: https://www.dropbox.com/1/oauth/authorize
           tokenCredentialsUri: https://api.dropbox.com/1/oauth/access_token
-    customHeader:
+    - customHeader:
         description: |
             A custom
 
