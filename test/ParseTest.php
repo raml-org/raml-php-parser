@@ -782,4 +782,50 @@ RAML;
         $body = $response->getBodyByType('text/xml');
         $this->assertEquals('A generic description', $body->getDescription());
     }
+
+    /** @test */
+    public function shouldMergeMethodSecurityScheme()
+    {
+        $apiDefinition = $this->parser->parse(__DIR__ . '/fixture/securitySchemes.raml');
+        $resource = $apiDefinition->getResourceByUri('/users');
+        $method = $resource->getMethod('get');
+        $headers = $method->getHeaders();
+        $this->assertFalse(empty($headers['Authorization']));
+    }
+
+    /** @test */
+    public function shouldAddSecuritySchemeToResource()
+    {
+        $apiDefinition = $this->parser->parse(__DIR__ . '/fixture/resourceSecuritySchemes.raml');
+        $resource = $apiDefinition->getResourceByUri('/users');
+        $method = $resource->getMethod('get');
+        $schemes = $method->getSecuritySchemes();
+        $this->assertArrayHasKey('oauth_1_0', $schemes);
+        $this->assertArrayHasKey('oauth_2_0', $schemes);
+    }
+
+    /** @test */
+    public function shouldParseCustomSettingsOnResource()
+    {
+        $apiDefinition = $this->parser->parse(__DIR__ . '/fixture/securedByCustomProps.raml');
+        $resource = $apiDefinition->getResourceByUri('/test');
+        $method = $resource->getMethod('get');
+        $schemes = $method->getSecuritySchemes();
+        $this->assertArrayHasKey('custom', $schemes);
+        $this->assertArrayHasKey('oauth_2_0', $schemes);
+
+        $this->assertEquals($schemes['custom']->getSettings(), ['myKey'=>'heLikesItNotSoMuch']);
+    }
+
+    /** @test */
+    public function shouldParseCustomSettingsOnMethodWithOAuthParser()
+    {
+        $apiDefinition = $this->parser->parse(__DIR__ . '/fixture/securedByCustomProps.raml');
+        $resource = $apiDefinition->getResourceByUri('/test');
+        $method = $resource->getMethod('get');
+        $schemes = $method->getSecuritySchemes();
+        $settingsObject = $schemes['oauth_2_0']->getSettings();
+        $this->assertSame($settingsObject->getScopes(), array('ADMINISTRATOR', 'USER'));
+        $this->assertSame($settingsObject->getAuthorizationUri(), 'https://www.dropbox.com/1/oauth2/authorize');
+    }
 }

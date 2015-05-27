@@ -191,7 +191,7 @@ class SecurityScheme implements ArrayInstantiationInterface
     /**
      * Get the settings of the security scheme
      *
-     * @return object
+     * @return object|array
      */
     public function getSettings()
     {
@@ -201,10 +201,27 @@ class SecurityScheme implements ArrayInstantiationInterface
     /**
      * Set the settings for the security scheme
      *
-     * @param array $settings
+     * @param object|array $settings
      */
     public function setSettings($settings)
     {
         $this->settings = $settings;
+    }
+
+    /**
+     * Update settings with a new array
+     *
+     * @param array $newSettings
+     */
+    public function mergeSettings($newSettings)
+    {
+        if (is_object($this->getSettings())) {
+            $settingsClass = get_class($this->getSettings());
+            $settings = $settingsClass::createFromArray($newSettings, $this->getSettings());
+        } else {
+            $settings = array_replace($this->getSettings(), $newSettings);
+        }
+
+        $this->setSettings($settings);
     }
 }

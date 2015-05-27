@@ -2,7 +2,9 @@
 
 namespace Raml\SecurityScheme\SecuritySettings;
 
-class OAuth1SecuritySettings
+use Raml\SecurityScheme\SecuritySettingsInterface;
+
+class OAuth1SecuritySettings implements SecuritySettingsInterface
 {
     const TYPE = 'OAuth 1.0';
 
@@ -13,7 +15,7 @@ class OAuth1SecuritySettings
      *
      * @var string
      */
-    private $requestTokenUri;
+    private $tokenCredentialsUri;
 
     /**
      * The URI of the Resource Owner Authorization endpoint as defined in RFC5849 Section 2.2
@@ -27,7 +29,43 @@ class OAuth1SecuritySettings
      *
      * @var string
      */
-    private $tokenCredentialsUri;
+    private $requestTokenUri;
+
+    // ---
+
+    /**
+     * Flesh out the settings
+     *
+     * @param array                     $data
+     * @param SecuritySettingsInterface $sourceSettings
+     *
+     * @throws \Exception
+     *
+     * @return OAuth1SecuritySettings
+     */
+    public static function createFromArray(array $data, SecuritySettingsInterface $sourceSettings = null)
+    {
+        if ($sourceSettings && !$sourceSettings instanceof OAuth1SecuritySettings) {
+            throw new \Exception();
+        }
+
+        $settings = $sourceSettings ? clone $sourceSettings : new static();
+
+        if (isset($data['tokenCredentialsUri'])) {
+            $settings->setTokenCredentialsUri($data['tokenCredentialsUri']);
+        }
+
+        if (isset($data['requestTokenUri'])) {
+            $settings->setRequestTokenUri($data['requestTokenUri']);
+        }
+
+        if (isset($data['authorizationUri'])) {
+            $settings->setAuthorizationUri($data['authorizationUri']);
+        }
+
+
+        return $settings;
+    }
 
     // ---
 

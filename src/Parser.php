@@ -263,7 +263,6 @@ class Parser
             }
         }
 
-
         if (isset($ramlData['securitySchemes'])) {
             $ramlData['securitySchemes'] = $this->parseSecuritySettings($ramlData['securitySchemes']);
         }
@@ -336,16 +335,14 @@ class Parser
     {
         $securitySchemes = [];
         foreach ($array as $securitySchemeData) {
-
             $key = array_keys($securitySchemeData)[0];
-            $securitySchemes[$key] = $securitySchemeData[$key];
 
-            if (
-                isset($securitySchemeData[$key]['type'])
-                && isset($this->securitySettingsParsers[$securitySchemeData[$key]['type']])
-            ) {
-                $parser = $this->securitySettingsParsers[$securitySchemeData[$key]['type']];
-                $securitySchemes[$key]['settings'] = $parser->createSecuritySettings($securitySchemeData[$key]['settings']);
+            $securitySchemes[$key] = $securitySchemeData[$key];
+            $securityScheme = $securitySchemes[$key];
+
+            if (isset($securityScheme['type']) && isset($this->securitySettingsParsers[$securityScheme['type']])) {
+                $parser = $this->securitySettingsParsers[$securityScheme['type']];
+                $securitySchemes[$key]['settings'] = $parser->createSecuritySettings($securityScheme['settings']);
             }
         }
         return $securitySchemes;

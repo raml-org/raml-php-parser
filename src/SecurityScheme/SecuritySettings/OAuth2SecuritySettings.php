@@ -2,7 +2,9 @@
 
 namespace Raml\SecurityScheme\SecuritySettings;
 
-class OAuth2SecuritySettings
+use Raml\SecurityScheme\SecuritySettingsInterface;
+
+class OAuth2SecuritySettings implements SecuritySettingsInterface
 {
     const TYPE = 'OAuth 2.0';
 
@@ -36,6 +38,49 @@ class OAuth2SecuritySettings
      * @var string[]
      */
     private $scopes;
+
+    // ---
+
+    /**
+     * Flesh out the settings
+     *
+     * @param array                     $data
+     * @param SecuritySettingsInterface $sourceSettings
+     *
+     * @throws \Exception
+     *
+     * @return OAuth2SecuritySettings
+     */
+    public static function createFromArray(array $data, SecuritySettingsInterface $sourceSettings = null)
+    {
+        if ($sourceSettings && !$sourceSettings instanceof OAuth2SecuritySettings) {
+            throw new \Exception();
+        }
+
+        $settings = $sourceSettings ? clone $sourceSettings : new static();
+
+        if (isset($data['authorizationUri'])) {
+            $settings->setAuthorizationUri($data['authorizationUri']);
+        }
+
+        if (isset($data['accessTokenUri'])) {
+            $settings->setAccessTokenUri($data['accessTokenUri']);
+        }
+
+        if (isset($data['authorizationGrants'])) {
+            foreach ($data['authorizationGrants'] as $grant) {
+                $settings->addAuthorizationGrants($grant);
+            }
+        }
+
+        if (isset($data['scopes'])) {
+            foreach ($data['scopes'] as $scope) {
+                $settings->addScope($scope);
+            }
+        }
+
+        return $settings;
+    }
 
     // ---
 
