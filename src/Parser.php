@@ -11,6 +11,7 @@ use Raml\Schema\Parser\XmlSchemaParser;
 
 use Raml\SecurityScheme\SecuritySettingsParser\OAuth1SecuritySettingsParser;
 use Raml\SecurityScheme\SecuritySettingsParser\OAuth2SecuritySettingsParser;
+use Raml\SecurityScheme\SecuritySettingsParser\DefaultSecuritySettingsParser;
 use Raml\SecurityScheme\SecuritySettingsParserInterface;
 
 use Raml\FileLoader\DefaultFileLoader;
@@ -101,7 +102,8 @@ class Parser
         if ($securitySettingsParsers === null) {
             $securitySettingsParsers = [
                 new OAuth1SecuritySettingsParser(),
-                new OAuth2SecuritySettingsParser()
+                new OAuth2SecuritySettingsParser(),
+                new DefaultSecuritySettingsParser()
             ];
         }
 
@@ -263,7 +265,6 @@ class Parser
             }
         }
 
-
         if (isset($ramlData['securitySchemes'])) {
             $ramlData['securitySchemes'] = $this->parseSecuritySettings($ramlData['securitySchemes']);
         }
@@ -336,16 +337,24 @@ class Parser
     {
         $securitySchemes = [];
         foreach ($array as $securitySchemeData) {
-
             $key = array_keys($securitySchemeData)[0];
-            $securitySchemes[$key] = $securitySchemeData[$key];
 
-            if (
-                isset($securitySchemeData[$key]['type'])
-                && isset($this->securitySettingsParsers[$securitySchemeData[$key]['type']])
-            ) {
-                $parser = $this->securitySettingsParsers[$securitySchemeData[$key]['type']];
-                $securitySchemes[$key]['settings'] = $parser->createSecuritySettings($securitySchemeData[$key]['settings']);
+            if (isset($this->securitySettingsParsers['*'])) {
+                $parser = $this->securitySettingsParsers['*'];
+            } else {
+                $parser = false;
+            }
+
+            $securitySchemes[$key] = $securitySchemeData[$key];
+            $securityScheme = $securitySchemes[$key];
+            $settings = isset($securityScheme['settings']) ? $securityScheme['settings'] : [];
+
+            if (isset($securityScheme['type']) && isset($this->securitySettingsParsers[$securityScheme['type']])) {
+                $parser = $this->securitySettingsParsers[$securityScheme['type']];
+            }
+
+            if ($parser) {
+                $securitySchemes[$key]['settings'] = $parser->createSecuritySettings($settings);
             }
         }
         return $securitySchemes;
