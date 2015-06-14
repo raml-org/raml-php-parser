@@ -88,15 +88,17 @@ RAML;
     /** @test */
     public function shouldThrowExceptionOnPathManipulationIfNotAllowed()
     {
-        $this->parser->preventDirectoryTraversal();
+        $config = new \Raml\ParseConfiguration();
+        $config->disableDirectoryTraversal();
+        $this->parser->setConfiguration($config);
         $this->setExpectedException('\Raml\Exception\InvalidJsonException');
         $this->parser->parse(__DIR__.'/fixture/treeTraversal/bad.raml');
     }
 
     /** @test */
-    public function shouldAllowDirectoryTraversalByDefault()
+    public function shouldPreventDirectoryTraversalByDefault()
     {
-        // @todo - switch this test in v2.0
+        $this->setExpectedException('\Raml\Exception\InvalidJsonException');
         $this->parser->parse(__DIR__.'/fixture/treeTraversal/bad.raml');
     }
 
@@ -104,7 +106,10 @@ RAML;
     /** @test */
     public function shouldNotThrowExceptionOnPathManipulationIfAllowed()
     {
-        $this->parser->allowDirectoryTraversal();
+        $config = new \Raml\ParseConfiguration();
+        $config->enableDirectoryTraversal();
+        $this->parser->setConfiguration($config);
+
         $simpleRaml = $this->parser->parse(__DIR__.'/fixture/treeTraversal/bad.raml');
 
         $resource = $simpleRaml->getResourceByUri('/songs');
@@ -285,7 +290,11 @@ RAML;
     /** @test */
     public function shouldNotParseJsonIfNotRequested()
     {
-        $simpleRaml = $this->parser->parse(__DIR__.'/fixture/simple.raml', false);
+        $config = new \Raml\ParseConfiguration();
+        $config->disableSchemaParsing();
+        $this->parser->setConfiguration($config);
+
+        $simpleRaml = $this->parser->parse(__DIR__.'/fixture/simple.raml');
         $resource = $simpleRaml->getResourceByUri('/songs/1');
         $method = $resource->getMethod('get');
         $response = $method->getResponse(200);
@@ -341,7 +350,11 @@ RAML;
     /** @test */
     public function shouldNotParseIncludedJsonIfNotRequired()
     {
-        $simpleRaml = $this->parser->parse(__DIR__.'/fixture/includeSchema.raml', false);
+        $config = new \Raml\ParseConfiguration();
+        $config->disableSchemaParsing();
+        $this->parser->setConfiguration($config);
+
+        $simpleRaml = $this->parser->parse(__DIR__.'/fixture/includeSchema.raml');
 
         $resource = $simpleRaml->getResourceByUri('/songs');
         $method = $resource->getMethod('get');
