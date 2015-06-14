@@ -336,16 +336,14 @@ class Parser
     {
         $securitySchemes = [];
         foreach ($array as $securitySchemeData) {
-
             $key = array_keys($securitySchemeData)[0];
             $securitySchemes[$key] = $securitySchemeData[$key];
 
-            if (
-                isset($securitySchemeData[$key]['type'])
-                && isset($this->securitySettingsParsers[$securitySchemeData[$key]['type']])
-            ) {
+            if (isset($securitySchemeData[$key]['type']) &&
+                isset($this->securitySettingsParsers[$securitySchemeData[$key]['type']])) {
                 $parser = $this->securitySettingsParsers[$securitySchemeData[$key]['type']];
-                $securitySchemes[$key]['settings'] = $parser->createSecuritySettings($securitySchemeData[$key]['settings']);
+                $settings = $parser->createSecuritySettings($securitySchemeData[$key]['settings']);
+                $securitySchemes[$key]['settings'] = $settings;
             }
         }
         return $securitySchemes;
@@ -656,7 +654,7 @@ class Parser
                 '/<<(' . $variables . ')([\s]*\|[\s]*!(singularize|pluralize))?>>/',
                 function ($matches) use ($values) {
                     $transformer = isset($matches[3]) ? $matches[3] : '';
-                    switch($transformer) {
+                    switch ($transformer) {
                         case 'singularize':
                             return Inflect::singularize($values[$matches[1]]);
                             break;
@@ -678,7 +676,7 @@ class Parser
                     function ($matches) use ($values) {
                         $transformer = isset($matches[3]) ? $matches[3] : '';
 
-                        switch($transformer) {
+                        switch ($transformer) {
                             case 'singularize':
                                 return Inflect::singularize($values[$matches[1]]);
                                 break;

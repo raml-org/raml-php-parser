@@ -679,8 +679,7 @@ class NamedParameter implements ArrayInstantiationInterface
                 
         }
         
-        switch($this->getType()) {
-            
+        switch ($this->getType()) {
             case static::TYPE_BOOLEAN:
                 
                 // Must be boolean
@@ -691,12 +690,13 @@ class NamedParameter implements ArrayInstantiationInterface
                 break;
                 
             case static::TYPE_DATE:
-                
+
                 // Must be a valid date
                 if (\DateTime::createFromFormat('D, d M Y H:i:s T', $param) === false) {
                     throw new ValidationException($this->getKey().' is not a valid date', static::VAL_NOTDATE);
                 }
-    
+
+                // DATES are also strings
             case static::TYPE_STRING:
     
                 // Must be a string
