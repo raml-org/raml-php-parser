@@ -405,7 +405,7 @@ class NamedParameter implements ArrayInstantiationInterface
      * Get the pattern regular expression
      *
      * @param boolean $typeCheck Set to false to only return the "pattern" value from the RAML data (Defaults to
-     *                           true for backwards compatability to return type checking strings when a validation
+     *                           true for backwards comparability to return type checking strings when a validation
      *                           pattern is not present in the RAML data)
      * @return string
      */
