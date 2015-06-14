@@ -17,14 +17,7 @@
       "Raml\\": "src/"
     }
   },
-
-  "repositories": [
-    {
-      "type": "vcs",
-      "url": "https://github.com/alecsammon/json-schema.git"
-    }
-  ],
-
+  
   "require-dev": {
     "satooshi/php-coveralls": "~0.6",
     "phpunit/phpunit": "4.*",
@@ -32,9 +25,9 @@
   },
 
   "require": {
-    "alecsammon/json-schema": "@dev",
-    "symfony/yaml": "~2.5",
+    "justinrainbow/json-schema": "~1.4",
+    "symfony/yaml": "~2.6",
     "symfony/routing": "~2.5",
-    "oodle/inflect": "0.2.0"
+    "oodle/inflect": "~0.2"
   }
 }
