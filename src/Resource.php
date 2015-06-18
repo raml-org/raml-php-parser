@@ -69,6 +69,13 @@ class Resource implements ArrayInstantiationInterface
      */
     private $methods = [];
 
+    /**
+     * A list of security schemes
+     *
+     * @var SecurityScheme[]
+     */
+    private $securitySchemes = [];
+
     // ---
 
     /**
@@ -134,6 +141,16 @@ class Resource implements ArrayInstantiationInterface
                 $resource->addUriParameter(
                     NamedParameter::createFromArray($key, $uriParameter ?: [])
                 );
+            }
+        }
+
+        if (isset($data['securedBy'])) {
+            foreach ($data['securedBy'] as $securedBy) {
+                if ($securedBy) {
+                    $resource->addSecurityScheme($apiDefinition->getSecurityScheme($securedBy));
+                } else {
+                    $resource->addSecurityScheme(SecurityScheme::createFromArray('null', [], $apiDefinition));
+                }
             }
         }
 
@@ -355,5 +372,25 @@ class Resource implements ArrayInstantiationInterface
         }
 
         return $this->methods[$method];
+    }
+
+    // --
+
+    /**
+     * Get the list of security schemes
+     *
+     * @return SecurityScheme[]
+     */
+    public function getSecuritySchemes()
+    {
+        return $this->securitySchemes;
+    }
+
+    /**
+     * @param SecurityScheme $securityScheme
+     */
+    public function addSecurityScheme(SecurityScheme $securityScheme)
+    {
+        $this->securitySchemes[$securityScheme->getKey()] = $securityScheme;
     }
 }

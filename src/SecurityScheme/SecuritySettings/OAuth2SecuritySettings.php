@@ -7,37 +7,25 @@ class OAuth2SecuritySettings
     const TYPE = 'OAuth 2.0';
 
     // --
-
+    
     /**
-     * The URI of the Authorization Endpoint as defined in RFC6749 [RFC6748] Section 3.1
-     *
-     * @var string
+     * The array of settings data
+     * @var array
      */
-    private $authorizationUri;
-
-    /**
-     * The URI of the Token Endpoint as defined in RFC6749 [RFC6748] Section 3.2
-     *
-     * @var string
-     */
-    private $accessTokenUri;
-
-    /**
-     * A list of the Authorization grants supported by the API As defined in RFC6749 [RFC6749]
-     * Sections 4.1, 4.2, 4.3 and 4.4, can be any of: code, token, owner or credentials.
-     *
-     * @var string[]
-     */
-    private $authorizationGrants;
-
-    /**
-     * A list of scopes supported by the API as defined in RFC6749 [RFC6749] Section 3.3
-     *
-     * @var string[]
-     */
-    private $scopes;
+    private $settings;
 
     // ---
+    
+    /**
+     * Flesh out the settings
+     *
+     * @param array $settings
+     */
+    public function createFromArray(array $settings)
+    {
+        $defaults = array_fill_keys(array('authorizationUri', 'accessTokenUri', 'authorizationGrants', 'scopes'), null);
+        $this->settings = array_replace($defaults, $settings);
+    }
 
     /**
      * Get the Authorization URI
@@ -46,7 +34,7 @@ class OAuth2SecuritySettings
      */
     public function getAuthorizationUri()
     {
-        return $this->authorizationUri;
+        return $this->settings['authorizationUri'];
     }
 
     /**
@@ -56,7 +44,7 @@ class OAuth2SecuritySettings
      */
     public function setAuthorizationUri($authorizationUri)
     {
-        $this->authorizationUri = $authorizationUri;
+        $this->settings['authorizationUri'] = $authorizationUri;
     }
 
     // --
@@ -68,7 +56,7 @@ class OAuth2SecuritySettings
      */
     public function getAccessTokenUri()
     {
-        return $this->accessTokenUri;
+        return $this->settings['accessTokenUri'];
     }
 
     /**
@@ -78,7 +66,7 @@ class OAuth2SecuritySettings
      */
     public function setAccessTokenUri($accessTokenUri)
     {
-        $this->accessTokenUri = $accessTokenUri;
+        $this->settings['accessTokenUri'] = $accessTokenUri;
     }
 
     // --
@@ -90,7 +78,7 @@ class OAuth2SecuritySettings
      */
     public function getAuthorizationGrants()
     {
-        return $this->authorizationGrants;
+        return $this->settings['authorizationGrants'];
     }
 
     /**
@@ -100,7 +88,7 @@ class OAuth2SecuritySettings
      */
     public function addAuthorizationGrants($authorizationGrant)
     {
-        $this->authorizationGrants[] = $authorizationGrant;
+        $this->settings['authorizationGrants'][] = $authorizationGrant;
     }
 
     // --
@@ -112,7 +100,7 @@ class OAuth2SecuritySettings
      */
     public function getScopes()
     {
-        return $this->scopes;
+        return $this->settings['scopes'];
     }
 
     /**
@@ -122,6 +110,18 @@ class OAuth2SecuritySettings
      */
     public function addScope($scope)
     {
-        $this->scopes[] = $scope;
+        $this->settings['scopes'][] = $scope;
+    }
+    
+    // --
+    
+    /**
+     * Get the array of configured settings
+     *
+     * @return array The array of settings data
+     */
+    public function getSettings()
+    {
+        return $this->settings;
     }
 }

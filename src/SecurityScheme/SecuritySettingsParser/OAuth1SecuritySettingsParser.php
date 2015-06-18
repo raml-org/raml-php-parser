@@ -26,17 +26,7 @@ class OAuth1SecuritySettingsParser implements SecuritySettingsParserInterface
     {
         $securitySetting = new OAuth1SecuritySettings();
 
-        if (isset($data['requestTokenUri'])) {
-            $securitySetting->setRequestTokenUri($data['requestTokenUri']);
-        }
-
-        if (isset($data['authorizationUri'])) {
-            $securitySetting->setAuthorizationUri($data['authorizationUri']);
-        }
-
-        if (isset($data['tokenCredentialsUri'])) {
-            $securitySetting->setTokenCredentialsUri($data['tokenCredentialsUri']);
-        }
+        $securitySetting->createFromArray($data);
 
         return $securitySetting;
     }

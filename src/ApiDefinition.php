@@ -12,6 +12,8 @@ use Raml\Exception\BadParameter\ResourceNotFoundException;
 use Raml\Exception\BadParameter\InvalidSchemaDefinitionException;
 use Raml\Exception\BadParameter\InvalidProtocolException;
 
+use Symfony\Component\Yaml\Yaml;
+
 /**
  * The API Definition
  *
@@ -132,6 +134,15 @@ class ApiDefinition implements ArrayInstantiationInterface
      * @var SecurityScheme[]
      */
     private $securedBy = [];
+    
+    /**
+     * Should security scheme structures merge with methods implementing the schemes?
+     *
+     * @TODO Change to false in version 2.0.0
+     *
+     * @var bool
+     */
+    private $mergeSecurity = true;
 
     // ---
 
@@ -165,12 +176,13 @@ class ApiDefinition implements ArrayInstantiationInterface
      *
      * @return ApiDefinition
      */
-    public static function createFromArray($title, array $data = [])
+    public static function createFromArray($title, array $data = [], $mergeSecurity = true)
     {
         $apiDefinition = new static($title);
 
         // --
 
+        $apiDefinition->mergeSecurity = $mergeSecurity;
 
         if (isset($data['version'])) {
             $apiDefinition->setVersion($data['version']);
@@ -584,7 +596,65 @@ class ApiDefinition implements ArrayInstantiationInterface
      */
     public function getSecurityScheme($schemeName)
     {
+        $newSettings = array();
+        if (is_array($schemeName) && count($schemeName) === 1) {
+            reset($schemeName);
+            $schemeKey = key($schemeName);
+            
+            if (!empty($schemeName[$schemeKey]) && !empty($this->securitySchemes[$schemeKey])) {
+                $newSettings = $schemeName[$schemeKey];
+            }
+            
+            $schemeName = $schemeKey;
+            
+        }
+        
+        $this->securitySettings($this->securitySchemes[$schemeName], $newSettings);
         return $this->securitySchemes[$schemeName];
+    }
+    
+    /**
+     * Set new settings on the security scheme object
+     *
+     * @param SecurityScheme $securityScheme    The SecurityScheme object we're changing the settings for
+     * @param array $newSettings                The array of settings to merge into the existing settings
+     */
+    private function securitySettings(SecurityScheme $securityScheme, array $newSettings = array())
+    {
+        // Assign new values to the security scheme.
+        $currentSettings = $securityScheme->getSettings();
+        
+        if (is_object($currentSettings) &&
+            method_exists($currentSettings, 'getSettings') &&
+            method_exists($currentSettings, 'createFromArray')
+        ) {
+            // Preserve
+            $settingsObject = $currentSettings;
+        
+            /*
+    		 * Pull the settings data from the settings object. _PRP_ORIGINAL_SETTINGS_ holds the
+    		 * root specified values.
+    		 */
+            $currentSettings = $settingsObject->getSettings();
+        
+            if (!empty($currentSettings['_PRP_ORIGINAL_SETTINGS_'])) {
+                $currentSettings = $currentSettings['_PRP_ORIGINAL_SETTINGS_'];
+            }
+        
+            $currentSettings['_PRP_ORIGINAL_SETTINGS_'] = $currentSettings;
+            $settings = array_replace($currentSettings, $newSettings);
+            $settingsObject->createFromArray($settings);
+             
+        } else {
+            if (!empty($currentSettings['_PRP_ORIGINAL_SETTINGS_'])) {
+                $currentSettings = $currentSettings['_PRP_ORIGINAL_SETTINGS_'];
+            }
+             
+            $currentSettings['_PRP_ORIGINAL_SETTINGS_'] = $currentSettings;
+            $settings = array_replace($currentSettings, $newSettings);
+            $securityScheme->setSettings($settings);
+             
+        }
     }
 
     /**
@@ -654,5 +724,15 @@ class ApiDefinition implements ArrayInstantiationInterface
         }
 
         return $all;
+    }
+    
+    /**
+     * Check if security schemes must be merged with methods when the method uses securedBy
+     *
+     * @return boolean
+     */
+    public function getMergeSecurity()
+    {
+        return $this->mergeSecurity;
     }
 }

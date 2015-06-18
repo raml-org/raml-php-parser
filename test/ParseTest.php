@@ -648,9 +648,20 @@ RAML;
         $settings->setAuthorizationUri('https://www.dropbox.com/1/oauth/authorize');
         $settings->setTokenCredentialsUri('https://api.dropbox.com/1/oauth/access_token');
 
+        // Get the settings array and remove the key used for internal processing.
+        $oauthSettings = $securitySchemes['oauth_1_0']->getSettings()->getSettings();
+        unset($oauthSettings['_PRP_ORIGINAL_SETTINGS_']);
+        
+        // Make the settings data an array.
+        $settings = (array) $settings;
+        reset($settings);
+        
+        // Loose the class name key.
+        $settings = $settings[key($settings)];
+        
         $this->assertEquals(
             $settings,
-            $securitySchemes['oauth_1_0']->getSettings()
+            $oauthSettings
         );
 
     }
@@ -781,5 +792,60 @@ RAML;
         $response = $method->getResponse(200);
         $body = $response->getBodyByType('text/xml');
         $this->assertEquals('A generic description', $body->getDescription());
+    }
+    
+    /** @test */
+    public function shouldMergeMethodSecurityScheme()
+    {
+        $apiDefinition = $this->parser->parse(__DIR__ . '/fixture/securitySchemes.raml');
+        $resource = $apiDefinition->getResourceByUri('/users');
+        $method = $resource->getMethod('get');
+        $headers = $method->getHeaders();
+        $this->assertFalse(empty($headers['Authorization']));
+    }
+    
+    /** @test */
+    public function shouldNotMergeMethodSecurityScheme()
+    {
+        $this->parser->setMergeSecurity();
+        $apiDefinition = $this->parser->parse(__DIR__ . '/fixture/securitySchemes.raml');
+        $resource = $apiDefinition->getResourceByUri('/users');
+        $method = $resource->getMethod('get');
+        $headers = $method->getHeaders();
+        $this->assertTrue(empty($headers['Authorization']));
+        
+        // Reset the value.
+        $this->parser->setMergeSecurity(true);
+    }
+    
+    /** @test */
+    public function shouldAddSecuritySchemeToResource()
+    {
+        $apiDefinition = $this->parser->parse(__DIR__ . '/fixture/resourceSecuritySchemes.raml');
+        $resource = $apiDefinition->getResourceByUri('/users');
+        $schemes = $resource->getSecuritySchemes();
+        $this->assertFalse(empty($schemes['oauth_2_0']));
+    }
+    
+    /** @test */
+    public function shouldParseCustomSettingsOnResource()
+    {
+        $apiDefinition = $this->parser->parse(__DIR__ . '/fixture/securedByCustomProps.raml');
+        $resource = $apiDefinition->getResourceByUri('/test');
+        $schemes = $resource->getSecuritySchemes();
+        $settings = $schemes['custom']->getSettings();
+        $this->assertSame($settings['myKey'], 'heLikesItNotSoMuch');
+    }
+    
+    /** @test */
+    public function shouldParseCustomSettingsOnMethodWithOAuthParser()
+    {
+        $apiDefinition = $this->parser->parse(__DIR__ . '/fixture/securedByCustomProps.raml');
+        $resource = $apiDefinition->getResourceByUri('/test');
+        $method = $resource->getMethod('get');
+        $schemes = $method->getSecuritySchemes();
+        $settingsObject = $schemes['oauth_2_0']->getSettings();
+        $settingsArray = $settingsObject->getSettings();
+        $this->assertSame($settingsArray['scopes'], array('ADMINISTRATOR', 'USER'));
     }
 }
