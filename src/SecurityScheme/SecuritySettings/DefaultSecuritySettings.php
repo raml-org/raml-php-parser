@@ -113,4 +113,14 @@ class DefaultSecuritySettings implements SecuritySettingsInterface, \ArrayAccess
     {
         return isset($this->settings[$offset]) ? $this->settings[$offset] : null;
     }
+    
+    /**
+     * Get the array of settings data
+     *
+     * @return array
+     */
+    public function asArray()
+    {
+        return $this->settings;
+    }
 }

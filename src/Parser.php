@@ -325,38 +325,43 @@ class Parser
     }
 
     /**
-     * Parse the security settings
+     * Parse the security settings data into an array
      *
      * @param array $array
      *
      * @return array
      */
-    private function parseSecuritySettings($array)
+    private function parseSecuritySettings($schemesArray)
     {
         $securitySchemes = [];
-        if ($this->configuration->isSchemaSecuritySchemeParsingEnabled()) {
-            foreach ($array as $securitySchemeData) {
-                $key = array_keys($securitySchemeData)[0];
+        
+        foreach ($schemesArray as $key => $securitySchemeData) {
+            // Create the default parser.
+            if (isset($this->securitySettingsParsers['*'])) {
+                $parser = $this->securitySettingsParsers['*'];
+            } else {
+                $parser = false;
+            }
 
-                if (isset($this->securitySettingsParsers['*'])) {
-                    $parser = $this->securitySettingsParsers['*'];
-                } else {
-                    $parser = false;
-                }
-
-                $securitySchemes[$key] = $securitySchemeData[$key];
-                $securityScheme = $securitySchemes[$key];
-                $settings = isset($securityScheme['settings']) ? $securityScheme['settings'] : [];
-
+            $securitySchemes[$key] = $schemesArray[$key];
+            $securityScheme = $securitySchemes[$key];
+            
+            // If we're using protocol specific parsers, see if we have one to use.
+            if ($this->configuration->isSchemaSecuritySchemeParsingEnabled()) {
                 if (isset($securityScheme['type']) && isset($this->securitySettingsParsers[$securityScheme['type']])) {
                     $parser = $this->securitySettingsParsers[$securityScheme['type']];
                 }
+                
+            }
 
-                if ($parser) {
-                    $securitySchemes[$key]['settings'] = $parser->createSecuritySettings($settings);
-                }
+            // If we found a parser, create it's settings object.
+            if ($parser) {
+                $settings = isset($securityScheme['settings']) ? $securityScheme['settings'] : [];
+                $securitySchemes[$key]['settings'] = $parser->createSecuritySettings($settings);
+                
             }
         }
+            
         return $securitySchemes;
 
     }
