@@ -627,7 +627,7 @@ class ApiDefinition implements ArrayInstantiationInterface
      *
      * @param \Raml\Resource[] $resources
      *
-     * @return array
+     * @return array[BasicRoute]
      */
     private function getMethodsAsArray(array $resources)
     {
@@ -645,10 +645,10 @@ class ApiDefinition implements ArrayInstantiationInterface
                     $path,
                     $protocols,
                     $method->getType(),
+                    $resource->getUriParameters(),
                     $resource->getMethod($method->getType())
                 );
             }
-
 
             $all = array_merge_recursive($all, $this->getMethodsAsArray($resource->getResources()));
         }
