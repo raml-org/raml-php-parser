@@ -1,25 +1,21 @@
 <?php
 namespace Raml;
 
+use Inflect\Inflect;
 use Raml\Exception\BadParameter\FileNotFoundException;
 use Raml\Exception\InvalidSchemaTypeException;
 use Raml\Exception\RamlParserException;
-
-use Raml\Schema\SchemaParserInterface;
+use Raml\FileLoader\DefaultFileLoader;
+use Raml\FileLoader\FileLoaderInterface;
+use Raml\FileLoader\JsonSchemaFileLoader;
 use Raml\Schema\Parser\JsonSchemaParser;
 use Raml\Schema\Parser\XmlSchemaParser;
-
+use Raml\Schema\SchemaParserInterface;
+use Raml\SecurityScheme\SecuritySettingsParser\DefaultSecuritySettingsParser;
 use Raml\SecurityScheme\SecuritySettingsParser\OAuth1SecuritySettingsParser;
 use Raml\SecurityScheme\SecuritySettingsParser\OAuth2SecuritySettingsParser;
-use Raml\SecurityScheme\SecuritySettingsParser\DefaultSecuritySettingsParser;
 use Raml\SecurityScheme\SecuritySettingsParserInterface;
-
-use Raml\FileLoader\DefaultFileLoader;
-use Raml\FileLoader\JsonSchemaFileLoader;
-use Raml\FileLoader\FileLoaderInterface;
-
 use Symfony\Component\Yaml\Yaml;
-use Inflect\Inflect;
 
 /**
  * Converts a RAML file into a API Documentation tree
@@ -181,7 +177,7 @@ class Parser
     /**
      * Parse a RAML spec from a file
      *
-     * @param string  $fileName
+     * @param string $fileName
      *
      * @throws FileNotFoundException
      * @throws RamlParserException
@@ -205,8 +201,8 @@ class Parser
     /**
      * Parse a RAML spec from a string
      *
-     * @param string  $ramlString
-     * @param string  $rootDir
+     * @param string $ramlString
+     * @param string $rootDir
      *
      * @throws RamlParserException
      *
@@ -224,8 +220,8 @@ class Parser
     /**
      * Parse RAML data
      *
-     * @param string  $ramlData
-     * @param string  $rootDir
+     * @param string $ramlData
+     * @param string $rootDir
      *
      * @throws RamlParserException
      *
@@ -275,6 +271,7 @@ class Parser
      *
      * @param  array $array
      * @param  array $schemas List of available schema definition
+     *
      * @return array
      */
     private function replaceSchemas($array, $schemas)
@@ -291,13 +288,14 @@ class Parser
                 $array[$key] = $this->replaceSchemas($value, $schemas);
             }
         }
+
         return $array;
     }
 
     /**
      * Recurses though resources and replaces schema strings
      *
-     * @param array $array
+     * @param array  $array
      * @param string $rootDir
      *
      * @throws InvalidSchemaTypeException
@@ -321,6 +319,7 @@ class Parser
                 }
             }
         }
+
         return $array;
     }
 
@@ -334,7 +333,7 @@ class Parser
     private function parseSecuritySettings($schemesArray)
     {
         $securitySchemes = [];
-        
+
         foreach ($schemesArray as $securitySchemeData) {
             // Create the default parser.
             if (isset($this->securitySettingsParsers['*'])) {
@@ -350,7 +349,9 @@ class Parser
 
                 // If we're using protocol specific parsers, see if we have one to use.
                 if ($this->configuration->isSchemaSecuritySchemeParsingEnabled()) {
-                    if (isset($securityScheme['type']) && isset($this->securitySettingsParsers[$securityScheme['type']])) {
+                    if (isset($securityScheme['type']) &&
+                        isset($this->securitySettingsParsers[$securityScheme['type']])
+                    ) {
                         $parser = $this->securitySettingsParsers[$securityScheme['type']];
                     }
                 }
@@ -362,7 +363,7 @@ class Parser
                 }
             }
         }
-            
+
         return $securitySchemes;
 
     }
@@ -429,7 +430,7 @@ class Parser
      * Parse a RAML or YAML content
      *
      * @param string $ramlString
-     * @param string  $rootDir
+     * @param string $rootDir
      *
      * @throws \Exception
      *
@@ -464,6 +465,7 @@ class Parser
      * Convert a yaml string into an array
      *
      * @param string $fileData
+     *
      * @return array
      */
     private function parseYaml($fileData)
@@ -474,8 +476,8 @@ class Parser
     /**
      * Load and parse a file
      *
-     * @param string  $fileName
-     * @param string  $rootDir
+     * @param string $fileName
+     * @param string $rootDir
      *
      * @throws \Exception
      *
@@ -492,7 +494,8 @@ class Parser
 
         // Prevent LFI directory traversal attacks
         if (!$this->configuration->isDirectoryTraversalAllowed() &&
-            substr($fullPath, 0, strlen($rootDir)) !== $rootDir) {
+            substr($fullPath, 0, strlen($rootDir)) !== $rootDir
+        ) {
             return false;
         }
 
@@ -506,7 +509,7 @@ class Parser
         $fileExtension = (pathinfo($fileName, PATHINFO_EXTENSION));
 
         if (in_array($fileExtension, ['yaml', 'yml', 'raml'])) {
-            $rootDir = dirname($rootDir.'/'.$fileName);
+            $rootDir = dirname($rootDir . '/' . $fileName);
 
             // RAML and YAML files are always parsed
             $fileData = $this->parseRamlString(
@@ -526,6 +529,7 @@ class Parser
 
         // cache before returning
         $this->cachedFiles[$cacheKey] = $fileData;
+
         return $fileData;
     }
 
@@ -533,7 +537,7 @@ class Parser
      * Recurse through the structure and load includes
      *
      * @param array|string $structure
-     * @param string        $rootDir
+     * @param string       $rootDir
      *
      * @return array
      */
@@ -556,8 +560,8 @@ class Parser
     /**
      * Insert the traits into the RAML file
      *
-     * @param array $raml
-     * @param array $traits
+     * @param array  $raml
+     * @param array  $traits
      * @param string $path
      * @param string $name
      *
@@ -599,14 +603,15 @@ class Parser
             }
 
         }
+
         return $newArray;
     }
 
     /**
      * Insert the types into the RAML file
      *
-     * @param array $raml
-     * @param array $types
+     * @param array  $raml
+     * @param array  $types
      * @param string $path
      * @param string $name
      * @param string $parentKey
@@ -647,6 +652,7 @@ class Parser
             }
 
         }
+
         return $newArray;
     }
 
@@ -655,6 +661,7 @@ class Parser
      *
      * @param array $values
      * @param array $trait
+     *
      * @return mixed
      */
     private function applyTraitVariables(array $values, array $trait)
@@ -705,6 +712,7 @@ class Parser
             }
             $newTrait[$newKey] = $value;
         }
+
         return $newTrait;
     }
 }
