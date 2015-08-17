@@ -6,6 +6,11 @@ use \Raml\Method;
 
 class BasicRoute
 {
+    /**
+     * The base URL for the route
+     *
+     * @var string
+     */
     private $baseUrl;
 
     /**
@@ -15,6 +20,11 @@ class BasicRoute
      */
     private $uri;
 
+    /**
+     * The protocol(s) of the routes
+     *
+     * @var array
+     */
     private $protocols;
 
     /**
@@ -24,6 +34,13 @@ class BasicRoute
      * @var string
      */
     private $type;
+
+    /**
+     * Any uri parameters of the route.
+     *
+     * @var array
+     */
+    private $uriParameters;
 
     /**
      * The Method definition
@@ -37,21 +54,30 @@ class BasicRoute
     /**
      * Create a new basic route
      *
+     * @param string $baseUrl
      * @param string $uri
+     * @param array $protocols
      * @param string $type
+     * @param array $uriParameters
      * @param Method $method
      */
-    public function __construct($baseUrl, $uri, $protocols, $type, Method $method)
+    public function __construct($baseUrl, $uri, $protocols, $type, $uriParameters, Method $method)
     {
         $this->baseUrl = $baseUrl;
         $this->uri = $uri;
         $this->protocols = $protocols;
-        $this->method = $method;
         $this->type = $type;
+        $this->uriParameters = $uriParameters;
+        $this->method = $method;
     }
 
     // --
 
+    /**
+     * Gets the base URL of the route
+     *
+     * @return string
+     */
     public function getBaseUrl()
     {
         return $this->baseUrl;
@@ -67,6 +93,11 @@ class BasicRoute
         return $this->uri;
     }
 
+    /**
+     * Gets the Protocols of the route
+     *
+     * @return array
+     */
     public function getProtocols()
     {
         return $this->protocols;
@@ -80,6 +111,16 @@ class BasicRoute
     public function getType()
     {
         return $this->type;
+    }
+
+    /**
+     * Gets the URI parameters of the route
+     *
+     * @return array
+     */
+    public function getUriParameters()
+    {
+        return $this->uriParameters;
     }
 
     /**

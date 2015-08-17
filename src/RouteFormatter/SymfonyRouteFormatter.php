@@ -40,7 +40,7 @@ class SymfonyRouteFormatter implements RouteFormatterInterface
      * Given an array of RAML\Resources, this function will add each Resource
      * into the Symfony Route Collection, and set the corresponding method.
      *
-     * @param BasicRoute[] $resources
+     * @param BasicRoute[Resource] $resources
      *  Associative array where the key is the method and full path, and the value contains
      *  the path, method type (GET/POST etc.) and then the Raml\Method object
      *
@@ -48,6 +48,7 @@ class SymfonyRouteFormatter implements RouteFormatterInterface
      */
     public function format(array $resources)
     {
+        // Loop over the Resources
         foreach ($resources as $path => $resource) {
             // This is the path from the RAML, with or without a /.
             $path = $resource->getUri() . ($this->addTrailingSlash ? '/' : '');
@@ -62,10 +63,19 @@ class SymfonyRouteFormatter implements RouteFormatterInterface
             $fullPath = substr($url, strpos($url, $host) + strlen($host));
 
             // Now build our Route class.
-
             $route = new Route($fullPath);
             $route->setMethods($resource->getMethod()->getType());
             $route->setSchemes($resource->getProtocols());
+
+            // Loop over each of the URI Parameters searching for validation patterns
+            // or default values for parameters.
+            foreach ($resource->getUriParameters() as $name => $param) {
+                $route->setRequirement($name, $param->getValidationPattern());
+
+                if ($default = $param->getDefault()) {
+                    $route->setDefault($name, $default);
+                }
+            }
 
             $this->routes->add($resource->getType() . ' ' . $path, $route);
         }
