@@ -11,6 +11,7 @@ use Raml\Schema\Parser\XmlSchemaParser;
 
 use Raml\SecurityScheme\SecuritySettingsParser\OAuth1SecuritySettingsParser;
 use Raml\SecurityScheme\SecuritySettingsParser\OAuth2SecuritySettingsParser;
+use Raml\SecurityScheme\SecuritySettingsParser\DefaultSecuritySettingsParser;
 use Raml\SecurityScheme\SecuritySettingsParserInterface;
 
 use Raml\FileLoader\DefaultFileLoader;
@@ -54,14 +55,9 @@ class Parser
      */
     private $fileLoaders = [];
 
-    /**
-     * If directory tree traversal is allowed
-     *
-     * @todo change to "false" in v2.0.0
-     *
-     * @var boolean
-     */
-    private $allowDirectoryTraversal = true;
+    // ---
+
+    private $settings = null;
 
     // ---
 
@@ -73,12 +69,18 @@ class Parser
      * @param SchemaParserInterface[]           $schemaParsers
      * @param SecuritySettingsParserInterface[] $securitySettingsParsers
      * @param FileLoaderInterface[]             $fileLoaders
+     * @param ParseConfiguration                $config
      */
     public function __construct(
         array $schemaParsers = null,
         array $securitySettingsParsers = null,
-        array $fileLoaders = null
+        array $fileLoaders = null,
+        ParseConfiguration $config = null
     ) {
+        // ---
+        // parse settings
+        $this->configuration = $config ?: new ParseConfiguration();
+
         // ---
         // add schema parsers
 
@@ -101,7 +103,8 @@ class Parser
         if ($securitySettingsParsers === null) {
             $securitySettingsParsers = [
                 new OAuth1SecuritySettingsParser(),
-                new OAuth2SecuritySettingsParser()
+                new OAuth2SecuritySettingsParser(),
+                new DefaultSecuritySettingsParser()
             ];
         }
 
@@ -126,20 +129,16 @@ class Parser
     }
 
     /**
-     * Allow directory tree traversal
+     * Set the parse configuration
+     *
+     * @param ParseConfiguration $config
      */
-    public function allowDirectoryTraversal()
+    public function setConfiguration(ParseConfiguration $config)
     {
-        $this->allowDirectoryTraversal = true;
+        $this->configuration = $config;
     }
 
-    /**
-     * Allow directory tree traversal
-     */
-    public function preventDirectoryTraversal()
-    {
-        $this->allowDirectoryTraversal = false;
-    }
+    // ---
 
     /**
      * Add a new schema parser
@@ -177,18 +176,19 @@ class Parser
         }
     }
 
+    // ---
+
     /**
      * Parse a RAML spec from a file
      *
      * @param string  $fileName
-     * @param boolean $parseSchemas
      *
      * @throws FileNotFoundException
      * @throws RamlParserException
      *
      * @return \Raml\ApiDefinition
      */
-    public function parse($fileName, $parseSchemas = true)
+    public function parse($fileName)
     {
         if (!is_file($fileName)) {
             throw new FileNotFoundException($fileName);
@@ -197,9 +197,9 @@ class Parser
         $rootDir = dirname($fileName);
         $ramlString = file_get_contents($fileName);
 
-        $ramlData = $this->parseRamlString($ramlString, $rootDir, $parseSchemas);
+        $ramlData = $this->parseRamlString($ramlString, $rootDir);
 
-        return $this->parseRamlData($ramlData, $rootDir, $parseSchemas);
+        return $this->parseRamlData($ramlData, $rootDir);
     }
 
     /**
@@ -207,31 +207,31 @@ class Parser
      *
      * @param string  $ramlString
      * @param string  $rootDir
-     * @param boolean $parseSchemas
      *
      * @throws RamlParserException
      *
      * @return \Raml\ApiDefinition
      */
-    public function parseFromString($ramlString, $rootDir, $parseSchemas = true)
+    public function parseFromString($ramlString, $rootDir)
     {
-        $ramlData = $this->parseRamlString($ramlString, $rootDir, $parseSchemas);
+        $ramlData = $this->parseRamlString($ramlString, $rootDir);
 
-        return $this->parseRamlData($ramlData, $rootDir, $parseSchemas);
+        return $this->parseRamlData($ramlData, $rootDir);
     }
+
+    // ---
 
     /**
      * Parse RAML data
      *
      * @param string  $ramlData
      * @param string  $rootDir
-     * @param boolean $parseSchemas
      *
      * @throws RamlParserException
      *
      * @return \Raml\ApiDefinition
      */
-    private function parseRamlData($ramlData, $rootDir, $parseSchemas = true)
+    private function parseRamlData($ramlData, $rootDir)
     {
         if (!isset($ramlData['title'])) {
             throw new RamlParserException();
@@ -241,7 +241,7 @@ class Parser
 
         $ramlData = $this->parseResourceTypes($ramlData);
 
-        if ($parseSchemas) {
+        if ($this->configuration->isSchemaParsingEnabled()) {
             if (isset($ramlData['schemas'])) {
                 $schemas = [];
                 foreach ($ramlData['schemas'] as $schemaCollection) {
@@ -263,7 +263,6 @@ class Parser
             }
         }
 
-
         if (isset($ramlData['securitySchemes'])) {
             $ramlData['securitySchemes'] = $this->parseSecuritySettings($ramlData['securitySchemes']);
         }
@@ -278,7 +277,7 @@ class Parser
      * @param  array $schemas List of available schema definition
      * @return array
      */
-    public function replaceSchemas($array, $schemas)
+    private function replaceSchemas($array, $schemas)
     {
         if (!is_array($array)) {
             return $array;
@@ -328,16 +327,34 @@ class Parser
     /**
      * Parse the security settings
      *
-     * @param $securitySchemes
+     * @param array $array
      *
      * @return array
      */
-    private function parseSecuritySettings($securitySchemes)
+    private function parseSecuritySettings($array)
     {
-        foreach ($securitySchemes as $key => $securityScheme) {
-            if (isset($securityScheme['type']) && isset($this->securitySettingsParsers[$securityScheme['type']])) {
-                $parser = $this->securitySettingsParsers[$securityScheme['type']];
-                $securitySchemes[$key]['settings'] = $parser->createSecuritySettings($securityScheme['settings']);
+        $securitySchemes = [];
+        if ($this->configuration->isSchemaSecuritySchemeParsingEnabled()) {
+            foreach ($array as $securitySchemeData) {
+                $key = array_keys($securitySchemeData)[0];
+
+                if (isset($this->securitySettingsParsers['*'])) {
+                    $parser = $this->securitySettingsParsers['*'];
+                } else {
+                    $parser = false;
+                }
+
+                $securitySchemes[$key] = $securitySchemeData[$key];
+                $securityScheme = $securitySchemes[$key];
+                $settings = isset($securityScheme['settings']) ? $securityScheme['settings'] : [];
+
+                if (isset($securityScheme['type']) && isset($this->securitySettingsParsers[$securityScheme['type']])) {
+                    $parser = $this->securitySettingsParsers[$securityScheme['type']];
+                }
+
+                if ($parser) {
+                    $securitySchemes[$key]['settings'] = $parser->createSecuritySettings($settings);
+                }
             }
         }
         return $securitySchemes;
@@ -407,13 +424,12 @@ class Parser
      *
      * @param string $ramlString
      * @param string  $rootDir
-     * @param boolean $parseSchemas
      *
      * @throws \Exception
      *
      * @return array
      */
-    private function parseRamlString($ramlString, $rootDir, $parseSchemas)
+    private function parseRamlString($ramlString, $rootDir)
     {
         // get the header
         $header = strtok($ramlString, "\n");
@@ -429,8 +445,7 @@ class Parser
 
             $data = $this->includeAndParseFiles(
                 $data,
-                $rootDir,
-                $parseSchemas
+                $rootDir
             );
         }
 
@@ -445,7 +460,7 @@ class Parser
      * @param string $fileData
      * @return array
      */
-    protected function parseYaml($fileData)
+    private function parseYaml($fileData)
     {
         return Yaml::parse($fileData, true, true);
     }
@@ -455,13 +470,12 @@ class Parser
      *
      * @param string  $fileName
      * @param string  $rootDir
-     * @param boolean $parseSchemas
      *
      * @throws \Exception
      *
      * @return array
      */
-    private function loadAndParseFile($fileName, $rootDir, $parseSchemas)
+    private function loadAndParseFile($fileName, $rootDir)
     {
         $rootDir = realpath($rootDir);
         $fullPath = realpath($rootDir . '/' . $fileName);
@@ -471,7 +485,8 @@ class Parser
         }
 
         // Prevent LFI directory traversal attacks
-        if (!$this->allowDirectoryTraversal && substr($fullPath, 0, strlen($rootDir)) !== $rootDir) {
+        if (!$this->configuration->isDirectoryTraversalAllowed() &&
+            substr($fullPath, 0, strlen($rootDir)) !== $rootDir) {
             return false;
         }
 
@@ -490,10 +505,9 @@ class Parser
             // RAML and YAML files are always parsed
             $fileData = $this->parseRamlString(
                 $fullPath,
-                $rootDir,
-                $parseSchemas
+                $rootDir
             );
-            $fileData = $this->includeAndParseFiles($fileData, $rootDir, $parseSchemas);
+            $fileData = $this->includeAndParseFiles($fileData, $rootDir);
         } else {
             if (in_array($fileExtension, array_keys($this->fileLoaders))) {
                 $loader = $this->fileLoaders[$fileExtension];
@@ -514,21 +528,20 @@ class Parser
      *
      * @param array|string $structure
      * @param string        $rootDir
-     * @param boolean       $parseSchemas
      *
      * @return array
      */
-    private function includeAndParseFiles($structure, $rootDir, $parseSchemas)
+    private function includeAndParseFiles($structure, $rootDir)
     {
         if (is_array($structure)) {
             $result = array();
             foreach ($structure as $key => $structureElement) {
-                $result[$key] = $this->includeAndParseFiles($structureElement, $rootDir, $parseSchemas);
+                $result[$key] = $this->includeAndParseFiles($structureElement, $rootDir);
             }
 
             return $result;
         } elseif (strpos($structure, '!include') === 0) {
-            return $this->loadAndParseFile(str_replace('!include ', '', $structure), $rootDir, $parseSchemas);
+            return $this->loadAndParseFile(str_replace('!include ', '', $structure), $rootDir);
         } else {
             return $structure;
         }
@@ -648,7 +661,7 @@ class Parser
                 '/<<(' . $variables . ')([\s]*\|[\s]*!(singularize|pluralize))?>>/',
                 function ($matches) use ($values) {
                     $transformer = isset($matches[3]) ? $matches[3] : '';
-                    switch($transformer) {
+                    switch ($transformer) {
                         case 'singularize':
                             return Inflect::singularize($values[$matches[1]]);
                             break;
@@ -670,7 +683,7 @@ class Parser
                     function ($matches) use ($values) {
                         $transformer = isset($matches[3]) ? $matches[3] : '';
 
-                        switch($transformer) {
+                        switch ($transformer) {
                             case 'singularize':
                                 return Inflect::singularize($values[$matches[1]]);
                                 break;

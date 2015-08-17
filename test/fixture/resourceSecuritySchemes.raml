@@ -47,5 +47,7 @@ securitySchemes:
             A custom
 
 /users:
+    securedBy: [oauth_2_0, oauth_1_0, null]
     get:
-        securedBy: [oauth_2_0, oauth_1_0]
+       description: Get a single user
+

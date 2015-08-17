@@ -53,6 +53,13 @@ class Resource implements ArrayInstantiationInterface
      */
     private $uriParameters = [];
 
+    /**
+     * A list of security schemes
+     *
+     * @var SecurityScheme[]
+     */
+    private $securitySchemes = [];
+
     // --
 
     /**
@@ -137,6 +144,23 @@ class Resource implements ArrayInstantiationInterface
             }
         }
 
+        if (isset($data['securedBy'])) {
+            foreach ($data['securedBy'] as $key => $securedBy) {
+                if ($securedBy) {
+                    if (is_array($securedBy)) {
+                        $key = array_keys($securedBy)[0];
+                        $securityScheme = clone $apiDefinition->getSecurityScheme($key);
+                        $securityScheme->mergeSettings($securedBy[$key]);
+                        $resource->addSecurityScheme($securityScheme);
+                    } else {
+                        $resource->addSecurityScheme($apiDefinition->getSecurityScheme($securedBy));
+                    }
+                } else {
+                    $resource->addSecurityScheme(SecurityScheme::createFromArray('null', array(), $apiDefinition));
+                }
+            }
+        }
+
         foreach ($data as $key => $value) {
             if (strpos($key, '/') === 0) {
                 $resource->addResource(
@@ -174,16 +198,17 @@ class Resource implements ArrayInstantiationInterface
         foreach ($this->getUriParameters() as $uriParameter) {
             $regexUri = str_replace(
                 '/{'.$uriParameter->getKey().'}',
-                '/'.$uriParameter->getValidationPattern(),
+                '/'.$uriParameter->getMatchPattern(),
                 $regexUri
             );
 
             $regexUri = str_replace(
                 '/~{'.$uriParameter->getKey().'}',
-                '/(('.$uriParameter->getValidationPattern().')|())',
+                '/(('.$uriParameter->getMatchPattern().')|())',
                 $regexUri
             );
         }
+
 
         $regexUri = preg_replace('/\/{.*}/U', '\/([^/]+)', $regexUri);
         $regexUri = preg_replace('/\/~{.*}/U', '\/([^/]*)', $regexUri);
@@ -324,6 +349,11 @@ class Resource implements ArrayInstantiationInterface
     public function addMethod(Method $method)
     {
         $this->methods[$method->getType()] = $method;
+
+        foreach ($this->getSecuritySchemes() as $securityScheme) {
+            $method->addSecurityScheme($securityScheme);
+        }
+
     }
 
     /**
@@ -355,5 +385,23 @@ class Resource implements ArrayInstantiationInterface
         }
 
         return $this->methods[$method];
+    }
+
+    /**
+     * Get the list of security schemes
+     *
+     * @return SecurityScheme[]
+     */
+    public function getSecuritySchemes()
+    {
+        return $this->securitySchemes;
+    }
+
+    /**
+     * @param SecurityScheme $securityScheme
+     */
+    public function addSecurityScheme(SecurityScheme $securityScheme)
+    {
+        $this->securitySchemes[$securityScheme->getKey()] = $securityScheme;
     }
 }

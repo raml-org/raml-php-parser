@@ -88,15 +88,17 @@ RAML;
     /** @test */
     public function shouldThrowExceptionOnPathManipulationIfNotAllowed()
     {
-        $this->parser->preventDirectoryTraversal();
+        $config = new \Raml\ParseConfiguration();
+        $config->disableDirectoryTraversal();
+        $this->parser->setConfiguration($config);
         $this->setExpectedException('\Raml\Exception\InvalidJsonException');
         $this->parser->parse(__DIR__.'/fixture/treeTraversal/bad.raml');
     }
 
     /** @test */
-    public function shouldAllowDirectoryTraversalByDefault()
+    public function shouldPreventDirectoryTraversalByDefault()
     {
-        // @todo - switch this test in v2.0
+        $this->setExpectedException('\Raml\Exception\InvalidJsonException');
         $this->parser->parse(__DIR__.'/fixture/treeTraversal/bad.raml');
     }
 
@@ -104,7 +106,10 @@ RAML;
     /** @test */
     public function shouldNotThrowExceptionOnPathManipulationIfAllowed()
     {
-        $this->parser->allowDirectoryTraversal();
+        $config = new \Raml\ParseConfiguration();
+        $config->enableDirectoryTraversal();
+        $this->parser->setConfiguration($config);
+
         $simpleRaml = $this->parser->parse(__DIR__.'/fixture/treeTraversal/bad.raml');
 
         $resource = $simpleRaml->getResourceByUri('/songs');
@@ -285,7 +290,11 @@ RAML;
     /** @test */
     public function shouldNotParseJsonIfNotRequested()
     {
-        $simpleRaml = $this->parser->parse(__DIR__.'/fixture/simple.raml', false);
+        $config = new \Raml\ParseConfiguration();
+        $config->disableSchemaParsing();
+        $this->parser->setConfiguration($config);
+
+        $simpleRaml = $this->parser->parse(__DIR__.'/fixture/simple.raml');
         $resource = $simpleRaml->getResourceByUri('/songs/1');
         $method = $resource->getMethod('get');
         $response = $method->getResponse(200);
@@ -341,7 +350,11 @@ RAML;
     /** @test */
     public function shouldNotParseIncludedJsonIfNotRequired()
     {
-        $simpleRaml = $this->parser->parse(__DIR__.'/fixture/includeSchema.raml', false);
+        $config = new \Raml\ParseConfiguration();
+        $config->disableSchemaParsing();
+        $this->parser->setConfiguration($config);
+
+        $simpleRaml = $this->parser->parse(__DIR__.'/fixture/includeSchema.raml');
 
         $resource = $simpleRaml->getResourceByUri('/songs');
         $method = $resource->getMethod('get');
@@ -781,5 +794,51 @@ RAML;
         $response = $method->getResponse(200);
         $body = $response->getBodyByType('text/xml');
         $this->assertEquals('A generic description', $body->getDescription());
+    }
+
+    /** @test */
+    public function shouldMergeMethodSecurityScheme()
+    {
+        $apiDefinition = $this->parser->parse(__DIR__ . '/fixture/securitySchemes.raml');
+        $resource = $apiDefinition->getResourceByUri('/users');
+        $method = $resource->getMethod('get');
+        $headers = $method->getHeaders();
+        $this->assertFalse(empty($headers['Authorization']));
+    }
+
+    /** @test */
+    public function shouldAddSecuritySchemeToResource()
+    {
+        $apiDefinition = $this->parser->parse(__DIR__ . '/fixture/resourceSecuritySchemes.raml');
+        $resource = $apiDefinition->getResourceByUri('/users');
+        $method = $resource->getMethod('get');
+        $schemes = $method->getSecuritySchemes();
+        $this->assertArrayHasKey('oauth_1_0', $schemes);
+        $this->assertArrayHasKey('oauth_2_0', $schemes);
+    }
+
+    /** @test */
+    public function shouldParseCustomSettingsOnResource()
+    {
+        $apiDefinition = $this->parser->parse(__DIR__ . '/fixture/securedByCustomProps.raml');
+        $resource = $apiDefinition->getResourceByUri('/test');
+        $method = $resource->getMethod('get');
+        $schemes = $method->getSecuritySchemes();
+        $this->assertArrayHasKey('custom', $schemes);
+        $this->assertArrayHasKey('oauth_2_0', $schemes);
+
+        $this->assertEquals($schemes['custom']->getSettings()['myKey'], 'heLikesItNotSoMuch');
+    }
+
+    /** @test */
+    public function shouldParseCustomSettingsOnMethodWithOAuthParser()
+    {
+        $apiDefinition = $this->parser->parse(__DIR__ . '/fixture/securedByCustomProps.raml');
+        $resource = $apiDefinition->getResourceByUri('/test');
+        $method = $resource->getMethod('get');
+        $schemes = $method->getSecuritySchemes();
+        $settingsObject = $schemes['oauth_2_0']->getSettings();
+        $this->assertSame($settingsObject->getScopes(), array('ADMINISTRATOR', 'USER'));
+        $this->assertSame($settingsObject->getAuthorizationUri(), 'https://www.dropbox.com/1/oauth2/authorize');
     }
 }

@@ -11,23 +11,23 @@ schemas:
     eventListJson: !include eventListSchema.json
 
 securitySchemes:
-  oauth_2:
-    description: Eventlog uses OAuth2 security scheme only.
-    type: OAuth 2.0
-    describedBy:
-      headers:
-        Authorization:
-          type: string
-          description: A valid OAuth 2 access token.
-      responses:
-        401:
-          description: Bad or expired token.
-        403:
-          description: Bad OAuth request.
-    settings:
-      authorizationUri: http://eventlog.example.org/oauth2/authorize
-      accessTokenUri: http://eventlog.example.org/oauth2/token
-      authorizationGrants: [ credentials ]
+  - oauth_2:
+      description: Eventlog uses OAuth2 security scheme only.
+      type: OAuth 2.0
+      describedBy:
+        headers:
+          Authorization:
+            type: string
+            description: A valid OAuth 2 access token.
+        responses:
+          401:
+            description: Bad or expired token.
+          403:
+            description: Bad OAuth request.
+      settings:
+        authorizationUri: http://eventlog.example.org/oauth2/authorize
+        accessTokenUri: http://eventlog.example.org/oauth2/token
+        authorizationGrants: [ credentials ]
 
 
 resourceTypes:

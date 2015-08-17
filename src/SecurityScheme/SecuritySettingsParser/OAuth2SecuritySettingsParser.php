@@ -26,29 +26,7 @@ class OAuth2SecuritySettingsParser implements SecuritySettingsParserInterface
      */
     public function createSecuritySettings(array $data = [])
     {
-        $securitySetting = new OAuth2SecuritySettings();
-
-        if (isset($data['authorizationUri'])) {
-            $securitySetting->setAuthorizationUri($data['authorizationUri']);
-        }
-
-        if (isset($data['accessTokenUri'])) {
-            $securitySetting->setAccessTokenUri($data['accessTokenUri']);
-        }
-
-        if (isset($data['authorizationGrants'])) {
-            foreach ($data['authorizationGrants'] as $authorizationGrant) {
-                $securitySetting->addAuthorizationGrants($authorizationGrant);
-            }
-        }
-
-        if (isset($data['scopes'])) {
-            foreach ($data['scopes'] as $scope) {
-                $securitySetting->addScope($scope);
-            }
-        }
-
-        return $securitySetting;
+        return OAuth2SecuritySettings::createFromArray($data);
     }
 
     /**
