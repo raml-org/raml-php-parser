@@ -186,6 +186,8 @@ class Parser
      */
     public function parse($fileName)
     {
+        $fileName = realpath($fileName);
+        
         if (!is_file($fileName)) {
             throw new FileNotFoundException($fileName);
         }
