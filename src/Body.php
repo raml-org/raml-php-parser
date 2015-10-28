@@ -185,7 +185,7 @@ class Body implements BodyInterface, ArrayInstantiationInterface
     /**
      * Get the list of examples
      *
-     * @return string
+     * @return string[]
      */
     public function getExamples()
     {
