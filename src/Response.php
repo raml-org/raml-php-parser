@@ -123,6 +123,16 @@ class Response implements ArrayInstantiationInterface
     }
 
     /**
+     * Returns the list of bodies for this response type.
+     *
+     * @return BodyInterface[]
+     */
+    public function getBodies()
+    {
+        return $this->bodyList;
+    }
+
+    /**
      * Returns all supported types in response
      *
      * @return array
