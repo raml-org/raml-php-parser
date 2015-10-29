@@ -546,6 +546,16 @@ class NamedParameter implements ArrayInstantiationInterface
     }
 
     /**
+     * Get all examples
+     *
+     * @return string[]
+     */
+    public function getExamples()
+    {
+        return $this->examples;
+    }
+
+    /**
      * Set the example
      *
      * @param string $example
