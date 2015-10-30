@@ -55,6 +55,7 @@ class Response implements ArrayInstantiationInterface
     public function __construct($statusCode)
     {
         $this->statusCode = (int) $statusCode;
+        $this->bodyList = [];
     }
 
     /**
@@ -120,6 +121,16 @@ class Response implements ArrayInstantiationInterface
         }
 
         throw new \Exception('No body found for type "'.$type.'"');
+    }
+
+    /**
+     * Returns the list of bodies for this response type.
+     *
+     * @return BodyInterface[]
+     */
+    public function getBodies()
+    {
+        return $this->bodyList;
     }
 
     /**

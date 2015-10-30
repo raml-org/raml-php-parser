@@ -177,17 +177,19 @@ class Parser
     /**
      * Parse a RAML spec from a file
      *
-     * @param string $fileName
+     * @param string $rawFileName
      *
      * @throws FileNotFoundException
      * @throws RamlParserException
      *
      * @return \Raml\ApiDefinition
      */
-    public function parse($fileName)
+    public function parse($rawFileName)
     {
+        $fileName = realpath($rawFileName);
+        
         if (!is_file($fileName)) {
-            throw new FileNotFoundException($fileName);
+            throw new FileNotFoundException($rawFileName);
         }
 
         $rootDir = dirname($fileName);
