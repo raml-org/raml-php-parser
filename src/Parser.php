@@ -31,6 +31,11 @@ class Parser
     private $cachedFiles = [];
 
     /**
+     * @var array
+     */
+    private $cachedFilesPaths = [];
+
+    /**
      * List of schema parsers, keyed by the supported content type
      *
      * @var SchemaParserInterface[]
@@ -311,8 +316,9 @@ class Parser
                 if (isset($value['schema'])) {
                     if (in_array($key, array_keys($this->schemaParsers))) {
                         $schemaParser = $this->schemaParsers[$key];
-                        $schemaParser->setSourceUri('file:' . $rootDir . DIRECTORY_SEPARATOR);
-                        $value['schema'] = $schemaParser->createSchemaDefinition($value['schema'], $rootDir);
+                        $fileDir = $this->getCachedFilePath($value['schema']);
+                        $schemaParser->setSourceUri('file:' . ($fileDir ? $fileDir : $rootDir). DIRECTORY_SEPARATOR);
+                        $value['schema'] = $schemaParser->createSchemaDefinition($value['schema']);
                     } else {
                         throw new InvalidSchemaTypeException($key);
                     }
@@ -323,6 +329,16 @@ class Parser
         }
 
         return $array;
+    }
+
+    /**
+     * @param string $data
+     * @return string
+     */
+    private function getCachedFilePath($data) {
+        $key = md5($data);
+        
+        return array_key_exists($key, $this->cachedFilesPaths) ? $this->cachedFilesPaths[$key] : null;
     }
 
     /**
@@ -527,6 +543,7 @@ class Parser
             }
 
             $fileData = $loader->loadFile($fullPath);
+            $this->cachedFilesPaths[md5($fileData)] = $fullPath;
         }
 
         // cache before returning
