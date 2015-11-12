@@ -1,7 +1,5 @@
 <?php
 
-use Raml\Schema\SchemaParserInterface;
-
 class ParseTest extends PHPUnit_Framework_TestCase
 {
     /**
