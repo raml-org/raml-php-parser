@@ -396,7 +396,7 @@ RAML;
             $schemaParser
         ]);
         
-        $parser->parse(__DIR__.'/fixture/includeIncludeSchema.raml');
+        $parser->parse(__DIR__.'/fixture/includeSchema.raml');
     }
     
     /** @test */
