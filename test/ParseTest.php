@@ -385,7 +385,7 @@ RAML;
     /** @test */
     public function shouldSetCorrectSourceUriOnSchemaParsers()
     {
-        $schemaParser = $this->getMock(SchemaParserInterface::class);
+        $schemaParser = $this->getMock('\Raml\Schema\SchemaParserInterface');
         $schemaParser->expects($this->any())->method('getCompatibleContentTypes')->willReturn([ 'application/json' ]);
         
         $schemaParser->expects($this->any())->method('setSourceUri')->withConsecutive(
