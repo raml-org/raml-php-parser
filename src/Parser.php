@@ -317,7 +317,7 @@ class Parser
                     if (in_array($key, array_keys($this->schemaParsers))) {
                         $schemaParser = $this->schemaParsers[$key];
                         $fileDir = $this->getCachedFilePath($value['schema']);
-                        $schemaParser->setSourceUri('file:' . ($fileDir ? $fileDir : $rootDir). DIRECTORY_SEPARATOR);
+                        $schemaParser->setSourceUri('file:' . ($fileDir ? $fileDir : $rootDir . DIRECTORY_SEPARATOR));
                         $value['schema'] = $schemaParser->createSchemaDefinition($value['schema']);
                     } else {
                         throw new InvalidSchemaTypeException($key);

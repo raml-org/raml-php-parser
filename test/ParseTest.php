@@ -1,5 +1,7 @@
 <?php
 
+use Raml\Schema\SchemaParserInterface;
+
 class ParseTest extends PHPUnit_Framework_TestCase
 {
     /**
@@ -381,6 +383,23 @@ RAML;
     }
 
     /** @test */
+    public function shouldSetCorrectSourceUriOnSchemaParsers()
+    {
+        $schemaParser = $this->getMock(SchemaParserInterface::class);
+        $schemaParser->expects($this->any())->method('getCompatibleContentTypes')->willReturn([ 'application/json' ]);
+        
+        $schemaParser->expects($this->any())->method('setSourceUri')->withConsecutive(
+            [ 'file:'.__DIR__.'/fixture/songs.json' ]
+        );
+        
+        $parser = new \Raml\Parser([
+            $schemaParser
+        ]);
+        
+        $parser->parse(__DIR__.'/fixture/includeIncludeSchema.raml');
+    }
+    
+    /** @test */
     public function shouldThrowErrorIfEmpty()
     {
         $this->setExpectedException('Exception', 'RAML file appears to be empty');
@@ -418,7 +437,7 @@ RAML;
         $resource = $simpleRaml->getResourceByUri('/songs');
         $method = $resource->getMethod('get');
         $response = $method->getResponse(200);
-
+        
         $body = $response->getBodyByType('application/vnd.api-v1+json');
         $schema = $body->getSchema();
 
