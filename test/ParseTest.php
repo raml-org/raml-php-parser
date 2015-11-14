@@ -381,6 +381,23 @@ RAML;
     }
 
     /** @test */
+    public function shouldSetCorrectSourceUriOnSchemaParsers()
+    {
+        $schemaParser = $this->getMock('\Raml\Schema\SchemaParserInterface');
+        $schemaParser->expects($this->any())->method('getCompatibleContentTypes')->willReturn([ 'application/json' ]);
+        
+        $schemaParser->expects($this->any())->method('setSourceUri')->withConsecutive(
+            [ 'file:'.__DIR__.'/fixture/songs.json' ]
+        );
+        
+        $parser = new \Raml\Parser([
+            $schemaParser
+        ]);
+        
+        $parser->parse(__DIR__.'/fixture/includeSchema.raml');
+    }
+    
+    /** @test */
     public function shouldThrowErrorIfEmpty()
     {
         $this->setExpectedException('Exception', 'RAML file appears to be empty');
@@ -418,7 +435,7 @@ RAML;
         $resource = $simpleRaml->getResourceByUri('/songs');
         $method = $resource->getMethod('get');
         $response = $method->getResponse(200);
-
+        
         $body = $response->getBodyByType('application/vnd.api-v1+json');
         $schema = $body->getSchema();
 
