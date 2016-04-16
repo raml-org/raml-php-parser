@@ -661,7 +661,7 @@ class Parser
 
                 $newArray = array_replace_recursive($newArray, $this->replaceTypes($type, $types, $path, $name, $key));
             } else {
-                $newValue = $this->replaceTypes($value, $types, $path, $name, $key);
+                $newValue = $this->replaceTypes($value, $types, $path, substr($key, 1), $key);
 
                 if (isset($newArray[$key]) && is_array($newArray[$key])) {
                     $newArray[$key] = array_replace_recursive($newArray[$key], $newValue);

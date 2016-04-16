@@ -859,4 +859,17 @@ RAML;
         $this->assertSame($settingsObject->getScopes(), array('ADMINISTRATOR', 'USER'));
         $this->assertSame($settingsObject->getAuthorizationUri(), 'https://www.dropbox.com/1/oauth2/authorize');
     }
+
+    /** @test */
+    public function shouldParseResourcePathNameCorrectly()
+    {
+        $apiDefinition = $this->parser->parse(__DIR__ . '/fixture/resourcePathName.raml');
+
+        $foo = $apiDefinition->getResources()['/foo'];
+        $bar = $foo->getResources()['/foo/bar'];
+
+        $this->assertEquals('Get a list of foo.', $foo->getDescription());
+        $this->assertEquals('Get a list of bar.', $bar->getDescription());
+    }
+
 }

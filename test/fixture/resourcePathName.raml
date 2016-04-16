@@ -1,0 +1,12 @@
+#%RAML 0.8
+---
+title: Test API
+
+resourceTypes:
+    - test:
+        description: Get a list of <<resourcePathName>>.
+
+/foo:
+    type: test
+    /bar:
+        type: test
