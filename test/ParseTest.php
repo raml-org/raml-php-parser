@@ -832,6 +832,7 @@ RAML;
         $schemes = $method->getSecuritySchemes();
         $this->assertArrayHasKey('oauth_1_0', $schemes);
         $this->assertArrayHasKey('oauth_2_0', $schemes);
+        $this->assertTrue(in_array(null, array_keys($schemes)));
     }
 
     /** @test */
