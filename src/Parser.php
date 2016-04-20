@@ -661,7 +661,11 @@ class Parser
 
                 $newArray = array_replace_recursive($newArray, $this->replaceTypes($type, $types, $path, $name, $key));
             } else {
-                $newValue = $this->replaceTypes($value, $types, $path, substr($key, 1), $key);
+                $newName = $name;
+                if (strpos($key, '/') === 0 && !preg_match('/^\/\{.+\}$/', $key)) {
+                    $newName = (isset($value['displayName'])) ? $value['displayName'] : substr($key, 1);
+                }
+                $newValue = $this->replaceTypes($value, $types, $path, $newName, $key);
 
                 if (isset($newArray[$key]) && is_array($newArray[$key])) {
                     $newArray[$key] = array_replace_recursive($newArray[$key], $newValue);

@@ -866,10 +866,20 @@ RAML;
         $apiDefinition = $this->parser->parse(__DIR__ . '/fixture/resourcePathName.raml');
 
         $foo = $apiDefinition->getResources()['/foo'];
-        $bar = $foo->getResources()['/foo/bar'];
+        $fooId = $foo->getResources()['/foo/{fooId}'];
+        $bar = $fooId->getResources()['/foo/{fooId}/bar'];
 
-        $this->assertEquals('Get a list of foo.', $foo->getDescription());
-        $this->assertEquals('Get a list of bar.', $bar->getDescription());
+        $this->assertEquals('Get a list of foo', $foo->getDescription());
+        $this->assertEquals('Get a single foo', $fooId->getDescription());
+        $this->assertEquals('Get a list of bar', $bar->getDescription());
+
+        $baz = $apiDefinition->getResources()['/baz'];
+        $bazId = $baz->getResources()['/baz/{bazId}'];
+        $qux = $bazId->getResources()['/baz/{bazId}/qux'];
+
+
+        $this->assertEquals('Get a list of bazDisplayname', $baz->getDescription());
+        $this->assertEquals('Get a single bazDisplayname', $bazId->getDescription());
+        $this->assertEquals('Get a list of quxDisplayname', $qux->getDescription());
     }
-
 }
