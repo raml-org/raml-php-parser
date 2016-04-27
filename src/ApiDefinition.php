@@ -298,20 +298,20 @@ class ApiDefinition implements ArrayInstantiationInterface
     public function getResourceByPath($path)
     {
         // get rid of everything after the ?
-        $uri = strtok($uri, '?');
+        $path = strtok($path, '?');
 
         $potentialResource = null;
 
         $resources = $this->getResourcesAsArray($this->resources);
         foreach ($resources as $resource) {
-            if ($uri === $resource->getUri()) {
+            if ($path === $resource->getUri()) {
                 $potentialResource = $resource;
             }
         }
 
         if (!$potentialResource) {
             // we never returned so throw exception
-            throw new ResourceNotFoundException($uri);
+            throw new ResourceNotFoundException($path);
         }
 
         return $potentialResource;
