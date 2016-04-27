@@ -286,6 +286,37 @@ class ApiDefinition implements ArrayInstantiationInterface
         return $potentialResource;
     }
 
+    /**
+     * Get a resource by a path
+     *
+     * @param string $path
+     *
+     * @throws InvalidKeyException
+     *
+     * @return \Raml\Resource
+     */
+    public function getResourceByPath($path)
+    {
+        // get rid of everything after the ?
+        $uri = strtok($uri, '?');
+
+        $potentialResource = null;
+
+        $resources = $this->getResourcesAsArray($this->resources);
+        foreach ($resources as $resource) {
+            if ($uri === $resource->getUri()) {
+                $potentialResource = $resource;
+            }
+        }
+
+        if (!$potentialResource) {
+            // we never returned so throw exception
+            throw new ResourceNotFoundException($uri);
+        }
+
+        return $potentialResource;
+    }
+
 
     /**
      * Returns all the resources as a URI, essentially documenting the entire API Definition.
