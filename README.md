@@ -14,8 +14,7 @@ Requires:
 - composer (see [https://getcomposer.org](https://getcomposer.org))
  
 ```bash
-composer install --dev
-./vendor/bin/phpunit test
+composer require alecsammon/php-raml-parser --dev
 ```
 
 ```php
