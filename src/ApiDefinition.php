@@ -269,21 +269,38 @@ class ApiDefinition implements ArrayInstantiationInterface
         // get rid of everything after the ?
         $uri = strtok($uri, '?');
 
-        $potentialResource = null;
-
         $resources = $this->getResourcesAsArray($this->resources);
         foreach ($resources as $resource) {
             if ($resource->matchesUri($uri)) {
-                $potentialResource = $resource;
+                return $resource;
             }
         }
+        // we never returned so throw exception
+        throw new ResourceNotFoundException($uri);
+    }
 
-        if (!$potentialResource) {
-            // we never returned so throw exception
-            throw new ResourceNotFoundException($uri);
+    /**
+     * Get a resource by a path
+     *
+     * @param string $path
+     *
+     * @throws InvalidKeyException
+     *
+     * @return \Raml\Resource
+     */
+    public function getResourceByPath($path)
+    {
+        // get rid of everything after the ?
+        $path = strtok($path, '?');
+
+        $resources = $this->getResourcesAsArray($this->resources);
+        foreach ($resources as $resource) {
+            if ($path === $resource->getUri()) {
+                return $resource;
+            }
         }
-
-        return $potentialResource;
+        // we never returned so throw exception
+        throw new ResourceNotFoundException($path);
     }
 
 
