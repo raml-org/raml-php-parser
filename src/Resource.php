@@ -196,15 +196,24 @@ class Resource implements ArrayInstantiationInterface
         $regexUri = $this->uri;
 
         foreach ($this->getUriParameters() as $uriParameter) {
+            $matchPattern = $uriParameter->getMatchPattern();
+            if ('^' === $matchPattern[0]) {
+                $matchPattern = substr($matchPattern, 1);
+            }
+            
+            if ('$' === substr($matchPattern, -1)) {
+                $matchPattern = substr($matchPattern, 0, -1);
+            }
+            
             $regexUri = str_replace(
                 '/{'.$uriParameter->getKey().'}',
-                '/'.$uriParameter->getMatchPattern(),
+                '/'.$matchPattern,
                 $regexUri
             );
 
             $regexUri = str_replace(
                 '/~{'.$uriParameter->getKey().'}',
-                '/(('.$uriParameter->getMatchPattern().')|())',
+                '/(('.$matchPattern.')|())',
                 $regexUri
             );
         }
