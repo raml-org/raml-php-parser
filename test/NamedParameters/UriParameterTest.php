@@ -60,4 +60,36 @@ RAML;
         $resource = $apiDef->getResourceByUri('/user/alec');
         $this->assertInstanceOf('\Raml\Resource', $resource);
     }
+
+    /** @test */
+    public function shouldPassUriParametersFromParentToSub()
+    {
+        $raml = <<<RAML
+#%RAML 0.8
+title: User API
+version: 1.0
+
+/base/{param1}:
+  uriParameters:
+    param1:
+      type: string
+
+  /sub/{param2}:
+    uriParameters:
+      param2:
+        type: string        
+RAML;
+
+        $apiDef = $this->parser->parseFromString($raml, '');
+
+        $resource = $apiDef->getResourceByPath("/base/{param1}/sub/{param2}");
+        $this->assertInstanceOf('\Raml\Resource', $resource);
+
+        $uriParameters = $resource->getUriParameters();
+
+        $this->assertCount(2, $uriParameters, "should contain 2 uri parameters");
+
+        $this->assertArrayHasKey('param1', $uriParameters, 'should contain uri parameter from parent');
+        $this->assertArrayHasKey('param2', $uriParameters, 'should contain uri parameter from sub');
+    }
 }
