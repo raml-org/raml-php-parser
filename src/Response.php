@@ -6,7 +6,7 @@ namespace Raml;
  *
  * @see http://raml.org/spec.html#responses
  */
-class Response implements ArrayInstantiationInterface
+class Response implements ArrayInstantiationInterface, MessageSchemaInterface
 {
     /**
      * The status code of the response
@@ -56,6 +56,7 @@ class Response implements ArrayInstantiationInterface
     {
         $this->statusCode = (int) $statusCode;
         $this->bodyList = [];
+        $this->headers = [];
     }
 
     /**
@@ -146,9 +147,9 @@ class Response implements ArrayInstantiationInterface
     /**
      * Add a new body
      *
-     * @param Body $body
+     * @param BodyInterface $body
      */
-    public function addBody(Body $body)
+    public function addBody(BodyInterface $body)
     {
         $this->bodyList[$body->getMediaType()] = $body;
     }

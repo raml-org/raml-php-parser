@@ -29,6 +29,7 @@
     "justinrainbow/json-schema": "~1.5",
     "symfony/yaml": "~2.6",
     "symfony/routing": "~2.5",
-    "oodle/inflect": "~0.2"
+    "oodle/inflect": "~0.2",
+    "psr/http-message": "^1.0"
   }
 }
