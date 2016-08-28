@@ -55,9 +55,9 @@ class ValidatorSchemaHelper
      */
     public function getRequestBody($method, $path, $contentType)
     {
-        $method = $this->getMethod($method, $path);
+        $schema = $this->getMethod($method, $path);
 
-        return $this->getBody($method, $method, $path, $contentType);
+        return $this->getBody($schema, $method, $path, $contentType);
     }
 
     /**
@@ -73,7 +73,7 @@ class ValidatorSchemaHelper
 
         if (null === $responseSchema) {
             throw new ValidatorSchemaException(sprintf(
-                'Schema for %s %s with status code %s was not found in API definition',
+                'Schema for %s %s with status code %d was not found in API definition',
                 strtoupper($method),
                 $path,
                 $statusCode
@@ -127,7 +127,6 @@ class ValidatorSchemaHelper
      * @param string $path
      * @param string $contentType
      * @return Body
-     * @throws Exception
      * @throws ValidatorSchemaException
      */
     private function getBody(MessageSchemaInterface $schema, $method, $path, $contentType)
@@ -135,11 +134,6 @@ class ValidatorSchemaHelper
         try {
             $body = $schema->getBodyByType($contentType);
         } catch (Exception $exception) {
-            // Response::getBodyByType throws a generic \Exception, so we have to improvise.
-            if (false === strpos($exception->getMessage(), $contentType)) {
-                throw $exception;
-            }
-            
             $message = sprintf(
                 'Schema for %s %s with content type %s was not found in API definition',
                 strtoupper($method),
@@ -153,7 +147,7 @@ class ValidatorSchemaHelper
         // BodyInterface does not contain anything of use for validation, so we need to return an actual Body.
         if (!($body instanceof Body)) {
             throw new ValidatorSchemaException(sprintf(
-                'Schema for %s %s with content type %s is not a regular Body definition',
+                'Schema for %s %s with content type %s is BodyInterface but not a Body object, so we can\'t use it',
                 strtoupper($method),
                 $path,
                 $contentType
@@ -195,13 +189,8 @@ class ValidatorSchemaHelper
         try {
             return $resource->getMethod($method);
         } catch (Exception $exception) {
-            // Resource::getMethod throws a generic \Exception, so we have to improvise.
-            if (false === strpos($exception->getMessage(), 'Method not found')) {
-                throw $exception;
-            }
-
             throw new ValidatorSchemaException(sprintf(
-                'Schema for %s %s not found in API definition',
+                'Schema for %s %s was not found in API definition',
                 strtoupper($method),
                 $path
             ));
