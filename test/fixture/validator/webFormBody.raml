@@ -1,0 +1,11 @@
+#%RAML 0.8
+title: Example API
+version: v1
+
+/songs:
+  post:
+    body:
+      application/x-www-form-urlencoded:
+        formParameters:
+          name:
+            type: string

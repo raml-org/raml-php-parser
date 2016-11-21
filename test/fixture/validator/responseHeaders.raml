@@ -1,0 +1,13 @@
+#%RAML 0.8
+title: Example API
+version: v1
+
+/songs:
+  get:
+    responses:
+      200:
+        headers:
+          X-Required-Header:
+            required: true
+          X-Long-Optional-Header:
+            minLength: 10

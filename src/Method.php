@@ -6,7 +6,7 @@ namespace Raml;
  *
  * @see http://raml.org/spec.html#methods
  */
-class Method implements ArrayInstantiationInterface
+class Method implements ArrayInstantiationInterface, MessageSchemaInterface
 {
     /**
      * Valid METHODS
@@ -325,7 +325,7 @@ class Method implements ArrayInstantiationInterface
      */
     public function getExampleByType($type)
     {
-        return isset($this->body[$type]['example']) ? $this->body[$type]['example'] : null;
+        return isset($this->bodyList[$type]['example']) ? $this->bodyList[$type]['example'] : null;
     }
 
     /**

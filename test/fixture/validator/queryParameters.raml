@@ -1,0 +1,14 @@
+#%RAML 0.8
+title: Example API
+version: v1
+
+/songs:
+  get:
+    queryParameters:
+      required_number:
+        required: true
+        type: number
+      optional_long_string:
+        required: false
+        type: string
+        minLength: 10
