@@ -1,8 +1,6 @@
 <?php
 namespace Raml\Test\NamedParameters;
 
-use Raml\Exception\BadParameter\InvalidBaseUrlException;
-
 class BaseUriParameterTest extends \PHPUnit_Framework_TestCase
 {
     /**
@@ -115,7 +113,7 @@ RAML;
     /**
      * @test
      */
-    public function shouldCorrectlyOverrideBaseUriProtocol()
+    public function shouldOverrideBaseUriProtocols()
     {
         $raml =  <<<RAML
 #%RAML 0.8
@@ -130,23 +128,5 @@ RAML;
 
         $this->assertContains('HTTP', $protocols);
         $this->assertNotContains('HTTPS', $protocols);
-    }
-
-    /**
-     * @test
-     */
-    public function shouldThrowInvalidUrlExceptionIfSchemaIsEmpty()
-    {
-        $raml =  <<<RAML
-#%RAML 0.8
-title: Test body
-baseUrl: //some-host/
-protocols:  [ HTTP ]
-/:
-  get: []
-RAML;
-
-        $this->setExpectedException(InvalidBaseUrlException::class);
-        $this->parser->parseFromString($raml, '')->getProtocols();
     }
 }

@@ -1,7 +1,6 @@
 <?php
 namespace Raml;
 
-use Raml\Exception\BadParameter\InvalidBaseUrlException;
 use Raml\RouteFormatter\RouteFormatterInterface;
 use Raml\RouteFormatter\NoRouteFormatter;
 
@@ -178,12 +177,12 @@ class ApiDefinition implements ArrayInstantiationInterface
         }
 
         if (isset($data['baseUrl'])) {
-            $apiDefinition->setBaseUrl($data['baseUrl']);
+            $apiDefinition->baseUri = $data['baseUrl'];
         }
 
         // support for RAML 0.8
         if (isset($data['baseUri'])) {
-            $apiDefinition->setBaseUri($data['baseUri']);
+            $apiDefinition->baseUri = $data['baseUri'];
         }
 
         if (isset($data['baseUriParameters'])) {
@@ -394,31 +393,12 @@ class ApiDefinition implements ArrayInstantiationInterface
         return ($this->version) ? str_replace('{version}', $this->version, $this->baseUri) : $this->baseUri;
     }
 
-    public function setBaseUri($baseUri)
-    {
-        $this->baseUri = $baseUri;
-    }
-
     /**
      * @return string
      */
     public function getBaseUrl()
     {
         return $this->getBaseUri();
-    }
-
-    /**
-     * @param string $baseUrl
-     */
-    public function setBaseUrl($baseUrl)
-    {
-        $schema = strtoupper(parse_url($this->baseUri, PHP_URL_SCHEME));
-
-        if (empty($schema)) {
-            throw new InvalidBaseUrlException($baseUrl);
-        }
-
-        $this->baseUri = $baseUrl;
     }
 
     // --
