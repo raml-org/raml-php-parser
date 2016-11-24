@@ -1,6 +1,8 @@
 <?php
 namespace Raml\Test\NamedParameters;
 
+use Raml\Exception\BadParameter\InvalidBaseUrlException;
+
 class BaseUriParameterTest extends \PHPUnit_Framework_TestCase
 {
     /**
@@ -10,12 +12,8 @@ class BaseUriParameterTest extends \PHPUnit_Framework_TestCase
 
     public function setUp()
     {
-        parent::setUp();
         $this->parser = new \Raml\Parser();
     }
-
-    // ---
-
 
     /**
      * Returns a valid api def
@@ -52,8 +50,6 @@ RAML;
 
         return $this->parser->parseFromString($raml, '');
     }
-
-    // ---
 
     /**
      * @test
@@ -95,5 +91,62 @@ RAML;
         $resource = $apiDef->getResourceByUri('/users/1/image');
         $method = $resource->getMethod('PUT');
         $this->assertEquals(['content-update'], $method->getBaseUriParameters()['apiDomain']->getEnum());
+    }
+
+    /**
+     * @test
+     */
+    public function shouldCorrectlyParseNetBaseUri()
+    {
+        $raml =  <<<RAML
+#%RAML 0.8
+title: Test body
+baseUri: //some-host/
+/:
+  get: []
+RAML;
+
+        $protocols = $this->parser->parseFromString($raml, '')->getProtocols();
+
+        $this->assertContains('HTTP', $protocols);
+        $this->assertContains('HTTPS', $protocols);
+    }
+
+    /**
+     * @test
+     */
+    public function shouldCorrectlyOverrideBaseUriProtocol()
+    {
+        $raml =  <<<RAML
+#%RAML 0.8
+title: Test body
+baseUri: //some-host/
+protocols:  [ HTTP ]
+/:
+  get: []
+RAML;
+
+        $protocols = $this->parser->parseFromString($raml, '')->getProtocols();
+
+        $this->assertContains('HTTP', $protocols);
+        $this->assertNotContains('HTTPS', $protocols);
+    }
+
+    /**
+     * @test
+     */
+    public function shouldThrowInvalidUrlExceptionIfSchemaIsEmpty()
+    {
+        $raml =  <<<RAML
+#%RAML 0.8
+title: Test body
+baseUrl: //some-host/
+protocols:  [ HTTP ]
+/:
+  get: []
+RAML;
+
+        $this->setExpectedException(InvalidBaseUrlException::class);
+        $this->parser->parseFromString($raml, '')->getProtocols();
     }
 }

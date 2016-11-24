@@ -1,6 +1,7 @@
 <?php
 namespace Raml;
 
+use Raml\Exception\BadParameter\InvalidBaseUrlException;
 use Raml\RouteFormatter\RouteFormatterInterface;
 use Raml\RouteFormatter\NoRouteFormatter;
 
@@ -49,7 +50,7 @@ class ApiDefinition implements ArrayInstantiationInterface
      *
      * @var string
      */
-    private $baseUrl;
+    private $baseUri;
 
     /**
      * Parameters defined in the Base URI
@@ -182,7 +183,7 @@ class ApiDefinition implements ArrayInstantiationInterface
 
         // support for RAML 0.8
         if (isset($data['baseUri'])) {
-            $apiDefinition->setBaseUrl($data['baseUri']);
+            $apiDefinition->setBaseUri($data['baseUri']);
         }
 
         if (isset($data['baseUriParameters'])) {
@@ -201,6 +202,10 @@ class ApiDefinition implements ArrayInstantiationInterface
             foreach ($data['protocols'] as $protocol) {
                 $apiDefinition->addProtocol($protocol);
             }
+        }
+
+        if (empty($apiDefinition->getProtocols())) {
+            $apiDefinition->setProtocolsFromBaseUri();
         }
 
         if (isset($data['defaultMediaType'])) {
@@ -382,27 +387,38 @@ class ApiDefinition implements ArrayInstantiationInterface
     // --
 
     /**
-     * Get the base URI
-     *
+     * @return string
+     */
+    public function getBaseUri()
+    {
+        return ($this->version) ? str_replace('{version}', $this->version, $this->baseUri) : $this->baseUri;
+    }
+
+    public function setBaseUri($baseUri)
+    {
+        $this->baseUri = $baseUri;
+    }
+
+    /**
      * @return string
      */
     public function getBaseUrl()
     {
-        return ($this->version) ? str_replace('{version}', $this->version, $this->baseUrl) : $this->baseUrl;
+        return $this->getBaseUri();
     }
 
     /**
-     * Set the base url
-     *
      * @param string $baseUrl
      */
     public function setBaseUrl($baseUrl)
     {
-        $this->baseUrl = $baseUrl;
+        $schema = strtoupper(parse_url($this->baseUri, PHP_URL_SCHEME));
 
-        if (!$this->protocols) {
-            $this->protocols = [strtoupper(parse_url($this->baseUrl, PHP_URL_SCHEME))];
+        if (empty($schema)) {
+            throw new InvalidBaseUrlException($baseUrl);
         }
+
+        $this->baseUri = $baseUrl;
     }
 
     // --
@@ -671,5 +687,16 @@ class ApiDefinition implements ArrayInstantiationInterface
         }
 
         return $all;
+    }
+
+    private function setProtocolsFromBaseUri()
+    {
+        $schema = strtoupper(parse_url($this->baseUri, PHP_URL_SCHEME));
+
+        if (empty($schema)) {
+            $this->protocols = [self::PROTOCOL_HTTPS, self::PROTOCOL_HTTP];
+        } else {
+            $this->protocols = [$schema];
+        }
     }
 }
