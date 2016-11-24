@@ -645,7 +645,7 @@ class ApiDefinition implements ArrayInstantiationInterface
     private function getMethodsAsArray(array $resources)
     {
         $all = [];
-        $baseUrl = $this->getBaseUrl();
+        $baseUrl = $this->getBaseUri();
         $protocols = $this->protocols;
 
         // Loop over each resource to build out the full URI's that it has.

@@ -67,7 +67,7 @@ RAML;
         $simpleRaml = $this->parser->parse(__DIR__.'/fixture/simple.raml');
         $this->assertEquals('World Music API', $simpleRaml->getTitle());
         $this->assertEquals('v1', $simpleRaml->getVersion());
-        $this->assertEquals('http://example.api.com/v1', $simpleRaml->getBaseUrl());
+        $this->assertEquals('http://example.api.com/v1', $simpleRaml->getBaseUri());
         $this->assertEquals('application/json', $simpleRaml->getDefaultMediaType());
     }
 
