@@ -28,18 +28,25 @@ class RequestValidatorTest extends PHPUnit_Framework_TestCase
     }
 
     /**
-     * @param string $fixturePath
-     * @return RequestValidator
+     * @test
      */
-    private function getValidatorForSchema($fixturePath)
+    public function shouldNotAssertBodyOnGetRequest()
     {
-        $apiDefinition = $this->parser->parse($fixturePath);
-        $helper = new ValidatorSchemaHelper($apiDefinition);
+        $body = $this->getMock('\Psr\Http\Message\StreamInterface');
+        $body->method('getContents')->willReturn('');
 
-        return new RequestValidator($helper);
+        $this->request->method('getMethod')->willReturn('get');
+        $this->uri->method('getPath')->willReturn('/songs');
+        $this->uri->method('getQuery')->willReturn('required_number=5');
+        $this->request->method('getBody')->willReturn($body);
+
+        $validator = $this->getValidatorForSchema(__DIR__ . '/../fixture/validator/queryParameters.raml');
+        $validator->validateRequest($this->request);
     }
 
-    /** @test */
+    /**
+     * @test
+     */
     public function shouldCatchMissingParameters()
     {
         $this->request->method('getMethod')->willReturn('get');
@@ -55,7 +62,9 @@ class RequestValidatorTest extends PHPUnit_Framework_TestCase
         $validator->validateRequest($this->request);
     }
 
-    /** @test */
+    /**
+     * @test
+     */
     public function shouldCatchInvalidParameters()
     {
         $this->request->method('getMethod')->willReturn('get');
@@ -71,7 +80,9 @@ class RequestValidatorTest extends PHPUnit_Framework_TestCase
         $validator->validateRequest($this->request);
     }
 
-    /** @test */
+    /**
+     * @test
+     */
     public function shouldCatchInvalidBody()
     {
         $body = $this->getMock('\Psr\Http\Message\StreamInterface');
@@ -81,7 +92,7 @@ class RequestValidatorTest extends PHPUnit_Framework_TestCase
         $this->uri->method('getPath')->willReturn('/songs');
         $this->request->method('getHeaderLine')->with('Content-Type')->willReturn('application/json');
         $this->request->method('getBody')->willReturn($body);
-        
+
         $this->setExpectedException(
             '\Raml\Validator\ValidatorRequestException',
             'title (minLength), artist (required)'
@@ -89,5 +100,17 @@ class RequestValidatorTest extends PHPUnit_Framework_TestCase
 
         $validator = $this->getValidatorForSchema(__DIR__ . '/../fixture/validator/requestBody.raml');
         $validator->validateRequest($this->request);
+    }
+
+    /**
+     * @param string $fixturePath
+     * @return RequestValidator
+     */
+    private function getValidatorForSchema($fixturePath)
+    {
+        $apiDefinition = $this->parser->parse($fixturePath);
+        $helper = new ValidatorSchemaHelper($apiDefinition);
+
+        return new RequestValidator($helper);
     }
 }

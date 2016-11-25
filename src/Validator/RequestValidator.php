@@ -30,7 +30,10 @@ class RequestValidator
     {
         $this->assertNoMissingParameters($request);
         $this->assertValidParameters($request);
-        $this->assertValidBody($request);
+
+        if (strtolower($request->getMethod()) !== 'get') {
+            $this->assertValidBody($request);
+        }
     }
 
     /**
