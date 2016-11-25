@@ -178,7 +178,7 @@ class RequestValidator
             return;
         }
 
-        $acceptHeader = $request->getHeader('Accept');
+        $acceptHeader = $request->getHeaderLine('Accept');
         $accept = $acceptHeader ? $this->negotiator->getBest($acceptHeader, $priorities) : null;
 
         if ($accept === null) {
