@@ -2,9 +2,9 @@
 
 Parses a RAML file into a PHP object.
 
-[![Build Status](https://travis-ci.org/alecsammon/php-raml-parser.svg?branch=master)](https://travis-ci.org/alecsammon/php-raml-parser)
+[![Build Status](https://travis-ci.org/eLama/php-raml-parser.svg?branch=master)](https://travis-ci.org/eLama/php-raml-parser)
 [![Coverage Status](https://img.shields.io/coveralls/alecsammon/php-raml-parser.svg)](https://coveralls.io/r/alecsammon/php-raml-parser?branch=master)
-[![HHVM Status](http://hhvm.h4cc.de/badge/alecsammon/php-raml-parser.png)](http://hhvm.h4cc.de/package/alecsammon/php-raml-parser)
+[![HHVM Status](http://hhvm.h4cc.de/badge/eLama/php-raml-parser.svg)](http://hhvm.h4cc.de/package/eLama/php-raml-parser)
 
 See the RAML spec here: https://github.com/raml-org/raml-spec
 
@@ -14,7 +14,7 @@ Requires:
 - composer (see [https://getcomposer.org](https://getcomposer.org))
  
 ```bash
-composer require alecsammon/php-raml-parser --dev
+composer require elama/php-raml-parser --dev
 ```
 
 ```php
