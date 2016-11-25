@@ -34,6 +34,7 @@
     "symfony/yaml": "~3.0",
     "symfony/routing": "~3.0",
     "oodle/inflect": "~0.2",
-    "psr/http-message": "^1.0"
+    "psr/http-message": "^1.0",
+    "willdurand/negotiation": "^2.2"
   }
 }

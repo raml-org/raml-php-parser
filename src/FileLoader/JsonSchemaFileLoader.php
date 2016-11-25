@@ -4,6 +4,7 @@ namespace Raml\FileLoader;
 
 use JsonSchema\Uri\UriRetriever;
 use JsonSchema\RefResolver;
+use Raml\Exception\BadParameter\FileNotFoundException;
 use Raml\Exception\InvalidJsonException;
 
 /**
@@ -40,14 +41,25 @@ class JsonSchemaFileLoader implements FileLoaderInterface
         try {
             $json = $jsonSchemaParser->fetchRef('file://' . $filePath, null);
         } catch (\Exception $e) {
-            $json = json_decode(file_get_contents($filePath));
+            $content = file_get_contents($filePath);
+
+            if ($content === false) {
+                throw new FileNotFoundException($filePath);
+            }
+
+            $json = json_decode($content);
+
+            if (JSON_ERROR_NONE !== json_last_error()) {
+                throw new InvalidJsonException(json_last_error());
+            }
         }
 
-        try {
-            return json_encode($json);
-        } catch (\Exception $e) {
+        $json = json_encode($json);
+        if (JSON_ERROR_NONE !== json_last_error()) {
             throw new InvalidJsonException(json_last_error());
         }
+
+        return $json;
     }
 
     /**

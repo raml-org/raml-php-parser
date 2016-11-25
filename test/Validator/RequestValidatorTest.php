@@ -1,5 +1,6 @@
 <?php
 
+use Negotiation\Negotiator;
 use Raml\Validator\RequestValidator;
 use Raml\Validator\ValidatorSchemaHelper;
 
@@ -30,10 +31,44 @@ class RequestValidatorTest extends PHPUnit_Framework_TestCase
     /**
      * @test
      */
+    public function shouldCatchWrongMediaType()
+    {
+        $this->request->method('getMethod')->willReturn('get');
+        $this->uri->method('getPath')->willReturn('/songs');
+        $this->uri->method('getQuery')->willReturn('');
+        $this->request->method('getHeader')->with('Accept')->willReturn('application/xml');
+
+        $this->setExpectedException(
+            '\Raml\Validator\ValidatorRequestException',
+            'Invalid Media type'
+        );
+
+        $validator = $this->getValidatorForSchema(__DIR__ . '/../fixture/validator/requestAcceptHeader.raml');
+        $validator->validateRequest($this->request);
+    }
+
+    /**
+     * @test
+     */
+    public function shouldSuccessfullyAssertWildcardAcceptHeader()
+    {
+        $this->request->method('getMethod')->willReturn('get');
+        $this->uri->method('getPath')->willReturn('/songs');
+        $this->uri->method('getQuery')->willReturn('');
+        $this->request->method('getHeader')->with('Accept')->willReturn('application/json');
+
+        $validator = $this->getValidatorForSchema(__DIR__ . '/../fixture/validator/requestAcceptHeader.raml');
+        $validator->validateRequest($this->request);
+    }
+
+    /**
+     * @test
+     */
     public function shouldNotAssertBodyOnGetRequest()
     {
         $body = $this->getMock('\Psr\Http\Message\StreamInterface');
         $body->method('getContents')->willReturn('');
+        $this->request->method('getHeader')->with('Accept')->willReturn('application/json');
 
         $this->request->method('getMethod')->willReturn('get');
         $this->uri->method('getPath')->willReturn('/songs');
@@ -52,6 +87,7 @@ class RequestValidatorTest extends PHPUnit_Framework_TestCase
         $this->request->method('getMethod')->willReturn('get');
         $this->uri->method('getPath')->willReturn('/songs');
         $this->uri->method('getQuery')->willReturn('');
+        $this->request->method('getHeader')->with('Accept')->willReturn('application/json');
 
         $this->setExpectedException(
             '\Raml\Validator\ValidatorRequestException',
@@ -70,6 +106,7 @@ class RequestValidatorTest extends PHPUnit_Framework_TestCase
         $this->request->method('getMethod')->willReturn('get');
         $this->uri->method('getPath')->willReturn('/songs');
         $this->uri->method('getQuery')->willReturn('required_number=5&optional_long_string=ABC');
+        $this->request->method('getHeader')->with('Accept')->willReturn('application/json');
 
         $this->setExpectedException(
             '\Raml\Validator\ValidatorRequestException',
@@ -91,6 +128,7 @@ class RequestValidatorTest extends PHPUnit_Framework_TestCase
         $this->request->method('getMethod')->willReturn('post');
         $this->uri->method('getPath')->willReturn('/songs');
         $this->request->method('getHeaderLine')->with('Content-Type')->willReturn('application/json');
+        $this->request->method('getHeader')->with('Accept')->willReturn('application/json');
         $this->request->method('getBody')->willReturn($body);
 
         $this->setExpectedException(
@@ -111,6 +149,6 @@ class RequestValidatorTest extends PHPUnit_Framework_TestCase
         $apiDefinition = $this->parser->parse($fixturePath);
         $helper = new ValidatorSchemaHelper($apiDefinition);
 
-        return new RequestValidator($helper);
+        return new RequestValidator($helper, new Negotiator());
     }
 }

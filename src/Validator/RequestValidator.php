@@ -2,6 +2,7 @@
 namespace Raml\Validator;
 
 use Exception;
+use Negotiation\Negotiator;
 use Psr\Http\Message\RequestInterface;
 use Raml\Exception\InvalidSchemaException;
 use Raml\Exception\ValidationException;
@@ -15,11 +16,18 @@ class RequestValidator
     private $schemaHelper;
 
     /**
-     * @param ValidatorSchemaHelper $schema
+     * @var Negotiator
      */
-    public function __construct(ValidatorSchemaHelper $schema)
+    private $negotiator;
+
+    /**
+     * @param ValidatorSchemaHelper $schema
+     * @param Negotiator $negotiator
+     */
+    public function __construct(ValidatorSchemaHelper $schema, Negotiator $negotiator)
     {
         $this->schemaHelper = $schema;
+        $this->negotiator = $negotiator;
     }
 
     /**
@@ -28,6 +36,7 @@ class RequestValidator
      */
     public function validateRequest(RequestInterface $request)
     {
+        $this->assertMediaTypes($request);
         $this->assertNoMissingParameters($request);
         $this->assertValidParameters($request);
 
@@ -144,5 +153,36 @@ class RequestValidator
         return join(', ', array_map(function (array $error) {
             return sprintf('%s (%s)', $error['property'], $error['constraint']);
         }, $errors));
+    }
+
+    private function assertMediaTypes(RequestInterface $request)
+    {
+        $method = $request->getMethod();
+        $path = $request->getUri()->getPath();
+
+        $responseSchemas = $this->schemaHelper->getResponses(
+            $method,
+            $path
+        );
+
+        $priorities = [];
+        foreach ($responseSchemas as $responseSchema) {
+            $priorities = array_merge($priorities, $responseSchema->getTypes());
+        }
+
+        if (!$priorities) {
+            $priorities = $this->schemaHelper->getDefaultMediaTypes();
+        }
+
+        if (!$priorities) {
+            return;
+        }
+
+        $acceptHeader = $request->getHeader('Accept');
+        $accept = $acceptHeader ? $this->negotiator->getBest($acceptHeader, $priorities) : null;
+
+        if ($accept === null) {
+            throw new ValidatorRequestException('Invalid Media type');
+        }
     }
 }

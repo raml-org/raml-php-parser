@@ -81,9 +81,9 @@ class ApiDefinition implements ArrayInstantiationInterface
      *
      * @see http://raml.org/spec.html#default-media-type
      *
-     * @var string
+     * @var string[]
      */
-    private $defaultMediaType;
+    private $defaultMediaTypes;
 
     /**
      * The schemas the API supplies defined in the root (optional)
@@ -189,7 +189,7 @@ class ApiDefinition implements ArrayInstantiationInterface
         }
 
         if (isset($data['mediaType'])) {
-            $apiDefinition->setDefaultMediaType($data['mediaType']);
+            $apiDefinition->defaultMediaTypes = (array) $data['mediaType'];
         }
 
         if (isset($data['protocols'])) {
@@ -434,11 +434,11 @@ class ApiDefinition implements ArrayInstantiationInterface
     /**
      * Get the default media type
      *
-     * @return string
+     * @return string[]
      */
-    public function getDefaultMediaType()
+    public function getDefaultMediaTypes()
     {
-        return $this->defaultMediaType;
+        return $this->defaultMediaTypes;
     }
 
     /**
