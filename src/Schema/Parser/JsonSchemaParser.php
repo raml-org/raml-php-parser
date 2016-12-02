@@ -2,11 +2,10 @@
 
 namespace Raml\Schema\Parser;
 
+use JsonSchema\SchemaStorage;
 use Raml\Exception\InvalidJsonException;
 use Raml\Schema\SchemaParserAbstract;
 use Raml\Schema\Definition\JsonSchemaDefinition;
-use JsonSchema\Uri\UriRetriever;
-use JsonSchema\RefResolver;
 
 class JsonSchemaParser extends SchemaParserAbstract
 {
@@ -34,17 +33,30 @@ class JsonSchemaParser extends SchemaParserAbstract
      */
     public function createSchemaDefinition($schemaString)
     {
-        $retriever = new UriRetriever;
-        $jsonSchemaParser = new RefResolver($retriever);
+        $schemaStorage = new SchemaStorage();
 
-        $data = json_decode($schemaString);
-
-        if (!$data) {
-            throw new InvalidJsonException(json_last_error());
-        }
-
-        $jsonSchemaParser->resolve($data, $this->getSourceUri());
+        $schemaStorage->addSchema($this->getSourceUri(), json_decode($schemaString));
+        $data = $schemaStorage->getSchema($this->getSourceUri());
+        $data = $this->resolveRefSchemaRecursively($data, $schemaStorage);
 
         return new JsonSchemaDefinition($data);
+    }
+
+    /**
+     * @param \stdClass $data
+     * @param SchemaStorage $schemaStorage
+     * @return mixed
+     */
+    private function resolveRefSchemaRecursively($data, $schemaStorage)
+    {
+        $data = $schemaStorage->resolveRefSchema($data);
+
+        foreach ($data as $key => $value) {
+            if (is_object($value)) {
+                $data->{$key} = $schemaStorage->resolveRefSchema($value);
+            }
+        }
+
+        return $data;
     }
 }
