@@ -51,9 +51,19 @@ class JsonSchemaParser extends SchemaParserAbstract
     {
         $data = $schemaStorage->resolveRefSchema($data);
 
+        if (!is_object($data) && !is_array($data)) {
+            return $data;
+        }
+
         foreach ($data as $key => $value) {
             if (is_object($value)) {
-                $data->{$key} = $schemaStorage->resolveRefSchema($value);
+                $data->{$key} = $this->resolveRefSchemaRecursively($value, $schemaStorage);
+            }
+
+            if (is_array($value)) {
+                $data->{$key} = array_map(function($val) use ($schemaStorage) {
+                    return $this->resolveRefSchemaRecursively($val, $schemaStorage);
+                }, $value);
             }
         }
 

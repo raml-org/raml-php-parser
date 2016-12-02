@@ -313,12 +313,13 @@ class Parser
                     foreach ($this->schemaParsers as $schemaParser) {
                         try {
                             $schemaParser->setSourceUri(
-                                'file:' . ($fileDir ? $fileDir : $rootDir . DIRECTORY_SEPARATOR)
+                                'file://' . ($fileDir ? $fileDir : $rootDir . DIRECTORY_SEPARATOR)
                             );
                             $schema = $schemaParser->createSchemaDefinition($value['schema']);
 
                             break;
-                        } catch (\RuntimeException $e) {}
+                        } catch (\RuntimeException $e) {
+                        }
                     }
 
                     if ($schema === null) {

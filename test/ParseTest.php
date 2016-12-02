@@ -413,7 +413,7 @@ RAML;
         );
         $schemaParser->expects($this->any())->method('getCompatibleContentTypes')->willReturn([ 'application/json' ]);
         $schemaParser->expects($this->any())->method('setSourceUri')->withConsecutive(
-            [ 'file:'.__DIR__.'/fixture/songs.json' ]
+            [ 'file://'.__DIR__.'/fixture/songs.json' ]
         );
         
         $parser = new \Raml\Parser([
