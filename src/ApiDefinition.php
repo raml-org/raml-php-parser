@@ -131,6 +131,15 @@ class ApiDefinition implements ArrayInstantiationInterface
      */
     private $securedBy = [];
 
+    /**
+     * A list of data types
+     *
+     * @link https://github.com/raml-org/raml-spec/blob/master/versions/raml-10/raml-10.md/#raml-data-types
+     *
+     * @var array
+     */
+    private $types = [];
+
     // ---
 
     /**
@@ -231,6 +240,12 @@ class ApiDefinition implements ArrayInstantiationInterface
         if (isset($data['documentation'])) {
             foreach ($data['documentation'] as $title => $documentation) {
                 $apiDefinition->addDocumentation($title, $documentation);
+            }
+        }
+
+        if (isset($data['types'])) {
+            foreach ($data['types'] as $name => $definition) {
+                $apiDefinition->addType($name, $definition);
             }
         }
 
@@ -518,6 +533,27 @@ class ApiDefinition implements ArrayInstantiationInterface
     public function addDocumentation($title, $documentation)
     {
         $this->documentationList[$title] = $documentation;
+    }
+
+    /**
+     * Add data type
+     *
+     * @param string $name
+     * @param array $definition
+     */
+    public function addType($name, $definition)
+    {
+        $this->types[$name] = $definition;
+    }
+
+    /**
+     * Get data types
+     *
+     * @return array
+     */
+    public function getTypes()
+    {
+        return $this->types;
     }
 
     // --
