@@ -73,6 +73,23 @@ class ApiDefinitionTest extends PHPUnit_Framework_TestCase
     }
 
     /** @test */
+    public function shouldProcessTypes()
+    {
+        $api = $this->parser->parse(__DIR__.'/fixture/types.raml');
+        $this->assertCount(1, $api->getTypes());
+        $this->assertSame(array(
+            'User' => array(
+                'type' => 'object',
+                'properties' => array(
+                    'firstname' => 'string',
+                    'lastname' => 'string',
+                    'age' => 'number',
+                )
+            )
+        ), $api->getTypes());
+    }
+
+    /** @test */
     public function shouldReturnProtocolsIfSpecified()
     {
         $api = $this->parser->parse(__DIR__.'/fixture/protocols/protocolsSpecified.raml');
