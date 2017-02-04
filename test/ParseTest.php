@@ -881,6 +881,18 @@ RAML;
     }
 
     /** @test */
+    public function shouldParseIncludedTraits()
+    {
+        $apiDefinition = $this->parser->parse(__DIR__ . '/fixture/includedTraits.raml');
+        $resource = $apiDefinition->getResourceByUri('/category');
+        $method = $resource->getMethod('get');
+        $queryParams = $method->getQueryParameters();
+
+        $this->assertCount(3, $queryParams);
+        $this->assertSame(['id', 'parent_id', 'title'], array_keys($queryParams));
+    }
+
+    /** @test */
     public function shouldParseResourcePathNameCorrectly()
     {
         $apiDefinition = $this->parser->parse(__DIR__ . '/fixture/resourcePathName.raml');

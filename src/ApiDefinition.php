@@ -383,6 +383,18 @@ class ApiDefinition implements ArrayInstantiationInterface
         return ($this->version) ? str_replace('{version}', $this->version, $this->baseUri) : $this->baseUri;
     }
 
+    public function setBaseUri($baseUrl)
+    {
+        $this->baseUri = $baseUrl;
+
+        if (!$this->protocols) {
+            $protocol = strtoupper(parse_url($this->baseUri, PHP_URL_SCHEME));
+            if (!empty($protocol)) {
+                $this->protocols = [$protocol];
+            }
+        }
+    }
+
     /**
      * Get the base uri parameters
      *
