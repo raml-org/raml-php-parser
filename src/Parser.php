@@ -425,9 +425,15 @@ class Parser
     {
         if (isset($ramlData['traits'])) {
             $keyedTraits = [];
-            foreach ($ramlData['traits'] as $trait) {
-                foreach ($trait as $k => $t) {
-                    $keyedTraits[$k] = $t;
+            foreach ($ramlData['traits'] as $key => $trait) {
+                if (is_int($key)) {
+                    foreach ($trait as $k => $t) {
+                        $keyedTraits[$k] = $t;
+                    }
+                } else {
+                    foreach ($trait as $k => $t) {
+                        $keyedTraits[$key][$k] = $t;
+                    }
                 }
             }
 

@@ -416,7 +416,10 @@ class ApiDefinition implements ArrayInstantiationInterface
         $this->baseUrl = $baseUrl;
 
         if (!$this->protocols) {
-            $this->protocols = [strtoupper(parse_url($this->baseUrl, PHP_URL_SCHEME))];
+            $protocol = strtoupper(parse_url($this->baseUrl, PHP_URL_SCHEME));
+            if (!empty($protocol)) {
+                $this->protocols = [$protocol];
+            }
         }
     }
 
