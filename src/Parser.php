@@ -772,6 +772,18 @@ class Parser
 
     private function convertString($string,$convertTo)
     {
+        if (!in_array($convertTo,[
+            LOWER_CAMEL_CASE,
+            LOWER_HYPHEN_CASE,
+            LOWER_UNDERSCORE_CASE,
+            UPPER_CAMEL_CASE,
+            UPPER_HYPHEN_CASE,
+            UPPER_UNDERSCORE_CASE
+        ]))
+        {
+            throw new \Exception('Invalid parameter "'.$convertTo.'" given for '.__CLASS__.__METHOD__);
+        }
+
         // make a best possible guess about type
         $split = preg_split(
             '_|-|[A-Z]([A-Z0-9]*[a-z][a-z0-9]*[A-Z]|[a-z0-9]*[A-Z][A-Z0-9]*[a-z])[A-Za-z0-9]*',
