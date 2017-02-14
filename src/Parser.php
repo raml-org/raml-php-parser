@@ -22,6 +22,13 @@ use Symfony\Component\Yaml\Yaml;
  */
 class Parser
 {
+    const   LOWER_CAMEL_CASE      = 0,
+            LOWER_HYPHEN_CASE     = 1,
+            LOWER_UNDERSCORE_CASE = 2,
+            UPPER_CAMEL_CASE      = 4,
+            UPPER_HYPHEN_CASE     = 8,
+            UPPER_UNDERSCORE_CASE = 16;
+    
     /**
      * Array of cached files
      * No point in fetching them twice
@@ -700,53 +707,120 @@ class Parser
      */
     private function applyTraitVariables(array $values, array $trait)
     {
-        $variables = implode('|', array_keys($values));
         $newTrait = [];
 
         foreach ($trait as $key => &$value) {
-            $newKey = preg_replace_callback(
-                '/<<(' . $variables . ')([\s]*\|[\s]*!(singularize|pluralize))?>>/',
-                function ($matches) use ($values) {
-                    $transformer = isset($matches[3]) ? $matches[3] : '';
-                    switch ($transformer) {
-                        case 'singularize':
-                            return Inflect::singularize($values[$matches[1]]);
-                            break;
-                        case 'pluralize':
-                            return Inflect::pluralize($values[$matches[1]]);
-                            break;
-                        default:
-                            return $values[$matches[1]];
-                    }
-                },
-                $key
-            );
+            $newKey = $this->applyFunctions($key, $values);
 
             if (is_array($value)) {
                 $value = $this->applyTraitVariables($values, $value);
             } else {
-                $value = preg_replace_callback(
-                    '/<<(' . $variables . ')([\s]*\|[\s]*!(singularize|pluralize))?>>/',
-                    function ($matches) use ($values) {
-                        $transformer = isset($matches[3]) ? $matches[3] : '';
-
-                        switch ($transformer) {
-                            case 'singularize':
-                                return Inflect::singularize($values[$matches[1]]);
-                                break;
-                            case 'pluralize':
-                                return Inflect::pluralize($values[$matches[1]]);
-                                break;
-                            default:
-                                return $values[$matches[1]];
-                        }
-                    },
-                    $value
-                );
+                $value = $this->applyFunctions($value, $values);
             }
             $newTrait[$newKey] = $value;
         }
 
         return $newTrait;
+    }
+
+    private function applyFunctions($trait, array $values)
+    {
+        $variables = implode('|', array_keys($values));
+        return preg_replace_callback(
+            '/<<(' . $variables . ')'.
+            '('.
+                '[\s]*\|[\s]*!'.
+                '('.
+                    'singularize|pluralize|uppercase|lowercase|lowercamelcase|uppercamelcase|lowerunderscorecase|upperunderscorecase|lowerhyphencase|upperhyphencase'.
+                ')'.
+            ')?>>/',
+            function ($matches) use ($values) {
+                $transformer = isset($matches[3]) ? $matches[3] : '';
+                switch ($transformer) {
+                    case 'singularize':
+                        return Inflect::singularize($values[$matches[1]]);
+                        break;
+                    case 'pluralize':
+                        return Inflect::pluralize($values[$matches[1]]);
+                        break;
+                    case 'uppercase':
+                        return strtoupper($values[$matches[1]]);
+                        break;
+                    case 'lowercase':
+                        return strtolower($values[$matches[1]]);
+                        break;
+                    case 'lowercamelcase':
+                        return $this->convertString($values[$matches[1]],self::LOWER_CAMEL_CASE);
+                        break;
+                    case 'uppercamelcase':
+                        return $this->convertString($values[$matches[1]],self::UPPER_CAMEL_CASE);
+                        break;
+                    case 'lowerunderscorecase':
+                        return $this->convertString($values[$matches[1]],self::LOWER_UNDERSCORE_CASE);
+                        break;
+                    case 'upperunderscorecase':
+                        return $this->convertString($values[$matches[1]],self::UPPER_UNDERSCORE_CASE);
+                        break;
+                    case 'lowerhyphencase':
+                        return $this->convertString($values[$matches[1]],self::LOWER_HYPHEN_CASE);
+                        break;
+                    case 'upperhyphencase':
+                        return $this->convertString($values[$matches[1]],self::UPPER_HYPHEN_CASE);
+                        break;
+                    default:
+                        return $values[$matches[1]];
+                }
+            },
+            $trait
+        );
+    }
+
+    private function convertString($string,$convertTo)
+    {
+        // make a best possible guess about type
+        $split = preg_split(
+            '_|-|[A-Z]([A-Z0-9]*[a-z][a-z0-9]*[A-Z]|[a-z0-9]*[A-Z][A-Z0-9]*[a-z])[A-Za-z0-9]*',
+            $string,
+            null,
+            PREG_SPLIT_NO_EMPTY
+        );
+        $newString = '';
+        for ($i=0, $size = count($split); $i < $size; $i++) {
+            if ($i === 0)
+            {
+                $delimiter = '';
+            }
+            else
+            {
+                if ($convertTo === self::LOWER_HYPHEN_CASE || $convertTo === self::UPPER_HYPHEN_CASE)
+                {
+                    $delimiter = '-';
+                }
+                if ($convertTo === self::LOWER_UNDERSCORE_CASE || $convertTo === self::UPPER_UNDERSCORE_CASE)
+                {
+                    $delimiter = '_';
+                }
+            }
+            switch ($convertTo) {
+                case self::LOWER_CAMEL_CASE:
+                    if ($i === 0)
+                    {
+                        $newString .= lcfirst($split[$i]);
+                        break;
+                    }
+                case self::UPPER_CAMEL_CASE:
+                    $newString .= ucfirst($split[$i]);
+                    break;
+                case self::LOWER_HYPHEN_CASE:
+                case self::LOWER_UNDERSCORE_CASE:
+                    $newString .= $delimiter.strtolower($split[$i]);
+                    break;
+                case self::UPPER_UNDERSCORE_CASE:
+                case self::UPPER_HYPHEN_CASE:
+                    $newString .= $delimiter.strtoupper($split[$i]);
+                    break;
+            }
+        }
+        return $newString;
     }
 }
