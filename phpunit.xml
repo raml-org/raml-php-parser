@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <phpunit
     colors="true"
-    convertErrorsToExceptions="false"
     convertNoticesToExceptions="false"
-    convertWarningsToExceptions="false"
+    convertWarningsToExceptions="true"
+    convertErrorsToExceptions="true"
     stopOnFailure="false"
     bootstrap="vendor/autoload.php"
     verbose="true"
