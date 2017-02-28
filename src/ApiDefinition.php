@@ -12,6 +12,13 @@ use Raml\Exception\BadParameter\ResourceNotFoundException;
 use Raml\Exception\BadParameter\InvalidSchemaDefinitionException;
 use Raml\Exception\BadParameter\InvalidProtocolException;
 
+use Raml\Utility\StringTransformer;
+
+use Raml\Types\UnionType;
+use Raml\Types\ArrayType;
+use Raml\Types\ObjectType;
+use Raml\Types\LazyProxyType;
+
 /**
  * The API Definition
  *
@@ -138,9 +145,9 @@ class ApiDefinition implements ArrayInstantiationInterface
      *
      * @link https://github.com/raml-org/raml-spec/blob/master/versions/raml-10/raml-10.md/#raml-data-types
      *
-     * @var array
+     * @var \Raml\TypeCollection
      */
-    private $types = [];
+    private $types = null;
 
     // ---
 
@@ -152,6 +159,9 @@ class ApiDefinition implements ArrayInstantiationInterface
     public function __construct($title)
     {
         $this->title = $title;
+        $this->types = TypeCollection::getInstance();
+        // since the TypeCollection is a singleton, we need to clear it for every parse
+        $this->types->clear();
     }
 
     /**
@@ -179,7 +189,6 @@ class ApiDefinition implements ArrayInstantiationInterface
         $apiDefinition = new static($title);
 
         // --
-
 
         if (isset($data['version'])) {
             $apiDefinition->setVersion($data['version']);
@@ -246,9 +255,12 @@ class ApiDefinition implements ArrayInstantiationInterface
 
         if (isset($data['types'])) {
             foreach ($data['types'] as $name => $definition) {
-                $apiDefinition->addType($name, $definition);
+                $apiDefinition->addType(ApiDefinition::determineType($name, $definition));
             }
         }
+
+        // resolve type inheritance
+        $apiDefinition->getTypes()->applyInheritance();
 
         // ---
 
@@ -587,20 +599,75 @@ class ApiDefinition implements ArrayInstantiationInterface
     }
 
     /**
+     * Determines the right Type and returns an instance
+     *
+     * @param string                    $name       Name of type.
+     * @param array                     $definition Definition of type.
+     * @param \Raml\TypeCollection|null $typeCollection Type collection object.
+     *
+     * @return Raml\TypeInterface Returns a (best) matched type object.
+     **/
+    public static function determineType($name, $definition)
+    {
+        // check if we can find a more appropriate Type subclass
+        $definition = is_string($definition) ? ['type' => $definition] : $definition;
+        $definition['type'] = isset($definition['type']) ? $definition['type'] : 'string';
+        $type = $definition['type'];
+        $straightForwardTypes = [
+            'time-only',
+            'datetime',
+            'datetime-only',
+            'date-only',
+            'number',
+            'integer',
+            'boolean',
+            'string',
+            'null',
+            'file',
+            'array',
+            'object'
+        ];
+
+        if (!in_array($type, ['','any'])) {
+            if (in_array($type, $straightForwardTypes)) {
+                $className = sprintf(
+                    'Raml\Types\%sType',
+                    StringTransformer::convertString($type, StringTransformer::UPPER_CAMEL_CASE)
+                );
+                return forward_static_call_array([$className,'createFromArray'], [$name, $definition]);
+            }
+            // if $type contains a '|' we can savely assume it's a combination of types (union)
+            if (strpos($type, '|') !== false) {
+                return UnionType::createFromArray($name, $definition);
+            }
+            // if $type contains a '[]' it means we have an array with a item restriction
+            if (strpos($type, '[]') !== false) {
+                return ArrayType::createFromArray($name, $definition);
+            }
+            // no standard type found so this must be a reference to a custom defined type
+            // since the actual definition can be defined later then when it is referenced
+            // we create a proxy object for lazy loading when it is needed
+            return LazyProxyType::createFromArray($name, $definition);
+        }
+
+        // No subclass found, let's use base class
+        return Type::createFromArray($name, $definition);
+    }
+
+    /**
      * Add data type
      *
-     * @param string $name
-     * @param array $definition
+     * @param \Raml\TypeInterface $type
      */
-    public function addType($name, $definition)
+    public function addType(TypeInterface $type)
     {
-        $this->types[$name] = $definition;
+        $this->types->add($type);
     }
 
     /**
      * Get data types
      *
-     * @return array
+     * @return \Raml\TypeCollection
      */
     public function getTypes()
     {
@@ -634,7 +701,7 @@ class ApiDefinition implements ArrayInstantiationInterface
     /**
      * Get a security scheme by it's name
      *
-     * @param $schemeName
+     * @param string $schemeName
      *
      * @return SecurityScheme
      */

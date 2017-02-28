@@ -22,12 +22,6 @@ use Symfony\Component\Yaml\Yaml;
  */
 class Parser
 {
-    const   LOWER_CAMEL_CASE      = 0,
-            LOWER_HYPHEN_CASE     = 1,
-            LOWER_UNDERSCORE_CASE = 2,
-            UPPER_CAMEL_CASE      = 4,
-            UPPER_HYPHEN_CASE     = 8,
-            UPPER_UNDERSCORE_CASE = 16;
     
     /**
      * Array of cached files
@@ -48,6 +42,13 @@ class Parser
      * @var SchemaParserInterface[]
      */
     private $schemaParsers = [];
+
+    /**
+     * List of types
+     *
+     * @var string
+     **/
+    private $types = [];
 
     /**
      * List of security settings parsers
@@ -158,6 +159,16 @@ class Parser
         foreach ($schemaParser->getCompatibleContentTypes() as $contentType) {
             $this->schemaParsers[$contentType] = $schemaParser;
         }
+    }
+
+    /**
+     * Add a new type
+     *
+     * @param TypeInterface $type Type to add.
+     **/
+    public function addType(TypeInterface $type)
+    {
+        $this->types[$type->getName()] = $type;
     }
 
     /**
@@ -284,7 +295,7 @@ class Parser
      * Replaces schema into the raml file
      *
      * @param  array $array
-     * @param  array $schemas List of available schema definition
+     * @param  array $schemas List of available schema definition.
      *
      * @return array
      */
@@ -316,7 +327,7 @@ class Parser
      *
      * @return array
      */
-    private function recurseAndParseSchemas($array, $rootDir)
+    private function recurseAndParseSchemas(array $array, $rootDir)
     {
         foreach ($array as $key => &$value) {
             if (is_array($value)) {
@@ -351,7 +362,7 @@ class Parser
     /**
      * Parse the security settings data into an array
      *
-     * @param array $array
+     * @param array $schemesArray
      *
      * @return array
      */
@@ -390,30 +401,29 @@ class Parser
         }
 
         return $securitySchemes;
-
     }
 
     /**
      * Parse the resource types
      *
-     * @param $ramlData
+     * @param mixed $ramlData
      *
      * @return array
      */
     private function parseResourceTypes($ramlData)
     {
         if (isset($ramlData['resourceTypes'])) {
-            $keyedTraits = [];
-            foreach ($ramlData['resourceTypes'] as $trait) {
-                foreach ($trait as $k => $t) {
-                    $keyedTraits[$k] = $t;
+            $keyedResourceTypes = [];
+            foreach ($ramlData['resourceTypes'] as $resourceType) {
+                foreach ($resourceType as $k => $t) {
+                    $keyedResourceTypes[$k] = $t;
                 }
             }
 
             foreach ($ramlData as $key => $value) {
                 if (strpos($key, '/') === 0) {
                     $name = (isset($value['displayName'])) ? $value['displayName'] : substr($key, 1);
-                    $ramlData[$key] = $this->replaceTypes($value, $keyedTraits, $key, $name, $key);
+                    $ramlData[$key] = $this->replaceTypes($value, $keyedResourceTypes, $key, $name, $key);
                 }
             }
         }
@@ -424,7 +434,7 @@ class Parser
     /**
      * Parse the traits
      *
-     * @param $ramlData
+     * @param mixed $ramlData
      *
      * @return array
      */
@@ -592,14 +602,14 @@ class Parser
     /**
      * Insert the traits into the RAML file
      *
-     * @param array  $raml
+     * @param string|array  $raml
      * @param array  $traits
      * @param string $path
      * @param string $name
      *
      * @return array
      */
-    private function replaceTraits($raml, $traits, $path, $name)
+    private function replaceTraits($raml, array $traits, $path, $name)
     {
         if (!is_array($raml)) {
             return $raml;
@@ -618,7 +628,7 @@ class Parser
                         $traitVariables['resourcePath'] = $path;
                         $traitVariables['resourcePathName'] = $name;
 
-                        $trait = $this->applyTraitVariables($traitVariables, $traits[$traitName]);
+                        $trait = $this->applyVariables($traitVariables, $traits[$traitName]);
                     } elseif (isset($traits[$traitName])) {
                         $trait = $traits[$traitName];
                     }
@@ -662,14 +672,14 @@ class Parser
             if ($key === 'type' && strpos($parentKey, '/') === 0) {
                 $type = [];
 
-                $traitVariables = ['resourcePath' => $path, 'resourcePathName' => $name];
+                $typeVariables = ['resourcePath' => $path, 'resourcePathName' => $name];
 
                 if (is_array($value)) {
-                    $traitVariables = array_merge($traitVariables, current($value));
-                    $traitName = key($value);
-                    $type = $this->applyTraitVariables($traitVariables, $types[$traitName]);
+                    $typeVariables = array_merge($typeVariables, current($value));
+                    $typeName = key($value);
+                    $type = $this->applyVariables($typeVariables, $types[$typeName]);
                 } elseif (isset($types[$value])) {
-                    $type = $this->applyTraitVariables($traitVariables, $types[$value]);
+                    $type = $this->applyVariables($typeVariables, $types[$value]);
                 }
 
                 $newArray = array_replace_recursive($newArray, $this->replaceTypes($type, $types, $path, $name, $key));
@@ -693,14 +703,14 @@ class Parser
     }
 
     /**
-     * Add trait variables
+     * Add trait/type variables
      *
      * @param array $values
      * @param array $trait
      *
      * @return mixed
      */
-    private function applyTraitVariables(array $values, array $trait)
+    private function applyVariables(array $values, array $trait)
     {
         $newTrait = [];
 
@@ -708,7 +718,7 @@ class Parser
             $newKey = $this->applyFunctions($key, $values);
 
             if (is_array($value)) {
-                $value = $this->applyTraitVariables($values, $value);
+                $value = $this->applyVariables($values, $value);
             } else {
                 $value = $this->applyFunctions($value, $values);
             }
@@ -718,6 +728,14 @@ class Parser
         return $newTrait;
     }
 
+    /**
+     * Applies functions on variable if they are defined
+     *
+     * @param mixed $trait
+     * @param array $values
+     *
+     * @return mixed    Return input $trait after applying functions (if any)
+     */
     private function applyFunctions($trait, array $values)
     {
         $variables = implode('|', array_keys($values));
@@ -745,22 +763,22 @@ class Parser
                         return strtolower($values[$matches[1]]);
                         break;
                     case 'lowercamelcase':
-                        return $this->convertString($values[$matches[1]],self::LOWER_CAMEL_CASE);
+                        return StringTransformer::convertString($values[$matches[1]], StringTransformer::LOWER_CAMEL_CASE);
                         break;
                     case 'uppercamelcase':
-                        return $this->convertString($values[$matches[1]],self::UPPER_CAMEL_CASE);
+                        return StringTransformer::convertString($values[$matches[1]], StringTransformer::UPPER_CAMEL_CASE);
                         break;
                     case 'lowerunderscorecase':
-                        return $this->convertString($values[$matches[1]],self::LOWER_UNDERSCORE_CASE);
+                        return StringTransformer::convertString($values[$matches[1]], StringTransformer::LOWER_UNDERSCORE_CASE);
                         break;
                     case 'upperunderscorecase':
-                        return $this->convertString($values[$matches[1]],self::UPPER_UNDERSCORE_CASE);
+                        return StringTransformer::convertString($values[$matches[1]], StringTransformer::UPPER_UNDERSCORE_CASE);
                         break;
                     case 'lowerhyphencase':
-                        return $this->convertString($values[$matches[1]],self::LOWER_HYPHEN_CASE);
+                        return StringTransformer::convertString($values[$matches[1]], StringTransformer::LOWER_HYPHEN_CASE);
                         break;
                     case 'upperhyphencase':
-                        return $this->convertString($values[$matches[1]],self::UPPER_HYPHEN_CASE);
+                        return StringTransformer::convertString($values[$matches[1]], StringTransformer::UPPER_HYPHEN_CASE);
                         break;
                     default:
                         return $values[$matches[1]];
@@ -768,66 +786,5 @@ class Parser
             },
             $trait
         );
-    }
-
-    private function convertString($string,$convertTo)
-    {
-        if (!in_array($convertTo,[
-            LOWER_CAMEL_CASE,
-            LOWER_HYPHEN_CASE,
-            LOWER_UNDERSCORE_CASE,
-            UPPER_CAMEL_CASE,
-            UPPER_HYPHEN_CASE,
-            UPPER_UNDERSCORE_CASE
-        ]))
-        {
-            throw new \Exception('Invalid parameter "'.$convertTo.'" given for '.__CLASS__.__METHOD__);
-        }
-
-        // make a best possible guess about type
-        $split = preg_split(
-            '_|-|[A-Z]([A-Z0-9]*[a-z][a-z0-9]*[A-Z]|[a-z0-9]*[A-Z][A-Z0-9]*[a-z])[A-Za-z0-9]*',
-            $string,
-            null,
-            PREG_SPLIT_NO_EMPTY
-        );
-        $newString = '';
-        for ($i=0, $size = count($split); $i < $size; $i++) {
-            if ($i === 0)
-            {
-                $delimiter = '';
-            }
-            else
-            {
-                if ($convertTo === self::LOWER_HYPHEN_CASE || $convertTo === self::UPPER_HYPHEN_CASE)
-                {
-                    $delimiter = '-';
-                }
-                if ($convertTo === self::LOWER_UNDERSCORE_CASE || $convertTo === self::UPPER_UNDERSCORE_CASE)
-                {
-                    $delimiter = '_';
-                }
-            }
-            switch ($convertTo) {
-                case self::LOWER_CAMEL_CASE:
-                    if ($i === 0)
-                    {
-                        $newString .= lcfirst($split[$i]);
-                        break;
-                    }
-                case self::UPPER_CAMEL_CASE:
-                    $newString .= ucfirst($split[$i]);
-                    break;
-                case self::LOWER_HYPHEN_CASE:
-                case self::LOWER_UNDERSCORE_CASE:
-                    $newString .= $delimiter.strtolower($split[$i]);
-                    break;
-                case self::UPPER_UNDERSCORE_CASE:
-                case self::UPPER_HYPHEN_CASE:
-                    $newString .= $delimiter.strtoupper($split[$i]);
-                    break;
-            }
-        }
-        return $newString;
     }
 }
