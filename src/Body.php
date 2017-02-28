@@ -5,6 +5,9 @@ namespace Raml;
 use Raml\Schema\SchemaDefinitionInterface;
 
 use Raml\Exception\BadParameter\InvalidSchemaDefinitionException;
+use Raml\ApiDefinition;
+use Raml\TypeInterface;
+use Raml\Types\ObjectType;
 
 /**
  * A body
@@ -42,6 +45,8 @@ class Body implements BodyInterface, ArrayInstantiationInterface
      */
     private $schema;
 
+    private $type;
+
     /**
      * A list of examples
      *
@@ -75,6 +80,7 @@ class Body implements BodyInterface, ArrayInstantiationInterface
      * @param string $mediaType
      * @param array $data
      * [
+     *  type:       ?string
      *  schema:     ?string
      *  example:    ?string
      *  examples:   ?array
@@ -96,6 +102,15 @@ class Body implements BodyInterface, ArrayInstantiationInterface
             $body->setSchema($data['schema']);
         }
 
+        if (isset($data['type'])) {
+            $type = ApiDefinition::determineType($data['type'], ['type' => $data['type']]);
+            if ($type instanceof ObjectType)
+            {
+                $type->inheritFromParent();
+            }
+            $body->setType($type);
+        }
+
         if (isset($data['example'])) {
             $body->addExample($data['example']);
         }
@@ -105,7 +120,6 @@ class Body implements BodyInterface, ArrayInstantiationInterface
                 $body->addExample($example);
             }
         }
-
 
         return $body;
     }
@@ -168,6 +182,30 @@ class Body implements BodyInterface, ArrayInstantiationInterface
         }
 
         $this->schema = $schema;
+    }
+
+    // --
+
+    /**
+     * Get the type
+     *
+     * @return string
+     */
+    public function getType()
+    {
+        return $this->type;
+    }
+
+    /**
+     * Set the type
+     *
+     * @param \Raml\TypeInterface $type
+     *
+     * @throws \Exception Throws exception when type does not parse
+     */
+    public function setType(TypeInterface $type)
+    {
+        $this->type = $type;
     }
 
     // --

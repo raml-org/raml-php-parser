@@ -86,7 +86,42 @@ class ApiDefinitionTest extends PHPUnit_Framework_TestCase
                     'age' => 'number',
                 )
             )
-        ), $api->getTypes());
+        ), $api->getTypes()->toArray());
+    }
+
+    /** @test */
+    public function shouldParseTypesToSubTypes()
+    {
+        $api = $this->parser->parse(__DIR__.'/fixture/raml-1.0/types.raml');
+        $types = $api->getTypes();
+        $object = $types->current();
+        $this->assertInstanceOf('\Raml\Types\ObjectType', $object);
+        $this->assertInstanceOf('\Raml\Types\IntegerType', $object->getPropertyByName('id'));
+        $this->assertInstanceOf('\Raml\Types\StringType', $object->getPropertyByName('name'));
+    }
+
+    /** @test */
+    public function shouldParseComplexTypes()
+    {
+        $api = $this->parser->parse(__DIR__.'/fixture/raml-1.0/complexTypes.raml');
+        // check types
+        $org = $api->getTypes()->getTypeByName('Org');
+        $this->assertInstanceOf('\Raml\Types\ObjectType', $org);
+        // property will return a proxy object so to compare to actual type we will need to ask for the resolved object
+        $this->assertInstanceOf('\Raml\Types\UnionType', $org->getPropertyByName('onCall')->getResolvedObject());
+        $head = $org->getPropertyByName('Head');
+        $this->assertInstanceOf('\Raml\Types\ObjectType', $head->getResolvedObject());
+        $this->assertInstanceOf('\Raml\Types\StringType', $head->getPropertyByName('firstname'));
+        $this->assertInstanceOf('\Raml\Types\StringType', $head->getPropertyByName('lastname'));
+        $this->assertInstanceOf('\Raml\Types\StringType', $head->getPropertyByName('title?'));
+        $this->assertInstanceOf('\Raml\Types\StringType', $head->getPropertyByName('kind'));
+        $reports = $head->getPropertyByName('reports');
+        $this->assertInstanceOf('\Raml\Types\ArrayType', $reports);
+        $phone = $head->getPropertyByName('phone')->getResolvedObject();
+        $this->assertInstanceOf('\Raml\Types\StringType', $phone);
+        // check resources
+        $type = $api->getResourceByPath('/orgs/{orgId}')->getMethod('get')->getResponse(200)->getBodyByType('application/json')->getType();
+        $this->assertInstanceOf('\Raml\Types\ObjectType', $type->getResolvedObject());
     }
 
     /** @test */
