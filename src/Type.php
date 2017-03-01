@@ -283,4 +283,13 @@ class Type implements ArrayInstantiationInterface, TypeInterface
         }
         return $this;
     }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function validate($value)
+    {
+        // everything is valid for the any type
+        return true;
+    }
 }

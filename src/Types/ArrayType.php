@@ -173,4 +173,9 @@ class ArrayType extends Type
 
         return $this;
     }
+
+    public function validate($value)
+    {
+        return is_array($value);
+    }
 }

@@ -23,4 +23,10 @@ class TimeOnlyType extends Type
 
         return $type;
     }
+
+    public function validate($value)
+    {
+        $d = DateTime::createFromFormat('HH:II:SS', $value);
+        return $d && $d->format('HH:II:SS') === $value;
+    }
 }

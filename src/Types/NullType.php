@@ -27,4 +27,9 @@ class NullType extends Type
 
         return $type;
     }
+
+    public function validate($value)
+    {
+        return is_null($value);
+    }
 }

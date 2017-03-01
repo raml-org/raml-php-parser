@@ -62,4 +62,14 @@ class UnionType extends Type
 
         return $this;
     }
+
+    public function validate($value)
+    {
+        foreach ($this->getPossibleTypes() as $type) {
+            if ($type->validate($value)) {
+                return true;
+            }
+        }
+        return false;
+    }
 }

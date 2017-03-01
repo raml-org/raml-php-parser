@@ -27,4 +27,10 @@ class DateOnlyType extends Type
 
         return $type;
     }
+
+    public function validate($value)
+    {
+        $d = DateTime::createFromFormat('Y-m-d', $value);
+        return $d && $d->format('Y-m-d') === $value;
+    }
 }

@@ -131,4 +131,10 @@ class LazyProxyType implements TypeInterface
         }
         return $object;
     }
+
+    public function validate($value)
+    {
+        $original = $this->getResolvedObject();
+        return $original->validate($value);
+    }
 }

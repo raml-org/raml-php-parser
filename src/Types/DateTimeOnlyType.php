@@ -25,4 +25,10 @@ class DateTimeOnlyType extends Type
 
         return $type;
     }
+
+    public function validate($value)
+    {
+        $d = DateTime::createFromFormat(DATE_RFC3339, $value);
+        return $d && $d->format(DATE_RFC3339) === $value;
+    }
 }

@@ -125,6 +125,24 @@ class ApiDefinitionTest extends PHPUnit_Framework_TestCase
     }
 
     /** @test */
+    public function shouldValidateResponse()
+    {
+         $api = $this->parser->parse(__DIR__.'/fixture/raml-1.0/complexTypes.raml');
+         $body = $api->getResourceByPath('/orgs/{orgId}')->getMethod('get')->getResponse(200)->getBodyByType('application/json');
+         /* @var $body \Raml\Body */
+         
+         $validResponse = $body->getExample();
+         $type = $body->getType();
+         $this->assertTrue($type->validate($validResponse));
+
+         $invalidResponse = [
+            'onCall' => 'this is not an object',
+            'Head' => 'this is not an object'
+         ];
+         $this->assertFalse($type->validate($invalidResponse));
+    }
+
+    /** @test */
     public function shouldReturnProtocolsIfSpecified()
     {
         $api = $this->parser->parse(__DIR__.'/fixture/protocols/protocolsSpecified.raml');
