@@ -270,4 +270,24 @@ class ObjectType extends Type
 
         return $this;
     }
+
+    public function validate($value)
+    {
+        // an object is in essence just a group (array) of datatypes
+        if (!is_array($value)) {
+            return false;
+        }
+        foreach ($value as $name => $propertyValue) {
+            try {
+                $property = $this->getPropertyByName($name);
+                if (!$property->validate($propertyValue)) {
+                    return false;
+                }
+            } catch (PropertyNotFoundException $e) {
+                // if no property found, carry on
+                return false;
+            }
+        }
+        return true;
+    }
 }

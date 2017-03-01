@@ -18,7 +18,7 @@ class StringType extends Type
      *
      * @var string
      **/
-    private $pattern;
+    private $pattern = null;
 
     /**
      * Minimum length of the string. Value MUST be equal to or greater than 0.
@@ -26,7 +26,7 @@ class StringType extends Type
      *
      * @var int
      **/
-    private $minLength;
+    private $minLength = null;
 
     /**
      * Maximum length of the string. Value MUST be equal to or greater than 0.
@@ -34,7 +34,7 @@ class StringType extends Type
      *
      * @var int
      **/
-    private $maxLength;
+    private $maxLength = null;
 
     /**
     * Create a new StringType from an array of data
@@ -136,5 +136,29 @@ class StringType extends Type
         $this->maxLength = $maxLength;
 
         return $this;
+    }
+
+    public function validate($value)
+    {
+        if (!is_string($value)) {
+            return false;
+        }
+        if (!is_null($this->pattern)) {
+            if (preg_match('/'.$this->pattern.'/', $value) == false) {
+                return false;
+            }
+        }
+        if (!is_null($this->minLength)) {
+            if (strlen($value) < $this->minLength) {
+                return false;
+            }
+        }
+        if (!is_null($this->maxLength)) {
+            if (strlen($value) > $this->maxLength) {
+                return false;
+            }
+        }
+
+        return true;
     }
 }

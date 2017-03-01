@@ -30,4 +30,9 @@ class IntegerType extends NumberType
 
         return $type;
     }
+
+    public function validate($value)
+    {
+        return is_int($value);
+    }
 }

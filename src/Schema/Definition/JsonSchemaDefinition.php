@@ -37,9 +37,9 @@ class JsonSchemaDefinition implements SchemaDefinitionInterface
      *
      * @param $string
      *
-     * @throws \Exception
+     * @throws Exception
      *
-     * @return boolean
+     * @return bool
      */
     public function validate($string)
     {

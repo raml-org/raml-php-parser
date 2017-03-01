@@ -62,4 +62,11 @@ class DateTimeType extends Type
 
         return $this;
     }
+
+    public function validate($value)
+    {
+        $format = $this->format ?: DATE_RFC3339;
+        $d = DateTime::createFromFormat($format, $value);
+        return $d && $d->format($format) === $value;
+    }
 }
