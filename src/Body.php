@@ -45,6 +45,13 @@ class Body implements BodyInterface, ArrayInstantiationInterface
      */
     private $schema;
 
+    /**
+     * The type of the body
+     *
+     * @see http://raml.org/spec.html#raml-data-types
+     *
+     * @var SchemaDefinitionInterface|string
+     */
     private $type;
 
     /**
