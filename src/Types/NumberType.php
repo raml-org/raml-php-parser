@@ -16,28 +16,28 @@ class NumberType extends Type
      *
      * @var int
      **/
-    private $minimum;
+    private $minimum = null;
 
     /**
      * The maximum value of the parameter. Applicable only to parameters of type number or integer.
      *
      * @var int
      **/
-    private $maximum;
+    private $maximum = null;
 
     /**
      * The format of the value. The value MUST be one of the following: int32, int64, int, long, float, double, int16, int8
      *
      * @var string
      **/
-    private $format;
+    private $format = null;
 
     /**
      * A numeric instance is valid against "multipleOf" if the result of dividing the instance by this keyword's value is an integer.
      *
      * @var int
      **/
-    private $multipleOf;
+    private $multipleOf = null;
 
     /**
     * Create a new NumberType from an array of data
@@ -135,9 +135,13 @@ class NumberType extends Type
      * @param string $format
      *
      * @return self
+     * @throws Exception Thrown when given format is not any of allowed types.
      */
     public function setFormat($format)
     {
+        if (!in_array($format, ['int32', 'int64', 'int', 'long', 'float', 'double', 'int16', 'int8'])) {
+            throw new \Exception(sprinf('Incorrect format given: "%s"', $format));
+        }
         $this->format = $format;
 
         return $this;
@@ -165,5 +169,68 @@ class NumberType extends Type
         $this->multipleOf = $multipleOf;
 
         return $this;
+    }
+
+    public function validate($value)
+    {
+        if (!is_null($this->maximum)) {
+            if ($value > $this->maximum) {
+                return false;
+            }
+        }
+        if (!is_null($this->minimum)) {
+            if ($value < $this->minimum) {
+                return false;
+            }
+        }
+        switch ($this->format) {
+            case 'int8':
+                if (filter_var($value, FILTER_VALIDATE_INT, ['options' => ['min_range' => -128, 'max_range' => 127]]) === false) {
+                    return false;
+                }
+                break;
+            case 'int16':
+                if (filter_var($value, FILTER_VALIDATE_INT, ['options' => ['min_range' => -32768, 'max_range' => 32767]]) === false) {
+                    return false;
+                }
+                break;
+            case 'int32':
+                if (filter_var($value, FILTER_VALIDATE_INT, ['options' => ['min_range' => -2147483648, 'max_range' => 2147483647]]) === false) {
+                    return false;
+                }
+                break;
+            case 'int64':
+                if (filter_var($value, FILTER_VALIDATE_INT, ['options' => ['min_range' => -9223372036854775808, 'max_range' => 9223372036854775807]]) === false) {
+                    return false;
+                }
+                break;
+            case 'int':
+                // int === long
+            case 'long':
+                if (!is_int($value)) {
+                    return false;
+                }
+                break;
+            case 'float':
+                // float === double
+            case 'double':
+                if (!is_float($value)) {
+                    return false;
+                }
+                break;
+            // if no format is given we check only if it is a number
+            null:
+            default:
+                if (!is_float($value) && !is_int($value)) {
+                    return false;
+                }
+                break;
+        }
+        if (!is_null($this->multipleOf)) {
+            if ($value %$this->multipleOf != 0) {
+                return false;
+            }
+        }
+        return true;
     }
 }

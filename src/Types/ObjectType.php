@@ -5,6 +5,7 @@ namespace Raml\Types;
 use Raml\Type;
 use Raml\ApiDefinition;
 use Raml\TypeCollection;
+use Raml\Exception\PropertyNotFoundException;
 
 /**
  * ObjectType class
@@ -145,7 +146,7 @@ class ObjectType extends Type
                 return $property;
             }
         }
-        throw new \Exception(sprintf('No such property: %s', $name));
+        throw new PropertyNotFoundException(sprintf('No such property: %s', $name));
     }
 
 
