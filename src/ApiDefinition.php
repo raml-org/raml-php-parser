@@ -11,6 +11,7 @@ use Raml\Exception\InvalidKeyException;
 use Raml\Exception\BadParameter\ResourceNotFoundException;
 use Raml\Exception\BadParameter\InvalidSchemaDefinitionException;
 use Raml\Exception\BadParameter\InvalidProtocolException;
+use Raml\Exception\MutuallyExclusiveElementsException;
 
 use Raml\Utility\StringTransformer;
 
@@ -97,6 +98,7 @@ class ApiDefinition implements ArrayInstantiationInterface
     /**
      * The schemas the API supplies defined in the root (optional)
      *
+     * @deprecated Replaced by types element.
      * @see http://raml.org/spec.html#schemas
      *
      * @var array[]
@@ -225,9 +227,13 @@ class ApiDefinition implements ArrayInstantiationInterface
             $apiDefinition->setDefaultMediaType($data['defaultMediaType']);
         }
 
+        if (isset($data['schemas']) && isset($data['types'])) {
+            throw new MutuallyExclusiveElementsException();
+        }
+
         if (isset($data['schemas'])) {
             foreach ($data['schemas'] as $name => $schema) {
-                $apiDefinition->addSchemaCollection($name, $schema);
+                $apiDefinition->addType(ApiDefinition::determineType($name, $schema));
             }
         }
 
@@ -539,7 +545,7 @@ class ApiDefinition implements ArrayInstantiationInterface
      */
     public function getSchemaCollections()
     {
-        return $this->schemaCollections;
+        return $this->types;
     }
 
     /**
@@ -610,9 +616,6 @@ class ApiDefinition implements ArrayInstantiationInterface
     public static function determineType($name, $definition)
     {
         // check if we can find a more appropriate Type subclass
-        $definition = is_string($definition) ? ['type' => $definition] : $definition;
-        $definition['type'] = isset($definition['type']) ? $definition['type'] : 'string';
-        $type = $definition['type'];
         $straightForwardTypes = [
             'time-only',
             'datetime',
@@ -627,6 +630,18 @@ class ApiDefinition implements ArrayInstantiationInterface
             'array',
             'object'
         ];
+        if (is_string($definition)) {
+            $definition = ['type' => $definition];
+        } elseif (is_array($definition)) {
+            if (!isset($definition['type'])) {
+                $definition['type'] = isset($definition['properties']) ? 'object' : 'string';
+            }
+        } else {
+            throw new \Exception('Invalid datatype for $definition parameter.');
+        }
+        
+        
+        $type = $definition['type'];
 
         if (!in_array($type, ['','any'])) {
             if (in_array($type, $straightForwardTypes)) {
