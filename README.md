@@ -1,5 +1,20 @@
 # PHP RAML Parser
 
+## **!!Attention!!** this is a work-in-progress of the RAML 1.0 specification, for RAML 0.8 see the [master branch](https://github.com/alecsammon/php-raml-parser/tree/master)
+
+### Still TODO:
+- [User defined facets](https://github.com/raml-org/raml-spec/blob/master/versions/raml-10/raml-10.md/#user-defined-facets)
+- Full implementation of [type expressions](https://github.com/raml-org/raml-spec/blob/master/versions/raml-10/raml-10.md/#type-expressions)
+	- The shorthand array and the union type have been implemented
+	- Bi-dimensional array and the array-union combination have **NOT** been implemented yet.
+- [Multiple inheritance](https://github.com/raml-org/raml-spec/blob/master/versions/raml-10/raml-10.md/#multiple-inheritance)
+- [Annotations](https://github.com/raml-org/raml-spec/blob/master/versions/raml-10/raml-10.md/#annotations)
+- [Libraries](https://github.com/raml-org/raml-spec/blob/master/versions/raml-10/raml-10.md/#libraries)
+- [Overlays and Extensions](https://github.com/raml-org/raml-spec/blob/master/versions/raml-10/raml-10.md/#overlays-and-extensions)
+- [Improved Security Schemes](https://github.com/raml-org/raml-spec/blob/master/versions/raml-10/raml-10.md/#security-schemes)
+
+## Original documentation
+
 Parses a RAML file into a PHP object.
 
 [![Build Status](https://travis-ci.org/alecsammon/php-raml-parser.svg?branch=master)](https://travis-ci.org/alecsammon/php-raml-parser)
