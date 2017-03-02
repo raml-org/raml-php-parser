@@ -116,6 +116,10 @@ class Body implements BodyInterface, ArrayInstantiationInterface
                 $type->inheritFromParent();
             }
             $body->setType($type);
+        } else {
+            // nothing defined means a default of the any type
+            // see https://github.com/raml-org/raml-spec/blob/master/versions/raml-10/raml-10.md/#determine-default-types
+            $body->setType(new Type('default'));
         }
 
         if (isset($data['example'])) {
