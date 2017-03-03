@@ -1,0 +1,18 @@
+#%RAML 1.0
+
+title: Type from root type
+
+types:
+  Song:
+    properties:
+      title:
+        type: string
+        required: true
+
+/songs:
+  get:
+    responses:
+      200:
+        body:
+          application/json:
+            type: Song

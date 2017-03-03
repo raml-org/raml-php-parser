@@ -22,8 +22,6 @@ class ApiDefinition implements ArrayInstantiationInterface
     const PROTOCOL_HTTP = 'HTTP';
     const PROTOCOL_HTTPS = 'HTTPS';
 
-    // ---
-
     /**
      * The API Title (required)
      *
@@ -49,7 +47,7 @@ class ApiDefinition implements ArrayInstantiationInterface
      *
      * @var string
      */
-    private $baseUrl;
+    private $baseUri;
 
     /**
      * Parameters defined in the Base URI
@@ -83,9 +81,9 @@ class ApiDefinition implements ArrayInstantiationInterface
      *
      * @see http://raml.org/spec.html#default-media-type
      *
-     * @var string
+     * @var string[]
      */
-    private $defaultMediaType;
+    private $defaultMediaTypes;
 
     /**
      * The schemas the API supplies defined in the root (optional)
@@ -111,7 +109,7 @@ class ApiDefinition implements ArrayInstantiationInterface
      *
      * @see http://raml.org/spec.html#resources-and-nested-resources
      *
-     * @var Resource[]
+     * @var \Raml\Resource[]
      */
     private $resources = [];
 
@@ -169,20 +167,17 @@ class ApiDefinition implements ArrayInstantiationInterface
     {
         $apiDefinition = new static($title);
 
-        // --
-
-
         if (isset($data['version'])) {
-            $apiDefinition->setVersion($data['version']);
+            $apiDefinition->version  = $data['version'];
         }
 
         if (isset($data['baseUrl'])) {
-            $apiDefinition->setBaseUrl($data['baseUrl']);
+            $apiDefinition->baseUri = $data['baseUrl'];
         }
 
         // support for RAML 0.8
         if (isset($data['baseUri'])) {
-            $apiDefinition->setBaseUrl($data['baseUri']);
+            $apiDefinition->baseUri = $data['baseUri'];
         }
 
         if (isset($data['baseUriParameters'])) {
@@ -194,13 +189,17 @@ class ApiDefinition implements ArrayInstantiationInterface
         }
 
         if (isset($data['mediaType'])) {
-            $apiDefinition->setDefaultMediaType($data['mediaType']);
+            $apiDefinition->defaultMediaTypes = (array) $data['mediaType'];
         }
 
         if (isset($data['protocols'])) {
             foreach ($data['protocols'] as $protocol) {
                 $apiDefinition->addProtocol($protocol);
             }
+        }
+
+        if (!$apiDefinition->protocols) {
+            $apiDefinition->setProtocolsFromBaseUri();
         }
 
         if (isset($data['defaultMediaType'])) {
@@ -327,9 +326,9 @@ class ApiDefinition implements ArrayInstantiationInterface
     }
 
     /**
-     * @param $resources
+     * @param \Raml\Resource[] $resources
      *
-     * @return Resource[]
+     * @return \Raml\Resource[]
      */
     private function getResourcesAsArray($resources)
     {
@@ -345,11 +344,7 @@ class ApiDefinition implements ArrayInstantiationInterface
         return $resourceMap;
     }
 
-    // ---
-
     /**
-     * Get the title of the API
-     *
      * @return string
      */
     public function getTitle()
@@ -357,11 +352,7 @@ class ApiDefinition implements ArrayInstantiationInterface
         return $this->title;
     }
 
-    // --
-
     /**
-     * Get the version string of the API
-     *
      * @return string
      */
     public function getVersion()
@@ -370,42 +361,12 @@ class ApiDefinition implements ArrayInstantiationInterface
     }
 
     /**
-     * Set the version
-     *
-     * @param $version
-     */
-    public function setVersion($version)
-    {
-        $this->version = $version;
-    }
-
-    // --
-
-    /**
-     * Get the base URI
-     *
      * @return string
      */
-    public function getBaseUrl()
+    public function getBaseUri()
     {
-        return ($this->version) ? str_replace('{version}', $this->version, $this->baseUrl) : $this->baseUrl;
+        return ($this->version) ? str_replace('{version}', $this->version, $this->baseUri) : $this->baseUri;
     }
-
-    /**
-     * Set the base url
-     *
-     * @param string $baseUrl
-     */
-    public function setBaseUrl($baseUrl)
-    {
-        $this->baseUrl = $baseUrl;
-
-        if (!$this->protocols) {
-            $this->protocols = [strtoupper(parse_url($this->baseUrl, PHP_URL_SCHEME))];
-        }
-    }
-
-    // --
 
     /**
      * Get the base uri parameters
@@ -430,28 +391,22 @@ class ApiDefinition implements ArrayInstantiationInterface
     // --
 
     /**
-     * Does the API support HTTP (non SSL) requests?
-     *
      * @return boolean
      */
     public function supportsHttp()
     {
-        return in_array(self::PROTOCOL_HTTP, $this->protocols);
+        return in_array(self::PROTOCOL_HTTP, $this->protocols, true);
     }
 
     /**
-     * Does the API support HTTPS (SSL enabled) requests?
-     *
      * @return boolean
      */
     public function supportsHttps()
     {
-        return in_array(self::PROTOCOL_HTTPS, $this->protocols);
+        return in_array(self::PROTOCOL_HTTPS, $this->protocols, true);
     }
 
     /**
-     * Get the list of support protocols
-     *
      * @return array
      */
     public function getProtocols()
@@ -460,19 +415,16 @@ class ApiDefinition implements ArrayInstantiationInterface
     }
 
     /**
-     * Add a supported protocol
-     *
      * @param string $protocol
-     *
      * @throws \InvalidArgumentException
      */
-    public function addProtocol($protocol)
+    private function addProtocol($protocol)
     {
         if (!in_array($protocol, [self::PROTOCOL_HTTP, self::PROTOCOL_HTTPS])) {
             throw new InvalidProtocolException(sprintf('"%s" is not a valid protocol', $protocol));
         }
 
-        if (!in_array($protocol, $this->protocols)) {
+        if (!in_array($protocol, $this->protocols, true)) {
             $this->protocols[] = $protocol;
         }
     }
@@ -482,11 +434,11 @@ class ApiDefinition implements ArrayInstantiationInterface
     /**
      * Get the default media type
      *
-     * @return string
+     * @return string[]
      */
-    public function getDefaultMediaType()
+    public function getDefaultMediaTypes()
     {
-        return $this->defaultMediaType;
+        return $this->defaultMediaTypes;
     }
 
     /**
@@ -617,7 +569,7 @@ class ApiDefinition implements ArrayInstantiationInterface
     /**
      * Get a list of security schemes that the whole API is secured by
      *
-     * @return SecurityScheme
+     * @return SecurityScheme[]
      */
     public function getSecuredBy()
     {
@@ -649,7 +601,7 @@ class ApiDefinition implements ArrayInstantiationInterface
     private function getMethodsAsArray(array $resources)
     {
         $all = [];
-        $baseUrl = $this->getBaseUrl();
+        $baseUrl = $this->getBaseUri();
         $protocols = $this->protocols;
 
         // Loop over each resource to build out the full URI's that it has.
@@ -671,5 +623,16 @@ class ApiDefinition implements ArrayInstantiationInterface
         }
 
         return $all;
+    }
+
+    private function setProtocolsFromBaseUri()
+    {
+        $schema = strtoupper(parse_url($this->baseUri, PHP_URL_SCHEME));
+
+        if (empty($schema)) {
+            $this->protocols = [self::PROTOCOL_HTTPS, self::PROTOCOL_HTTP];
+        } else {
+            $this->protocols = [$schema];
+        }
     }
 }

@@ -3,7 +3,7 @@ namespace Raml;
 
 use Inflect\Inflect;
 use Raml\Exception\BadParameter\FileNotFoundException;
-use Raml\Exception\InvalidSchemaTypeException;
+use Raml\Exception\InvalidSchemaFormatException;
 use Raml\Exception\RamlParserException;
 use Raml\FileLoader\DefaultFileLoader;
 use Raml\FileLoader\FileLoaderInterface;
@@ -55,12 +55,6 @@ class Parser
      * @var FileLoaderInterface[]
      */
     private $fileLoaders = [];
-
-    // ---
-
-    private $settings = null;
-
-    // ---
 
     /**
      * Create a new parser object
@@ -305,7 +299,7 @@ class Parser
      * @param array  $array
      * @param string $rootDir
      *
-     * @throws InvalidSchemaTypeException
+     * @throws InvalidSchemaFormatException
      *
      * @return array
      */
@@ -314,14 +308,25 @@ class Parser
         foreach ($array as $key => &$value) {
             if (is_array($value)) {
                 if (isset($value['schema'])) {
-                    if (in_array($key, array_keys($this->schemaParsers))) {
-                        $schemaParser = $this->schemaParsers[$key];
-                        $fileDir = $this->getCachedFilePath($value['schema']);
-                        $schemaParser->setSourceUri('file:' . ($fileDir ? $fileDir : $rootDir . DIRECTORY_SEPARATOR));
-                        $value['schema'] = $schemaParser->createSchemaDefinition($value['schema']);
-                    } else {
-                        throw new InvalidSchemaTypeException($key);
+                    $fileDir = $this->getCachedFilePath($value['schema']);
+                    $schema = null;
+                    foreach ($this->schemaParsers as $schemaParser) {
+                        try {
+                            $schemaParser->setSourceUri(
+                                'file://' . ($fileDir ? $fileDir : $rootDir . DIRECTORY_SEPARATOR)
+                            );
+                            $schema = $schemaParser->createSchemaDefinition($value['schema']);
+
+                            break;
+                        } catch (\RuntimeException $e) {
+                        }
                     }
+
+                    if ($schema === null) {
+                        throw new InvalidSchemaFormatException();
+                    }
+
+                    $value['schema'] = $schema;
                 } else {
                     $value = $this->recurseAndParseSchemas($value, $rootDir);
                 }
@@ -507,14 +512,14 @@ class Parser
         $fullPath = realpath($rootDir . '/' . $fileName);
 
         if (is_readable($fullPath) === false) {
-            return false;
+            throw new FileNotFoundException($fileName);
         }
 
         // Prevent LFI directory traversal attacks
         if (!$this->configuration->isDirectoryTraversalAllowed() &&
             substr($fullPath, 0, strlen($rootDir)) !== $rootDir
         ) {
-            return false;
+            throw new FileNotFoundException($fileName);
         }
 
         $cacheKey = md5($fullPath);
