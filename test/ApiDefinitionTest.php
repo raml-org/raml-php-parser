@@ -113,7 +113,7 @@ class ApiDefinitionTest extends PHPUnit_Framework_TestCase
         $this->assertInstanceOf('\Raml\Types\ObjectType', $head->getResolvedObject());
         $this->assertInstanceOf('\Raml\Types\StringType', $head->getPropertyByName('firstname'));
         $this->assertInstanceOf('\Raml\Types\StringType', $head->getPropertyByName('lastname'));
-        $this->assertInstanceOf('\Raml\Types\StringType', $head->getPropertyByName('title?'));
+        $this->assertInstanceOf('\Raml\Types\StringType', $head->getPropertyByName('title'));
         $this->assertInstanceOf('\Raml\Types\StringType', $head->getPropertyByName('kind'));
         $reports = $head->getPropertyByName('reports');
         $this->assertInstanceOf('\Raml\Types\ArrayType', $reports);
@@ -125,21 +125,56 @@ class ApiDefinitionTest extends PHPUnit_Framework_TestCase
     }
 
     /** @test */
-    public function shouldValidateResponse()
+    public function shouldPassValidResponse()
     {
-         $api = $this->parser->parse(__DIR__.'/fixture/raml-1.0/complexTypes.raml');
-         $body = $api->getResourceByPath('/orgs/{orgId}')->getMethod('get')->getResponse(200)->getBodyByType('application/json');
-         /* @var $body \Raml\Body */
-         
-         $validResponse = $body->getExample();
-         $type = $body->getType();
-         $this->assertTrue($type->validate($validResponse));
+        $api = $this->parser->parse(__DIR__ . '/fixture/raml-1.0/complexTypes.raml');
+        $body = $api->getResourceByPath('/orgs/{orgId}')->getMethod('get')->getResponse(200)->getBodyByType(
+            'application/json'
+        );
+        /* @var $body \Raml\Body */
 
-         $invalidResponse = [
+        $validResponse = '{
+            "onCall": {
+                "firstname": "nico",
+                "lastname": "ark",
+                "kind": "AlertableAdmin",
+                "clearanceLevel": "low",
+                "phone": "12321"
+            },
+            "Head": {
+                "firstname": "nico",
+                "lastname": "ark",
+                "kind": "Manager",
+                "reports": [
+                    {
+                        "firstname": "nico",
+                        "lastname": "ark",
+                        "kind": "Admin",
+                        "clearanceLevel": "low"
+                    }
+                ],
+                "phone": "123-23"
+            }
+        }';
+        $type = $body->getType();
+        $this->assertTrue($type->validate(json_decode($validResponse, true)));
+    }
+
+    /** @test */
+    public function shouldRejectMissingParameterResponse()
+    {
+        $api = $this->parser->parse(__DIR__.'/fixture/raml-1.0/complexTypes.raml');
+        $body = $api->getResourceByPath('/orgs/{orgId}')->getMethod('get')->getResponse(200)->getBodyByType('application/json');
+        /* @var $body \Raml\Body */
+        $type = $body->getType();
+
+        $invalidResponse = [
             'onCall' => 'this is not an object',
             'Head' => 'this is not an object'
-         ];
-         $this->assertFalse($type->validate($invalidResponse));
+        ];
+
+        $this->setExpectedException('\Raml\Exception\MissingRequiredPropertyException');
+        $type->validate($invalidResponse);
     }
 
     /** @test */

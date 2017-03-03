@@ -23,7 +23,7 @@ class TypeTest extends PHPUnit_Framework_TestCase
         $body = $response->getBodyByType('application/json');
         $type = $body->getType();
 
-        $this->assertTrue($type->validate('[{"title":"Good Song","artist":"An artist"}]'));
+        $this->assertTrue($type->validate(json_decode('{"title":"Good Song","artist":"An artist"}', true)));
     }
 
     /** @test */
@@ -36,7 +36,7 @@ class TypeTest extends PHPUnit_Framework_TestCase
         $body = $response->getBodyByType('application/json');
         $type = $body->getType();
 
-        $this->assertTrue($type->validate('[{"title":"Good Song"}]'));
+        $this->assertTrue($type->validate(json_decode('{"title":"Good Song"}', true)));
     }
 
     /** @test */
@@ -50,8 +50,8 @@ class TypeTest extends PHPUnit_Framework_TestCase
         $body = $response->getBodyByType('application/json');
         $type = $body->getType();
 
-        $this->setExpectedException('\Raml\Exception\InvalidTypeException');
-        $this->assertTrue($type->validate('[{"artist":"An artist"}]'));
+        $this->setExpectedException('\Raml\Exception\MissingRequiredPropertyException');
+        $this->assertTrue($type->validate(json_decode('{"artist":"An artist"}', true)));
     }
 
     /** @test */
@@ -65,7 +65,7 @@ class TypeTest extends PHPUnit_Framework_TestCase
         $body = $response->getBodyByType('application/json');
         $type = $body->getType();
 
-        $this->setExpectedException('\Raml\Exception\InvalidTypeException');
-        $type->validate('{}');
+        $this->setExpectedException('\Raml\Exception\MissingRequiredPropertyException');
+        $type->validate([]);
     }
 }

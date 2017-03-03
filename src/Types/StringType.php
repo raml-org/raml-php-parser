@@ -140,6 +140,10 @@ class StringType extends Type
 
     public function validate($value)
     {
+        if (!parent::validate($value)) {
+            return false;
+        }
+
         if (!is_string($value)) {
             return false;
         }

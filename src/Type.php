@@ -38,7 +38,7 @@ class Type implements ArrayInstantiationInterface, TypeInterface
      *
      * @var bool
      **/
-    private $required = null;
+    private $required = true;
 
     /**
      * Raml definition
@@ -75,9 +75,21 @@ class Type implements ArrayInstantiationInterface, TypeInterface
         if (isset($data['usage'])) {
             $class->setUsage($data['usage']);
         }
+        if (isset($data['required'])) {
+            $class->setRequired($data['required']);
+        }
+        if (substr($name, -1) === '?') {
+            $class->setRequired(false);
+            $class->setName(substr($name, 0, -1));
+        }
         $class->setDefinition($data);
 
         return $class;
+    }
+
+    public function discriminate($value)
+    {
+        return true;
     }
 
     /**
@@ -289,7 +301,10 @@ class Type implements ArrayInstantiationInterface, TypeInterface
      */
     public function validate($value)
     {
-        // everything is valid for the any type
+        if ($this->required && !isset($value)) {
+            return false;
+        }
+
         return true;
     }
 }

@@ -2,10 +2,12 @@
 
 namespace Raml\Types;
 
+use Raml\Exception\MissingRequiredPropertyException;
 use Raml\Type;
 use Raml\ApiDefinition;
 use Raml\TypeCollection;
 use Raml\Exception\PropertyNotFoundException;
+use Raml\TypeInterface;
 
 /**
  * ObjectType class
@@ -51,7 +53,7 @@ class ObjectType extends Type
      *
      * @var string
      **/
-    private $discriminator = null;
+    protected $discriminator = null;
 
     /**
      * Identifies the declaring type.
@@ -103,10 +105,27 @@ class ObjectType extends Type
         return $type;
     }
 
+    public function discriminate($value)
+    {
+        if (isset($value[$this->getDiscriminator()])) {
+            if ($this->getDiscriminatorValue() !== null) {
+                if ($this->getDiscriminatorValue() === $value[$this->getDiscriminator()]) {
+                    return true;
+                }
+
+                return false;
+            }
+
+            return $value[$this->getDiscriminator()] === $this->getType();
+        }
+
+        return true;
+    }
+
     /**
      * Get the value of Properties
      *
-     * @return mixed
+     * @return Type[]
      */
     public function getProperties()
     {
@@ -137,7 +156,7 @@ class ObjectType extends Type
      *
      * @param string $name Name of property.
      *
-     * @return Raml\TypeInterface
+     * @return \Raml\TypeInterface
      **/
     public function getPropertyByName($name)
     {
@@ -276,6 +295,14 @@ class ObjectType extends Type
         // an object is in essence just a group (array) of datatypes
         if (!is_array($value)) {
             return false;
+        }
+        foreach ($this->getProperties() as $property) {
+            if ($property->getRequired() && !isset($value[$property->getName()])) {
+                throw new MissingRequiredPropertyException(sprintf(
+                    'Missing required property %s',
+                    $property->getName()
+                ));
+            }
         }
         foreach ($value as $name => $propertyValue) {
             try {

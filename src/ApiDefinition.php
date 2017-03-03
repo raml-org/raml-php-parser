@@ -573,7 +573,7 @@ class ApiDefinition implements ArrayInstantiationInterface
      * @param array                     $definition Definition of type.
      * @param \Raml\TypeCollection|null $typeCollection Type collection object.
      *
-     * @return Raml\TypeInterface Returns a (best) matched type object.
+     * @return \Raml\TypeInterface Returns a (best) matched type object.
      **/
     public static function determineType($name, $definition)
     {

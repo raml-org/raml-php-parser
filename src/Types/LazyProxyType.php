@@ -91,6 +91,11 @@ class LazyProxyType implements TypeInterface
         return $this->name;
     }
 
+    public function discriminate($value)
+    {
+        return true;
+    }
+
     /**
      * Magic method to proxy all method calls to original object
      * @param string    $name       Name of called method.
@@ -135,6 +140,11 @@ class LazyProxyType implements TypeInterface
     public function validate($value)
     {
         $original = $this->getResolvedObject();
-        return $original->validate($value);
+
+        if ($original->discriminate($value)) {
+            return $original->validate($value);
+        }
+
+//        return $original->validate($value);
     }
 }

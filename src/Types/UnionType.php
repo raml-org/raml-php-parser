@@ -5,6 +5,7 @@ namespace Raml\Types;
 use Raml\Type;
 use Raml\TypeCollection;
 use Raml\ApiDefinition;
+use Raml\TypeInterface;
 
 /**
  * UnionType class
@@ -40,7 +41,7 @@ class UnionType extends Type
     /**
      * Get the value of Possible Types
      *
-     * @return array
+     * @return TypeInterface[]
      */
     public function getPossibleTypes()
     {
@@ -65,11 +66,21 @@ class UnionType extends Type
 
     public function validate($value)
     {
-        foreach ($this->getPossibleTypes() as $type) {
+        $possibleTypes = $this->getPossibleTypes();
+        foreach ($possibleTypes as $type) {
+            if ($type->discriminate($value)) {
+                if ($type->validate($value)) {
+                    return true;
+                }
+            }
+        }
+
+        foreach ($possibleTypes as $type) {
             if ($type->validate($value)) {
                 return true;
             }
         }
+
         return false;
     }
 }
