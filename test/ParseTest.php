@@ -288,6 +288,21 @@ RAML;
     }
 
     /** @test */
+    public function shouldParseJsonTypeInRaml()
+    {
+        $simpleRaml = $this->parser->parse(__DIR__.'/fixture/typeInRoot.raml');
+
+        $resource = $simpleRaml->getResourceByUri('/songs');
+        $method = $resource->getMethod('get');
+        $response = $method->getResponse(200);
+        /** @var \Raml\Body $body */
+        $body = $response->getBodyByType('application/json');
+        $type = $body->getType();
+
+        $this->assertInstanceOf('\Raml\Schema\Definition\TypeSchemaDefinition', $type);
+    }
+
+    /** @test */
     public function shouldIncludeChildJsonObjects()
     {
         $simpleRaml = $this->parser->parse(__DIR__.'/fixture/parentAndChildSchema.raml');
