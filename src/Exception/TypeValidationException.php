@@ -11,10 +11,11 @@ class TypeValidationException extends RuntimeException implements ExceptionInter
         return new self(sprintf('Missing required property %s', $missingPropertyName));
     }
 
-    public static function expectedObject($actualValue)
+    public static function unexpectedValueType($expectedType, $actualValue)
     {
         return new self(sprintf(
-            'Value expected to be object with fields, got (%s) "%s"',
+            'Value expected to be %s, got (%s) "%s"',
+            $expectedType,
             gettype($actualValue),
             $actualValue
         ));

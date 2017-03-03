@@ -2,6 +2,8 @@
 
 namespace Raml\Types;
 
+use Raml\Exception\TypeValidationException;
+
 /**
  * IntegerType class
  * 
@@ -33,6 +35,10 @@ class IntegerType extends NumberType
 
     public function validate($value)
     {
-        return is_int($value);
+        if (!is_int($value)) {
+            throw TypeValidationException::unexpectedValueType('integer', $value);
+        }
+
+        return true;
     }
 }

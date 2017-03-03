@@ -296,7 +296,7 @@ class ObjectType extends Type
         // an object is in essence just a group (array) of datatypes
         if (!is_array($value)) {
             if (!is_object($value)) {
-                throw TypeValidationException::expectedObject($value);
+                throw TypeValidationException::unexpectedValueType('object', $value);
             }
             // in case of stdClass - convert it to array for convenience
             $value = get_object_vars($value);

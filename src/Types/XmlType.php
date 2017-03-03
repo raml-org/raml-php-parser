@@ -42,6 +42,7 @@ class XmlType extends Type
      * @param $string
      *
      * @return bool
+     * TODO: throw XML schema validation exception
      */
     public function validate($string)
     {

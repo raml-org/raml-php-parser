@@ -32,7 +32,7 @@ class JsonType extends Type
         $type = parent::createFromArray($name, $data);
         /* @var $type StringType */
 
-        $this->json = $data;
+        $type->json = $data;
         
         return $type;
     }
@@ -44,6 +44,7 @@ class JsonType extends Type
      * @param $string 
      *
      * @return bool
+     * TODO: throw JSON schema validation exception
      */
     public function validate($string)
     {

@@ -2,6 +2,8 @@
 
 namespace Raml\Types;
 
+use DateTime;
+use Raml\Exception\TypeValidationException;
 use Raml\Type;
 
 /**
@@ -67,6 +69,11 @@ class DateTimeType extends Type
     {
         $format = $this->format ?: DATE_RFC3339;
         $d = DateTime::createFromFormat($format, $value);
-        return $d && $d->format($format) === $value;
+
+        if ($d && $d->format($format) !== $value) {
+            throw TypeValidationException::unexpectedValueType('datetime', $value);
+        }
+
+        return true;
     }
 }

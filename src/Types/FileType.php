@@ -2,6 +2,7 @@
 
 namespace Raml\Types;
 
+use Raml\Exception\TypeValidationException;
 use Raml\Type;
 
 /**
@@ -137,6 +138,10 @@ class FileType extends Type
 
     public function validate($value)
     {
-        return (bool) preg_match('/^[a-zA-Z0-9\/\r\n+]*={0,2}$/', $value);
+        if (!preg_match('/^[a-zA-Z0-9\/\r\n+]*={0,2}$/', $value)) {
+            throw TypeValidationException::unexpectedValueType('file', $value);
+        }
+
+        return true;
     }
 }

@@ -2,7 +2,7 @@
 
 namespace Raml\Types;
 
-
+use Raml\Exception\TypeValidationException;
 use Raml\Type;
 
 
@@ -30,6 +30,10 @@ class NullType extends Type
 
     public function validate($value)
     {
-        return is_null($value);
+        if (!is_null($value)) {
+            throw TypeValidationException::unexpectedValueType('null', $value);
+        }
+
+        return true;
     }
 }

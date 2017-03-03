@@ -173,7 +173,7 @@ class ApiDefinitionTest extends PHPUnit_Framework_TestCase
             'Head' => 'this is not an object'
         ];
 
-        $this->setExpectedException('\Raml\Exception\TypeValidationException', 'Value expected to be object with fields, got (string) "this is not an object"');
+        $this->setExpectedException('\Raml\Exception\TypeValidationException', 'Value expected to be object, got (string) "this is not an object"');
         $type->validate($invalidResponse);
     }
 

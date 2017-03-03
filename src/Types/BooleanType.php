@@ -2,6 +2,7 @@
 
 namespace Raml\Types;
 
+use Raml\Exception\TypeValidationException;
 use Raml\Type;
 
 /**
@@ -28,6 +29,10 @@ class BooleanType extends Type
 
     public function validate($value)
     {
-        return is_bool($value);
+        if (!is_bool($value)) {
+            throw TypeValidationException::unexpectedValueType('boolean', $value);
+        }
+
+        return true;
     }
 }

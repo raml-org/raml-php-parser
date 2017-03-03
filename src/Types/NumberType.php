@@ -2,6 +2,7 @@
 
 namespace Raml\Types;
 
+use Raml\Exception\TypeValidationException;
 use Raml\Type;
 
 /**
@@ -186,43 +187,43 @@ class NumberType extends Type
         switch ($this->format) {
             case 'int8':
                 if (filter_var($value, FILTER_VALIDATE_INT, ['options' => ['min_range' => -128, 'max_range' => 127]]) === false) {
-                    return false;
+                    throw TypeValidationException::unexpectedValueType($this->format, $value);
                 }
                 break;
             case 'int16':
                 if (filter_var($value, FILTER_VALIDATE_INT, ['options' => ['min_range' => -32768, 'max_range' => 32767]]) === false) {
-                    return false;
+                    throw TypeValidationException::unexpectedValueType($this->format, $value);
                 }
                 break;
             case 'int32':
                 if (filter_var($value, FILTER_VALIDATE_INT, ['options' => ['min_range' => -2147483648, 'max_range' => 2147483647]]) === false) {
-                    return false;
+                    throw TypeValidationException::unexpectedValueType($this->format, $value);
                 }
                 break;
             case 'int64':
                 if (filter_var($value, FILTER_VALIDATE_INT, ['options' => ['min_range' => -9223372036854775808, 'max_range' => 9223372036854775807]]) === false) {
-                    return false;
+                    throw TypeValidationException::unexpectedValueType($this->format, $value);
                 }
                 break;
             case 'int':
                 // int === long
             case 'long':
                 if (!is_int($value)) {
-                    return false;
+                    throw TypeValidationException::unexpectedValueType($this->format, $value);
                 }
                 break;
             case 'float':
                 // float === double
             case 'double':
                 if (!is_float($value)) {
-                    return false;
+                    throw TypeValidationException::unexpectedValueType($this->format, $value);
                 }
                 break;
             // if no format is given we check only if it is a number
             null:
             default:
                 if (!is_float($value) && !is_int($value)) {
-                    return false;
+                    throw TypeValidationException::unexpectedValueType('number', $value);
                 }
                 break;
         }

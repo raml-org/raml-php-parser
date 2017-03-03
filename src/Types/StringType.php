@@ -3,6 +3,7 @@
 namespace Raml\Types;
 
 
+use Raml\Exception\TypeValidationException;
 use Raml\Type;
 
 
@@ -140,12 +141,10 @@ class StringType extends Type
 
     public function validate($value)
     {
-        if (!parent::validate($value)) {
-            return false;
-        }
+        parent::validate($value);
 
         if (!is_string($value)) {
-            return false;
+            throw TypeValidationException::unexpectedValueType('string', $value);
         }
         if (!is_null($this->pattern)) {
             if (preg_match('/'.$this->pattern.'/', $value) == false) {

@@ -2,6 +2,7 @@
 
 namespace Raml\Types;
 
+use Raml\Exception\TypeValidationException;
 use Raml\Type;
 
 /**
@@ -176,6 +177,10 @@ class ArrayType extends Type
 
     public function validate($value)
     {
-        return is_array($value);
+        if (!is_array($value)) {
+            throw TypeValidationException::unexpectedValueType('array', $value);
+        }
+
+        return true;
     }
 }
