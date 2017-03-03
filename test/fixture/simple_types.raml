@@ -1,0 +1,25 @@
+#%RAML 1.0
+
+title: World Music API
+baseUri: http://example.api.com/{version}
+version: v1
+mediaType: application/json
+
+/songs:
+  get:
+    responses:
+        200:
+          body:
+            application/json:
+              type: Song
+
+types:
+  Song:
+    properties:
+      title:
+        type: string
+        required: true
+      artist:
+        type: string
+        required: false
+
