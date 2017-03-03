@@ -58,7 +58,7 @@ class UnionType extends Type
     public function setPossibleTypes(array $possibleTypes)
     {
         foreach ($possibleTypes as $type) {
-            $this->possibleTypes[] = ApiDefinition::determineType('', ['type' => trim($type)]);
+            $this->possibleTypes[] = ApiDefinition::determineType(trim($type), ['type' => trim($type)]);
         }
 
         return $this;
@@ -66,16 +66,7 @@ class UnionType extends Type
 
     public function validate($value)
     {
-        $possibleTypes = $this->getPossibleTypes();
-        foreach ($possibleTypes as $type) {
-            if ($type->discriminate($value)) {
-                if ($type->validate($value)) {
-                    return true;
-                }
-            }
-        }
-
-        foreach ($possibleTypes as $type) {
+        foreach ($this->getPossibleTypes() as $type) {
             if ($type->validate($value)) {
                 return true;
             }

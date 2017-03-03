@@ -50,7 +50,7 @@ class TypeTest extends PHPUnit_Framework_TestCase
         $body = $response->getBodyByType('application/json');
         $type = $body->getType();
 
-        $this->setExpectedException('\Raml\Exception\MissingRequiredPropertyException');
+        $this->setExpectedException('\Raml\Exception\TypeValidationException', 'Required property (string) "title" not found');
         $this->assertTrue($type->validate(json_decode('{"artist":"An artist"}', true)));
     }
 
@@ -65,7 +65,7 @@ class TypeTest extends PHPUnit_Framework_TestCase
         $body = $response->getBodyByType('application/json');
         $type = $body->getType();
 
-        $this->setExpectedException('\Raml\Exception\MissingRequiredPropertyException');
+        $this->setExpectedException('\Raml\Exception\TypeValidationException', 'Required property (string) "title" not found');
         $type->validate([]);
     }
 }

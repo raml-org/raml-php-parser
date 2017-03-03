@@ -2,11 +2,12 @@
 
 namespace Raml\Types;
 
+use Raml\Exception\ExpectedObjectException;
 use Raml\Exception\MissingRequiredPropertyException;
 use Raml\Type;
 use Raml\ApiDefinition;
 use Raml\TypeCollection;
-use Raml\Exception\PropertyNotFoundException;
+use Raml\Exception\TypeValidationException;
 use Raml\TypeInterface;
 
 /**
@@ -116,7 +117,7 @@ class ObjectType extends Type
                 return false;
             }
 
-            return $value[$this->getDiscriminator()] === $this->getType();
+            return $value[$this->getDiscriminator()] === $this->getName();
         }
 
         return true;
@@ -165,7 +166,7 @@ class ObjectType extends Type
                 return $property;
             }
         }
-        throw new PropertyNotFoundException(sprintf('No such property: %s', $name));
+        throw new TypeValidationException(sprintf('No such property: %s', $name));
     }
 
 
@@ -294,24 +295,20 @@ class ObjectType extends Type
     {
         // an object is in essence just a group (array) of datatypes
         if (!is_array($value)) {
-            return false;
+            if (!is_object($value)) {
+                throw TypeValidationException::expectedObject($value);
+            }
+            // in case of stdClass - convert it to array for convenience
+            $value = get_object_vars($value);
         }
         foreach ($this->getProperties() as $property) {
             if ($property->getRequired() && !isset($value[$property->getName()])) {
-                throw new MissingRequiredPropertyException(sprintf(
-                    'Missing required property %s',
-                    $property->getName()
-                ));
+                throw TypeValidationException::missingRequiredProperty($property->getName(), $property->getType());
             }
         }
         foreach ($value as $name => $propertyValue) {
-            try {
-                $property = $this->getPropertyByName($name);
-                if (!$property->validate($propertyValue)) {
-                    return false;
-                }
-            } catch (PropertyNotFoundException $e) {
-                // if no property found, carry on
+            $property = $this->getPropertyByName($name);
+            if (!$property->validate($propertyValue)) {
                 return false;
             }
         }

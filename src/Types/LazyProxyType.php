@@ -145,6 +145,6 @@ class LazyProxyType implements TypeInterface
             return $original->validate($value);
         }
 
-//        return $original->validate($value);
+        return true;
     }
 }

@@ -2,6 +2,7 @@
 
 namespace Raml;
 
+use Raml\Exception\TypeValidationException;
 use Raml\Types;
 use Raml\Utility\StringTransformer;
 
@@ -302,7 +303,7 @@ class Type implements ArrayInstantiationInterface, TypeInterface
     public function validate($value)
     {
         if ($this->required && !isset($value)) {
-            return false;
+            throw TypeValidationException::missingRequiredProperty($this->getName(), $this->getType());
         }
 
         return true;
