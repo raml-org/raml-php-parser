@@ -2,6 +2,7 @@
 
 namespace Raml\Types;
 
+use Raml\ArrayInstantiationInterface;
 use Raml\TypeInterface;
 use Raml\TypeCollection;
 use Raml\ApiDefinition;
@@ -9,7 +10,7 @@ use Raml\ApiDefinition;
 /**
  * LazyProxyType class for lazy loading datatype objects
  */
-class LazyProxyType implements TypeInterface
+class LazyProxyType implements TypeInterface, ArrayInstantiationInterface
 {
     /**
      * name/id of type

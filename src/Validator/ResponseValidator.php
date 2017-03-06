@@ -116,15 +116,11 @@ class ResponseValidator
 
         $schemaBody = $this->schemaHelper->getResponseBody($method, $path, $statusCode, $contentType);
 
-        if (($schema = $schemaBody->getSchema()) === null) {
-            return;
-        }
-
         $body = $response->getBody()->getContents();
 
         try {
-            $schema->validate($body);
-        } catch (InvalidSchemaException $exception) {
+            $schemaBody->getValidator()->validate($body);
+        } catch (ValidationException $exception) {
             $message = sprintf(
                 'Response body for %s %s with content type %s and status code %s does not match schema: %s',
                 strtoupper($method),

@@ -7,17 +7,12 @@ namespace Raml;
  *
  * @author Melvin Loos <m.loos@infopact.nl>
  */
-interface TypeInterface extends ArrayInstantiationInterface
+interface TypeInterface extends ValidatorInterface
 {
     /**
      * Returns the name of the Type.
      **/
     public function getName();
-
-    /**
-     * Returns a multidimensional array of the Type's content.
-     */
-    public function toArray();
 
     /**
      * Returns true if type discriminator matched discriminatorValue for class

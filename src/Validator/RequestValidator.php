@@ -119,7 +119,7 @@ class RequestValidator
         $schemaBody = $this->schemaHelper->getRequestBody($method, $path, $contentType);
 
         try {
-            $schemaBody->getSchema()->validate($body);
+            $schemaBody->getValidator()->validate($body);
         } catch (InvalidSchemaException $exception) {
             $message = sprintf(
                 'Request body for %s %s with content type %s does not match schema: %s',

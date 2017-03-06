@@ -50,7 +50,7 @@ class Body implements BodyInterface, ArrayInstantiationInterface
      *
      * @see http://raml.org/spec.html#raml-data-types
      *
-     * @var SchemaDefinitionInterface|string
+     * @var TypeInterface
      */
     private $type;
 
@@ -180,6 +180,16 @@ class Body implements BodyInterface, ArrayInstantiationInterface
     }
 
     /**
+     * Get validator, either type or schema, with type having more priority
+     *
+     * @return ValidatorInterface
+     */
+    public function getValidator()
+    {
+        return $this->getType() ?: $this->getSchema();
+    }
+
+    /**
      * Set the schema
      *
      * @param SchemaDefinitionInterface|string $schema
@@ -200,7 +210,7 @@ class Body implements BodyInterface, ArrayInstantiationInterface
     /**
      * Get the type
      *
-     * @return string
+     * @return TypeInterface
      */
     public function getType()
     {
