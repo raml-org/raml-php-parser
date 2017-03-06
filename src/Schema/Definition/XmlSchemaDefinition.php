@@ -5,6 +5,7 @@ namespace Raml\Schema\Definition;
 use Raml\Exception\InvalidXmlException;
 use Raml\Exception\InvalidSchemaException;
 use \Raml\Schema\SchemaDefinitionInterface;
+use Raml\Types\TypeValidationError;
 
 class XmlSchemaDefinition implements SchemaDefinitionInterface
 {
@@ -74,5 +75,13 @@ class XmlSchemaDefinition implements SchemaDefinitionInterface
     public function __toString()
     {
         return $this->xml;
+    }
+
+    /**
+     * @return TypeValidationError[]
+     */
+    public function getErrors()
+    {
+        return [];
     }
 }

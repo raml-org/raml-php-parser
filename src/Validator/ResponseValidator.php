@@ -8,6 +8,7 @@ use Raml\Exception\InvalidJsonException;
 use Raml\Exception\InvalidSchemaException;
 use Raml\Exception\ValidationException;
 use Raml\NamedParameter;
+use Raml\Types\TypeValidationError;
 
 class ResponseValidator
 {
@@ -117,12 +118,17 @@ class ResponseValidator
 
         $schemaBody = $this->schemaHelper->getResponseBody($method, $path, $statusCode, $contentType);
 
-        $body = json_decode($request->getBody()->getContents(), true);
+        $body = json_decode($response->getBody()->getContents(), true);
         if (json_last_error() !== JSON_ERROR_NONE) {
             throw new InvalidJsonException(json_last_error_msg());
         }
         try {
             $schemaBody->getValidator()->validate($body);
+            if ($schemaBody->getValidator()->getErrors()) {
+                $message = $this->getTypeValidationErrorsAsString($schemaBody->getValidator()->getErrors());
+
+                throw new ValidatorResponseException($message);
+            }
         } catch (InvalidSchemaException $exception) {
             $message = sprintf(
                 'Response body for %s %s with content type %s and status code %s does not match schema: %s',
@@ -156,6 +162,13 @@ class ResponseValidator
     {
         return join(', ', array_map(function (array $error) {
             return sprintf('%s (%s)', $error['property'], $error['constraint']);
+        }, $errors));
+    }
+
+    private function getTypeValidationErrorsAsString(array $errors)
+    {
+        return join(', ', array_map(function (TypeValidationError $error) {
+            return $error->__toString();
         }, $errors));
     }
 }

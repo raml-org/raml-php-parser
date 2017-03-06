@@ -3,6 +3,8 @@ declare(strict_types=1);
 
 namespace Raml;
 
+use Raml\Types\TypeValidationError;
+
 interface ValidatorInterface
 {
     /**
@@ -15,4 +17,9 @@ interface ValidatorInterface
      * @return boolean
      */
     public function validate($string);
+
+    /**
+     * @return TypeValidationError[]
+     */
+    public function getErrors();
 }

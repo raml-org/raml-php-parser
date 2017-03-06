@@ -4,6 +4,7 @@ namespace Raml;
 
 use Raml\Exception\TypeValidationException;
 use Raml\Types;
+use Raml\Types\TypeValidationError;
 use Raml\Utility\StringTransformer;
 
 /**
@@ -13,6 +14,11 @@ use Raml\Utility\StringTransformer;
  */
 class Type implements ArrayInstantiationInterface, TypeInterface
 {
+    /**
+     * @var Types\TypeValidationError[]
+     */
+    protected $errors;
+
     /**
      * Parent object
      *
@@ -303,9 +309,15 @@ class Type implements ArrayInstantiationInterface, TypeInterface
     public function validate($value)
     {
         if ($this->required && !isset($value)) {
-            throw TypeValidationException::missingRequiredProperty($this->getName(), $this->getType());
+            $this->errors[] = new TypeValidationError($this->getName(), 'required');
         }
+    }
 
-        return true;
+    /**
+     * @return TypeValidationError[]
+     */
+    public function getErrors()
+    {
+        return $this->errors;
     }
 }

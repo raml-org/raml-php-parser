@@ -6,6 +6,7 @@ use Raml\Exception\InvalidJsonException;
 use Raml\Exception\InvalidSchemaException;
 use \Raml\Schema\SchemaDefinitionInterface;
 use \JsonSchema\Validator;
+use Raml\Types\TypeValidationError;
 
 class JsonSchemaDefinition implements SchemaDefinitionInterface
 {
@@ -106,5 +107,13 @@ class JsonSchemaDefinition implements SchemaDefinitionInterface
     {
         $jsonSchema = $this->json;
         return json_decode(json_encode($jsonSchema), true);
+    }
+
+    /**
+     * @return TypeValidationError[]
+     */
+    public function getErrors()
+    {
+        return [];
     }
 }

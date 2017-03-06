@@ -187,43 +187,42 @@ class NumberType extends Type
         switch ($this->format) {
             case 'int8':
                 if (filter_var($value, FILTER_VALIDATE_INT, ['options' => ['min_range' => -128, 'max_range' => 127]]) === false) {
-                    throw TypeValidationException::unexpectedValueType($this->format, $value);
+                    $this->errors[] = TypeValidationError::unexpectedValueType($this->getName(), 'int8', $value);
                 }
                 break;
             case 'int16':
                 if (filter_var($value, FILTER_VALIDATE_INT, ['options' => ['min_range' => -32768, 'max_range' => 32767]]) === false) {
-                    throw TypeValidationException::unexpectedValueType($this->format, $value);
+                    $this->errors[] = TypeValidationError::unexpectedValueType($this->getName(), 'int16', $value);
                 }
                 break;
             case 'int32':
                 if (filter_var($value, FILTER_VALIDATE_INT, ['options' => ['min_range' => -2147483648, 'max_range' => 2147483647]]) === false) {
-                    throw TypeValidationException::unexpectedValueType($this->format, $value);
+                    $this->errors[] = TypeValidationError::unexpectedValueType($this->getName(), 'int32', $value);
                 }
                 break;
             case 'int64':
                 if (filter_var($value, FILTER_VALIDATE_INT, ['options' => ['min_range' => -9223372036854775808, 'max_range' => 9223372036854775807]]) === false) {
-                    throw TypeValidationException::unexpectedValueType($this->format, $value);
+                    $this->errors[] = TypeValidationError::unexpectedValueType($this->getName(), 'int64', $value);
                 }
                 break;
             case 'int':
                 // int === long
             case 'long':
                 if (!is_int($value)) {
-                    throw TypeValidationException::unexpectedValueType($this->format, $value);
+                    $this->errors[] = TypeValidationError::unexpectedValueType($this->getName(), 'int or long', $value);
                 }
                 break;
             case 'float':
                 // float === double
             case 'double':
                 if (!is_float($value)) {
-                    throw TypeValidationException::unexpectedValueType($this->format, $value);
+                    $this->errors[] = TypeValidationError::unexpectedValueType($this->getName(), 'double or float', $value);
                 }
                 break;
             // if no format is given we check only if it is a number
-            null:
             default:
                 if (!is_float($value) && !is_int($value)) {
-                    throw TypeValidationException::unexpectedValueType('number', $value);
+                    $this->errors[] = TypeValidationError::unexpectedValueType($this->getName(), 'number', $value);
                 }
                 break;
         }

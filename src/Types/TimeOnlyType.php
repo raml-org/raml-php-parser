@@ -2,7 +2,7 @@
 
 namespace Raml\Types;
 
-use Raml\Exception\TypeValidationException;
+use DateTime;
 use Raml\Type;
 
 /**
@@ -27,10 +27,12 @@ class TimeOnlyType extends Type
 
     public function validate($value)
     {
+        parent::validate($value);
+
         $d = DateTime::createFromFormat('HH:II:SS', $value);
 
         if ($d && $d->format('HH:II:SS') !== $value) {
-            throw TypeValidationException::unexpectedValueType('time-only', $value);
+            $this->errors[] = TypeValidationError::unexpectedValueType($this->getName(), 'HH:II:SS', $value);
         }
 
         return true;

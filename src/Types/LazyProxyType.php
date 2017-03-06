@@ -25,7 +25,7 @@ class LazyProxyType implements TypeInterface, ArrayInstantiationInterface
      * @var string
      **/
     private $type;
-    
+
     /**
      * original type
      *
@@ -41,13 +41,13 @@ class LazyProxyType implements TypeInterface, ArrayInstantiationInterface
     private $definition = [];
 
     /**
-    * Create a new LazyProxyType from an array of data
-    *
-    * @param string                 $name Type name.
-    * @param array                  $data Type data.
-    *
-    * @return LazyProxyType
-    */
+     * Create a new LazyProxyType from an array of data
+     *
+     * @param string                 $name Type name.
+     * @param array                  $data Type data.
+     *
+     * @return LazyProxyType
+     */
     public static function createFromArray($name, array $data = [])
     {
         $proxy = new static();
@@ -56,7 +56,7 @@ class LazyProxyType implements TypeInterface, ArrayInstantiationInterface
         if (!isset($data['type'])) {
             throw new \Exception('Missing "type" key in $data param to determine datatype!');
         }
-        
+
         $proxy->type = $data['type'];
 
         return $proxy;
@@ -107,35 +107,8 @@ class LazyProxyType implements TypeInterface, ArrayInstantiationInterface
     public function __call($name, $params)
     {
         $original = $this->getResolvedObject();
+
         return call_user_func_array(array($original, $name), $params);
-    }
-
-    public function getWrappedObject()
-    {
-        if ($this->wrappedObject === null) {
-            $typeCollection = TypeCollection::getInstance();
-            $this->wrappedObject = $typeCollection->getTypeByName($this->type);
-        }
-        return $this->wrappedObject;
-    }
-
-    public function getDefinitionRecursive()
-    {
-        $type = $this->getWrappedObject();
-        $typeDefinition = ($type instanceof self) ? $type->getDefinitionRecursive() : $type->getDefinition();
-        $recursiveDefinition = array_replace_recursive($typeDefinition, $this->getDefinition());
-        $recursiveDefinition['type'] = $typeDefinition['type'];
-        return $recursiveDefinition;
-    }
-
-    public function getResolvedObject()
-    {
-        $object = $this->getWrappedObject();
-        if ($object instanceof self) {
-            $definition = $object->getDefinitionRecursive();
-            return ApiDefinition::determineType($this->name, $definition);
-        }
-        return $object;
     }
 
     public function validate($value)
@@ -147,5 +120,44 @@ class LazyProxyType implements TypeInterface, ArrayInstantiationInterface
         }
 
         return true;
+    }
+
+    private function getWrappedObject()
+    {
+        if ($this->wrappedObject === null) {
+            $typeCollection = TypeCollection::getInstance();
+            $this->wrappedObject = $typeCollection->getTypeByName($this->type);
+        }
+
+        return $this->wrappedObject;
+    }
+
+    private function getDefinitionRecursive()
+    {
+        $type = $this->getWrappedObject();
+        $typeDefinition = ($type instanceof self) ? $type->getDefinitionRecursive() : $type->getDefinition();
+        $recursiveDefinition = array_replace_recursive($typeDefinition, $this->getDefinition());
+        $recursiveDefinition['type'] = $typeDefinition['type'];
+
+        return $recursiveDefinition;
+    }
+
+    private function getResolvedObject()
+    {
+        $object = $this->getWrappedObject();
+        if ($object instanceof self) {
+            $definition = $object->getDefinitionRecursive();
+            return ApiDefinition::determineType($this->name, $definition);
+        }
+
+        return $object;
+    }
+
+    /**
+     * @return TypeValidationError[]
+     */
+    public function getErrors()
+    {
+        return $this->getResolvedObject()->getErrors();
     }
 }
