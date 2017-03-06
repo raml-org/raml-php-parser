@@ -30,12 +30,12 @@ class DateTimeOnlyType extends Type
 
     public function validate($value)
     {
+        parent::validate($value);
+
         $d = DateTime::createFromFormat(DATE_RFC3339, $value);
 
         if ($d && $d->format(DATE_RFC3339) !== $value) {
-            throw TypeValidationException::unexpectedValueType('datetime-only', $value);
+            $this->errors[] = TypeValidationError::unexpectedValueType($this->getName(), 'datetime-only', $value);
         }
-
-        return true;
     }
 }

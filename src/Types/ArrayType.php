@@ -177,10 +177,10 @@ class ArrayType extends Type
 
     public function validate($value)
     {
-        if (!is_array($value)) {
-            throw TypeValidationException::unexpectedValueType('array', $value);
-        }
+        parent::validate($value);
 
-        return true;
+        if (!is_array($value)) {
+            $this->errors[] = TypeValidationError::unexpectedValueType($this->getName(), 'is array', $value);
+        }
     }
 }

@@ -125,7 +125,14 @@ class ResponseValidator
         try {
             $schemaBody->getValidator()->validate($body);
             if ($schemaBody->getValidator()->getErrors()) {
-                $message = $this->getTypeValidationErrorsAsString($schemaBody->getValidator()->getErrors());
+                $message = sprintf(
+                    'Response body for %s %s with content type %s and status code %s does not match schema: %s',
+                    strtoupper($method),
+                    $path,
+                    $contentType,
+                    $statusCode,
+                    $this->getTypeValidationErrorsAsString($schemaBody->getValidator()->getErrors())
+                );
 
                 throw new ValidatorResponseException($message);
             }

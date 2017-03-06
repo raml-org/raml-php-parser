@@ -122,6 +122,22 @@ class LazyProxyType implements TypeInterface, ArrayInstantiationInterface
         return true;
     }
 
+    /**
+     * @return TypeValidationError[]
+     */
+    public function getErrors()
+    {
+        return $this->getResolvedObject()->getErrors();
+    }
+
+    /**
+     * @return boolean
+     */
+    public function isValid()
+    {
+        return $this->getResolvedObject()->isValid();
+    }
+
     private function getWrappedObject()
     {
         if ($this->wrappedObject === null) {
@@ -151,13 +167,5 @@ class LazyProxyType implements TypeInterface, ArrayInstantiationInterface
         }
 
         return $object;
-    }
-
-    /**
-     * @return TypeValidationError[]
-     */
-    public function getErrors()
-    {
-        return $this->getResolvedObject()->getErrors();
     }
 }

@@ -17,7 +17,7 @@ class Type implements ArrayInstantiationInterface, TypeInterface
     /**
      * @var Types\TypeValidationError[]
      */
-    protected $errors;
+    protected $errors = [];
 
     /**
      * Parent object
@@ -319,5 +319,13 @@ class Type implements ArrayInstantiationInterface, TypeInterface
     public function getErrors()
     {
         return $this->errors;
+    }
+
+    /**
+     * @return boolean
+     */
+    public function isValid()
+    {
+        return empty($this->errors);
     }
 }

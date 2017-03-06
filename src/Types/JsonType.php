@@ -44,39 +44,18 @@ class JsonType extends Type
      * @param $string 
      *
      * @return bool
-     * TODO: throw JSON schema validation exception
      */
-    public function validate($string)
-    {
-        $json = json_decode($string);
-
-        if (json_last_error() !== JSON_ERROR_NONE) {
-            return false;
-        }
-
-        return $this->validateJsonObject($json);
-    }
-
-    /**
-     * Validates a json object
-     *
-     * @param string $json
-     *
-     * @throws InvalidSchemaException
-     *
-     * @return bool
-     */
-    public function validateJsonObject($json)
+    public function validate($value)
     {
         $validator = new Validator();
         $jsonSchema = $this->json;
 
-        $validator->check($json, $jsonSchema);
+        $validator->check($value, $jsonSchema);
 
         if (!$validator->isValid()) {
-            return false;
+            foreach ($validator->getErrors() as $error) {
+                $this->errors[] = new TypeValidationError($error['']);
+            }
         }
-
-        return true;
     }
 }

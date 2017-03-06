@@ -174,14 +174,16 @@ class NumberType extends Type
 
     public function validate($value)
     {
+        parent::validate($value);
+
         if (!is_null($this->maximum)) {
             if ($value > $this->maximum) {
-                return false;
+                $this->errors[] = TypeValidationError::valueExceedsMaximum($this->getName(), $this->maximum, $value);
             }
         }
         if (!is_null($this->minimum)) {
             if ($value < $this->minimum) {
-                return false;
+                $this->errors[] = TypeValidationError::valueExceedsMinimum($this->getName(), $this->minimum, $value);
             }
         }
         switch ($this->format) {
@@ -227,10 +229,9 @@ class NumberType extends Type
                 break;
         }
         if (!is_null($this->multipleOf)) {
-            if ($value %$this->multipleOf != 0) {
-                return false;
+            if ($value % $this->multipleOf != 0) {
+                $this->errors[] = TypeValidationError::isNotMultipleOf($this->getName(), $this->multipleOf, $value);
             }
         }
-        return true;
     }
 }

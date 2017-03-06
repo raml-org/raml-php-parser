@@ -67,13 +67,13 @@ class DateTimeType extends Type
 
     public function validate($value)
     {
+        parent::validate($value);
+
         $format = $this->format ?: DATE_RFC3339;
         $d = DateTime::createFromFormat($format, $value);
 
         if ($d && $d->format($format) !== $value) {
-            throw TypeValidationException::unexpectedValueType('datetime', $value);
+            $this->errors[] = TypeValidationError::unexpectedValueType($this->getName(), 'datetime', $value);
         }
-
-        return true;
     }
 }

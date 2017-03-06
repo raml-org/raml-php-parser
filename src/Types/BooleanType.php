@@ -29,10 +29,10 @@ class BooleanType extends Type
 
     public function validate($value)
     {
-        if (!is_bool($value)) {
-            throw TypeValidationException::unexpectedValueType('boolean', $value);
-        }
+        parent::validate($value);
 
-        return true;
+        if (!is_bool($value)) {
+            $this->errors[] = TypeValidationError::unexpectedValueType($this->getName(), 'is boolean', $value);
+        }
     }
 }

@@ -68,13 +68,13 @@ class ObjectType extends Type
     private $discriminatorValue = null;
 
     /**
-    * Create a new ObjectType from an array of data
-    *
-    * @param string                 $name Type name.
-    * @param array                  $data Type data.
-    *
-    * @return ObjectType
-    */
+     * Create a new ObjectType from an array of data
+     *
+     * @param string                 $name Type name.
+     * @param array                  $data Type data.
+     *
+     * @return ObjectType
+     */
     public static function createFromArray($name, array $data = [])
     {
         $type = parent::createFromArray($name, $data);
@@ -293,25 +293,24 @@ class ObjectType extends Type
 
     public function validate($value)
     {
+        parent::validate($value);
+
         // an object is in essence just a group (array) of datatypes
         if (!is_array($value)) {
             if (!is_object($value)) {
-                throw TypeValidationException::unexpectedValueType('object', $value);
+                $this->errors[] = TypeValidationError::unexpectedValueType($this->getName(), 'object', $value);
+                return;
             }
             // in case of stdClass - convert it to array for convenience
             $value = get_object_vars($value);
         }
         foreach ($this->getProperties() as $property) {
             if ($property->getRequired() && !isset($value[$property->getName()])) {
-                throw TypeValidationException::missingRequiredProperty($property->getName(), $property->getType());
+                $this->errors[] = TypeValidationError::missingRequiredProperty($property->getName());
             }
         }
         foreach ($value as $name => $propertyValue) {
-            $property = $this->getPropertyByName($name);
-            if (!$property->validate($propertyValue)) {
-                return false;
-            }
+            $this->getPropertyByName($name)->validate($propertyValue);
         }
-        return true;
     }
 }

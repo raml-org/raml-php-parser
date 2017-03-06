@@ -116,4 +116,12 @@ class JsonSchemaDefinition implements SchemaDefinitionInterface
     {
         return [];
     }
+
+    /**
+     * @return boolean
+     */
+    public function isValid()
+    {
+        return true;
+    }
 }

@@ -138,10 +138,10 @@ class FileType extends Type
 
     public function validate($value)
     {
-        if (!preg_match('/^[a-zA-Z0-9\/\r\n+]*={0,2}$/', $value)) {
-            throw TypeValidationException::unexpectedValueType('file', $value);
-        }
+        parent::validate($value);
 
-        return true;
+        if (!preg_match('/^[a-zA-Z0-9\/\r\n+]*={0,2}$/', $value)) {
+            $this->errors[] = TypeValidationError::unexpectedValueType($this->getName(), 'file', $value);
+        }
     }
 }

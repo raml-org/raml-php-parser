@@ -31,7 +31,7 @@ class XmlType extends Type
         $type = parent::createFromArray($name, $data);
         /* @var $type StringType */
 
-        $this->xml = $data;
+        $type->xml = $data;
         
         return $type;
     }
@@ -42,7 +42,6 @@ class XmlType extends Type
      * @param $string
      *
      * @return bool
-     * TODO: throw XML schema validation exception
      */
     public function validate($string)
     {

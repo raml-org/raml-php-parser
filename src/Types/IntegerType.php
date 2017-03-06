@@ -35,10 +35,10 @@ class IntegerType extends NumberType
 
     public function validate($value)
     {
-        if (!is_int($value)) {
-            throw TypeValidationException::unexpectedValueType('integer', $value);
-        }
+        parent::validate($value);
 
-        return true;
+        if (!is_int($value)) {
+            $this->errors[] = TypeValidationError::unexpectedValueType($this->getName(), 'integer', $value);
+        }
     }
 }

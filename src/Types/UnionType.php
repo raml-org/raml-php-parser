@@ -66,6 +66,8 @@ class UnionType extends Type
 
     public function validate($value)
     {
+        parent::validate($value);
+
         foreach ($this->getPossibleTypes() as $type) {
             if ($type->validate($value)) {
                 return true;

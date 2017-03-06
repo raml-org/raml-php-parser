@@ -22,4 +22,9 @@ interface ValidatorInterface
      * @return TypeValidationError[]
      */
     public function getErrors();
+
+    /**
+     * @return boolean
+     */
+    public function isValid();
 }
