@@ -4,6 +4,7 @@ namespace Raml\Validator;
 
 use Psr\Http\Message\RequestInterface;
 use Psr\Http\Message\ResponseInterface;
+use Raml\Exception\InvalidJsonException;
 use Raml\Exception\InvalidSchemaException;
 use Raml\Exception\ValidationException;
 use Raml\NamedParameter;
@@ -116,11 +117,13 @@ class ResponseValidator
 
         $schemaBody = $this->schemaHelper->getResponseBody($method, $path, $statusCode, $contentType);
 
-        $body = $response->getBody()->getContents();
-
+        $body = json_decode($request->getBody()->getContents(), true);
+        if (json_last_error() !== JSON_ERROR_NONE) {
+            throw new InvalidJsonException(json_last_error_msg());
+        }
         try {
             $schemaBody->getValidator()->validate($body);
-        } catch (ValidationException $exception) {
+        } catch (InvalidSchemaException $exception) {
             $message = sprintf(
                 'Response body for %s %s with content type %s and status code %s does not match schema: %s',
                 strtoupper($method),

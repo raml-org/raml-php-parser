@@ -4,6 +4,7 @@ namespace Raml\Validator;
 use Exception;
 use Negotiation\Negotiator;
 use Psr\Http\Message\RequestInterface;
+use Raml\Exception\InvalidJsonException;
 use Raml\Exception\InvalidSchemaException;
 use Raml\Exception\ValidationException;
 use Raml\NamedParameter;
@@ -110,14 +111,16 @@ class RequestValidator
      */
     private function assertValidBody(RequestInterface $request)
     {
-        $body = $request->getBody()->getContents();
-
         $method = $request->getMethod();
         $path = $request->getUri()->getPath();
         $contentType = $request->getHeaderLine('Content-Type');
 
         $schemaBody = $this->schemaHelper->getRequestBody($method, $path, $contentType);
 
+        $body = json_decode($request->getBody()->getContents(), true);
+        if (json_last_error() !== JSON_ERROR_NONE) {
+            throw new InvalidJsonException(json_last_error_msg());
+        }
         try {
             $schemaBody->getValidator()->validate($body);
         } catch (InvalidSchemaException $exception) {

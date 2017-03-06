@@ -144,7 +144,7 @@ class TypeCollection implements \Iterator
                 return $type;
             }
         }
-        throw new \Exception(sprintf('No type found for name %s, list: %s', var_export($name, true), var_export($allTypes, true)));
+        throw new \Exception(sprintf('No type found for name %s, list: %s', var_export($name, true), var_export($this->collection, true)));
     }
 
     /**
