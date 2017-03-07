@@ -123,7 +123,7 @@ class TypeValidationError
 
     /**
      * @param $property
-     * @param $minValue
+     * @param $maxValue
      * @param $actualValue
      * @return TypeValidationError
      */
