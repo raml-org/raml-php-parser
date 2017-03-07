@@ -23,7 +23,8 @@ class TypeTest extends PHPUnit_Framework_TestCase
         $body = $response->getBodyByType('application/json');
         $type = $body->getType();
 
-        $this->assertTrue($type->validate(json_decode('{"title":"Good Song","artist":"An artist"}', true)));
+        $type->validate(json_decode('{"title":"Good Song","artist":"An artist"}', true));
+        self::assertTrue($type->isValid());
     }
 
     /** @test */
@@ -36,7 +37,8 @@ class TypeTest extends PHPUnit_Framework_TestCase
         $body = $response->getBodyByType('application/json');
         $type = $body->getType();
 
-        $this->assertTrue($type->validate(json_decode('{"title":"Good Song"}', true)));
+        $type->validate(json_decode('{"title":"Good Song"}', true));
+        self::assertTrue($type->isValid());
     }
 
     /** @test */
@@ -50,8 +52,9 @@ class TypeTest extends PHPUnit_Framework_TestCase
         $body = $response->getBodyByType('application/json');
         $type = $body->getType();
 
-        $this->setExpectedException('\Raml\Exception\TypeValidationException', 'Required property (string) "title" not found');
-        $this->assertTrue($type->validate(json_decode('{"artist":"An artist"}', true)));
+//        $this->setExpectedException('\Raml\Exception\TypeValidationException', 'Required property (string) "title" not found');
+        $type->validate(json_decode('{"artist":"An artist"}', true));
+        self::assertFalse($type->isValid());
     }
 
     /** @test */
@@ -65,7 +68,8 @@ class TypeTest extends PHPUnit_Framework_TestCase
         $body = $response->getBodyByType('application/json');
         $type = $body->getType();
 
-        $this->setExpectedException('\Raml\Exception\TypeValidationException', 'Required property (string) "title" not found');
+//        $this->setExpectedException('\Raml\Exception\TypeValidationException', 'Required property (string) "title" not found');
         $type->validate([]);
+        self::assertFalse($type->isValid());
     }
 }

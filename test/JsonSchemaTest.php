@@ -38,7 +38,8 @@ class JsonSchemaTest extends PHPUnit_Framework_TestCase
         $body = $response->getBodyByType('application/json');
         $schema = $body->getSchema();
 
-        $this->assertTrue($schema->validate('[{"title":"Good Song","artist":"An artist"}]'));
+        $schema->validate('[{"title":"Good Song","artist":"An artist"}]');
+        $this->assertTrue($schema->isValid());
     }
 
     /** @test */
@@ -52,8 +53,9 @@ class JsonSchemaTest extends PHPUnit_Framework_TestCase
         $body = $response->getBodyByType('application/json');
         $schema = $body->getSchema();
 
-        $this->setExpectedException('\Raml\Exception\InvalidSchemaException');
+//        $this->setExpectedException('\Raml\Exception\InvalidSchemaException');
         $schema->validate('{}');
+        $this->assertFalse($schema->isValid());
     }
 
     /** @test */
@@ -66,12 +68,13 @@ class JsonSchemaTest extends PHPUnit_Framework_TestCase
         $body = $response->getBodyByType('application/json');
         $schema = $body->getSchema();
 
-        $this->setExpectedException('\Raml\Exception\InvalidJsonException');
-        try {
-            $schema->validate('{');
-        } catch (\Raml\Exception\InvalidJsonException $e) {
-            $this->assertEquals(4, $e->getErrorCode());
-            throw $e;
-        }
+//        $this->setExpectedException('\Raml\Exception\InvalidJsonException');
+//        try {
+        $schema->validate('{');
+        $this->assertFalse($schema->isValid());
+//        } catch (\Raml\Exception\InvalidJsonException $e) {
+//            $this->assertEquals(4, $e->getErrorCode());
+//            throw $e;
+//        }
     }
 }
