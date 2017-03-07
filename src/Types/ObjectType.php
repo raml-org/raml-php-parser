@@ -155,10 +155,9 @@ class ObjectType extends Type
     /**
      * Returns a property by name
      *
-     * @param string $name Name of property.
-     *
-     * @return \Raml\TypeInterface
-     **/
+     * @param string $name
+     * @return null|Type
+     */
     public function getPropertyByName($name)
     {
         foreach ($this->properties as $property) {
@@ -166,7 +165,8 @@ class ObjectType extends Type
                 return $property;
             }
         }
-        throw new TypeValidationException(sprintf('No such property: %s', $name));
+
+        return null;
     }
 
 
@@ -310,7 +310,14 @@ class ObjectType extends Type
             }
         }
         foreach ($value as $name => $propertyValue) {
-            $this->getPropertyByName($name)->validate($propertyValue);
+            $property = $this->getPropertyByName($name);
+            if (!$property) {
+                continue;
+            }
+            $property->validate($propertyValue);
+            if (!$property->isValid()) {
+                $this->errors = array_merge($this->errors, $property->getErrors());
+            }
         }
     }
 }

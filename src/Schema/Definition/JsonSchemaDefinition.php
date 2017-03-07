@@ -17,6 +17,8 @@ class JsonSchemaDefinition implements SchemaDefinitionInterface
      */
     private $json;
 
+    private $errors = [];
+
     // --
 
     /**
@@ -36,18 +38,18 @@ class JsonSchemaDefinition implements SchemaDefinitionInterface
      * Validate a JSON string against the schema
      * - Converts the string into a JSON object then uses the JsonSchema Validator to validate
      *
-     * @param $string
+     * @param $value
      *
-     * @throws Exception
+     * @throws \Exception
      *
      * @return bool
      */
-    public function validate($string)
+    public function validate($value)
     {
-        $json = json_decode($string);
+        $json = json_decode($value);
 
         if (json_last_error() !== JSON_ERROR_NONE) {
-            throw new InvalidJsonException(json_last_error());
+            $this->errors[] = TypeValidationError::jsonValidationFailed(json_last_error_msg());
         }
 
         return $this->validateJsonObject($json);
@@ -69,10 +71,6 @@ class JsonSchemaDefinition implements SchemaDefinitionInterface
      * Validates a json object
      *
      * @param string $json
-     *
-     * @throws \Exception
-     *
-     * @return boolean
      */
     public function validateJsonObject($json)
     {
@@ -82,10 +80,10 @@ class JsonSchemaDefinition implements SchemaDefinitionInterface
         $validator->check($json, $jsonSchema);
 
         if (!$validator->isValid()) {
-            throw new InvalidSchemaException($validator->getErrors());
+            foreach ($validator->getErrors() as $error) {
+                $this->errors[] = new TypeValidationError($error['property'], $error['constraint']);
+            }
         }
-
-        return true;
     }
 
     /**
@@ -106,6 +104,7 @@ class JsonSchemaDefinition implements SchemaDefinitionInterface
     public function getJsonArray()
     {
         $jsonSchema = $this->json;
+
         return json_decode(json_encode($jsonSchema), true);
     }
 
@@ -114,7 +113,7 @@ class JsonSchemaDefinition implements SchemaDefinitionInterface
      */
     public function getErrors()
     {
-        return [];
+        return $this->errors;
     }
 
     /**
@@ -122,6 +121,6 @@ class JsonSchemaDefinition implements SchemaDefinitionInterface
      */
     public function isValid()
     {
-        return true;
+        return empty($this->errors);
     }
 }

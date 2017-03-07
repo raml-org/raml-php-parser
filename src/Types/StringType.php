@@ -144,24 +144,22 @@ class StringType extends Type
         parent::validate($value);
 
         if (!is_string($value)) {
-            throw TypeValidationException::unexpectedValueType('string', $value);
+            $this->errors[] = TypeValidationError::unexpectedValueType($this->getName(), 'string', $value);
         }
         if (!is_null($this->pattern)) {
             if (preg_match('/'.$this->pattern.'/', $value) == false) {
-                return false;
+                $this->errors[] = TypeValidationError::stringPatterMismatch($this->getName(), $this->pattern, $value);
             }
         }
         if (!is_null($this->minLength)) {
             if (strlen($value) < $this->minLength) {
-                return false;
+                $this->errors[] = TypeValidationError::stringLengthExceedsMinimum($this->getName(), $this->minLength, $value);
             }
         }
         if (!is_null($this->maxLength)) {
             if (strlen($value) > $this->maxLength) {
-                return false;
+                $this->errors[] = TypeValidationError::stringLengthExceedsMinimum($this->getName(), $this->minLength, $value);
             }
         }
-
-        return true;
     }
 }

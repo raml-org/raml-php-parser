@@ -8,15 +8,9 @@ use Raml\Types\TypeValidationError;
 interface ValidatorInterface
 {
     /**
-     * Validates a string against the schema
-     *
-     * @param $string
-     *
-     * @throws \Exception
-     *
-     * @return boolean
+     * @param $value
      */
-    public function validate($string);
+    public function validate($value);
 
     /**
      * @return TypeValidationError[]

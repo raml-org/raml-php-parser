@@ -40,6 +40,8 @@ class LazyProxyType implements TypeInterface, ArrayInstantiationInterface
      **/
     private $definition = [];
 
+    private $errors = [];
+
     /**
      * Create a new LazyProxyType from an array of data
      *
@@ -94,6 +96,16 @@ class LazyProxyType implements TypeInterface, ArrayInstantiationInterface
 
     public function discriminate($value)
     {
+        if (!$this->getWrappedObject()->discriminate($value)) {
+            if (isset($value[$this->getDiscriminator()])) {
+                $discriminatorValue = $this->getDiscriminatorValue() ?: $this->getName();
+
+                return $value[$this->getDiscriminator()] === $discriminatorValue;
+            }
+
+            return true;
+        }
+
         return true;
     }
 
@@ -115,11 +127,12 @@ class LazyProxyType implements TypeInterface, ArrayInstantiationInterface
     {
         $original = $this->getResolvedObject();
 
-        if ($original->discriminate($value)) {
-            return $original->validate($value);
+        if ($this->discriminate($value)) {
+            $original->validate($value);
+            if (!$original->isValid()) {
+                $this->errors = array_merge($this->errors, $original->getErrors());
+            }
         }
-
-        return true;
     }
 
     /**
@@ -127,7 +140,7 @@ class LazyProxyType implements TypeInterface, ArrayInstantiationInterface
      */
     public function getErrors()
     {
-        return $this->getResolvedObject()->getErrors();
+        return $this->errors;
     }
 
     /**
@@ -135,10 +148,21 @@ class LazyProxyType implements TypeInterface, ArrayInstantiationInterface
      */
     public function isValid()
     {
-        return $this->getResolvedObject()->isValid();
+        return empty($this->errors);
     }
 
-    private function getWrappedObject()
+    public function getResolvedObject()
+    {
+        $object = $this->getWrappedObject();
+        if ($object instanceof self) {
+            $definition = $object->getDefinitionRecursive();
+            return ApiDefinition::determineType($this->name, $definition);
+        }
+
+        return $object;
+    }
+
+    public function getWrappedObject()
     {
         if ($this->wrappedObject === null) {
             $typeCollection = TypeCollection::getInstance();
@@ -148,7 +172,7 @@ class LazyProxyType implements TypeInterface, ArrayInstantiationInterface
         return $this->wrappedObject;
     }
 
-    private function getDefinitionRecursive()
+    public function getDefinitionRecursive()
     {
         $type = $this->getWrappedObject();
         $typeDefinition = ($type instanceof self) ? $type->getDefinitionRecursive() : $type->getDefinition();
@@ -156,16 +180,5 @@ class LazyProxyType implements TypeInterface, ArrayInstantiationInterface
         $recursiveDefinition['type'] = $typeDefinition['type'];
 
         return $recursiveDefinition;
-    }
-
-    private function getResolvedObject()
-    {
-        $object = $this->getWrappedObject();
-        if ($object instanceof self) {
-            $definition = $object->getDefinitionRecursive();
-            return ApiDefinition::determineType($this->name, $definition);
-        }
-
-        return $object;
     }
 }

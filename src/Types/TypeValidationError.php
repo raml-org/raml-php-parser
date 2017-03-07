@@ -28,6 +28,25 @@ class TypeValidationError
         return sprintf('%s (%s)', $this->property, $this->constraint);
     }
 
+    public static function stringPatterMismatch($property, $pattern, $value)
+    {
+        return new self($property, sprintf(
+            'String %s did not match pattern %s',
+            $value,
+            $pattern
+        ));
+    }
+
+    public static function xmlValidationFailed($message)
+    {
+        return new self($message, 'xml validation');
+    }
+
+    public static function jsonValidationFailed($message)
+    {
+        return new self($message, 'json validation');
+    }
+
     public static function missingRequiredProperty($property)
     {
         return new self($property, sprintf('Missing required property'));
@@ -54,6 +73,36 @@ class TypeValidationError
             $constraint,
             gettype($actualValue),
             $actualValue
+        ));
+    }
+
+    /**
+     * @param $property
+     * @param $minLength
+     * @param $actualValue
+     * @return TypeValidationError
+     */
+    public static function stringLengthExceedsMinimum($property, $minLength, $actualValue)
+    {
+        return new self($property, sprintf(
+            'Minimum allowed length: %d, got %d',
+            $minLength,
+            strlen($actualValue)
+        ));
+    }
+
+    /**
+     * @param $property
+     * @param $maxLength
+     * @param $actualValue
+     * @return TypeValidationError
+     */
+    public static function stringLengthExceedsMaximum($property, $maxLength, $actualValue)
+    {
+        return new self($property, sprintf(
+            'Maximum allowed length: %d, got %d',
+            $maxLength,
+            strlen($actualValue)
         ));
     }
 

@@ -34,7 +34,5 @@ class TimeOnlyType extends Type
         if ($d && $d->format('HH:II:SS') !== $value) {
             $this->errors[] = TypeValidationError::unexpectedValueType($this->getName(), 'HH:II:SS', $value);
         }
-
-        return true;
     }
 }

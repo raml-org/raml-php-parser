@@ -13,6 +13,10 @@ types:
     properties:
       firstname: string
       lastname: string
+      age:
+        type: integer
+        minimum: 18
+        maximum: 70
       title?: string
       kind: string # may be used to differenciate between classes that extend from `Person`
   Phone:
@@ -42,19 +46,22 @@ types:
             type: Org # reference to global type definition
             example:
               onCall:
-                firstname: nico
-                lastname: ark
+                firstname: John
+                lastname: Flare
                 kind: AlertableAdmin
+                age: 35
                 clearanceLevel: low
                 phone: "12321"
               Head:
-                firstname: nico
-                lastname: ark
+                firstname: Nico
+                lastname: Ark
+                age: 41
                 kind: Manager
                 reports:
                   -
-                    firstname: nico
-                    lastname: ark
+                    firstname: Archie
+                    lastname: Ark
+                    age: 40
                     kind: Admin
                     clearanceLevel: low
                 phone: "123-23"

@@ -2,6 +2,7 @@
 
 namespace Raml\Schema\Definition;
 
+use LibXMLError;
 use Raml\Exception\InvalidXmlException;
 use Raml\Exception\InvalidSchemaException;
 use \Raml\Schema\SchemaDefinitionInterface;
@@ -15,6 +16,8 @@ class XmlSchemaDefinition implements SchemaDefinitionInterface
      * @var string
      */
     private $xml;
+
+    private $errors = [];
 
     // --
 
@@ -37,8 +40,6 @@ class XmlSchemaDefinition implements SchemaDefinitionInterface
      * @param $string
      *
      * @throws \Exception
-     *
-     * @return boolean
      */
     public function validate($string)
     {
@@ -50,21 +51,27 @@ class XmlSchemaDefinition implements SchemaDefinitionInterface
         $errors = libxml_get_errors();
         libxml_clear_errors();
         if ($errors) {
-            throw new InvalidXmlException($errors);
-        }
+            /** @var LibXMLError $error */
+            foreach ($errors as $error) {
+                $this->errors[] = TypeValidationError::xmlValidationFailed($error->message);
+            }
 
-        // ---
+            return;
+        }
 
         $dom->schemaValidateSource($this->xml);
         $errors = libxml_get_errors();
         libxml_clear_errors();
         if ($errors) {
-            throw new InvalidSchemaException($errors);
+            /** @var LibXMLError $error */
+            foreach ($errors as $error) {
+                $this->errors[] = TypeValidationError::xmlValidationFailed($error->message);
+            }
+
+            return;
         }
         
         libxml_use_internal_errors($originalErrorLevel);
-
-        return true;
     }
 
     /**
@@ -82,7 +89,7 @@ class XmlSchemaDefinition implements SchemaDefinitionInterface
      */
     public function getErrors()
     {
-        return [];
+        return $this->errors;
     }
 
     /**
@@ -90,6 +97,6 @@ class XmlSchemaDefinition implements SchemaDefinitionInterface
      */
     public function isValid()
     {
-        return true;
+        return empty($this->errors);
     }
 }

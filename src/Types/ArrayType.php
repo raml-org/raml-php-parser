@@ -4,6 +4,8 @@ namespace Raml\Types;
 
 use Raml\Exception\TypeValidationException;
 use Raml\Type;
+use Raml\TypeCollection;
+use Raml\TypeInterface;
 
 /**
  * ArrayType class
@@ -22,7 +24,7 @@ class ArrayType extends Type
     /**
      * Indicates the type all items in the array are inherited from. Can be a reference to an existing type or an inline type declaration.
      *
-     * @var string
+     * @var string|TypeInterface
      **/
     private $items;
 
@@ -106,17 +108,21 @@ class ArrayType extends Type
     /**
      * Get the value of Items
      *
-     * @return string
+     * @return TypeInterface
      */
     public function getItems()
     {
+        if (!($this->items instanceof TypeInterface)) {
+            $this->items = TypeCollection::getInstance()->getTypeByName($this->items);
+        }
+
         return $this->items;
     }
 
     /**
      * Set the value of Items
      *
-     * @param string $items
+     * @param string|TypeInterface $items
      *
      * @return self
      */
@@ -181,6 +187,12 @@ class ArrayType extends Type
 
         if (!is_array($value)) {
             $this->errors[] = TypeValidationError::unexpectedValueType($this->getName(), 'is array', $value);
+        }
+        foreach ($value as $valueItem) {
+            $this->getItems()->validate($valueItem);
+            if (!$this->getItems()->isValid()) {
+                $this->errors = array_merge($this->errors, $this->getItems()->getErrors());
+            }
         }
     }
 }

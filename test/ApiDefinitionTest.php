@@ -1,5 +1,8 @@
 <?php
 
+use Raml\Types\TypeValidationError;
+use Raml\ValidatorInterface;
+
 class ApiDefinitionTest extends PHPUnit_Framework_TestCase
 {
     /**
@@ -135,20 +138,23 @@ class ApiDefinitionTest extends PHPUnit_Framework_TestCase
 
         $validResponse = '{
             "onCall": {
-                "firstname": "nico",
-                "lastname": "ark",
+                "firstname": "John",
+                "lastname": "Flare",
+                "age": 41,
                 "kind": "AlertableAdmin",
                 "clearanceLevel": "low",
                 "phone": "12321"
             },
             "Head": {
-                "firstname": "nico",
-                "lastname": "ark",
+                "firstname": "Nico",
+                "lastname": "Ark",
+                "age": 41,
                 "kind": "Manager",
                 "reports": [
                     {
-                        "firstname": "nico",
-                        "lastname": "ark",
+                        "firstname": "Archie",
+                        "lastname": "Ark",
+                        "age": 40,
                         "kind": "Admin",
                         "clearanceLevel": "low"
                     }
@@ -157,7 +163,8 @@ class ApiDefinitionTest extends PHPUnit_Framework_TestCase
             }
         }';
         $type = $body->getType();
-        $this->assertTrue($type->validate(json_decode($validResponse, true)));
+        $type->validate(json_decode($validResponse, true));
+        self::assertTrue($type->isValid());
     }
 
     /** @test */
@@ -170,11 +177,63 @@ class ApiDefinitionTest extends PHPUnit_Framework_TestCase
 
         $invalidResponse = [
             'onCall' => 'this is not an object',
-            'Head' => 'this is not an object'
+            'Head' => 'this is not a Head object'
         ];
 
-        $this->setExpectedException('\Raml\Exception\TypeValidationException', 'Value expected to be object, got (string) "this is not an object"');
         $type->validate($invalidResponse);
+        $this->assertValidationFailedWithErrors(
+            $type,
+            [
+                new TypeValidationError('Manager', 'Expected object, got (string) "this is not an object"'),
+                new TypeValidationError('AlertableAdmin', 'Expected object, got (string) "this is not an object"'),
+                new TypeValidationError('Head', 'Expected object, got (string) "this is not a Head object"'),
+            ]
+        );
+    }
+
+    /** @test */
+    public function shouldRejectInvalidIntegerParameterResponse()
+    {
+        $api = $this->parser->parse(__DIR__.'/fixture/raml-1.0/complexTypes.raml');
+        $body = $api->getResourceByPath('/orgs/{orgId}')->getMethod('get')->getResponse(200)->getBodyByType('application/json');
+        /* @var $body \Raml\Body */
+        $type = $body->getType();
+
+        $invalidResponse = [
+            'onCall' => [
+                "firstname" => "John",
+                "lastname" => "Flare",
+                "age" => 18,
+                "kind" => "AlertableAdmin",
+                "clearanceLevel" => "low",
+                "phone" => "12321",
+            ],
+            'Head' => [
+                "firstname" => "Nico",
+                "lastname" => "Ark",
+                "age" => 71,
+                "kind" => "Manager",
+                "reports" => [
+                    [
+                        "firstname" => "Archie",
+                        "lastname" => "Ark",
+                        "kind" => "Admin",
+                        "age" => 17,
+                        "clearanceLevel" => "low",
+                    ],
+                ],
+                "phone" => "123-23"
+            ]
+        ];
+
+        $type->validate($invalidResponse);
+        $this->assertValidationFailedWithErrors(
+            $type,
+            [
+                new TypeValidationError('age', 'Maximum allowed value: 70, got 71'),
+                new TypeValidationError('age', 'Minimum allowed value: 18, got 17'),
+            ]
+        );
     }
 
     /** @test */
@@ -194,5 +253,23 @@ class ApiDefinitionTest extends PHPUnit_Framework_TestCase
         $this->setExpectedException('Raml\Exception\BadParameter\InvalidProtocolException');
 
         $this->parser->parse(__DIR__.'/fixture/protocols/invalidProtocolsSpecified.raml');
+    }
+
+    /**
+     * @param ValidatorInterface $validator
+     * @param TypeValidationError[] $errors
+     */
+    private function assertValidationFailedWithErrors(ValidatorInterface $validator, $errors)
+    {
+        self::assertFalse($validator->isValid(), 'Validator expected to fail');
+        foreach ($errors as $error) {
+            self::assertContains(
+                $error,
+                $validator->getErrors(),
+                $message = sprintf('Validator expected to contain error: %s', $error->__toString()),
+                $ignoreCase = false,
+                $checkObjectidentity = false
+            );
+        }
     }
 }

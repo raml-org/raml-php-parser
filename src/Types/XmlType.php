@@ -2,6 +2,7 @@
 
 namespace Raml\Types;
 
+use LibXMLError;
 use Raml\Type;
 
 /**
@@ -40,8 +41,6 @@ class XmlType extends Type
      * Validate an XML string against the schema
      *
      * @param $string
-     *
-     * @return bool
      */
     public function validate($string)
     {
@@ -53,7 +52,12 @@ class XmlType extends Type
         $errors = libxml_get_errors();
         libxml_clear_errors();
         if ($errors) {
-            return false;
+            /** @var LibXMLError $error */
+            foreach ($errors as $error) {
+                $this->errors[] = TypeValidationError::xmlValidationFailed($error->message);
+            }
+
+            return;
         }
 
         // ---
@@ -62,11 +66,13 @@ class XmlType extends Type
         $errors = libxml_get_errors();
         libxml_clear_errors();
         if ($errors) {
-            return false;
+            foreach ($errors as $error) {
+                $this->errors[] = TypeValidationError::xmlValidationFailed($error->message);
+            }
+
+            return;
         }
         
         libxml_use_internal_errors($originalErrorLevel);
-
-        return true;
     }
 }

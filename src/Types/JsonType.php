@@ -54,7 +54,7 @@ class JsonType extends Type
 
         if (!$validator->isValid()) {
             foreach ($validator->getErrors() as $error) {
-                $this->errors[] = new TypeValidationError($error['']);
+                $this->errors[] = new TypeValidationError($error['property'], $error['constraint']);
             }
         }
     }
