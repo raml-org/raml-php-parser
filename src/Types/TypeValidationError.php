@@ -28,10 +28,10 @@ class TypeValidationError
         return sprintf('%s (%s)', $this->property, $this->constraint);
     }
 
-    public static function stringPatterMismatch($property, $pattern, $value)
+    public static function stringPatternMismatch($property, $pattern, $value)
     {
         return new self($property, sprintf(
-            'String %s did not match pattern %s',
+            'String "%s" did not match pattern /%s/',
             $value,
             $pattern
         ));

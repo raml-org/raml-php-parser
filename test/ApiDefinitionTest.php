@@ -203,7 +203,7 @@ class ApiDefinitionTest extends PHPUnit_Framework_TestCase
             'onCall' => [
                 "firstname" => "John",
                 "lastname" => "Flare",
-                "age" => 18,
+                "age" => 18.5,
                 "kind" => "AlertableAdmin",
                 "clearanceLevel" => "low",
                 "phone" => "12321",
@@ -232,6 +232,53 @@ class ApiDefinitionTest extends PHPUnit_Framework_TestCase
             [
                 new TypeValidationError('age', 'Maximum allowed value: 70, got 71'),
                 new TypeValidationError('age', 'Minimum allowed value: 18, got 17'),
+                new TypeValidationError('age', 'Expected integer, got (double) "18.5"'),
+            ]
+        );
+    }
+
+    /** @test */
+    public function shouldRejectInvalidStringParameterResponse()
+    {
+        $api = $this->parser->parse(__DIR__.'/fixture/raml-1.0/complexTypes.raml');
+        $body = $api->getResourceByPath('/orgs/{orgId}')->getMethod('get')->getResponse(200)->getBodyByType('application/json');
+        /* @var $body \Raml\Body */
+        $type = $body->getType();
+
+        $invalidResponse = [
+            'onCall' => [
+                "firstname" => "John",
+                "lastname" => "F",
+                "age" => 30,
+                "kind" => "AlertableAdmin",
+                "clearanceLevel" => "low",
+                "phone" => "12321",
+            ],
+            'Head' => [
+                "firstname" => "Nico von Teufelspieler, the true duke of northern Blasphomores",
+                "lastname" => "Ark",
+                "age" => 30,
+                "kind" => "Manager",
+                "reports" => [
+                    [
+                        "firstname" => "Archie",
+                        "lastname" => "Ark",
+                        "kind" => "Admin",
+                        "age" => 30,
+                        "clearanceLevel" => "low",
+                    ],
+                ],
+                "phone" => "123-23 33 22"
+            ]
+        ];
+
+        $type->validate($invalidResponse);
+        $this->assertValidationFailedWithErrors(
+            $type,
+            [
+                new TypeValidationError('firstname', 'Maximum allowed length: 50, got 62'),
+                new TypeValidationError('lastname', 'Minimum allowed length: 2, got 1'),
+                new TypeValidationError('Phone', 'String "123-23 33 22" did not match pattern /^[0-9|-]+$/'),
             ]
         );
     }

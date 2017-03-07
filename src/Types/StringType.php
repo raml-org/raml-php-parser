@@ -148,7 +148,7 @@ class StringType extends Type
         }
         if (!is_null($this->pattern)) {
             if (preg_match('/'.$this->pattern.'/', $value) == false) {
-                $this->errors[] = TypeValidationError::stringPatterMismatch($this->getName(), $this->pattern, $value);
+                $this->errors[] = TypeValidationError::stringPatternMismatch($this->getName(), $this->pattern, $value);
             }
         }
         if (!is_null($this->minLength)) {
@@ -158,7 +158,7 @@ class StringType extends Type
         }
         if (!is_null($this->maxLength)) {
             if (strlen($value) > $this->maxLength) {
-                $this->errors[] = TypeValidationError::stringLengthExceedsMinimum($this->getName(), $this->minLength, $value);
+                $this->errors[] = TypeValidationError::stringLengthExceedsMaximum($this->getName(), $this->maxLength, $value);
             }
         }
     }

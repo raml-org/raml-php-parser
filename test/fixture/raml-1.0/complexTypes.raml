@@ -11,8 +11,14 @@ types:
     type: object
     discriminator: kind # reference to the `kind` property of `Person`
     properties:
-      firstname: string
-      lastname: string
+      firstname:
+        type: string
+        minLength: 2
+        maxLength: 50
+      lastname:
+        type: string
+        minLength: 2
+        maxLength: 50
       age:
         type: integer
         minimum: 18
