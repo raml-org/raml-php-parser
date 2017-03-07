@@ -2,8 +2,6 @@
 
 namespace Raml\Types;
 
-use Raml\Exception\TypeValidationException;
-
 /**
  * IntegerType class
  * 

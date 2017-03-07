@@ -2,10 +2,7 @@
 
 namespace Raml\Types;
 
-
-use Raml\Exception\TypeValidationException;
 use Raml\Type;
-
 
 /**
  * StringType class

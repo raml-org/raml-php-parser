@@ -2,9 +2,7 @@
 
 namespace Raml\Types;
 
-use Raml\Exception\TypeValidationException;
 use Raml\Type;
-
 
 /**
  * NullType class

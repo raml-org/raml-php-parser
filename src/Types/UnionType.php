@@ -3,7 +3,6 @@
 namespace Raml\Types;
 
 use Raml\Type;
-use Raml\TypeCollection;
 use Raml\ApiDefinition;
 use Raml\TypeInterface;
 

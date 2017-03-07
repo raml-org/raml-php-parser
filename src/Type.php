@@ -2,10 +2,9 @@
 
 namespace Raml;
 
-use Raml\Exception\TypeValidationException;
 use Raml\Types;
+use Raml\Types\ObjectType;
 use Raml\Types\TypeValidationError;
-use Raml\Utility\StringTransformer;
 
 /**
  * Type class

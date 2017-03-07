@@ -3,7 +3,6 @@
 namespace Raml\Types;
 
 use DateTime;
-use Raml\Exception\TypeValidationException;
 use Raml\Type;
 
 /**

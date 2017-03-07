@@ -2,13 +2,8 @@
 
 namespace Raml\Types;
 
-use Raml\Exception\ExpectedObjectException;
-use Raml\Exception\MissingRequiredPropertyException;
 use Raml\Type;
 use Raml\ApiDefinition;
-use Raml\TypeCollection;
-use Raml\Exception\TypeValidationException;
-use Raml\TypeInterface;
 
 /**
  * ObjectType class
