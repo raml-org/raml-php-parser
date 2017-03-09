@@ -4,9 +4,11 @@ namespace Raml\Validator;
 
 use Psr\Http\Message\RequestInterface;
 use Psr\Http\Message\ResponseInterface;
+use Raml\Exception\InvalidJsonException;
 use Raml\Exception\InvalidSchemaException;
 use Raml\Exception\ValidationException;
 use Raml\NamedParameter;
+use Raml\Types\TypeValidationError;
 
 class ResponseValidator
 {
@@ -116,25 +118,20 @@ class ResponseValidator
 
         $schemaBody = $this->schemaHelper->getResponseBody($method, $path, $statusCode, $contentType);
 
-        if (($schema = $schemaBody->getSchema()) === null) {
-            return;
-        }
+        $body = ContentConverter::convertStringByContentType($response->getBody()->getContents(), $contentType);
 
-        $body = $response->getBody()->getContents();
-
-        try {
-            $schema->validate($body);
-        } catch (InvalidSchemaException $exception) {
+        $schemaBody->getValidator()->validate($body);
+        if ($schemaBody->getValidator()->getErrors()) {
             $message = sprintf(
                 'Response body for %s %s with content type %s and status code %s does not match schema: %s',
                 strtoupper($method),
                 $path,
                 $contentType,
                 $statusCode,
-                $this->getSchemaErrorsAsString($exception->getErrors())
+                $this->getTypeValidationErrorsAsString($schemaBody->getValidator()->getErrors())
             );
 
-            throw new ValidatorResponseException($message, 0, $exception);
+            throw new ValidatorResponseException($message);
         }
     }
 
@@ -149,14 +146,10 @@ class ResponseValidator
         }, $errors));
     }
 
-    /**
-     * @param array $errors
-     * @return string
-     */
-    private function getSchemaErrorsAsString(array $errors)
+    private function getTypeValidationErrorsAsString(array $errors)
     {
-        return join(', ', array_map(function (array $error) {
-            return sprintf('%s (%s)', $error['property'], $error['constraint']);
+        return join(', ', array_map(function (TypeValidationError $error) {
+            return $error->__toString();
         }, $errors));
     }
 }

@@ -4,9 +4,11 @@ namespace Raml\Validator;
 use Exception;
 use Negotiation\Negotiator;
 use Psr\Http\Message\RequestInterface;
+use Raml\Exception\InvalidJsonException;
 use Raml\Exception\InvalidSchemaException;
 use Raml\Exception\ValidationException;
 use Raml\NamedParameter;
+use Raml\Types\TypeValidationError;
 
 class RequestValidator
 {
@@ -110,26 +112,25 @@ class RequestValidator
      */
     private function assertValidBody(RequestInterface $request)
     {
-        $body = $request->getBody()->getContents();
-
         $method = $request->getMethod();
         $path = $request->getUri()->getPath();
         $contentType = $request->getHeaderLine('Content-Type');
 
         $schemaBody = $this->schemaHelper->getRequestBody($method, $path, $contentType);
 
-        try {
-            $schemaBody->getSchema()->validate($body);
-        } catch (InvalidSchemaException $exception) {
+        $body = ContentConverter::convertStringByContentType($request->getBody()->getContents(), $contentType);
+
+        $schemaBody->getValidator()->validate($body);
+        if ($schemaBody->getValidator()->getErrors()) {
             $message = sprintf(
                 'Request body for %s %s with content type %s does not match schema: %s',
                 strtoupper($method),
                 $path,
                 $contentType,
-                $this->getSchemaErrorsAsString($exception->getErrors())
+                $this->getTypeValidationErrorsAsString($schemaBody->getValidator()->getErrors())
             );
 
-            throw new ValidatorRequestException($message, 0, $exception);
+            throw new ValidatorRequestException($message);
         }
     }
 
@@ -184,5 +185,12 @@ class RequestValidator
         if ($accept === null) {
             throw new ValidatorRequestException('Invalid Media type');
         }
+    }
+
+    private function getTypeValidationErrorsAsString(array $errors)
+    {
+        return join(', ', array_map(function (TypeValidationError $error) {
+            return $error->__toString();
+        }, $errors));
     }
 }
