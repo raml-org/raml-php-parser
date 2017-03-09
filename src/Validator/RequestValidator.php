@@ -8,6 +8,7 @@ use Raml\Exception\InvalidJsonException;
 use Raml\Exception\InvalidSchemaException;
 use Raml\Exception\ValidationException;
 use Raml\NamedParameter;
+use Raml\Types\TypeValidationError;
 
 class RequestValidator
 {
@@ -117,22 +118,19 @@ class RequestValidator
 
         $schemaBody = $this->schemaHelper->getRequestBody($method, $path, $contentType);
 
-        $body = json_decode($request->getBody()->getContents(), true);
-        if (json_last_error() !== JSON_ERROR_NONE) {
-            throw new InvalidJsonException(json_last_error_msg());
-        }
-        try {
-            $schemaBody->getValidator()->validate($body);
-        } catch (InvalidSchemaException $exception) {
+        $body = ContentConverter::convertStringByContentType($request->getBody()->getContents(), $contentType);
+
+        $schemaBody->getValidator()->validate($body);
+        if ($schemaBody->getValidator()->getErrors()) {
             $message = sprintf(
                 'Request body for %s %s with content type %s does not match schema: %s',
                 strtoupper($method),
                 $path,
                 $contentType,
-                $this->getSchemaErrorsAsString($exception->getErrors())
+                $this->getTypeValidationErrorsAsString($schemaBody->getValidator()->getErrors())
             );
 
-            throw new ValidatorRequestException($message, 0, $exception);
+            throw new ValidatorRequestException($message);
         }
     }
 
@@ -187,5 +185,12 @@ class RequestValidator
         if ($accept === null) {
             throw new ValidatorRequestException('Invalid Media type');
         }
+    }
+
+    private function getTypeValidationErrorsAsString(array $errors)
+    {
+        return join(', ', array_map(function (TypeValidationError $error) {
+            return $error->__toString();
+        }, $errors));
     }
 }

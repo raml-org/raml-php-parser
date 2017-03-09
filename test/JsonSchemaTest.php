@@ -38,7 +38,7 @@ class JsonSchemaTest extends PHPUnit_Framework_TestCase
         $body = $response->getBodyByType('application/json');
         $schema = $body->getSchema();
 
-        $schema->validate('[{"title":"Good Song","artist":"An artist"}]');
+        $schema->validate(json_decode('[{"title":"Good Song","artist":"An artist"}]'));
         $this->assertTrue($schema->isValid());
     }
 

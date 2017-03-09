@@ -118,35 +118,20 @@ class ResponseValidator
 
         $schemaBody = $this->schemaHelper->getResponseBody($method, $path, $statusCode, $contentType);
 
-        $body = json_decode($response->getBody()->getContents(), true);
-        if (json_last_error() !== JSON_ERROR_NONE) {
-            throw new InvalidJsonException(json_last_error_msg());
-        }
-        try {
-            $schemaBody->getValidator()->validate($body);
-            if ($schemaBody->getValidator()->getErrors()) {
-                $message = sprintf(
-                    'Response body for %s %s with content type %s and status code %s does not match schema: %s',
-                    strtoupper($method),
-                    $path,
-                    $contentType,
-                    $statusCode,
-                    $this->getTypeValidationErrorsAsString($schemaBody->getValidator()->getErrors())
-                );
+        $body = ContentConverter::convertStringByContentType($response->getBody()->getContents(), $contentType);
 
-                throw new ValidatorResponseException($message);
-            }
-        } catch (InvalidSchemaException $exception) {
+        $schemaBody->getValidator()->validate($body);
+        if ($schemaBody->getValidator()->getErrors()) {
             $message = sprintf(
                 'Response body for %s %s with content type %s and status code %s does not match schema: %s',
                 strtoupper($method),
                 $path,
                 $contentType,
                 $statusCode,
-                $this->getSchemaErrorsAsString($exception->getErrors())
+                $this->getTypeValidationErrorsAsString($schemaBody->getValidator()->getErrors())
             );
 
-            throw new ValidatorResponseException($message, 0, $exception);
+            throw new ValidatorResponseException($message);
         }
     }
 
@@ -158,17 +143,6 @@ class ResponseValidator
     {
         return join(', ', array_map(function (NamedParameter $parameter) {
             return $parameter->getDisplayName();
-        }, $errors));
-    }
-
-    /**
-     * @param array $errors
-     * @return string
-     */
-    private function getSchemaErrorsAsString(array $errors)
-    {
-        return join(', ', array_map(function (array $error) {
-            return sprintf('%s (%s)', $error['property'], $error['constraint']);
         }, $errors));
     }
 

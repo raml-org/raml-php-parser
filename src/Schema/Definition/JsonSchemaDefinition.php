@@ -2,8 +2,6 @@
 
 namespace Raml\Schema\Definition;
 
-use Raml\Exception\InvalidJsonException;
-use Raml\Exception\InvalidSchemaException;
 use \Raml\Schema\SchemaDefinitionInterface;
 use \JsonSchema\Validator;
 use Raml\Types\TypeValidationError;
@@ -46,13 +44,16 @@ class JsonSchemaDefinition implements SchemaDefinitionInterface
      */
     public function validate($value)
     {
-        $json = json_decode($value);
+        $validator = new Validator();
+        $jsonSchema = $this->json;
 
-        if (json_last_error() !== JSON_ERROR_NONE) {
-            $this->errors[] = TypeValidationError::jsonValidationFailed(json_last_error_msg());
+        $validator->check($value, $jsonSchema);
+
+        if (!$validator->isValid()) {
+            foreach ($validator->getErrors() as $error) {
+                $this->errors[] = new TypeValidationError($error['property'], $error['constraint']);
+            }
         }
-
-        return $this->validateJsonObject($json);
     }
 
     /**
@@ -63,27 +64,6 @@ class JsonSchemaDefinition implements SchemaDefinitionInterface
     public function __toString()
     {
         return json_encode($this->json);
-    }
-
-    // ---
-
-    /**
-     * Validates a json object
-     *
-     * @param string $json
-     */
-    public function validateJsonObject($json)
-    {
-        $validator = new Validator();
-        $jsonSchema = $this->json;
-
-        $validator->check($json, $jsonSchema);
-
-        if (!$validator->isValid()) {
-            foreach ($validator->getErrors() as $error) {
-                $this->errors[] = new TypeValidationError($error['property'], $error['constraint']);
-            }
-        }
     }
 
     /**

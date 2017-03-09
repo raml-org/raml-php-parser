@@ -2,7 +2,7 @@
 
 namespace Raml\Types;
 
-use LibXMLError;
+use DOMDocument;
 use Raml\Type;
 
 /**
@@ -42,27 +42,16 @@ class XmlType extends Type
      *
      * @param $string
      */
-    public function validate($string)
+    public function validate($value)
     {
-        $dom = new \DOMDocument;
-
-        $originalErrorLevel = libxml_use_internal_errors(true);
-
-        $dom->loadXML($string);
-        $errors = libxml_get_errors();
-        libxml_clear_errors();
-        if ($errors) {
-            /** @var LibXMLError $error */
-            foreach ($errors as $error) {
-                $this->errors[] = TypeValidationError::xmlValidationFailed($error->message);
-            }
+        if (!$value instanceof DOMDocument) {
+            $this->errors[] = TypeValidationError::xmlValidationFailed('Expected value of type DOMDocument');
 
             return;
         }
 
-        // ---
-
-        $dom->schemaValidateSource($this->xml);
+        $originalErrorLevel = libxml_use_internal_errors(true);
+        $value->schemaValidateSource($this->xml);
         $errors = libxml_get_errors();
         libxml_clear_errors();
         if ($errors) {
