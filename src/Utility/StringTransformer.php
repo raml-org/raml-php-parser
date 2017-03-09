@@ -10,7 +10,8 @@ class StringTransformer
             UPPER_CAMEL_CASE      = 8,
             UPPER_HYPHEN_CASE     = 16,
             UPPER_UNDERSCORE_CASE = 32;
-    const POSSIBLE_TRANSFORMATIONS = [
+
+    private static $possibleTransformations = [
         self::LOWER_CAMEL_CASE,
         self::LOWER_HYPHEN_CASE,
         self::LOWER_UNDERSCORE_CASE,
@@ -29,7 +30,7 @@ class StringTransformer
      **/
     public static function convertString($string, $convertTo)
     {
-        if (!in_array($convertTo, self::POSSIBLE_TRANSFORMATIONS))
+        if (!in_array($convertTo, self::$possibleTransformations))
         {
             throw new \Exception('Invalid parameter "'.$convertTo.'" given for '.__CLASS__.__METHOD__);
         }
