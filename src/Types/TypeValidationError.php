@@ -62,6 +62,22 @@ class TypeValidationError
     }
 
     /**
+     * @param $property
+     * @param $possibleValues
+     * @param $actualValue
+     * @return TypeValidationError
+     */
+    public static function unexpectedValue($property, $possibleValues, $actualValue)
+    {
+        return new self($property, sprintf(
+            'Expected any of [%s], got (%s) "%s"',
+            implode($possibleValues, ', '),
+            gettype($actualValue),
+            $actualValue
+        ));
+    }
+
+    /**
      * @param $constraint
      * @param $actualValue
      * @return TypeValidationError

@@ -13,11 +13,11 @@ use Raml\Exception\BadParameter\InvalidSchemaDefinitionException;
 use Raml\Exception\BadParameter\InvalidProtocolException;
 use Raml\Exception\MutuallyExclusiveElementsException;
 
+use Raml\Types\EnumType;
 use Raml\Utility\StringTransformer;
 
 use Raml\Types\UnionType;
 use Raml\Types\ArrayType;
-use Raml\Types\ObjectType;
 use Raml\Types\LazyProxyType;
 
 /**
@@ -601,8 +601,11 @@ class ApiDefinition implements ArrayInstantiationInterface
         } else {
             throw new \Exception('Invalid datatype for $definition parameter.');
         }
-        
-        
+
+        if (isset($definition['enum'])) {
+            return EnumType::createFromArray($name, $definition);
+        }
+
         $type = $definition['type'];
 
         if (!in_array($type, ['','any'])) {

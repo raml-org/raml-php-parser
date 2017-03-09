@@ -284,6 +284,49 @@ class ApiDefinitionTest extends PHPUnit_Framework_TestCase
     }
 
     /** @test */
+    public function shouldRejectInvalidEnumParameterResponse()
+    {
+        $api = $this->parser->parse(__DIR__.'/fixture/raml-1.0/complexTypes.raml');
+        $body = $api->getResourceByPath('/orgs/{orgId}')->getMethod('get')->getResponse(200)->getBodyByType('application/json');
+        /* @var $body \Raml\Body */
+        $type = $body->getType();
+
+        $invalidResponse = [
+            'onCall' => [
+                "firstname" => "John",
+                "lastname" => "Flare",
+                "age" => 30,
+                "kind" => "AlertableAdmin",
+                "clearanceLevel" => "average",
+                "phone" => "12321",
+            ],
+            'Head' => [
+                "firstname" => "Nico",
+                "lastname" => "Ark",
+                "age" => 30,
+                "kind" => "Manager",
+                "reports" => [
+                    [
+                        "firstname" => "Archie",
+                        "lastname" => "Ark",
+                        "kind" => "Admin",
+                        "age" => 30,
+                    ],
+                ],
+                "phone" => "123-23"
+            ]
+        ];
+
+        $type->validate($invalidResponse);
+        $this->assertValidationFailedWithErrors(
+            $type,
+            [
+                new TypeValidationError('clearanceLevel', 'Expected any of [low, high], got (string) "average"'),
+            ]
+        );
+    }
+
+    /** @test */
     public function shouldReturnProtocolsIfSpecified()
     {
         $api = $this->parser->parse(__DIR__.'/fixture/protocols/protocolsSpecified.raml');
