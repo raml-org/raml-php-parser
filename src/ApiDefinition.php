@@ -13,7 +13,6 @@ use Raml\Exception\BadParameter\InvalidSchemaDefinitionException;
 use Raml\Exception\BadParameter\InvalidProtocolException;
 use Raml\Exception\MutuallyExclusiveElementsException;
 
-use Raml\Types\EnumType;
 use Raml\Utility\StringTransformer;
 
 use Raml\Types\UnionType;
@@ -600,10 +599,6 @@ class ApiDefinition implements ArrayInstantiationInterface
             }
         } else {
             throw new \Exception('Invalid datatype for $definition parameter.');
-        }
-
-        if (isset($definition['enum'])) {
-            return EnumType::createFromArray($name, $definition);
         }
 
         $type = $definition['type'];

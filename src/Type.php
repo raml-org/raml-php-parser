@@ -54,6 +54,11 @@ class Type implements ArrayInstantiationInterface, TypeInterface
     private $definition;
 
     /**
+     * @var array
+     */
+    private $enum = [];
+
+    /**
      *  Create new type
      *
      *  @param string   $name
@@ -83,6 +88,9 @@ class Type implements ArrayInstantiationInterface, TypeInterface
         }
         if (isset($data['required'])) {
             $class->setRequired($data['required']);
+        }
+        if (isset($data['enum'])) {
+            $class->setEnum($data['enum']);
         }
         if (substr($name, -1) === '?') {
             $class->setRequired(false);
@@ -201,6 +209,22 @@ class Type implements ArrayInstantiationInterface, TypeInterface
     }
 
     /**
+     * @return array
+     */
+    public function getEnum()
+    {
+        return $this->enum;
+    }
+
+    /**
+     * @param array $enum
+     */
+    public function setEnum(array $enum)
+    {
+        $this->enum = $enum;
+    }
+
+    /**
      * Get the value of Parent
      *
      * @return ObjectType
@@ -309,6 +333,10 @@ class Type implements ArrayInstantiationInterface, TypeInterface
     {
         if ($this->required && !isset($value)) {
             $this->errors[] = new TypeValidationError($this->getName(), 'required');
+        }
+
+        if ($this->getEnum() && !in_array($value, $this->getEnum(), true)) {
+            $this->errors[] = TypeValidationError::unexpectedValue($this->getName(), $this->getEnum(), $value);
         }
     }
 
