@@ -4,8 +4,6 @@ namespace Raml\Validator;
 use Exception;
 use Negotiation\Negotiator;
 use Psr\Http\Message\RequestInterface;
-use Raml\Exception\InvalidJsonException;
-use Raml\Exception\InvalidSchemaException;
 use Raml\Exception\ValidationException;
 use Raml\NamedParameter;
 use Raml\Types\TypeValidationError;

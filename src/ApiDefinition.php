@@ -13,7 +13,6 @@ use Raml\Exception\BadParameter\InvalidSchemaDefinitionException;
 use Raml\Exception\BadParameter\InvalidProtocolException;
 use Raml\Exception\MutuallyExclusiveElementsException;
 
-use Raml\Types\EnumType;
 use Raml\Utility\StringTransformer;
 
 use Raml\Types\UnionType;
