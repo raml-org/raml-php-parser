@@ -54,6 +54,11 @@ class Type implements ArrayInstantiationInterface, TypeInterface
     private $definition;
 
     /**
+     * @var array
+     */
+    private $possibleValues = [];
+
+    /**
      *  Create new type
      *
      *  @param string   $name
@@ -83,6 +88,9 @@ class Type implements ArrayInstantiationInterface, TypeInterface
         }
         if (isset($data['required'])) {
             $class->setRequired($data['required']);
+        }
+        if (isset($data['enum'])) {
+            $class->setPossibleValues($data['enum']);
         }
         if (substr($name, -1) === '?') {
             $class->setRequired(false);
@@ -310,6 +318,10 @@ class Type implements ArrayInstantiationInterface, TypeInterface
         if ($this->required && !isset($value)) {
             $this->errors[] = new TypeValidationError($this->getName(), 'required');
         }
+
+        if ($this->getPossibleValues() && !in_array($value, $this->getPossibleValues(), true)) {
+            $this->errors[] = TypeValidationError::unexpectedValue($this->getName(), $this->getPossibleValues(), $value);
+        }
     }
 
     /**
@@ -326,5 +338,21 @@ class Type implements ArrayInstantiationInterface, TypeInterface
     public function isValid()
     {
         return empty($this->errors);
+    }
+
+    /**
+     * @param array $enum
+     */
+    public function setPossibleValues(array $enum)
+    {
+        $this->possibleValues = $enum;
+    }
+
+    /**
+     * @return array
+     */
+    public function getPossibleValues()
+    {
+        return $this->possibleValues;
     }
 }

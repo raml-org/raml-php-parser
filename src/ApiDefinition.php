@@ -602,10 +602,6 @@ class ApiDefinition implements ArrayInstantiationInterface
             throw new \Exception('Invalid datatype for $definition parameter.');
         }
 
-        if (isset($definition['enum'])) {
-            return EnumType::createFromArray($name, $definition);
-        }
-
         $type = $definition['type'];
 
         if (!in_array($type, ['','any'])) {
