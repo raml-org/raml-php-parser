@@ -123,6 +123,15 @@ class LazyProxyType implements TypeInterface, ArrayInstantiationInterface
         return call_user_func_array(array($original, $name), $params);
     }
 
+    public function getRequired()
+    {
+        if (isset($this->definition['required'])) {
+            return $this->definition['required'];
+        }
+
+        return $this->getResolvedObject()->getRequired();
+    }
+
     public function validate($value)
     {
         $original = $this->getResolvedObject();

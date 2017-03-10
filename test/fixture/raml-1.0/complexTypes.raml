@@ -33,16 +33,22 @@ types:
     properties:
       reports: Person[] # inherits all properties from type `Person`; array type where `[]` is a shortcut
       phone:  Phone
+      clearanceLevel:
+        type: ClearanceLevels
+        required: false
   Admin:
     type: Person # inherits all properties from type `Person`
     properties:
-      clearanceLevel:
-        enum: [ low, high ]
+      clearanceLevel: ClearanceLevels
   AlertableAdmin:
     type: Admin # inherits all properties from type `Admin`
     properties:
       phone: Phone # inherits all properties from type `Phone`; uses shortcut syntax
   Alertable: Manager | AlertableAdmin # union type; either a `Manager` or `AlertableAdmin`
+  ClearanceLevels:
+    enum:
+      - low
+      - high
 /orgs/{orgId}:
   get:
     responses:
