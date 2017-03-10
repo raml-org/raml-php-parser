@@ -13,18 +13,19 @@ class ContentConverter
 
     private static $xmlTypes = [
         'application/xml',
-        'application/soap+xml',
         'text/xml',
     ];
 
     public static function convertStringByContentType($string, $contentType)
     {
-        if (in_array($contentType, self::$jsonTypes, true)) {
-            $value = json_decode($string);
+        $generalContentType = self::parseMediaRange($contentType);
+
+        if (in_array($generalContentType, self::$jsonTypes, true)) {
+            $value = json_decode($string, true);
             if (json_last_error() !== JSON_ERROR_NONE) {
                 throw new InvalidJsonException(json_last_error_msg());
             }
-        } elseif (in_array($contentType, self::$xmlTypes, true)) {
+        } elseif (in_array($generalContentType, self::$xmlTypes, true)) {
             $value = new \DOMDocument;
 
             $originalErrorLevel = libxml_use_internal_errors(true);
@@ -43,5 +44,33 @@ class ContentConverter
         }
 
         return $value;
+    }
+
+    private static function parseMediaRange($mediaRange)
+    {
+        $parts = explode(';', $mediaRange);
+        $params = array();
+        foreach ($parts as $i => $param) {
+            if (strpos($param, '=') !== false) {
+                list($k, $v) = explode('=', trim($param));
+                $params[$k] = $v;
+            }
+        }
+        $fullType = trim($parts[0]);
+        if ($fullType == '*') {
+            return '*/*';
+        }
+        list($type, $subtype) = explode('/', $fullType);
+        if (!$subtype) {
+            throw new \UnexpectedValueException('Malformed media-range: '.$mediaRange);
+        }
+        $plusPos = strpos($subtype, '+');
+        if (false !== $plusPos) {
+            $genericSubtype = substr($subtype, $plusPos + 1);
+        } else {
+            $genericSubtype = $subtype;
+        }
+
+        return sprintf('%s/%s', trim($type), trim($genericSubtype));
     }
 }

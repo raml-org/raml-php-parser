@@ -164,7 +164,7 @@ class ApiDefinitionTest extends PHPUnit_Framework_TestCase
         }';
         $type = $body->getType();
         $type->validate(json_decode($validResponse, true));
-        self::assertTrue($type->isValid());
+        self::assertTrue($type->isValid(), sprintf("Validation failed with following errors: %s", implode(', ', array_map('strval', $type->getErrors()))));
     }
 
     /** @test */
@@ -321,7 +321,7 @@ class ApiDefinitionTest extends PHPUnit_Framework_TestCase
         $this->assertValidationFailedWithErrors(
             $type,
             [
-                new TypeValidationError('clearanceLevel', 'Expected any of [low, high], got (string) "average"'),
+                new TypeValidationError('ClearanceLevels', 'Expected any of [low, high], got (string) "average"'),
             ]
         );
     }

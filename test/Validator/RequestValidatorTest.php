@@ -130,10 +130,7 @@ class RequestValidatorTest extends PHPUnit_Framework_TestCase
         $this->request->method('getHeaderLine')->willReturn('application/json');
         $this->request->method('getBody')->willReturn($body);
 
-        $this->setExpectedException(
-            '\Raml\Validator\ValidatorRequestException',
-            'title (minLength), artist (required)'
-        );
+        $this->setExpectedException('\Raml\Validator\ValidatorRequestException');
 
         $validator = $this->getValidatorForSchema(__DIR__ . '/../fixture/validator/requestBody.raml');
         $validator->validateRequest($this->request);
