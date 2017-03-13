@@ -219,8 +219,32 @@ class Parser
         $ramlString = file_get_contents($fileName);
 
         $ramlData = $this->parseRamlString($ramlString, $rootDir);
-
+        
         return $this->parseRamlData($ramlData, $rootDir);
+    }
+
+    /**
+     * Parse a RAML spec from a file to array
+     *
+     * @param string $rawFileName
+     *
+     * @throws FileNotFoundException
+     * @throws RamlParserException
+     *
+     * @return array
+     */
+    public function parseToArray($rawFileName)
+    {
+        $fileName = realpath($rawFileName);
+        
+        if (!is_file($fileName)) {
+            throw new FileNotFoundException($rawFileName);
+        }
+
+        $rootDir = dirname($fileName);
+        $ramlString = file_get_contents($fileName);
+
+        return $this->parseRamlString($ramlString, $rootDir);
     }
 
     /**
@@ -263,9 +287,13 @@ class Parser
         $ramlData = $this->parseResourceTypes($ramlData);
 
         if ($this->configuration->isSchemaParsingEnabled()) {
-            if (isset($ramlData['schemas'])) {
+            if (isset($ramlData['schemas']) || isset($ramlData['types'])) {
+                $collections = isset($ramlData['schemas']) ? $ramlData['schemas'] : $ramlData['types'];
                 $schemas = [];
-                foreach ($ramlData['schemas'] as $schemaCollection) {
+                foreach ($collections as $key => $schemaCollection) {
+                    if (!is_array($schemaCollection)) {
+                        continue;
+                    }
                     foreach ($schemaCollection as $schemaName => $schema) {
                         $schemas[$schemaName] = $schema;
                     }
@@ -305,7 +333,7 @@ class Parser
             return $array;
         }
         foreach ($array as $key => $value) {
-            if ('schema' === $key) {
+            if (in_array($key, ['schema', 'type'])) {
                 if (isset($schemas[$value])) {
                     $array[$key] = $schemas[$value];
                 }
@@ -526,18 +554,39 @@ class Parser
      */
     private function loadAndParseFile($fileName, $rootDir)
     {
-        $rootDir = realpath($rootDir);
-        $fullPath = realpath($rootDir . '/' . $fileName);
+        // first check if file is local or remote
+        $host = parse_url($fileName, PHP_URL_HOST);
+        if ($host === NULL) {
+            // local file
+            $rootDir = realpath($rootDir);
+            $fullPath = realpath($rootDir . '/' . $fileName);
 
-        if (is_readable($fullPath) === false) {
-            return false;
-        }
+            if (is_readable($fullPath) === false) {
+                return false;
+            }
 
-        // Prevent LFI directory traversal attacks
-        if (!$this->configuration->isDirectoryTraversalAllowed() &&
-            substr($fullPath, 0, strlen($rootDir)) !== $rootDir
-        ) {
-            return false;
+            // Prevent LFI directory traversal attacks
+            if (!$this->configuration->isDirectoryTraversalAllowed() &&
+                substr($fullPath, 0, strlen($rootDir)) !== $rootDir
+            ) {
+                return false;
+            }
+            $fileExtension = (pathinfo($fileName, PATHINFO_EXTENSION));
+        } else {
+            // remote file
+            $fullPath = $fileName;
+            $fileHeaders = get_headers($fileName, true);
+            $mimeType = isset($fileHeaders['Content-Type']) ? $fileHeaders['Content-Type'] : '';
+            $mapping = [
+                'application/json'      => 'json',
+                'application/xml'       => 'xml',
+                'application/soap+xml'  => 'xml',
+                'text/xml'              => 'xml'
+            ];
+            if (!isset($mapping[$mimeType])) {
+                return false;
+            }
+            $fileExtension = $mapping[$mimeType];
         }
 
         $cacheKey = md5($fullPath);
@@ -546,8 +595,6 @@ class Parser
         if (isset($this->cachedFiles[$cacheKey])) {
             return $this->cachedFiles[$cacheKey];
         }
-
-        $fileExtension = (pathinfo($fileName, PATHINFO_EXTENSION));
 
         if (in_array($fileExtension, ['yaml', 'yml', 'raml'])) {
             $rootDir = dirname($rootDir . '/' . $fileName);
