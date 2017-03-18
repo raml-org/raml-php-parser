@@ -52,6 +52,11 @@ class TypeValidationError
         return new self($property, sprintf('Missing required property'));
     }
 
+    public static function unexpectedProperty($property)
+    {
+        return new self($property, sprintf('Unexpected property'));
+    }
+
     public static function isNotMultipleOf($property, $multiplicator, $actualValue)
     {
         return new self($property, sprintf(

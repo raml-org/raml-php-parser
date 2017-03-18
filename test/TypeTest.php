@@ -52,7 +52,6 @@ class TypeTest extends PHPUnit_Framework_TestCase
         $body = $response->getBodyByType('application/json');
         $type = $body->getType();
 
-//        $this->setExpectedException('\Raml\Exception\TypeValidationException', 'Required property (string) "title" not found');
         $type->validate(json_decode('{"artist":"An artist"}', true));
         self::assertFalse($type->isValid());
     }
@@ -60,7 +59,6 @@ class TypeTest extends PHPUnit_Framework_TestCase
     /** @test */
     public function shouldCorrectlyValidateIncorrectType()
     {
-
         $simpleRaml = $this->parser->parse(__DIR__ . '/fixture/simple_types.raml');
         $resource = $simpleRaml->getResourceByUri('/songs');
         $method = $resource->getMethod('get');
@@ -68,8 +66,21 @@ class TypeTest extends PHPUnit_Framework_TestCase
         $body = $response->getBodyByType('application/json');
         $type = $body->getType();
 
-//        $this->setExpectedException('\Raml\Exception\TypeValidationException', 'Required property (string) "title" not found');
         $type->validate([]);
+        self::assertFalse($type->isValid());
+    }
+
+    /** @test */
+    public function shouldCorrectlyValidateAdditionalProperties()
+    {
+        $simpleRaml = $this->parser->parse(__DIR__ . '/fixture/simple_types.raml');
+        $resource = $simpleRaml->getResourceByUri('/songs');
+        $method = $resource->getMethod('get');
+        $response = $method->getResponse(200);
+        $body = $response->getBodyByType('application/json');
+        $type = $body->getType();
+
+        $type->validate(json_decode('{"title": "Good Song", "duration":"3:09"}', true));
         self::assertFalse($type->isValid());
     }
 }
