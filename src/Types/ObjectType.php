@@ -307,6 +307,9 @@ class ObjectType extends Type
         foreach ($value as $name => $propertyValue) {
             $property = $this->getPropertyByName($name);
             if (!$property) {
+                if ($this->additionalProperties === false) {
+                    $this->errors[] = TypeValidationError::unexpectedProperty($name);
+                }
                 continue;
             }
             $property->validate($propertyValue);
