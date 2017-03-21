@@ -2,10 +2,9 @@
 
 namespace Raml\Schema\Definition;
 
-use Raml\Exception\InvalidJsonException;
-use Raml\Exception\InvalidSchemaException;
 use \Raml\Schema\SchemaDefinitionInterface;
 use \JsonSchema\Validator;
+use Raml\Types\TypeValidationError;
 
 class JsonSchemaDefinition implements SchemaDefinitionInterface
 {
@@ -15,6 +14,8 @@ class JsonSchemaDefinition implements SchemaDefinitionInterface
      * @var \stdClass
      */
     private $json;
+
+    private $errors = [];
 
     // --
 
@@ -35,21 +36,24 @@ class JsonSchemaDefinition implements SchemaDefinitionInterface
      * Validate a JSON string against the schema
      * - Converts the string into a JSON object then uses the JsonSchema Validator to validate
      *
-     * @param $string
+     * @param $value
      *
      * @throws \Exception
      *
-     * @return boolean
+     * @return bool
      */
-    public function validate($string)
+    public function validate($value)
     {
-        $json = json_decode($string);
+        $validator = new Validator();
+        $jsonSchema = $this->json;
 
-        if (json_last_error() !== JSON_ERROR_NONE) {
-            throw new InvalidJsonException(json_last_error());
+        $validator->check($value, $jsonSchema);
+
+        if (!$validator->isValid()) {
+            foreach ($validator->getErrors() as $error) {
+                $this->errors[] = new TypeValidationError($error['property'], $error['constraint']);
+            }
         }
-
-        return $this->validateJsonObject($json);
     }
 
     /**
@@ -60,31 +64,6 @@ class JsonSchemaDefinition implements SchemaDefinitionInterface
     public function __toString()
     {
         return json_encode($this->json);
-    }
-
-    // ---
-
-    /**
-     * Validates a json object
-     *
-     * @param string $json
-     *
-     * @throws \Exception
-     *
-     * @return boolean
-     */
-    public function validateJsonObject($json)
-    {
-        $validator = new Validator();
-        $jsonSchema = $this->json;
-
-        $validator->check($json, $jsonSchema);
-
-        if (!$validator->isValid()) {
-            throw new InvalidSchemaException($validator->getErrors());
-        }
-
-        return true;
     }
 
     /**
@@ -105,6 +84,23 @@ class JsonSchemaDefinition implements SchemaDefinitionInterface
     public function getJsonArray()
     {
         $jsonSchema = $this->json;
+
         return json_decode(json_encode($jsonSchema), true);
+    }
+
+    /**
+     * @return TypeValidationError[]
+     */
+    public function getErrors()
+    {
+        return $this->errors;
+    }
+
+    /**
+     * @return boolean
+     */
+    public function isValid()
+    {
+        return empty($this->errors);
     }
 }

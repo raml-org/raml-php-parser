@@ -1,23 +1,15 @@
 <?php
+
 namespace Raml\Schema;
+
+use Raml\ValidatorInterface;
 
 /**
  * Defines the interface for schema definitions.
  * Each schema definition wraps or provides methods for parsing and validating schemas.
  */
-interface SchemaDefinitionInterface
+interface SchemaDefinitionInterface extends ValidatorInterface
 {
-    /**
-     * Validates a string against the schema
-     *
-     * @param $string
-     *
-     * @throws \Exception
-     *
-     * @return boolean
-     */
-    public function validate($string);
-
     /**
      * Returns the schema as a string
      *

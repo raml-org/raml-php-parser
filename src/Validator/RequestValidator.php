@@ -2,10 +2,11 @@
 namespace Raml\Validator;
 
 use Exception;
+use Negotiation\Negotiator;
 use Psr\Http\Message\RequestInterface;
-use Raml\Exception\InvalidSchemaException;
 use Raml\Exception\ValidationException;
 use Raml\NamedParameter;
+use Raml\Types\TypeValidationError;
 
 class RequestValidator
 {
@@ -15,11 +16,18 @@ class RequestValidator
     private $schemaHelper;
 
     /**
-     * @param ValidatorSchemaHelper $schema
+     * @var Negotiator
      */
-    public function __construct(ValidatorSchemaHelper $schema)
+    private $negotiator;
+
+    /**
+     * @param ValidatorSchemaHelper $schema
+     * @param Negotiator $negotiator
+     */
+    public function __construct(ValidatorSchemaHelper $schema, Negotiator $negotiator)
     {
         $this->schemaHelper = $schema;
+        $this->negotiator = $negotiator;
     }
 
     /**
@@ -28,9 +36,13 @@ class RequestValidator
      */
     public function validateRequest(RequestInterface $request)
     {
+        $this->assertMediaTypes($request);
         $this->assertNoMissingParameters($request);
         $this->assertValidParameters($request);
-        $this->assertValidBody($request);
+
+        if (strtolower($request->getMethod()) !== 'get') {
+            $this->assertValidBody($request);
+        }
     }
 
     /**
@@ -98,26 +110,25 @@ class RequestValidator
      */
     private function assertValidBody(RequestInterface $request)
     {
-        $body = $request->getBody()->getContents();
-
         $method = $request->getMethod();
         $path = $request->getUri()->getPath();
         $contentType = $request->getHeaderLine('Content-Type');
 
         $schemaBody = $this->schemaHelper->getRequestBody($method, $path, $contentType);
 
-        try {
-            $schemaBody->getSchema()->validate($body);
-        } catch (InvalidSchemaException $exception) {
+        $body = ContentConverter::convertStringByContentType($request->getBody()->getContents(), $contentType);
+
+        $schemaBody->getValidator()->validate($body);
+        if ($schemaBody->getValidator()->getErrors()) {
             $message = sprintf(
                 'Request body for %s %s with content type %s does not match schema: %s',
                 strtoupper($method),
                 $path,
                 $contentType,
-                $this->getSchemaErrorsAsString($exception->getErrors())
+                $this->getTypeValidationErrorsAsString($schemaBody->getValidator()->getErrors())
             );
 
-            throw new ValidatorRequestException($message, 0, $exception);
+            throw new ValidatorRequestException($message);
         }
     }
 
@@ -140,6 +151,44 @@ class RequestValidator
     {
         return join(', ', array_map(function (array $error) {
             return sprintf('%s (%s)', $error['property'], $error['constraint']);
+        }, $errors));
+    }
+
+    private function assertMediaTypes(RequestInterface $request)
+    {
+        $method = $request->getMethod();
+        $path = $request->getUri()->getPath();
+
+        $responseSchemas = $this->schemaHelper->getResponses(
+            $method,
+            $path
+        );
+
+        $priorities = [];
+        foreach ($responseSchemas as $responseSchema) {
+            $priorities = array_merge($priorities, $responseSchema->getTypes());
+        }
+
+        if (!$priorities) {
+            $priorities = $this->schemaHelper->getDefaultMediaTypes();
+        }
+
+        if (!$priorities) {
+            return;
+        }
+
+        $acceptHeader = $request->getHeaderLine('Accept');
+        $accept = $acceptHeader ? $this->negotiator->getBest($acceptHeader, $priorities) : null;
+
+        if ($accept === null) {
+            throw new ValidatorRequestException('Invalid Media type');
+        }
+    }
+
+    private function getTypeValidationErrorsAsString(array $errors)
+    {
+        return join(', ', array_map(function (TypeValidationError $error) {
+            return $error->__toString();
         }, $errors));
     }
 }
