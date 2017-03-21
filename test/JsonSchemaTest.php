@@ -77,4 +77,17 @@ class JsonSchemaTest extends PHPUnit_Framework_TestCase
 //            throw $e;
 //        }
     }
+
+    /** @test */
+    public function shouldCorrectlyValidateJsonAsArray()
+    {
+        $simpleRaml = $this->parser->parse(__DIR__ . '/fixture/simple.raml');
+        $resource = $simpleRaml->getResourceByUri('/songs/{songId}');
+        $method = $resource->getMethod('post');
+        $request = $method->getBodyByType('application/json');
+        $schema = $request->getSchema();
+
+        $schema->validate(json_decode('{"title":"Title", "artist": "Artist"}', true));
+        $this->assertTrue($schema->isValid());
+    }
 }
