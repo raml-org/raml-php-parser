@@ -69,9 +69,19 @@ class UnionType extends Type
 
         foreach ($this->getPossibleTypes() as $type) {
             $type->validate($value);
-            if (!$type->isValid()) {
-                $this->errors = array_merge($this->errors, $type->getErrors());
+            if ($type->isValid()) {
+                return;
             }
         }
+
+        $this->errors = array_merge(
+            $this->errors,
+            TypeValidationError::unionTypeValidationFailed(
+                $this->getName(),
+                array_map(function(TypeInterface $type) {
+                    return $type->getName();
+                }, $this->getPossibleTypes())
+            )
+        );
     }
 }

@@ -156,4 +156,14 @@ class TypeValidationError
             $actualValue
         ));
     }
+
+    /**
+     * @param string $property
+     * @param string[] $possibleTypeNames
+     * @return TypeValidationError
+     */
+    public static function unionTypeValidationFailed($property, array $possibleTypeNames)
+    {
+        return new self($property, sprintf('Value does not valid any type: %s', implode(',', $possibleTypeNames)));
+    }
 }
