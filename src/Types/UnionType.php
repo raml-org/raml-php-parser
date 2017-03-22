@@ -74,14 +74,11 @@ class UnionType extends Type
             }
         }
 
-        $this->errors = array_merge(
-            $this->errors,
-            TypeValidationError::unionTypeValidationFailed(
-                $this->getName(),
-                array_map(function(TypeInterface $type) {
-                    return $type->getName();
-                }, $this->getPossibleTypes())
-            )
+        $this->errors[] = TypeValidationError::unionTypeValidationFailed(
+            $this->getName(),
+            array_map(function(TypeInterface $type) {
+                return $type->getName();
+            }, $this->getPossibleTypes())
         );
     }
 }
