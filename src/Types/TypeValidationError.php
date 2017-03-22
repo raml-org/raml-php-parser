@@ -166,7 +166,7 @@ class TypeValidationError
     {
         return new self(
             $property,
-            sprintf('Value did not pass validation against any type: %s', implode(',', $possibleTypeNames))
+            sprintf('Value did not pass validation against any type: %s', implode(', ', $possibleTypeNames))
         );
     }
 }
