@@ -331,6 +331,7 @@ class Type implements ArrayInstantiationInterface, TypeInterface
      */
     public function validate($value)
     {
+        $this->errors = [];
         if ($this->required && !isset($value)) {
             $this->errors[] = new TypeValidationError($this->getName(), 'required');
         }
