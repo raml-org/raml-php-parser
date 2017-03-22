@@ -2,9 +2,9 @@
 
 namespace Raml\Schema\Definition;
 
-use Raml\Exception\InvalidXmlException;
-use Raml\Exception\InvalidSchemaException;
+use DOMDocument;
 use \Raml\Schema\SchemaDefinitionInterface;
+use Raml\Types\TypeValidationError;
 
 class XmlSchemaDefinition implements SchemaDefinitionInterface
 {
@@ -14,6 +14,8 @@ class XmlSchemaDefinition implements SchemaDefinitionInterface
      * @var string
      */
     private $xml;
+
+    private $errors = [];
 
     // --
 
@@ -33,37 +35,31 @@ class XmlSchemaDefinition implements SchemaDefinitionInterface
     /**
      * Validate an XML string against the schema
      *
-     * @param $string
+     * @param $value
      *
      * @throws \Exception
-     *
-     * @return boolean
      */
-    public function validate($string)
+    public function validate($value)
     {
-        $dom = new \DOMDocument;
+        if (!$value instanceof DOMDocument) {
+            $this->errors[] = TypeValidationError::xmlValidationFailed('Expected value of type DOMDocument');
+
+            return;
+        }
 
         $originalErrorLevel = libxml_use_internal_errors(true);
-
-        $dom->loadXML($string);
+        $value->schemaValidateSource($this->xml);
         $errors = libxml_get_errors();
         libxml_clear_errors();
         if ($errors) {
-            throw new InvalidXmlException($errors);
+            foreach ($errors as $error) {
+                $this->errors[] = TypeValidationError::xmlValidationFailed($error->message);
+            }
+
+            return;
         }
 
-        // ---
-
-        $dom->schemaValidateSource($this->xml);
-        $errors = libxml_get_errors();
-        libxml_clear_errors();
-        if ($errors) {
-            throw new InvalidSchemaException($errors);
-        }
-        
         libxml_use_internal_errors($originalErrorLevel);
-
-        return true;
     }
 
     /**
@@ -74,5 +70,21 @@ class XmlSchemaDefinition implements SchemaDefinitionInterface
     public function __toString()
     {
         return $this->xml;
+    }
+
+    /**
+     * @return TypeValidationError[]
+     */
+    public function getErrors()
+    {
+        return $this->errors;
+    }
+
+    /**
+     * @return boolean
+     */
+    public function isValid()
+    {
+        return empty($this->errors);
     }
 }
