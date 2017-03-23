@@ -207,7 +207,10 @@ class NumberType extends Type
                 }
                 break;
             case 'int':
-                // int === long
+                if (!is_int($value)) {
+                    $this->errors[] = TypeValidationError::unexpectedValueType($this->getName(), 'int', $value);
+                }
+                break;
             case 'long':
                 if (!is_int($value)) {
                     $this->errors[] = TypeValidationError::unexpectedValueType($this->getName(), 'int or long', $value);

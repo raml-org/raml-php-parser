@@ -184,8 +184,12 @@ class ApiDefinitionTest extends PHPUnit_Framework_TestCase
         $this->assertValidationFailedWithErrors(
             $type,
             [
-                new TypeValidationError('Manager', 'Expected object, got (string) "this is not an object"'),
-                new TypeValidationError('AlertableAdmin', 'Expected object, got (string) "this is not an object"'),
+                new TypeValidationError(
+                    'Alertable',
+                    'Value did not pass validation against any type: '
+                        . 'Manager (Manager (Expected object, got (string) "this is not an object")), '
+                        . 'AlertableAdmin (AlertableAdmin (Expected object, got (string) "this is not an object"))'
+                ),
                 new TypeValidationError('Head', 'Expected object, got (string) "this is not a Head object"'),
             ]
         );
@@ -232,7 +236,11 @@ class ApiDefinitionTest extends PHPUnit_Framework_TestCase
             [
                 new TypeValidationError('age', 'Maximum allowed value: 70, got 71'),
                 new TypeValidationError('age', 'Minimum allowed value: 18, got 17'),
-                new TypeValidationError('age', 'Expected integer, got (double) "18.5"'),
+                new TypeValidationError(
+                    'Alertable',
+                    'Value did not pass validation against any type: '
+                        . 'AlertableAdmin (age (Expected int, got (double) "18.5"))'
+                ),
             ]
         );
     }
@@ -277,8 +285,12 @@ class ApiDefinitionTest extends PHPUnit_Framework_TestCase
             $type,
             [
                 new TypeValidationError('firstname', 'Maximum allowed length: 50, got 62'),
-                new TypeValidationError('lastname', 'Minimum allowed length: 2, got 1'),
                 new TypeValidationError('Phone', 'String "123-23 33 22" did not match pattern /^[0-9|-]+$/'),
+                new TypeValidationError(
+                    'Alertable',
+                    'Value did not pass validation against any type: '
+                        . 'AlertableAdmin (lastname (Minimum allowed length: 2, got 1))'
+                ),
             ]
         );
     }
@@ -321,7 +333,11 @@ class ApiDefinitionTest extends PHPUnit_Framework_TestCase
         $this->assertValidationFailedWithErrors(
             $type,
             [
-                new TypeValidationError('ClearanceLevels', 'Expected any of [low, high], got (string) "average"'),
+                new TypeValidationError(
+                    'Alertable',
+                    'Value did not pass validation against any type: '
+                        . 'AlertableAdmin (ClearanceLevels (Expected any of [low, high], got (string) "average"))'
+                ),
             ]
         );
     }

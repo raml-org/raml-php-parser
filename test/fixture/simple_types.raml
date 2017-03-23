@@ -12,6 +12,10 @@ mediaType: application/json
           body:
             application/json:
               type: Song
+        201:
+          body:
+            application/json:
+              type: Sample
 
 types:
   Song:
@@ -23,3 +27,9 @@ types:
         type: string
         required: false
     additionalProperties: false
+  Sample:
+    properties:
+      id:
+        type: integer | string
+      name:
+        type: integer | string

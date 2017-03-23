@@ -156,4 +156,29 @@ class TypeValidationError
             $actualValue
         ));
     }
+
+    /**
+     * @param string $property
+     * @param array $errorsGroupedByTypes
+     * @return TypeValidationError
+     */
+    public static function unionTypeValidationFailed($property, array $errorsGroupedByTypes)
+    {
+        $errors = [];
+        foreach ($errorsGroupedByTypes as $type => $typeErrors) {
+            $message = array_reduce($typeErrors, function ($acc, TypeValidationError $error) {
+                $acc .= (string) $error . ', ';
+
+                return $acc;
+            }, "$type (");
+
+
+            $errors[] = substr($message, 0, strlen($message) - 2) . ')';
+        }
+
+        return new self(
+            $property,
+            sprintf('Value did not pass validation against any type: %s', implode(', ', $errors))
+        );
+    }
 }
