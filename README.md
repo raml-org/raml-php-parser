@@ -36,7 +36,7 @@ Requires:
 - composer (see [https://getcomposer.org](https://getcomposer.org))
  
 ```bash
-composer require elama/php-raml-parser --dev
+composer require elama/php-raml-parser
 ```
 
 ```php
