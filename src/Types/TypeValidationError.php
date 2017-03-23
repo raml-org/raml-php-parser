@@ -159,14 +159,26 @@ class TypeValidationError
 
     /**
      * @param string $property
-     * @param string[] $possibleTypeNames
+     * @param array $errorsGroupedByTypes
      * @return TypeValidationError
      */
-    public static function unionTypeValidationFailed($property, array $possibleTypeNames)
+    public static function unionTypeValidationFailed($property, array $errorsGroupedByTypes)
     {
+        $errors = [];
+        foreach ($errorsGroupedByTypes as $type => $typeErrors) {
+            $message = array_reduce($typeErrors, function ($acc, TypeValidationError $error) {
+                $acc .= (string) $error . ', ';
+
+                return $acc;
+            }, "$type (");
+
+
+            $errors[] = substr($message, 0, strlen($message) - 2) . ')';
+        }
+
         return new self(
             $property,
-            sprintf('Value did not pass validation against any type: %s', implode(', ', $possibleTypeNames))
+            sprintf('Value did not pass validation against any type: %s', implode(', ', $errors))
         );
     }
 }
