@@ -35,8 +35,6 @@ final class JsonSchemaDefinition implements SchemaDefinitionInterface
      * @param $value
      *
      * @throws \Exception
-     *
-     * @return bool
      */
     public function validate($value)
     {
@@ -49,11 +47,7 @@ final class JsonSchemaDefinition implements SchemaDefinitionInterface
             foreach ($validator->getErrors() as $error) {
                 $this->errors[] = new TypeValidationError($error['property'], $error['constraint']);
             }
-
-            return false;
         }
-
-        return true;
     }
 
     /**
