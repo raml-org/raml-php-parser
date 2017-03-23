@@ -10,13 +10,6 @@ namespace Raml\Types;
 class IntegerType extends NumberType
 {
     /**
-     * A numeric instance is valid against "multipleOf" if the result of dividing the instance by this keyword's value is an integer.
-     *
-     * @var int
-     */
-    protected $multipleOf = null;
-
-    /**
     * Create a new IntegerType from an array of data
     *
     * @param string    $name
