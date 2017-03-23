@@ -30,7 +30,7 @@
 
   "require": {
     "php": ">=5.5.9",
-    "justinrainbow/json-schema": "4.0",
+    "justinrainbow/json-schema": "5.1.*",
     "symfony/yaml": "~3.0",
     "symfony/routing": "~3.0",
     "oodle/inflect": "~0.2",
