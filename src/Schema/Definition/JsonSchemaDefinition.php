@@ -2,11 +2,12 @@
 
 namespace Raml\Schema\Definition;
 
+use JsonSchema\Constraints\Constraint;
 use \Raml\Schema\SchemaDefinitionInterface;
 use \JsonSchema\Validator;
 use Raml\Types\TypeValidationError;
 
-class JsonSchemaDefinition implements SchemaDefinitionInterface
+final class JsonSchemaDefinition implements SchemaDefinitionInterface
 {
     /**
      * The JSON schema
@@ -16,8 +17,6 @@ class JsonSchemaDefinition implements SchemaDefinitionInterface
     private $json;
 
     private $errors = [];
-
-    // --
 
     /**
      * Create a JSON Schema definition
@@ -29,9 +28,6 @@ class JsonSchemaDefinition implements SchemaDefinitionInterface
         $this->json = $json;
     }
 
-    // ---
-    // SchemaDefinitionInterface
-
     /**
      * Validate a JSON string against the schema
      * - Converts the string into a JSON object then uses the JsonSchema Validator to validate
@@ -39,15 +35,13 @@ class JsonSchemaDefinition implements SchemaDefinitionInterface
      * @param $value
      *
      * @throws \Exception
-     *
-     * @return bool
      */
     public function validate($value)
     {
         $validator = new Validator();
         $jsonSchema = $this->json;
 
-        $validator->check($value, $jsonSchema);
+        $validator->validate($value, $jsonSchema, Constraint::CHECK_MODE_TYPE_CAST);
 
         if (!$validator->isValid()) {
             foreach ($validator->getErrors() as $error) {
