@@ -40,7 +40,9 @@ class UnionTypeTest extends PHPUnit_Framework_TestCase
         $type->validate(json_decode('{"id": 1, "name": false}', true));
         self::assertFalse($type->isValid());
         self::assertEquals(
-            'name (Value did not pass validation against any type: integer, string)',
+            'name (Value did not pass validation against any type: '
+                . 'integer (integer (Expected int, got (boolean) "")), '
+                . 'string (string (Expected string, got (boolean) "")))',
             (string) $type->getErrors()[0]
         );
     }

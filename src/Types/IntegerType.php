@@ -13,8 +13,8 @@ class IntegerType extends NumberType
      * A numeric instance is valid against "multipleOf" if the result of dividing the instance by this keyword's value is an integer.
      *
      * @var int
-     **/
-    private $multipleOf = 1;
+     */
+    protected $multipleOf = null;
 
     /**
     * Create a new IntegerType from an array of data
@@ -27,16 +27,10 @@ class IntegerType extends NumberType
     public static function createFromArray($name, array $data = [])
     {
         $type = parent::createFromArray($name, $data);
+        if (!$type->getFormat()) {
+            $type->setFormat('int');
+        }
 
         return $type;
-    }
-
-    public function validate($value)
-    {
-        parent::validate($value);
-
-        if (!is_int($value)) {
-            $this->errors[] = TypeValidationError::unexpectedValueType($this->getName(), 'integer', $value);
-        }
     }
 }

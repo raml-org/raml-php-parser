@@ -239,7 +239,7 @@ class ApiDefinitionTest extends PHPUnit_Framework_TestCase
                 new TypeValidationError(
                     'Alertable',
                     'Value did not pass validation against any type: '
-                        . 'AlertableAdmin (age (Expected integer, got (double) "18.5"))'
+                        . 'AlertableAdmin (age (Expected int, got (double) "18.5"))'
                 ),
             ]
         );
