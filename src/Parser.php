@@ -244,7 +244,13 @@ class Parser
         $rootDir = dirname($fileName);
         $ramlString = file_get_contents($fileName);
 
-        return $this->parseRamlString($ramlString, $rootDir);
+        $ramlData = $this->parseRamlString($ramlString, $rootDir);
+
+        $ramlData = $this->parseTraits($ramlData);
+
+        $ramlData = $this->parseResourceTypes($ramlData);
+        
+        return $ramlData;
     }
 
     /**
@@ -517,7 +523,7 @@ class Parser
         }
 
         if (strpos($header, '#%RAML') === 0) {
-            // @todo extract the vesion of the raml and do something with it
+            // @todo extract the version of the raml and do something with it
 
             $data = $this->includeAndParseFiles(
                 $data,
@@ -799,34 +805,24 @@ class Parser
                 switch ($transformer) {
                     case 'singularize':
                         return Inflect::singularize($values[$matches[1]]);
-                        break;
                     case 'pluralize':
                         return Inflect::pluralize($values[$matches[1]]);
-                        break;
                     case 'uppercase':
                         return strtoupper($values[$matches[1]]);
-                        break;
                     case 'lowercase':
                         return strtolower($values[$matches[1]]);
-                        break;
                     case 'lowercamelcase':
                         return StringTransformer::convertString($values[$matches[1]], StringTransformer::LOWER_CAMEL_CASE);
-                        break;
                     case 'uppercamelcase':
                         return StringTransformer::convertString($values[$matches[1]], StringTransformer::UPPER_CAMEL_CASE);
-                        break;
                     case 'lowerunderscorecase':
                         return StringTransformer::convertString($values[$matches[1]], StringTransformer::LOWER_UNDERSCORE_CASE);
-                        break;
                     case 'upperunderscorecase':
                         return StringTransformer::convertString($values[$matches[1]], StringTransformer::UPPER_UNDERSCORE_CASE);
-                        break;
                     case 'lowerhyphencase':
                         return StringTransformer::convertString($values[$matches[1]], StringTransformer::LOWER_HYPHEN_CASE);
-                        break;
                     case 'upperhyphencase':
                         return StringTransformer::convertString($values[$matches[1]], StringTransformer::UPPER_HYPHEN_CASE);
-                        break;
                     default:
                         return $values[$matches[1]];
                 }
