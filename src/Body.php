@@ -106,9 +106,8 @@ class Body implements BodyInterface, ArrayInstantiationInterface
         if (isset($data['schema'])) {
             $body->setSchema($data['schema']);
         } elseif (isset($data['type'])) {
-            $type = ApiDefinition::determineType($data['type'], ['type' => $data['type']]);
-            if ($type instanceof ObjectType)
-            {
+            $type = ApiDefinition::determineType($data['type'], $data);
+            if ($type instanceof ObjectType) {
                 $type->inheritFromParent();
             }
             $body->setType($type);

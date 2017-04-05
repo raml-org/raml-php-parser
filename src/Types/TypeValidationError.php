@@ -159,6 +159,18 @@ class TypeValidationError
 
     /**
      * @param string $property
+     * @param $min $expected
+     * @param $max $expected
+     * @param integer $actual
+     * @return TypeValidationError
+     */
+    public static function arraySizeValidationFailed($property, $min, $max, $actual)
+    {
+        return new self($property, sprintf('Allowed array size: between %s and %s, got %s', $min, $max, $actual));
+    }
+
+    /**
+     * @param string $property
      * @param array $errorsGroupedByTypes
      * @return TypeValidationError
      */

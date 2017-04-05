@@ -16,7 +16,7 @@ class UnionTypeTest extends PHPUnit_Framework_TestCase
     /** @test */
     public function shouldCorrectlyValidateCorrectType()
     {
-        $simpleRaml = $this->parser->parse(__DIR__ . '/fixture/simple_types.raml');
+        $simpleRaml = $this->parser->parse(__DIR__ . '/../fixture/simple_types.raml');
         $resource = $simpleRaml->getResourceByUri('/songs');
         $method = $resource->getMethod('get');
         $response = $method->getResponse(201);
@@ -30,7 +30,7 @@ class UnionTypeTest extends PHPUnit_Framework_TestCase
     /** @test */
     public function shouldCorrectlyValidateIncorrectType()
     {
-        $simpleRaml = $this->parser->parse(__DIR__ . '/fixture/simple_types.raml');
+        $simpleRaml = $this->parser->parse(__DIR__ . '/../fixture/simple_types.raml');
         $resource = $simpleRaml->getResourceByUri('/songs');
         $method = $resource->getMethod('get');
         $response = $method->getResponse(201);
