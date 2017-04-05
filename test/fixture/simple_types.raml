@@ -19,8 +19,10 @@ mediaType: application/json
         202:
           body:
             application/json:
-              type: Sample[]
-              maxItems: 1
+              type: array
+              items: Sample
+              minItems: 1
+              maxItems: 2
 
 types:
   Song:

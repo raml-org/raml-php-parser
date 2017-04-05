@@ -33,7 +33,7 @@ class ArrayType extends Type
      *
      * @var int
      **/
-    private $minItems;
+    private $minItems = 0;
 
     /**
      * Maximum amount of items in array. Value MUST be equal to or greater than 0.
@@ -41,7 +41,7 @@ class ArrayType extends Type
      *
      * @var int
      **/
-    private $maxItems;
+    private $maxItems = 2147483647;
 
     /**
     * Create a new ArrayType from an array of data
@@ -53,6 +53,7 @@ class ArrayType extends Type
     */
     public static function createFromArray($name, array $data = [])
     {
+        /** @var ArrayType $type */
         $type = parent::createFromArray($name, $data);
         $pos = strpos($type->getType(), '[]');
         if ($pos !== false) {
@@ -81,27 +82,19 @@ class ArrayType extends Type
     }
 
     /**
-     * Get the value of Unique Items
-     *
-     * @return bool
-     */
-    public function getUniqueItems()
-    {
-        return $this->uniqueItems;
-    }
-
-    /**
-     * Set the value of Unique Items
-     *
      * @param bool $uniqueItems
-     *
-     * @return self
      */
     public function setUniqueItems($uniqueItems)
     {
         $this->uniqueItems = $uniqueItems;
+    }
 
-        return $this;
+    /**
+     * @param string $items
+     */
+    public function setItems($items)
+    {
+        $this->items = $items;
     }
 
     /**
@@ -119,65 +112,19 @@ class ArrayType extends Type
     }
 
     /**
-     * Set the value of Items
-     *
-     * @param string|TypeInterface $items
-     *
-     * @return self
-     */
-    public function setItems($items)
-    {
-        $this->items = $items;
-
-        return $this;
-    }
-
-    /**
-     * Get the value of Min Items
-     *
-     * @return int
-     */
-    public function getMinItems()
-    {
-        return $this->minItems;
-    }
-
-    /**
-     * Set the value of Min Items
-     *
      * @param int $minItems
-     *
-     * @return self
      */
     public function setMinItems($minItems)
     {
         $this->minItems = $minItems;
-
-        return $this;
     }
 
     /**
-     * Get the value of Max Items
-     *
-     * @return int
-     */
-    public function getMaxItems()
-    {
-        return $this->maxItems;
-    }
-
-    /**
-     * Set the value of Max Items
-     *
      * @param int $maxItems
-     *
-     * @return self
      */
     public function setMaxItems($maxItems)
     {
         $this->maxItems = $maxItems;
-
-        return $this;
     }
 
     public function validate($value)
@@ -186,7 +133,19 @@ class ArrayType extends Type
 
         if (!is_array($value)) {
             $this->errors[] = TypeValidationError::unexpectedValueType($this->getName(), 'is array', $value);
+            return;
         }
+
+        $actualArraySize = count($value);
+        if (!($actualArraySize >= $this->minItems && $actualArraySize <= $this->maxItems)) {
+            $this->errors[] = TypeValidationError::arraySizeValidationFailed(
+                $this->getName(),
+                $this->minItems,
+                $this->maxItems,
+                $actualArraySize
+            );
+        }
+
         foreach ($value as $valueItem) {
             $this->getItems()->validate($valueItem);
             if (!$this->getItems()->isValid()) {
