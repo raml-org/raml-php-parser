@@ -45,7 +45,7 @@ class ArrayTest extends PHPUnit_Framework_TestCase
         $type->validate([]);
 
         self::assertFalse($type->isValid());
-        self::assertEquals('array (Allowed array size: between 1 and 2, got 0)', (string) $type->getErrors()[0]);
+        self::assertEquals('Sample[] (Allowed array size: between 1 and 2, got 0)', (string) $type->getErrors()[0]);
     }
 
     /** @test */
@@ -67,6 +67,6 @@ class ArrayTest extends PHPUnit_Framework_TestCase
         );
 
         self::assertFalse($type->isValid());
-        self::assertEquals('array (Allowed array size: between 1 and 2, got 3)', (string) $type->getErrors()[0]);
+        self::assertEquals('Sample[] (Allowed array size: between 1 and 2, got 3)', (string) $type->getErrors()[0]);
     }
 }
