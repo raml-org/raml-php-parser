@@ -1,6 +1,6 @@
 <?php
 
-class UnionTypeTest extends PHPUnit_Framework_TestCase
+class ArrayTest extends PHPUnit_Framework_TestCase
 {
     /**
      * @var \Raml\Parser
@@ -16,34 +16,41 @@ class UnionTypeTest extends PHPUnit_Framework_TestCase
     /** @test */
     public function shouldCorrectlyValidateCorrectType()
     {
-        $simpleRaml = $this->parser->parse(__DIR__ . '/fixture/simple_types.raml');
+        $simpleRaml = $this->parser->parse(__DIR__ . '/../fixture/simple_types.raml');
         $resource = $simpleRaml->getResourceByUri('/songs');
         $method = $resource->getMethod('get');
-        $response = $method->getResponse(201);
+        $response = $method->getResponse(202);
         $body = $response->getBodyByType('application/json');
         $type = $body->getType();
 
-        $type->validate(json_decode('{"id": 1, "name": "Sample name"}', true));
+        $type->validate(
+            [
+                ['id' => 1, 'name' => 'Sample 1']
+            ]
+        );
+
         self::assertTrue($type->isValid());
     }
 
     /** @test */
     public function shouldCorrectlyValidateIncorrectType()
     {
-        $simpleRaml = $this->parser->parse(__DIR__ . '/fixture/simple_types.raml');
+        $this->markTestSkipped();
+
+        $simpleRaml = $this->parser->parse(__DIR__ . '/../fixture/simple_types.raml');
         $resource = $simpleRaml->getResourceByUri('/songs');
         $method = $resource->getMethod('get');
-        $response = $method->getResponse(201);
+        $response = $method->getResponse(202);
         $body = $response->getBodyByType('application/json');
         $type = $body->getType();
 
-        $type->validate(json_decode('{"id": 1, "name": false}', true));
-        self::assertFalse($type->isValid());
-        self::assertEquals(
-            'name (Value did not pass validation against any type: '
-                . 'integer (integer (Expected int, got (boolean) "")), '
-                . 'string (string (Expected string, got (boolean) "")))',
-            (string) $type->getErrors()[0]
+        $type->validate(
+            [
+                ['id' => 1, 'name' => 'Sample 1'],
+                ['id' => 2, 'name' => 'Sample 2']
+            ]
         );
+
+        self::assertFalse($type->isValid());
     }
 }
