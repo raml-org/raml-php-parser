@@ -51,7 +51,7 @@ class ValidatorSchemaHelper
      * @param string $method
      * @param string $path
      * @param string $contentType
-     * @return Body
+     * @return \Raml\Body
      */
     public function getRequestBody($method, $path, $contentType)
     {

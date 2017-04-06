@@ -16,12 +16,22 @@ use Raml\SecurityScheme\SecuritySettingsParser\OAuth1SecuritySettingsParser;
 use Raml\SecurityScheme\SecuritySettingsParser\OAuth2SecuritySettingsParser;
 use Raml\SecurityScheme\SecuritySettingsParserInterface;
 use Symfony\Component\Yaml\Yaml;
+use JsonSchema\Uri\UriRetriever;
+use JsonSchema\RefResolver;
+use Raml\Exception\InvalidJsonException;
 
 /**
  * Converts a RAML file into a API Documentation tree
  */
 class Parser
 {
+    // @TODO: pass the parsed RAML version to the ApiDefinition
+    /**
+     * RAML version
+     *
+     * @var string
+     */
+    private $ramlVersion;
     
     /**
      * Array of cached files
@@ -91,6 +101,7 @@ class Parser
         $this->configuration = $config ?: new ParseConfiguration();
 
         // ---
+        // @deprecated schema have been replaced by a dedicated (json/xml) type
         // add schema parsers
 
         // if null then use a default list
@@ -292,31 +303,31 @@ class Parser
 
         $ramlData = $this->parseResourceTypes($ramlData);
 
-        if ($this->configuration->isSchemaParsingEnabled()) {
-            if (isset($ramlData['schemas']) || isset($ramlData['types'])) {
-                $collections = isset($ramlData['schemas']) ? $ramlData['schemas'] : $ramlData['types'];
-                $schemas = [];
-                foreach ($collections as $key => $schemaCollection) {
-                    if (!is_array($schemaCollection)) {
-                        continue;
-                    }
-                    foreach ($schemaCollection as $schemaName => $schema) {
-                        $schemas[$schemaName] = $schema;
-                    }
+        // if ($this->configuration->isSchemaParsingEnabled()) {
+        if (isset($ramlData['schemas']) || isset($ramlData['types'])) {
+            $collections = isset($ramlData['schemas']) ? $ramlData['schemas'] : $ramlData['types'];
+            $schemas = [];
+            foreach ($collections as $key => $schemaCollection) {
+                if (!is_array($schemaCollection)) {
+                    continue;
                 }
-            }
-            foreach ($ramlData as $key => $value) {
-                if (0 === strpos($key, '/')) {
-                    if (isset($schemas)) {
-                        $value = $this->replaceSchemas($value, $schemas);
-                    }
-                    if (is_array($value)) {
-                        $value = $this->recurseAndParseSchemas($value, $rootDir);
-                    }
-                    $ramlData[$key] = $value;
+                foreach ($schemaCollection as $schemaName => $schema) {
+                    $schemas[$schemaName] = $schema;
                 }
             }
         }
+        foreach ($ramlData as $key => $value) {
+            if (0 === strpos($key, '/')) {
+                if (isset($schemas)) {
+                    $value = $this->replaceSchemas($value, $schemas);
+                }
+                if (is_array($value)) {
+                    $value = $this->recurseAndParseSchemas($value, $rootDir);
+                }
+                $ramlData[$key] = $value;
+            }
+        }
+        // }
 
         if (isset($ramlData['securitySchemes'])) {
             $ramlData['securitySchemes'] = $this->parseSecuritySettings($ramlData['securitySchemes']);
@@ -339,8 +350,8 @@ class Parser
             return $array;
         }
         foreach ($array as $key => $value) {
-            if (in_array($key, ['schema', 'type'])) {
-                if (isset($schemas[$value])) {
+            if (is_string($key) && in_array($key, ['schema', 'type'])) {
+                if (array_key_exists($value, $schemas)) {
                     $array[$key] = $schemas[$value];
                 }
             } else {
@@ -366,13 +377,35 @@ class Parser
         foreach ($array as $key => &$value) {
             if (is_array($value)) {
                 if (isset($value['schema'])) {
-                    if (in_array($key, array_keys($this->schemaParsers))) {
-                        $schemaParser = $this->schemaParsers[$key];
-                        $fileDir = $this->getCachedFilePath($value['schema']);
-                        $schemaParser->setSourceUri('file:' . ($fileDir ? $fileDir : $rootDir . DIRECTORY_SEPARATOR));
-                        $value['schema'] = $schemaParser->createSchemaDefinition($value['schema']);
-                    } else {
-                        throw new InvalidSchemaTypeException($key);
+                    if ($value['schema'] === false) {
+                        throw new \Exception('Schema is false: '.var_export($array, true));
+                    }
+                    $value['type'] = $value['schema'];
+                    unset($value['schema']);
+                }
+                if (isset($value['type'])) {
+                    if ($value['type'] === false) {
+                        throw new \Exception('Type is false: '.var_export($array, true));
+                    }
+                    if (substr(ltrim($value['type']), 0, 1) === '{') {
+                        if (in_array($key, array_keys($this->schemaParsers))) {
+                            $fileDir = $this->getCachedFilePath($value['type']);
+                            $retriever = new UriRetriever;
+                            $jsonSchemaParser = new RefResolver($retriever);
+
+                            $data = json_decode($value['type']);
+
+                            if (json_last_error() !== JSON_ERROR_NONE) {
+                                throw new InvalidJsonException(json_last_error());
+                            }
+                            $jsonSchemaParser->resolve($data, 'file:' . ($fileDir ? $fileDir : $rootDir . DIRECTORY_SEPARATOR));
+                            $value['type'] = json_encode((array) $data);
+                        } else {
+                            throw new InvalidJsonException($key);
+                        }
+                    // } elseif (substr(ltrim($value['type']), 0, 1) === '<') {
+                    // } else {
+                    //     throw new InvalidJsonException('');
                     }
                 } else {
                     $value = $this->recurseAndParseSchemas($value, $rootDir);
@@ -524,7 +557,7 @@ class Parser
 
         if (strpos($header, '#%RAML') === 0) {
             // @todo extract the version of the raml and do something with it
-
+            
             $data = $this->includeAndParseFiles(
                 $data,
                 $rootDir
@@ -646,7 +679,11 @@ class Parser
 
             return $result;
         } elseif (strpos($structure, '!include') === 0) {
-            return $this->loadAndParseFile(str_replace('!include ', '', $structure), $rootDir);
+            $result = $this->loadAndParseFile(str_replace('!include ', '', $structure), $rootDir);
+            if ($result === false) {
+                throw new RamlParserException('Could not load and/or parse include file.');
+            }
+            return $result;
         } else {
             return $structure;
         }
@@ -749,7 +786,6 @@ class Parser
                     $newArray[$key] = $newValue;
                 }
             }
-
         }
 
         return $newArray;

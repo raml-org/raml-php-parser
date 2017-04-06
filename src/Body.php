@@ -5,6 +5,7 @@ namespace Raml;
 use Raml\Schema\SchemaDefinitionInterface;
 
 use Raml\Exception\BadParameter\InvalidSchemaDefinitionException;
+use Raml\Exception\MutuallyExclusiveElementsException;
 use Raml\ApiDefinition;
 use Raml\TypeInterface;
 use Raml\Type\ObjectType;
@@ -106,14 +107,16 @@ class Body implements BodyInterface, ArrayInstantiationInterface
             $body->setDescription($data['description']);
         }
 
-        if (isset($data['schema'])) {
-            $body->setSchema($data['schema']);
+        if (isset($data['schema']) && isset($data['type'])) {
+            throw new MutuallyExclusiveElementsException();
         }
 
         if (isset($data['type'])) {
-            $type = ApiDefinition::determineType($data['type'], ['type' => $data['type']]);
-            if ($type instanceof ObjectType)
-            {
+            $name = '';
+            $definition = $data['type'];
+
+            $type = ApiDefinition::determineType($name, $definition);
+            if ($type instanceof ObjectType) {
                 $type->inheritFromParent();
             }
             $body->setType($type);
@@ -171,16 +174,18 @@ class Body implements BodyInterface, ArrayInstantiationInterface
     // --
 
     /**
+     * @deprecated Schema has been deprecated and is superseded by type.
      * Get the schema
      *
      * @return SchemaDefinitionInterface|string
      */
     public function getSchema()
     {
-        return $this->schema;
+        return $this->type;
     }
 
     /**
+     * @deprecated Schema has been deprecated and is superseded by type.
      * Set the schema
      *
      * @param SchemaDefinitionInterface|string $schema
@@ -189,11 +194,11 @@ class Body implements BodyInterface, ArrayInstantiationInterface
      */
     public function setSchema($schema)
     {
-        if (!is_string($schema) && !$schema instanceof SchemaDefinitionInterface) {
+        if (!is_string($schema) && !$schema instanceof TypeInterface) {
             throw new InvalidSchemaDefinitionException();
         }
 
-        $this->schema = $schema;
+        $this->type = $schema;
     }
 
     // --
