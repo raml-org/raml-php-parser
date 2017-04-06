@@ -81,8 +81,11 @@ RAML;
     /** @test */
     public function shouldThrowCorrectExceptionOnBadRamlFile()
     {
-        $this->setExpectedException('\Raml\Exception\InvalidJsonException');
-        $this->parser->parse(__DIR__.'/fixture/invalid/bad.raml');
+        $this->setExpectedException('\Raml\Exception\RamlParserException');
+        // exit(var_dump(
+            $this->parser->parse(__DIR__.'/fixture/invalid/bad.raml')
+        // ))
+        ;
     }
 
     /** @test */
@@ -91,14 +94,14 @@ RAML;
         $config = new \Raml\ParseConfiguration();
         $config->disableDirectoryTraversal();
         $this->parser->setConfiguration($config);
-        $this->setExpectedException('\Raml\Exception\InvalidJsonException');
+        $this->setExpectedException('\Raml\Exception\RamlParserException');
         $this->parser->parse(__DIR__.'/fixture/treeTraversal/bad.raml');
     }
 
     /** @test */
     public function shouldPreventDirectoryTraversalByDefault()
     {
-        $this->setExpectedException('\Raml\Exception\InvalidJsonException');
+        $this->setExpectedException('\Raml\Exception\RamlParserException');
         $this->parser->parse(__DIR__.'/fixture/treeTraversal/bad.raml');
     }
 
@@ -118,7 +121,7 @@ RAML;
         $body = $response->getBodyByType('application/json');
 
         $schema = $body->getSchema();
-        $this->assertInstanceOf('\Raml\Schema\Definition\JsonSchemaDefinition', $schema);
+        $this->assertInstanceOf('\Raml\Type\JsonType', $schema);
     }
 
     /** @test */
@@ -213,7 +216,7 @@ RAML;
         $this->assertCount(3, $resource->getMethods());
         $this->assertInstanceOf('\Raml\Method', $method);
         $this->assertEquals('POST', $method->getType());
-        $this->assertInstanceOf('\Raml\Schema\Definition\JsonSchemaDefinition', $schema);
+        $this->assertInstanceOf('\Raml\Type\JsonType', $schema);
     }
 
     /** @test */
@@ -256,7 +259,7 @@ RAML;
         $body = $response->getBodyByType('application/json');
         $schema = $body->getSchema();
 
-        $this->assertInstanceOf('\Raml\Schema\Definition\JsonSchemaDefinition', $schema);
+        $this->assertInstanceOf('\Raml\Type\JsonType', $schema);
     }
 
     /** @test */
@@ -270,7 +273,7 @@ RAML;
         $body = $response->getBodyByType('application/json');
         $schema = $body->getSchema();
 
-        $this->assertInstanceOf('\Raml\Schema\Definition\JsonSchemaDefinition', $schema);
+        $this->assertInstanceOf('\Raml\Type\JsonType', $schema);
     }
 
     /** @test */
@@ -284,24 +287,7 @@ RAML;
         $body = $response->getBodyByType('application/json');
         $schema = $body->getSchema();
 
-        $this->assertInstanceOf('\Raml\Schema\Definition\JsonSchemaDefinition', $schema);
-    }
-
-    /** @test */
-    public function shouldNotParseJsonIfNotRequested()
-    {
-        $config = new \Raml\ParseConfiguration();
-        $config->disableSchemaParsing();
-        $this->parser->setConfiguration($config);
-
-        $simpleRaml = $this->parser->parse(__DIR__.'/fixture/simple.raml');
-        $resource = $simpleRaml->getResourceByUri('/songs/1');
-        $method = $resource->getMethod('get');
-        $response = $method->getResponse(200);
-        $body = $response->getBodyByType('application/json');
-        $schema = $body->getSchema();
-
-        $this->assertInternalType('string', $schema);
+        $this->assertInstanceOf('\Raml\Type\JsonType', $schema);
     }
 
     /** @test */
@@ -344,25 +330,7 @@ RAML;
         $body = $response->getBodyByType('application/json');
         $schema = $body->getSchema();
 
-        $this->assertInstanceOf('\Raml\Schema\Definition\JsonSchemaDefinition', $schema);
-    }
-
-    /** @test */
-    public function shouldNotParseIncludedJsonIfNotRequired()
-    {
-        $config = new \Raml\ParseConfiguration();
-        $config->disableSchemaParsing();
-        $this->parser->setConfiguration($config);
-
-        $simpleRaml = $this->parser->parse(__DIR__.'/fixture/includeSchema.raml');
-
-        $resource = $simpleRaml->getResourceByUri('/songs');
-        $method = $resource->getMethod('get');
-        $response = $method->getResponse(200);
-        $body = $response->getBodyByType('application/json');
-        $schema = $body->getSchema();
-
-        $this->assertInternalType('string', $schema);
+        $this->assertInstanceOf('\Raml\Type\JsonType', $schema);
     }
 
     /** @test */
@@ -414,7 +382,7 @@ RAML;
     /** @test */
     public function shouldThrowErrorIfUnknownIncluded()
     {
-        $this->setExpectedException('\Raml\Exception\InvalidSchemaTypeException');
+        $this->setExpectedException('\Raml\Exception\InvalidJsonException');
 
         try {
             $this->parser->parse(__DIR__.'/fixture/includeUnknownSchema.raml');
@@ -440,7 +408,7 @@ RAML;
         $schema = $body->getSchema();
 
 
-        $this->assertInstanceOf('\Raml\Schema\Definition\JsonSchemaDefinition', $schema);
+        $this->assertInstanceOf('\Raml\Type\JsonType', $schema);
     }
 
     /** @test */
@@ -707,7 +675,7 @@ RAML;
         $body = $response->getBodyByType('application/json');
         $schema = $body->getSchema();
 
-        $this->assertInstanceOf('Raml\Schema\Definition\JsonSchemaDefinition', $schema);
+        $this->assertInstanceOf('Raml\Type\JsonType', $schema);
 
         $schema = $schema->getJsonArray();
 
@@ -719,7 +687,7 @@ RAML;
     {
         $def = $this->parser->parse(__DIR__ . '/fixture/schemaInTypes.raml');
         $schema = $def->getResourceByUri('/projects')->getMethod('post')->getBodyByType('application/json')->getSchema();
-        $this->assertInstanceOf('Raml\Schema\Definition\JsonSchemaDefinition', $schema);
+        $this->assertInstanceOf('Raml\Type\JsonType', $schema);
     }
 
     /** @test */
