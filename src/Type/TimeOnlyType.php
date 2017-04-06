@@ -1,8 +1,9 @@
 <?php
 
-namespace Raml\Types;
+namespace Raml\Type;
 
 use Raml\Type;
+use Raml\Exception\InvalidTypeException;
 
 /**
  * TimeOnlyType class
@@ -27,6 +28,8 @@ class TimeOnlyType extends Type
     public function validate($value)
     {
         $d = DateTime::createFromFormat('HH:II:SS', $value);
-        return $d && $d->format('HH:II:SS') === $value;
+        if (($d && $d->format('HH:II:SS') === $value) !== false) {
+            throw new InvalidTypeException(['Value is not time-only.']);
+        }
     }
 }

@@ -1,8 +1,9 @@
 <?php
 
-namespace Raml\Types;
+namespace Raml\Type;
 
 use Raml\Type;
+use Raml\Exception\InvalidTypeException;
 
 /**
  * FileType class
@@ -137,6 +138,9 @@ class FileType extends Type
 
     public function validate($value)
     {
-        return (bool) preg_match('/^[a-zA-Z0-9\/\r\n+]*={0,2}$/', $value);
+        if ((bool) preg_match('/^[a-zA-Z0-9\/\r\n+]*={0,2}$/', $value) === false) {
+            throw new InvalidTypeException(['Value is not a file.']);
+        }
+        return true;
     }
 }

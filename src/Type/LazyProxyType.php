@@ -1,6 +1,6 @@
 <?php
 
-namespace Raml\Types;
+namespace Raml\Type;
 
 use Raml\TypeInterface;
 use Raml\TypeCollection;

@@ -1,11 +1,12 @@
 <?php
 
-namespace Raml\Types;
+namespace Raml\Type;
 
 use Raml\Type;
 use Raml\ApiDefinition;
 use Raml\TypeCollection;
 use Raml\Exception\PropertyNotFoundException;
+use Raml\Exception\InvalidTypeException;
 
 /**
  * ObjectType class
@@ -275,19 +276,28 @@ class ObjectType extends Type
     {
         // an object is in essence just a group (array) of datatypes
         if (!is_array($value)) {
-            return false;
+            throw new InvalidTypeException(['Value is not an array.']);
         }
-        foreach ($value as $name => $propertyValue) {
-            try {
-                $property = $this->getPropertyByName($name);
-                if (!$property->validate($propertyValue)) {
-                    return false;
+        $errors = [];
+
+        foreach ($this->getProperties() as $property) {
+            if ($property->isRequired()) {
+                if (!in_array($property->getName(), array_keys($value))) {
+                    $errors[] = sprintf('Object does not contain required property "%s".', $property->getName());
+                } else {
+                    try {
+                        $property->validate($value[$property->getName()]);
+                    } catch (InvalidTypeException $e) {
+                        $errors = array_merge($errors, $e->getErrors());
+                    }
                 }
-            } catch (PropertyNotFoundException $e) {
-                // if no property found, carry on
-                return false;
             }
         }
+        
+        if (!empty($errors)) {
+            throw new InvalidTypeException($errors);
+        }
+
         return true;
     }
 }

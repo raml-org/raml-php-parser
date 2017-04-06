@@ -1,25 +1,24 @@
 <?php
 
-namespace Raml\Types;
-
+namespace Raml\Type;
 
 use Raml\Type;
-
+use Raml\Exception\InvalidTypeException;
 
 /**
- * DateOnlyType class
- * 
+ * BooleanType class
+ *
  * @author Melvin Loos <m.loos@infopact.nl>
  */
-class DateOnlyType extends Type
+class BooleanType extends Type
 {
     /**
-    * Create a new DateOnlyType from an array of data
+    * Create a new BooleanType from an array of data
     *
     * @param string    $name
     * @param array     $data
     *
-    * @return DateOnlyType
+    * @return BooleanType
     */
     public static function createFromArray($name, array $data = [])
     {
@@ -30,7 +29,9 @@ class DateOnlyType extends Type
 
     public function validate($value)
     {
-        $d = DateTime::createFromFormat('Y-m-d', $value);
-        return $d && $d->format('Y-m-d') === $value;
+        if (!is_bool($value)) {
+            throw new InvalidTypeException(['Value is not a boolean.']);
+        }
+        return true;
     }
 }

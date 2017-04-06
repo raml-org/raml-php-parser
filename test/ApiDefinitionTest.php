@@ -95,9 +95,9 @@ class ApiDefinitionTest extends PHPUnit_Framework_TestCase
         $api = $this->parser->parse(__DIR__.'/fixture/raml-1.0/types.raml');
         $types = $api->getTypes();
         $object = $types->current();
-        $this->assertInstanceOf('\Raml\Types\ObjectType', $object);
-        $this->assertInstanceOf('\Raml\Types\IntegerType', $object->getPropertyByName('id'));
-        $this->assertInstanceOf('\Raml\Types\StringType', $object->getPropertyByName('name'));
+        $this->assertInstanceOf('\Raml\Type\ObjectType', $object);
+        $this->assertInstanceOf('\Raml\Type\IntegerType', $object->getPropertyByName('id'));
+        $this->assertInstanceOf('\Raml\Type\StringType', $object->getPropertyByName('name'));
     }
 
     /** @test */
@@ -106,40 +106,45 @@ class ApiDefinitionTest extends PHPUnit_Framework_TestCase
         $api = $this->parser->parse(__DIR__.'/fixture/raml-1.0/complexTypes.raml');
         // check types
         $org = $api->getTypes()->getTypeByName('Org');
-        $this->assertInstanceOf('\Raml\Types\ObjectType', $org);
+        $this->assertInstanceOf('\Raml\Type\ObjectType', $org);
         // property will return a proxy object so to compare to actual type we will need to ask for the resolved object
-        $this->assertInstanceOf('\Raml\Types\UnionType', $org->getPropertyByName('onCall')->getResolvedObject());
+        $this->assertInstanceOf('\Raml\Type\UnionType', $org->getPropertyByName('onCall')->getResolvedObject());
         $head = $org->getPropertyByName('Head');
-        $this->assertInstanceOf('\Raml\Types\ObjectType', $head->getResolvedObject());
-        $this->assertInstanceOf('\Raml\Types\StringType', $head->getPropertyByName('firstname'));
-        $this->assertInstanceOf('\Raml\Types\StringType', $head->getPropertyByName('lastname'));
-        $this->assertInstanceOf('\Raml\Types\StringType', $head->getPropertyByName('title?'));
-        $this->assertInstanceOf('\Raml\Types\StringType', $head->getPropertyByName('kind'));
+        $this->assertInstanceOf('\Raml\Type\ObjectType', $head->getResolvedObject());
+        $this->assertInstanceOf('\Raml\Type\StringType', $head->getPropertyByName('firstname'));
+        $this->assertInstanceOf('\Raml\Type\StringType', $head->getPropertyByName('lastname'));
+        $this->assertInstanceOf('\Raml\Type\StringType', $head->getPropertyByName('title?'));
+        $this->assertInstanceOf('\Raml\Type\StringType', $head->getPropertyByName('kind'));
         $reports = $head->getPropertyByName('reports');
-        $this->assertInstanceOf('\Raml\Types\ArrayType', $reports);
+        $this->assertInstanceOf('\Raml\Type\ArrayType', $reports);
         $phone = $head->getPropertyByName('phone')->getResolvedObject();
-        $this->assertInstanceOf('\Raml\Types\StringType', $phone);
+        $this->assertInstanceOf('\Raml\Type\StringType', $phone);
         // check resources
         $type = $api->getResourceByPath('/orgs/{orgId}')->getMethod('get')->getResponse(200)->getBodyByType('application/json')->getType();
-        $this->assertInstanceOf('\Raml\Types\ObjectType', $type->getResolvedObject());
+        $this->assertInstanceOf('\Raml\Type\ObjectType', $type->getResolvedObject());
     }
 
     /** @test */
     public function shouldValidateResponse()
     {
-         $api = $this->parser->parse(__DIR__.'/fixture/raml-1.0/complexTypes.raml');
-         $body = $api->getResourceByPath('/orgs/{orgId}')->getMethod('get')->getResponse(200)->getBodyByType('application/json');
-         /* @var $body \Raml\Body */
-         
-         $validResponse = $body->getExample();
-         $type = $body->getType();
-         $this->assertTrue($type->validate($validResponse));
+        $api = $this->parser->parse(__DIR__.'/fixture/raml-1.0/complexTypes.raml');
+        $body = $api->getResourceByPath('/orgs/{orgId}')->getMethod('get')->getResponse(200)->getBodyByType('application/json');
+        /* @var $body \Raml\Body */
 
-         $invalidResponse = [
+        $validResponse = $body->getExample();
+        $type = $body->getType();
+        $this->assertTrue($type->validate($validResponse));
+        
+
+        $invalidResponse = [
             'onCall' => 'this is not an object',
             'Head' => 'this is not an object'
-         ];
-         $this->assertFalse($type->validate($invalidResponse));
+        ];
+        $this->setExpectedException(
+            '\Raml\Exception\InvalidTypeException',
+            'Invalid Schema.'
+        );
+        $type->validate($invalidResponse);
     }
 
     /** @test */

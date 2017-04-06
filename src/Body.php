@@ -7,7 +7,8 @@ use Raml\Schema\SchemaDefinitionInterface;
 use Raml\Exception\BadParameter\InvalidSchemaDefinitionException;
 use Raml\ApiDefinition;
 use Raml\TypeInterface;
-use Raml\Types\ObjectType;
+use Raml\Type\ObjectType;
+use Raml\Type;
 
 /**
  * A body

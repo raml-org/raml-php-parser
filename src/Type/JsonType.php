@@ -1,9 +1,11 @@
 <?php
 
-namespace Raml\Types;
+namespace Raml\Type;
 
 use Raml\Type;
 use JsonSchema\Validator;
+use Raml\Exception\InvalidSchemaException;
+use Raml\Exception\InvalidJsonException;
 
 /**
  * JsonType class
@@ -30,27 +32,36 @@ class JsonType extends Type
     public static function createFromArray($name, array $data = [])
     {
         $type = parent::createFromArray($name, $data);
-        /* @var $type StringType */
 
-        $this->json = $data;
+        $json = $data['type'];
+
+        $type->setJson($json);
         
         return $type;
+    }
+
+    public function setJson($json) {
+        if (!is_string($json)) {
+            throw new InvalidJsonException();
+        }
+        $this->json = $json;
     }
 
     /**
      * Validate a JSON string against the schema
      * - Converts the string into a JSON object then uses the JsonSchema Validator to validate
      *
-     * @param $string 
+     * @param string $string JSON object to validate.
      *
      * @return bool
+     * @throws InvalidJsonException Thrown when string is invalid JSON.
      */
     public function validate($string)
     {
         $json = json_decode($string);
 
         if (json_last_error() !== JSON_ERROR_NONE) {
-            return false;
+            throw new InvalidJsonException(json_last_error());
         }
 
         return $this->validateJsonObject($json);
@@ -61,21 +72,51 @@ class JsonType extends Type
      *
      * @param string $json
      *
-     * @throws InvalidSchemaException
+     * @throws InvalidSchemaException Thrown when the string does not validate against the schema.
      *
      * @return bool
      */
     public function validateJsonObject($json)
     {
         $validator = new Validator();
-        $jsonSchema = $this->json;
+        $jsonSchema = json_decode($this->json);
 
         $validator->check($json, $jsonSchema);
 
         if (!$validator->isValid()) {
-            return false;
+            throw new InvalidSchemaException($validator->getErrors());
         }
 
         return true;
+    }
+
+    /**
+     * Returns the JSON Schema as a \stdClass
+     *
+     * @return \stdClass
+     */
+    public function getJsonObject()
+    {
+        return json_decode($this->json);
+    }
+
+    /**
+     * Returns the JSON Schema as an array
+     *
+     * @return array
+     */
+    public function getJsonArray()
+    {
+        return json_decode($this->json, true);
+    }
+
+    /**
+     * Returns the original JSON schema
+     *
+     * @return string
+     */
+    public function __toString()
+    {
+        return $this->json;
     }
 }

@@ -1,10 +1,11 @@
 <?php
 
-namespace Raml\Types;
+namespace Raml\Type;
 
 use Raml\Type;
 use Raml\TypeCollection;
 use Raml\ApiDefinition;
+use Raml\Exception\InvalidTypeException;
 
 /**
  * UnionType class
@@ -66,10 +67,25 @@ class UnionType extends Type
     public function validate($value)
     {
         foreach ($this->getPossibleTypes() as $type) {
-            if ($type->validate($value)) {
-                return true;
+            try {
+                if ($type->validate($value)) {
+                    return true;
+                }
+            } catch (InvalidTypeException $e) {
+                // ignore validation errors since it can be any of possible types
             }
         }
-        return false;
+        
+        throw new InvalidTypeException(
+            [
+                sprintf(
+                    'Value is not any of the following types: %s',
+                    array_reduce($this->getPossibleTypes(), function ($carry, $item) {
+                        $carry = $carry . ', ' . $item->getName();
+                        return $carry;
+                    })
+                )
+            ]
+        );
     }
 }

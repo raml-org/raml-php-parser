@@ -1,10 +1,9 @@
 <?php
 
-namespace Raml\Types;
-
+namespace Raml\Type;
 
 use Raml\Type;
-
+use Raml\Exception\InvalidTypeException;
 
 /**
  * StringType class
@@ -141,21 +140,21 @@ class StringType extends Type
     public function validate($value)
     {
         if (!is_string($value)) {
-            return false;
+            throw new InvalidTypeException(['Value is not a string.']);
         }
         if (!is_null($this->pattern)) {
             if (preg_match('/'.$this->pattern.'/', $value) == false) {
-                return false;
+                throw new InvalidTypeException([sprintf('String does not match required pattern: %s.', $this->pattern)]);
             }
         }
         if (!is_null($this->minLength)) {
             if (strlen($value) < $this->minLength) {
-                return false;
+                throw new InvalidTypeException([sprintf('String is shorter than the minimal length of %s.', $this->minLength)]);
             }
         }
         if (!is_null($this->maxLength)) {
             if (strlen($value) > $this->maxLength) {
-                return false;
+                throw new InvalidTypeException([sprintf('String is longer than the maximal length of %s.', $this->minLength)]);
             }
         }
 

@@ -15,10 +15,12 @@ use Raml\Exception\MutuallyExclusiveElementsException;
 
 use Raml\Utility\StringTransformer;
 
-use Raml\Types\UnionType;
-use Raml\Types\ArrayType;
-use Raml\Types\ObjectType;
-use Raml\Types\LazyProxyType;
+use Raml\Type\UnionType;
+use Raml\Type\ArrayType;
+use Raml\Type\ObjectType;
+use Raml\Type\JsonType;
+use Raml\Type\XmlType;
+use Raml\Type\LazyProxyType;
 
 /**
  * The API Definition

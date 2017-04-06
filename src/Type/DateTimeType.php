@@ -1,8 +1,9 @@
 <?php
 
-namespace Raml\Types;
+namespace Raml\Type;
 
 use Raml\Type;
+use Raml\Exception\InvalidTypeException;
 
 /**
  * DateTimeType type class
@@ -67,6 +68,9 @@ class DateTimeType extends Type
     {
         $format = $this->format ?: DATE_RFC3339;
         $d = DateTime::createFromFormat($format, $value);
-        return $d && $d->format($format) === $value;
+        if (($d && $d->format($format) === $value) === false) {
+            throw new InvalidTypeException('Value is not a datetime-only.');
+        }
+        return true;
     }
 }

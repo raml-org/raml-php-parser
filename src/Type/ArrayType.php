@@ -1,8 +1,9 @@
 <?php
 
-namespace Raml\Types;
+namespace Raml\Type;
 
 use Raml\Type;
+use Raml\Exception\InvalidTypeException;
 
 /**
  * ArrayType class
@@ -31,7 +32,7 @@ class ArrayType extends Type
      *
      * @var int
      **/
-    private $minItems;
+    private $minItems = 0;
 
     /**
      * Maximum amount of items in array. Value MUST be equal to or greater than 0.
@@ -39,7 +40,7 @@ class ArrayType extends Type
      *
      * @var int
      **/
-    private $maxItems;
+    private $maxItems = 2147483647;
 
     /**
     * Create a new ArrayType from an array of data
@@ -176,6 +177,18 @@ class ArrayType extends Type
 
     public function validate($value)
     {
-        return is_array($value);
+        if (!is_array($value)) {
+            throw new InvalidTypeException(['Value is not an array.']);
+        } else {
+            if (count($value) < $this->minItems) {
+                throw new InvalidTypeException([sprintf('Array should contain a minimal of "%s" items.', $this->minItems)]);
+            }
+            if (count($value) > $this->maxItems) {
+                throw new InvalidTypeException([sprintf('Array should contain a maximum of "%s" items.', $this->maxItems)]);
+            }
+            // TODO: implement $this->items check
+            // TODO: implement $this->uniqueItems check
+        }
+        return true;
     }
 }

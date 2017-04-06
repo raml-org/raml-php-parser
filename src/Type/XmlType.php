@@ -1,8 +1,9 @@
 <?php
 
-namespace Raml\Types;
+namespace Raml\Type;
 
 use Raml\Type;
+use Raml\Exception\InvalidSchemaException;
 
 /**
  * XmlType class
@@ -31,7 +32,7 @@ class XmlType extends Type
         $type = parent::createFromArray($name, $data);
         /* @var $type StringType */
 
-        $this->xml = $data;
+        $type->xml = $data['type'];
         
         return $type;
     }
@@ -39,7 +40,7 @@ class XmlType extends Type
     /**
      * Validate an XML string against the schema
      *
-     * @param $string
+     * @param string $string Value to validate.
      *
      * @return bool
      */
@@ -53,7 +54,7 @@ class XmlType extends Type
         $errors = libxml_get_errors();
         libxml_clear_errors();
         if ($errors) {
-            return false;
+            throw new InvalidSchemaException($errors);
         }
 
         // ---
@@ -62,11 +63,21 @@ class XmlType extends Type
         $errors = libxml_get_errors();
         libxml_clear_errors();
         if ($errors) {
-            return false;
+            throw new InvalidSchemaException($errors);
         }
         
         libxml_use_internal_errors($originalErrorLevel);
 
         return true;
+    }
+
+    /**
+     * Returns the original XML schema
+     *
+     * @return string
+     */
+    public function __toString()
+    {
+        return $this->xml;
     }
 }

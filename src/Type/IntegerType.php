@@ -1,10 +1,12 @@
 <?php
 
-namespace Raml\Types;
+namespace Raml\Type;
+
+use Raml\Exception\InvalidTypeException;
 
 /**
  * IntegerType class
- * 
+ *
  * @author Melvin Loos <m.loos@infopact.nl>
  */
 class IntegerType extends NumberType
@@ -33,6 +35,9 @@ class IntegerType extends NumberType
 
     public function validate($value)
     {
-        return is_int($value);
+        if (is_int($value) === false) {
+            throw new InvalidTypeException(['Value is not a integer.']);
+        }
+        return true;
     }
 }

@@ -1,14 +1,13 @@
 <?php
 
-namespace Raml\Types;
-
+namespace Raml\Type;
 
 use Raml\Type;
-
+use Raml\Exception\InvalidTypeException;
 
 /**
  * NullType class
- * 
+ *
  * @author Melvin Loos <m.loos@infopact.nl>
  */
 class NullType extends Type
@@ -30,6 +29,9 @@ class NullType extends Type
 
     public function validate($value)
     {
-        return is_null($value);
+        if (is_null($value) === false) {
+            throw new InvalidTypeException(['Value is not null.']);
+        }
+        return true;
     }
 }

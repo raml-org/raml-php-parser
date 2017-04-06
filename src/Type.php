@@ -2,8 +2,9 @@
 
 namespace Raml;
 
-use Raml\Types;
+use Raml\Type;
 use Raml\Utility\StringTransformer;
+use Symfony\Component\Yaml\Yaml;
 
 /**
  * Type class
@@ -34,11 +35,11 @@ class Type implements ArrayInstantiationInterface, TypeInterface
     private $type;
 
     /**
-     * Required
+     * Specifies that the property is required or not.
      *
      * @var bool
      **/
-    private $required = null;
+    private $required = true;
 
     /**
      * Raml definition
@@ -74,6 +75,9 @@ class Type implements ArrayInstantiationInterface, TypeInterface
         $class->setType($data['type']);
         if (isset($data['usage'])) {
             $class->setUsage($data['usage']);
+        }
+        if (isset($data['required'])) {
+            $class->setRequired($data['required']);
         }
         $class->setDefinition($data);
 
@@ -166,6 +170,16 @@ class Type implements ArrayInstantiationInterface, TypeInterface
     public function getRequired()
     {
         return $this->required;
+    }
+
+    /**
+     * Returns true when property is required, false otherwise.
+     *
+     * @return bool
+     */
+    public function isRequired()
+    {
+        return ($this->required === true);
     }
 
     /**
@@ -291,5 +305,15 @@ class Type implements ArrayInstantiationInterface, TypeInterface
     {
         // everything is valid for the any type
         return true;
+    }
+
+    /**
+     * Returns the original RAML string
+     *
+     * @return string
+     */
+    public function __toString()
+    {
+        return Yaml::dump($this->definition);
     }
 }
