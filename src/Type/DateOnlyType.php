@@ -33,9 +33,10 @@ class DateOnlyType extends Type
         if (!is_string($value)) {
             throw new InvalidTypeException(['property' => $this->name, 'constraint' => 'Value is not a date-only string.']);
         }
-        $d = DateTime::createFromFormat('Y-m-d', $value);
-        if (($d && $d->format('Y-m-d') === $value) === false) {
-            throw new InvalidTypeException(['property' => $this->name, 'constraint' => 'Value is not a date-only.']);
+        $format = 'Y-m-d';
+        $d = DateTime::createFromFormat($format, $value);
+        if (($d && $d->format($format) === $value) === false) {
+            throw new InvalidTypeException(['property' => $this->name, 'constraint' => sprintf('Value is not conform format: %s.', $format)]);
         }
         return true;
     }

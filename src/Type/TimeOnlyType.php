@@ -27,9 +27,10 @@ class TimeOnlyType extends Type
 
     public function validate($value)
     {
-        $d = DateTime::createFromFormat('HH:II:SS', $value);
-        if (($d && $d->format('HH:II:SS') === $value) !== false) {
-            throw new InvalidTypeException(['property' => $this->name, 'constraint' => 'Value is not time-only.']);
+        $format = 'HH:II:SS';
+        $d = DateTime::createFromFormat($format, $value);
+        if (($d && $d->format($format) === $value) !== false) {
+            throw new InvalidTypeException(['property' => $this->name, 'constraint' => sprintf('Value is not conform format: %s.', $format)]);
         }
     }
 }
