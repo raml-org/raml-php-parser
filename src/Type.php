@@ -18,35 +18,35 @@ class Type implements ArrayInstantiationInterface, TypeInterface
      *
      * @var ObjectType|string
      **/
-    private $parent = null;
+    protected $parent = null;
 
     /**
      * Key used for type
      *
      * @var string
      **/
-    private $name;
+    protected $name;
 
     /**
      * Type
      *
      * @var string
      **/
-    private $type;
+    protected $type;
 
     /**
      * Specifies that the property is required or not.
      *
      * @var bool
      **/
-    private $required = true;
+    protected $required = true;
 
     /**
      * Raml definition
      *
      * @var array
      **/
-    private $definition;
+    protected $definition;
 
     /**
      *  Create new type

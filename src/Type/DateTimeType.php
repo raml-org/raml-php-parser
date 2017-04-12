@@ -69,7 +69,7 @@ class DateTimeType extends Type
         $format = $this->format ?: DATE_RFC3339;
         $d = DateTime::createFromFormat($format, $value);
         if (($d && $d->format($format) === $value) === false) {
-            throw new InvalidTypeException('Value is not a datetime-only.');
+            throw new InvalidTypeException(['property' => $this->name, 'constraint' => 'Value is not a datetime-only.']);
         }
         return true;
     }

@@ -115,7 +115,7 @@ class Body implements BodyInterface, ArrayInstantiationInterface
             $name = '';
             $definition = $data['type'];
 
-            $type = ApiDefinition::determineType($name, $definition);
+            $type = ApiDefinition::determineType(ApiDefinition::ROOT_ELEMENT_NAME, $definition);
             if ($type instanceof ObjectType) {
                 $type->inheritFromParent();
             }

@@ -4,6 +4,7 @@ namespace Raml\Type;
 
 use Raml\Type;
 use Raml\Exception\InvalidTypeException;
+use Raml\ApiDefinition;
 
 /**
  * ArrayType class
@@ -122,7 +123,12 @@ class ArrayType extends Type
      */
     public function setItems($items)
     {
-        $this->items = $items;
+        if (!is_array($items)) {
+            $items = [$items];
+        }
+        foreach ($items as $item) {
+            $this->items[] = ApiDefinition::determineType($item, $item);
+        }
 
         return $this;
     }
@@ -178,15 +184,67 @@ class ArrayType extends Type
     public function validate($value)
     {
         if (!is_array($value)) {
-            throw new InvalidTypeException(['Value is not an array.']);
+            throw new InvalidTypeException(['property' => $this->name, 'constraint' => sprintf('Value is not an array: %s', var_export($value, true))]);
         } else {
             if (count($value) < $this->minItems) {
-                throw new InvalidTypeException([sprintf('Array should contain a minimal of "%s" items.', $this->minItems)]);
+                throw new InvalidTypeException(['property' => $this->name, 'constraint' => sprintf('Array should contain a minimal of "%s" items.', $this->minItems)]);
             }
             if (count($value) > $this->maxItems) {
-                throw new InvalidTypeException([sprintf('Array should contain a maximum of "%s" items.', $this->maxItems)]);
+                throw new InvalidTypeException(['property' => $this->name, 'constraint' => sprintf('Array should contain a maximum of "%s" items.', $this->maxItems)]);
             }
-            // TODO: implement $this->items check
+            
+            if (!empty($this->items)) {
+                $lastException = null;
+                foreach ($value as $item) {
+                    // check if array element is of any of the defined types
+                    foreach ($this->items as $allowedType) {
+                        try {
+                            $allowedType->validate($item);
+                            continue 2;
+                        } catch (InvalidTypeException $e) {
+                            $lastException = $e;
+                        }
+                    }
+                    // none found means validation failure
+                    if (count($this->items) === 1) {
+                        throw new InvalidTypeException([
+                            'property' => $this->name,
+                            'constraint' => sprintf(
+                                'Array element can only be of allowed type "%s" and fails requirements: %s',
+                                implode(
+                                    ',',
+                                    array_map(
+                                        function ($item) {
+                                            return $item->getName();
+                                        },
+                                        $this->items
+                                    )
+                                ),
+                                implode(', ', array_map(function ($error) {
+                                    return sprintf('%s (%s)', $error['property'], $error['constraint']);
+                                }, $lastException->getErrors()))
+                            )
+                        ], $lastException);
+                    } else {
+                        throw new InvalidTypeException([
+                            'property' => $this->name,
+                            'constraint' => sprintf(
+                                'Array element can only be of allowed types: %s',
+                                implode(
+                                    ',',
+                                    array_map(
+                                        function ($item) {
+                                            return $item->getName();
+                                        },
+                                        $this->items
+                                    )
+                                ), 
+                                var_export($item, true)
+                            )
+                        ], $lastException);
+                    }
+                }
+            }
             // TODO: implement $this->uniqueItems check
         }
         return true;

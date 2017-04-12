@@ -30,7 +30,7 @@ class NullType extends Type
     public function validate($value)
     {
         if (is_null($value) === false) {
-            throw new InvalidTypeException(['Value is not null.']);
+            throw new InvalidTypeException(['property' => $this->name, 'constraint' => 'Value is not null.']);
         }
         return true;
     }

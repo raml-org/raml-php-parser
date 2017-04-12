@@ -36,7 +36,7 @@ class IntegerType extends NumberType
     public function validate($value)
     {
         if (is_int($value) === false) {
-            throw new InvalidTypeException(['Value is not a integer.']);
+            throw new InvalidTypeException(['property' => $this->name, 'constraint' => 'Value is not a integer.']);
         }
         return true;
     }

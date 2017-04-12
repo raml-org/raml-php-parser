@@ -276,26 +276,33 @@ class ObjectType extends Type
     {
         // an object is in essence just a group (array) of datatypes
         if (!is_array($value)) {
-            throw new InvalidTypeException(['Value is not an array.']);
+            throw new InvalidTypeException(['property' => $this->name, 'constraint' => 'Value is not an array.']);
         }
-        $errors = [];
+        $previousException = null;
 
         foreach ($this->getProperties() as $property) {
-            if ($property->isRequired()) {
+            // we catch the validation exceptions so we can validate the entire object
+            try {
                 if (!in_array($property->getName(), array_keys($value))) {
-                    $errors[] = sprintf('Object does not contain required property "%s".', $property->getName());
-                } else {
-                    try {
-                        $property->validate($value[$property->getName()]);
-                    } catch (InvalidTypeException $e) {
-                        $errors = array_merge($errors, $e->getErrors());
+                    if ($property->isRequired()) {
+                        throw new InvalidTypeException([
+                            'property' => $property->getName(),
+                            'constraint' => sprintf('Object does not contain required property "%s".', $property->getName())
+                        ], $previousException);
                     }
+                } else {
+                    $property->validate($value[$property->getName()]);
                 }
+            } catch (InvalidTypeException $e) {
+                $previousException = $e;
             }
         }
         
-        if (!empty($errors)) {
-            throw new InvalidTypeException($errors);
+        if ($previousException !== null) {
+            throw new InvalidTypeException([
+                'property' => $this->name,
+                'constraint' => 'One or more object properties is invalid.'
+            ]);
         }
 
         return true;

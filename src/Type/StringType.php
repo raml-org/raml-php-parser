@@ -140,21 +140,21 @@ class StringType extends Type
     public function validate($value)
     {
         if (!is_string($value)) {
-            throw new InvalidTypeException(['Value is not a string.']);
+            throw new InvalidTypeException(['property' => $this->name, 'constraint' => 'Value is not a string.']);
         }
         if (!is_null($this->pattern)) {
             if (preg_match('/'.$this->pattern.'/', $value) == false) {
-                throw new InvalidTypeException([sprintf('String does not match required pattern: %s.', $this->pattern)]);
+                throw new InvalidTypeException(['property' => $this->name, 'constraint' => sprintf('String does not match required pattern: %s.', $this->pattern)]);
             }
         }
         if (!is_null($this->minLength)) {
             if (strlen($value) < $this->minLength) {
-                throw new InvalidTypeException([sprintf('String is shorter than the minimal length of %s.', $this->minLength)]);
+                throw new InvalidTypeException(['property' => $this->name, 'constraint' => sprintf('String is shorter than the minimal length of %s.', $this->minLength)]);
             }
         }
         if (!is_null($this->maxLength)) {
             if (strlen($value) > $this->maxLength) {
-                throw new InvalidTypeException([sprintf('String is longer than the maximal length of %s.', $this->minLength)]);
+                throw new InvalidTypeException(['property' => $this->name, 'constraint' => sprintf('String is longer than the maximal length of %s.', $this->minLength)]);
             }
         }
 

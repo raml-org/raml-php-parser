@@ -8,6 +8,9 @@ use Raml\NamedParameter;
 use Raml\Exception\InvalidSchemaException;
 use Raml\Exception\ValidationException;
 use Exception;
+use Raml\Exception\BodyNotFoundException;
+use Raml\Validator\ValidatorSchemaException;
+use Raml\Exception\InvalidTypeException;
 
 /**
  * Validator
@@ -109,8 +112,15 @@ class Validator
         $method = $request->getMethod();
         $path = $request->getUri()->getPath();
         $contentType = $request->getHeaderLine('Content-Type');
-
-        $schemaBody = $this->schemaHelper->getRequestBody($method, $path, $contentType);
+        try {
+            $schemaBody = $this->schemaHelper->getRequestBody($method, $path, $contentType);
+        } catch (BodyNotFoundException $e) {
+            // no body is defined for this request, nothing to check!
+            return;
+        } catch (ValidatorSchemaException $e) {
+            // no body is defined for this request, nothing to check!
+            return;
+        }
 
         try {
             $schemaBody->getType()->validate($body);
@@ -242,13 +252,32 @@ class Validator
 
         $schemaBody = $this->schemaHelper->getResponseBody($method, $path, $statusCode, $contentType);
 
+        // psr7 response object should always be rewinded else getContents() only returns the remaining body
+        $response->getBody()->rewind();
         $body = $response->getBody()->getContents();
 
+        // parse body to PHP datatypes
+        switch ($contentType) {
+            case 'application/json':
+                $parsedBody = json_decode($body, true);
+                if (json_last_error() !== JSON_ERROR_NONE) {
+                    throw new InvalidJsonException(json_last_error());
+                }
+                break;
+            case 'application/xml':
+                // do nothing
+                $parsedBody = $body;
+                break;
+            
+            default:
+                throw new ValidatorResponseException(sprintf('Unsupported content-type given: %s', $contentType));
+        }
+
         try {
-            $schemaBody->getType()->validate($body);
-        } catch (InvalidSchemaException $exception) {
+            $schemaBody->getType()->validate($parsedBody);
+        } catch (InvalidTypeException $exception) {
             $message = sprintf(
-                'Invalid Schema: %s',
+                'Invalid type: %s',
                 $this->getSchemaErrorsAsString($exception->getErrors())
             );
 

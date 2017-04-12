@@ -176,60 +176,60 @@ class NumberType extends Type
     {
         if (!is_null($this->maximum)) {
             if ($value > $this->maximum) {
-                throw new InvalidTypeException([sprintf('Value is larger than the allowed maximum of %s.', $this->maximum)]);
+                throw new InvalidTypeException(['property' => $this->name, 'constraint' => sprintf('Value is larger than the allowed maximum of %s.', $this->maximum)]);
             }
         }
         if (!is_null($this->minimum)) {
             if ($value < $this->minimum) {
-                throw new InvalidTypeException([sprintf('Value is smaller than the allowed minimum of %s.', $this->minimum)]);
+                throw new InvalidTypeException(['property' => $this->name, 'constraint' => sprintf('Value is smaller than the allowed minimum of %s.', $this->minimum)]);
             }
         }
         switch ($this->format) {
             case 'int8':
                 if (filter_var($value, FILTER_VALIDATE_INT, ['options' => ['min_range' => -128, 'max_range' => 127]]) === false) {
-                    throw new InvalidTypeException([sprintf('Value is not of the required format: "%s".', $this->format)]);
+                    throw new InvalidTypeException(['property' => $this->name, 'constraint' => sprintf('Value is not of the required format: "%s".', $this->format)]);
                 }
                 break;
             case 'int16':
                 if (filter_var($value, FILTER_VALIDATE_INT, ['options' => ['min_range' => -32768, 'max_range' => 32767]]) === false) {
-                    throw new InvalidTypeException([sprintf('Value is not of the required format: "%s".', $this->format)]);
+                    throw new InvalidTypeException(['property' => $this->name, 'constraint' => sprintf('Value is not of the required format: "%s".', $this->format)]);
                 }
                 break;
             case 'int32':
                 if (filter_var($value, FILTER_VALIDATE_INT, ['options' => ['min_range' => -2147483648, 'max_range' => 2147483647]]) === false) {
-                    throw new InvalidTypeException([sprintf('Value is not of the required format: "%s".', $this->format)]);
+                    throw new InvalidTypeException(['property' => $this->name, 'constraint' => sprintf('Value is not of the required format: "%s".', $this->format)]);
                 }
                 break;
             case 'int64':
                 if (filter_var($value, FILTER_VALIDATE_INT, ['options' => ['min_range' => -9223372036854775808, 'max_range' => 9223372036854775807]]) === false) {
-                    throw new InvalidTypeException([sprintf('Value is not of the required format: "%s".', $this->format)]);
+                    throw new InvalidTypeException(['property' => $this->name, 'constraint' => sprintf('Value is not of the required format: "%s".', $this->format)]);
                 }
                 break;
             case 'int':
                 // int === long
             case 'long':
                 if (!is_int($value)) {
-                    throw new InvalidTypeException([sprintf('Value is not of the required format: "%s".', $this->format)]);
+                    throw new InvalidTypeException(['property' => $this->name, 'constraint' => sprintf('Value is not of the required format: "%s".', $this->format)]);
                 }
                 break;
             case 'float':
                 // float === double
             case 'double':
                 if (!is_float($value)) {
-                    throw new InvalidTypeException([sprintf('Value is not of the required format: "%s".', $this->format)]);
+                    throw new InvalidTypeException(['property' => $this->name, 'constraint' => sprintf('Value is not of the required format: "%s".', $this->format)]);
                 }
                 break;
             // if no format is given we check only if it is a number
             null:
             default:
                 if (!is_float($value) && !is_int($value)) {
-                    throw new InvalidTypeException([sprintf('Value is not of the required format: "%s".', $this->format)]);
+                    throw new InvalidTypeException(['property' => $this->name, 'constraint' => sprintf('Value is not of the required format: "%s".', $this->format)]);
                 }
                 break;
         }
         if (!is_null($this->multipleOf)) {
             if ($value %$this->multipleOf != 0) {
-                throw new InvalidTypeException([sprintf('Value is not a multiplication of "%s".', $this->multipleOf)]);
+                throw new InvalidTypeException(['property' => $this->name, 'constraint' => sprintf('Value is not a multiplication of "%s".', $this->multipleOf)]);
             }
         }
         return true;

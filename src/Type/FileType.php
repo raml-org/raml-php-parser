@@ -139,7 +139,7 @@ class FileType extends Type
     public function validate($value)
     {
         if ((bool) preg_match('/^[a-zA-Z0-9\/\r\n+]*={0,2}$/', $value) === false) {
-            throw new InvalidTypeException(['Value is not a file.']);
+            throw new InvalidTypeException(['property' => $this->name, 'constraint' => 'Value is not a file.']);
         }
         return true;
     }

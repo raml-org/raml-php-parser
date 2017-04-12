@@ -58,10 +58,14 @@ class JsonType extends Type
      */
     public function validate($string)
     {
-        $json = json_decode($string);
+        if (is_string($json)) {
+            $json = json_decode($string);
 
-        if (json_last_error() !== JSON_ERROR_NONE) {
-            throw new InvalidJsonException(json_last_error());
+            if (json_last_error() !== JSON_ERROR_NONE) {
+                throw new InvalidJsonException(json_last_error());
+            }
+        } else {
+            $json = (object) $string;
         }
 
         return $this->validateJsonObject($json);

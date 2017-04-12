@@ -31,6 +31,7 @@ class ApiDefinition implements ArrayInstantiationInterface
 {
     const PROTOCOL_HTTP = 'HTTP';
     const PROTOCOL_HTTPS = 'HTTPS';
+    const ROOT_ELEMENT_NAME = '__ROOT_ELEMENT__';
 
     // ---
 
@@ -624,6 +625,25 @@ class ApiDefinition implements ArrayInstantiationInterface
      **/
     public static function determineType($name, $definition)
     {
+        if (is_string($definition)) {
+            $definition = ['type' => $definition];
+        } elseif (is_array($definition)) {
+            if (!isset($definition['type'])) {
+                $definition['type'] = isset($definition['properties']) ? 'object' : 'string';
+            }
+        } elseif ($definition instanceof \stdClass) {
+            return JsonType::createFromArray('schema', $definition);
+        } else {
+            throw new \Exception('Invalid datatype for $definition parameter.');
+        }
+        if (is_object($name)) {
+            throw new \Exception(var_export($name, true));
+        }
+        if (strpos($definition['type'], '?') !== false) {
+            $definition['type'] = substr($definition['type'], 0, strlen($definition['type']) - 1);
+            $definition['required'] = false;
+        }
+        
         // check if we can find a more appropriate Type subclass
         $straightForwardTypes = [
             'time-only',
@@ -639,23 +659,6 @@ class ApiDefinition implements ArrayInstantiationInterface
             'array',
             'object'
         ];
-        if (is_string($definition)) {
-            $definition = ['type' => $definition];
-        } elseif (is_array($definition)) {
-            if (!isset($definition['type'])) {
-                $definition['type'] = isset($definition['properties']) ? 'object' : 'string';
-            }
-        } elseif ($definition instanceof \stdClass) {
-            return JsonType::createFromArray('schema', $definition);
-        } else {
-            throw new \Exception('Invalid datatype for $definition parameter.');
-        }
-        if (is_object($name)) {
-            throw new \Exception(var_export($name, true));
-        }
-        if (strpos($name, '?') !== false) {
-            $definition['required'] = false;
-        }
         
         $type = $definition['type'];
 
@@ -678,11 +681,11 @@ class ApiDefinition implements ArrayInstantiationInterface
             }
             // is it a XML schema?
             if (substr(ltrim($type), 0, 1) === '<') {
-                return XmlType::createFromArray('schema', $definition);
+                return XmlType::createFromArray(self::ROOT_ELEMENT_NAME, $definition);
             }
             // is it a JSON schema?
             if (substr(ltrim($type), 0, 1) === '{') {
-                return JsonType::createFromArray('schema', $definition);
+                return JsonType::createFromArray(self::ROOT_ELEMENT_NAME, $definition);
             }
 
             // no? then no standard type found so this must be a reference to a custom defined type.

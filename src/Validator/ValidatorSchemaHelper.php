@@ -132,7 +132,12 @@ class ValidatorSchemaHelper
     private function getBody(MessageSchemaInterface $schema, $method, $path, $contentType)
     {
         try {
-            $body = $schema->getBodyByType($contentType);
+            if (empty($contentType)) {
+                // no content-type defined? fallback to first defined
+                $body = current($schema->getBodies());
+            } else {
+                $body = $schema->getBodyByType($contentType);
+            }
         } catch (Exception $exception) {
             $message = sprintf(
                 'Schema for %s %s with content type %s was not found in API definition',

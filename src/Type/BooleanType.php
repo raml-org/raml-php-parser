@@ -30,7 +30,7 @@ class BooleanType extends Type
     public function validate($value)
     {
         if (!is_bool($value)) {
-            throw new InvalidTypeException(['Value is not a boolean.']);
+            throw new InvalidTypeException(['property' => $this->name, 'constraint' => 'Value is not a boolean.']);
         }
         return true;
     }

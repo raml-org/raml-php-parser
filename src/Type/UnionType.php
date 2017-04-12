@@ -78,7 +78,8 @@ class UnionType extends Type
         
         throw new InvalidTypeException(
             [
-                sprintf(
+                'property' => $this->name,
+                'constraint' => sprintf(
                     'Value is not any of the following types: %s',
                     array_reduce($this->getPossibleTypes(), function ($carry, $item) {
                         $carry = $carry . ', ' . $item->getName();

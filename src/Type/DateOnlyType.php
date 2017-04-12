@@ -2,6 +2,7 @@
 
 namespace Raml\Type;
 
+use DateTime;
 use Raml\Type;
 use Raml\Exception\InvalidTypeException;
 
@@ -29,9 +30,12 @@ class DateOnlyType extends Type
 
     public function validate($value)
     {
+        if (!is_string($value)) {
+            throw new InvalidTypeException(['property' => $this->name, 'constraint' => 'Value is not a date-only string.']);
+        }
         $d = DateTime::createFromFormat('Y-m-d', $value);
         if (($d && $d->format('Y-m-d') === $value) === false) {
-            throw new InvalidTypeException('Value is not a date-only.');
+            throw new InvalidTypeException(['property' => $this->name, 'constraint' => 'Value is not a date-only.']);
         }
         return true;
     }

@@ -31,7 +31,7 @@ class DateTimeOnlyType extends Type
     {
         $d = DateTime::createFromFormat(DATE_RFC3339, $value);
         if (($d && $d->format(DATE_RFC3339) === $value) === false) {
-            throw new InvalidTypeException('Value is not a datetime-only.');
+            throw new InvalidTypeException(['property' => $this->name, 'constraint' => 'Value is not a datetime-only.']);
         }
         return true;
     }

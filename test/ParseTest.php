@@ -82,10 +82,7 @@ RAML;
     public function shouldThrowCorrectExceptionOnBadRamlFile()
     {
         $this->setExpectedException('\Raml\Exception\RamlParserException');
-        // exit(var_dump(
-            $this->parser->parse(__DIR__.'/fixture/invalid/bad.raml')
-        // ))
-        ;
+        $this->parser->parse(__DIR__.'/fixture/invalid/bad.raml');
     }
 
     /** @test */

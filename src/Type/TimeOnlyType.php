@@ -29,7 +29,7 @@ class TimeOnlyType extends Type
     {
         $d = DateTime::createFromFormat('HH:II:SS', $value);
         if (($d && $d->format('HH:II:SS') === $value) !== false) {
-            throw new InvalidTypeException(['Value is not time-only.']);
+            throw new InvalidTypeException(['property' => $this->name, 'constraint' => 'Value is not time-only.']);
         }
     }
 }
