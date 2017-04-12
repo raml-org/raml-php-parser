@@ -302,7 +302,7 @@ class ObjectType extends Type
             throw new InvalidTypeException([
                 'property' => $this->name,
                 'constraint' => 'One or more object properties is invalid.'
-            ]);
+            ], $previousException);
         }
 
         return true;
