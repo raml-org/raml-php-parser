@@ -6,11 +6,11 @@ use Raml\Type;
 use Raml\Exception\InvalidTypeException;
 
 /**
- * NullType class
+ * NilType class
  *
  * @author Melvin Loos <m.loos@infopact.nl>
  */
-class NullType extends Type
+class NilType extends Type
 {
     /**
     * Create a new NullType from an array of data
