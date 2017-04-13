@@ -31,7 +31,7 @@ class DateTimeOnlyType extends Type
 
     public function validate($value)
     {
-        $format = \DateTime::DATE_RFC3339;
+        $format = \DateTime::RFC3339;
         $d = DateTime::createFromFormat($format, $value);
         if (($d && $d->format($format) === $value) === false) {
             throw new InvalidTypeException(['property' => $this->name, 'constraint' => sprintf('Value is not conform format: %s.', $format)]);
