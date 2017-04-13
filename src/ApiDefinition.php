@@ -639,9 +639,12 @@ class ApiDefinition implements ArrayInstantiationInterface
         if (is_object($name)) {
             throw new \Exception(var_export($name, true));
         }
-        if (strpos($definition['type'], '?') !== false) {
-            $definition['type'] = substr($definition['type'], 0, strlen($definition['type']) - 1);
-            $definition['required'] = false;
+        
+        
+        if (strpos($definition['type'], '?') !== false ||
+            $pos = strpos($name, '?') !== false) {
+            // shorthand for required = false
+            $definition['required'] = isset($definition['required']) ? $definition['required'] : false;
         }
         
         // check if we can find a more appropriate Type subclass
