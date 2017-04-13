@@ -65,7 +65,7 @@ class ObjectType extends Type
      *
      * @var string
      **/
-    private $discriminatorValue = null;
+    private $discriminatorValue = null; // TODO: set correct default value
 
     /**
     * Create a new ObjectType from an array of data
