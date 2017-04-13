@@ -60,7 +60,7 @@ class JsonType extends Type
      */
     public function validate($string)
     {
-        if (is_string($json)) {
+        if (is_string($string)) {
             $json = json_decode($string);
 
             if (json_last_error() !== JSON_ERROR_NONE) {
