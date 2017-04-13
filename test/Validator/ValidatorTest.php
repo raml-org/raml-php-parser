@@ -202,8 +202,8 @@ class ValidatorTest extends PHPUnit_Framework_TestCase
         $this->response->method('getBody')->willReturn($body);
 
         $this->setExpectedException(
-            '\Raml\Validator\ValidatorResponseException',
-            'Invalid Schema:'
+            '\Raml\Exception\InvalidSchemaException',
+            'Invalid Schema.'
         );
 
         $validator = $this->getValidatorForSchema(__DIR__ . '/../fixture/validator/responseBody.raml');

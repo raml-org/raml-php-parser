@@ -142,7 +142,7 @@ class ApiDefinitionTest extends PHPUnit_Framework_TestCase
         ];
         $this->setExpectedException(
             '\Raml\Exception\InvalidTypeException',
-            'Invalid Schema.'
+            'Type does not validate.'
         );
         $type->validate($invalidResponse);
     }
