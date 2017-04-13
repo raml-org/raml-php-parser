@@ -12,6 +12,8 @@ use Raml\Exception\InvalidTypeException;
  */
 class StringType extends Type
 {
+    const TYPE_NAME = 'string';
+    
     /**
      * Regular expression that this string should match.
      *

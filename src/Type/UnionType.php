@@ -14,6 +14,8 @@ use Raml\Exception\InvalidTypeException;
  */
 class UnionType extends Type
 {
+    const TYPE_NAME = 'union';
+    
     /**
      * Possible Types
      *

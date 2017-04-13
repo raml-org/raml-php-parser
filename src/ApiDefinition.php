@@ -646,28 +646,24 @@ class ApiDefinition implements ArrayInstantiationInterface
         
         // check if we can find a more appropriate Type subclass
         $straightForwardTypes = [
-            'time-only',
-            'datetime',
-            'datetime-only',
-            'date-only',
-            'number',
-            'integer',
-            'boolean',
-            'string',
-            'nil',
-            'file',
-            'array',
-            'object'
+            \Raml\Type\TimeOnlyType::TYPE_NAME      => 'Raml\Type\TimeOnlyType',
+            \Raml\Type\DateTimeType::TYPE_NAME      => 'Raml\Type\DateTimeType',
+            \Raml\Type\DateTimeOnlyType::TYPE_NAME  => 'Raml\Type\DateTimeOnlyType',
+            \Raml\Type\DateOnlyType::TYPE_NAME      => 'Raml\Type\DateOnlyType',
+            \Raml\Type\NumberType::TYPE_NAME        => 'Raml\Type\NumberType',
+            \Raml\Type\IntegerType::TYPE_NAME       => 'Raml\Type\IntegerType',
+            \Raml\Type\BooleanType::TYPE_NAME       => 'Raml\Type\BooleanType',
+            \Raml\Type\StringType::TYPE_NAME        => 'Raml\Type\StringType',
+            \Raml\Type\NilType::TYPE_NAME           => 'Raml\Type\NilType',
+            \Raml\Type\FileType::TYPE_NAME          => 'Raml\Type\FileType',
+            \Raml\Type\ArrayType::TYPE_NAME         => 'Raml\Type\ArrayType',
+            \Raml\Type\ObjectType::TYPE_NAME        => 'Raml\Type\ObjectType',
         ];
         
         $type = $definition['type'];
 
-        if (in_array($type, $straightForwardTypes)) {
-            $className = sprintf(
-                'Raml\Type\%sType',
-                StringTransformer::convertString($type, StringTransformer::UPPER_CAMEL_CASE)
-            );
-            return forward_static_call_array([$className,'createFromArray'], [$name, $definition]);
+        if (in_array($type, array_keys($straightForwardTypes))) {
+            return forward_static_call_array([$straightForwardTypes[$type],'createFromArray'], [$name, $definition]);
         }
 
         if (!in_array($type, ['','any'])) {

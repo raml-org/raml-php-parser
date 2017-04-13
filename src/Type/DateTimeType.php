@@ -10,6 +10,8 @@ use Raml\Exception\InvalidTypeException;
  */
 class DateTimeType extends Type
 {
+    const TYPE_NAME = 'datetime';
+    
     /**
      * DateTime format to use
      *

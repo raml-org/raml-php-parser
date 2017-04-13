@@ -12,6 +12,8 @@ use Raml\Exception\InvalidTypeException;
  */
 class FileType extends Type
 {
+    const TYPE_NAME = 'file';
+    
     /**
      * A list of valid content-type strings for the file. The file type * / * MUST be a valid value.
      *

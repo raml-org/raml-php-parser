@@ -12,6 +12,8 @@ use Raml\Exception\InvalidTypeException;
  */
 class NumberType extends Type
 {
+    const TYPE_NAME = 'number';
+    
     /**
      * The minimum value of the parameter. Applicable only to parameters of type number or integer.
      *

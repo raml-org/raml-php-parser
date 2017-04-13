@@ -12,6 +12,8 @@ use Raml\Exception\InvalidSchemaException;
  */
 class XmlType extends Type
 {
+    const TYPE_NAME = 'xsd';
+    
     /**
      * XML schema
      *

@@ -13,6 +13,8 @@ use Raml\Exception\InvalidTypeException;
  */
 class DateOnlyType extends Type
 {
+    const TYPE_NAME = 'date-only';
+
     /**
     * Create a new DateOnlyType from an array of data
     *

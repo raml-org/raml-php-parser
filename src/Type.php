@@ -13,6 +13,8 @@ use Symfony\Component\Yaml\Yaml;
  */
 class Type implements ArrayInstantiationInterface, TypeInterface
 {
+    const TYPE_NAME = 'any';
+    
     /**
      * Parent object
      *

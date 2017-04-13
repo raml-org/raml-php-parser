@@ -11,6 +11,8 @@ use Raml\Exception\InvalidTypeException;
  */
 class IntegerType extends NumberType
 {
+    const TYPE_NAME = 'integer';
+    
     /**
      * A numeric instance is valid against "multipleOf" if the result of dividing the instance by this keyword's value is an integer.
      *

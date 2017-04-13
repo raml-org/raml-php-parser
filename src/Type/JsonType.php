@@ -14,6 +14,8 @@ use Raml\Exception\InvalidJsonException;
  */
 class JsonType extends Type
 {
+    const TYPE_NAME = 'json';
+    
     /**
      * Json schema
      *

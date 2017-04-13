@@ -12,6 +12,8 @@ use Raml\Exception\InvalidTypeException;
  */
 class DateTimeOnlyType extends Type
 {
+    const TYPE_NAME = 'datetime-only';
+
     /**
     * Create a new DateTimeOnlyType from an array of data
     *

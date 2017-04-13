@@ -15,6 +15,8 @@ use Raml\Exception\InvalidTypeException;
  */
 class ObjectType extends Type
 {
+    const TYPE_NAME = 'object';
+    
     /**
      * The properties that instances of this type can or must have.
      *

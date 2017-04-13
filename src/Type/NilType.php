@@ -12,6 +12,8 @@ use Raml\Exception\InvalidTypeException;
  */
 class NilType extends Type
 {
+    const TYPE_NAME = 'nil';
+    
     /**
     * Create a new NullType from an array of data
     *

@@ -10,6 +10,8 @@ use Raml\Exception\InvalidTypeException;
  */
 class TimeOnlyType extends Type
 {
+    const TYPE_NAME = 'time-only';
+    
     /**
      * Create a new TimeOnlyType from an array of data
      *

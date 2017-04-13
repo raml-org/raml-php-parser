@@ -13,6 +13,8 @@ use Raml\ApiDefinition;
  */
 class ArrayType extends Type
 {
+    const TYPE_NAME = 'array';
+
     /**
      * Boolean value that indicates if items in the array MUST be unique.
      *

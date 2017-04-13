@@ -12,6 +12,8 @@ use Raml\Exception\InvalidTypeException;
  */
 class BooleanType extends Type
 {
+    const TYPE_NAME = 'boolean';
+
     /**
     * Create a new BooleanType from an array of data
     *
