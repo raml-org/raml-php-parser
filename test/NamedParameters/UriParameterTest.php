@@ -60,4 +60,26 @@ RAML;
         $resource = $apiDef->getResourceByUri('/user/alec');
         $this->assertInstanceOf('\Raml\Resource', $resource);
     }
+
+    /** @test */
+    public function shouldCorrectlyParseEnumUriParameters()
+    {
+        $raml = <<<RAML
+#%RAML 0.8
+title: User API
+version: 1.2
+/user:
+  /{userName}:
+    displayName: Get a user by name
+    uriParameters:
+      userName:
+        enum: [one, two]        
+    get:
+      displayName: retrieve a user's picture by user name
+RAML;
+
+        $apiDef = $this->parser->parseFromString($raml, '');
+        $resource = $apiDef->getResourceByUri('/user/one');
+        $this->assertInstanceOf('\Raml\Resource', $resource);
+    }
 }
