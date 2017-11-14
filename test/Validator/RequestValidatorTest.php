@@ -136,6 +136,22 @@ class RequestValidatorTest extends PHPUnit_Framework_TestCase
         $validator->validateRequest($this->request);
     }
 
+    /** @test */
+    public function shouldAllowEmptyRequestBody()
+    {
+        $body = $this->getMock('\Psr\Http\Message\StreamInterface');
+        $body->method('getContents')->willReturn('');
+
+        $this->request->method('getMethod')->willReturn('get');
+        $this->uri->method('getPath')->willReturn('/songs');
+        $this->request->method('getHeaderLine')->with('Content-Type')->willReturn('application/json');
+        $this->request->method('getBody')->willReturn($body);
+
+        $validator = $this->getValidatorForSchema(__DIR__ . '/../fixture/validator/requestBody.raml');
+        $validator->validateRequest($this->request);
+
+    }
+
     /**
      * @param string $fixturePath
      * @return RequestValidator
