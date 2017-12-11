@@ -22,6 +22,14 @@ mediaType: application/json
               type: Sample[]
               minItems: 1
               maxItems: 2
+        203:
+          body:
+            application/json:
+              type: Nullable
+        204:
+          body:
+            application/json:
+              type: _Null
 
 types:
   Song:
@@ -39,3 +47,11 @@ types:
         type: integer | string
       name:
         type: integer | string
+  Nullable:
+    properties:
+      var:
+        type: integer | null
+  _Null:
+    properties:
+      var:
+        type: 'null'

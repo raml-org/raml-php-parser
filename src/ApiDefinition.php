@@ -594,14 +594,14 @@ class ApiDefinition implements ArrayInstantiationInterface
         if (is_string($definition)) {
             $definition = ['type' => $definition];
         } elseif (is_array($definition)) {
-            if (!isset($definition['type'])) {
+            if (!array_key_exists('type', $definition)) {
                 $definition['type'] = isset($definition['properties']) ? 'object' : 'string';
             }
         } else {
             throw new \Exception('Invalid datatype for $definition parameter.');
         }
 
-        $type = $definition['type'];
+        $type = $definition['type'] ?: 'null';
 
         if (!in_array($type, ['','any'])) {
             if (in_array($type, $straightForwardTypes)) {
