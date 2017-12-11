@@ -312,6 +312,9 @@ class ObjectType extends Type
                 }
                 continue;
             }
+            if ($propertyValue === null && !$property->getRequired()) {
+                continue;
+            }
             $property->validate($propertyValue);
             if (!$property->isValid()) {
                 $this->errors = array_merge($this->errors, $property->getErrors());

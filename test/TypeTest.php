@@ -42,6 +42,20 @@ class TypeTest extends PHPUnit_Framework_TestCase
     }
 
     /** @test */
+    public function shouldCorrectlyValidateCorrectTypeNullUnrequired()
+    {
+        $simpleRaml = $this->parser->parse(__DIR__ . '/fixture/simple_types.raml');
+        $resource = $simpleRaml->getResourceByUri('/songs');
+        $method = $resource->getMethod('get');
+        $response = $method->getResponse(200);
+        $body = $response->getBodyByType('application/json');
+        $type = $body->getType();
+
+        $type->validate(json_decode('{"title":"Good Song", "artist":  null}', true));
+        self::assertTrue($type->isValid());
+    }
+
+    /** @test */
     public function shouldCorrectlyValidateCorrectTypeMissingRequired()
     {
 
