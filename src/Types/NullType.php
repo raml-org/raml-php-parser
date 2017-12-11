@@ -28,8 +28,6 @@ class NullType extends Type
 
     public function validate($value)
     {
-        parent::validate($value);
-
         if (!is_null($value)) {
             $this->errors[] = TypeValidationError::unexpectedValueType($this->getName(), 'null', $value);
         }

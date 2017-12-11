@@ -46,4 +46,20 @@ class UnionTypeTest extends PHPUnit_Framework_TestCase
             (string) $type->getErrors()[0]
         );
     }
+
+    /** @test */
+    public function shouldCorrectlyValidateNullableTypes()
+    {
+        $simpleRaml = $this->parser->parse(__DIR__ . '/../fixture/simple_types.raml');
+        $resource = $simpleRaml->getResourceByUri('/songs');
+        $method = $resource->getMethod('get');
+        $response = $method->getResponse(203);
+        $body = $response->getBodyByType('application/json');
+        $type = $body->getType();
+
+        $type->validate(json_decode('{"var": 10}', true));
+        self::assertTrue($type->isValid());
+        $type->validate(json_decode('{"var": null}', true));
+        self::assertTrue($type->isValid());
+    }
 }

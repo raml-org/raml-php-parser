@@ -300,7 +300,7 @@ class ObjectType extends Type
             $value = get_object_vars($value);
         }
         foreach ($this->getProperties() as $property) {
-            if ($property->getRequired() && !isset($value[$property->getName()])) {
+            if ($property->getRequired()&& !array_key_exists($property->getName(), $value)) {
                 $this->errors[] = TypeValidationError::missingRequiredProperty($property->getName());
             }
         }
@@ -310,9 +310,6 @@ class ObjectType extends Type
                 if ($this->additionalProperties === false) {
                     $this->errors[] = TypeValidationError::unexpectedProperty($name);
                 }
-                continue;
-            }
-            if ($propertyValue === null && !$property->getRequired()) {
                 continue;
             }
             $property->validate($propertyValue);
