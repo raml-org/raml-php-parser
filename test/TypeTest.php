@@ -103,7 +103,7 @@ class TypeTest extends PHPUnit_Framework_TestCase
     }
 
     /** @test */
-    public function shouldCorrectlyValidateDateTimeOnlyTypes()
+    public function shouldCorrectlyValidateRightDateTimeOnlyTypes()
     {
         $simpleRaml = $this->parser->parse(__DIR__ . '/fixture/simple_types.raml');
         $resource = $simpleRaml->getResourceByUri('/songs');
@@ -114,6 +114,17 @@ class TypeTest extends PHPUnit_Framework_TestCase
 
         $type->validate(json_decode('{"datetimeOnly": "2017-12-07T15:50:48"}', true));
         self::assertTrue($type->isValid());
+    }
+
+    /** @test */
+    public function shouldCorrectlyValidateWrongDateTimeOnlyTypes()
+    {
+        $simpleRaml = $this->parser->parse(__DIR__ . '/fixture/simple_types.raml');
+        $resource = $simpleRaml->getResourceByUri('/songs');
+        $method = $resource->getMethod('get');
+        $response = $method->getResponse(205);
+        $body = $response->getBodyByType('application/json');
+        $type = $body->getType();
 
         $type->validate(json_decode('{"datetimeOnly": "2017-12 15:50:48"}', true));
         self::assertFalse($type->isValid());
@@ -121,7 +132,7 @@ class TypeTest extends PHPUnit_Framework_TestCase
     }
 
     /** @test */
-    public function shouldCorrectlyValidateDateOnlyTypes()
+    public function shouldCorrectlyValidateRightDateOnlyTypes()
     {
         $simpleRaml = $this->parser->parse(__DIR__ . '/fixture/simple_types.raml');
         $resource = $simpleRaml->getResourceByUri('/songs');
@@ -132,6 +143,18 @@ class TypeTest extends PHPUnit_Framework_TestCase
 
         $type->validate(json_decode('{"dateOnly": "2016-02-28"}', true));
         self::assertTrue($type->isValid());
+    }
+
+
+    /** @test */
+    public function shouldCorrectlyValidateWrongDateOnlyTypes()
+    {
+        $simpleRaml = $this->parser->parse(__DIR__ . '/fixture/simple_types.raml');
+        $resource = $simpleRaml->getResourceByUri('/songs');
+        $method = $resource->getMethod('get');
+        $response = $method->getResponse(205);
+        $body = $response->getBodyByType('application/json');
+        $type = $body->getType();
 
         $type->validate(json_decode('{"dateOnly": "2017-12-07T15:50:48"}', true));
         self::assertFalse($type->isValid());
