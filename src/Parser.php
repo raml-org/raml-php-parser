@@ -22,7 +22,7 @@ use Symfony\Component\Yaml\Yaml;
  */
 class Parser
 {
-    
+
     /**
      * Array of cached files
      * No point in fetching them twice
@@ -35,6 +35,11 @@ class Parser
      * @var array
      */
     private $cachedFilesPaths = [];
+
+    /**
+     * @var array
+     */
+    private $includedFiles = [];
 
     /**
      * List of schema parsers, keyed by the supported content type
@@ -204,7 +209,7 @@ class Parser
     public function parse($rawFileName)
     {
         $fileName = realpath($rawFileName);
-        
+
         if (!is_file($fileName)) {
             throw new FileNotFoundException($rawFileName);
         }
@@ -360,7 +365,7 @@ class Parser
      */
     private function getCachedFilePath($data) {
         $key = md5($data);
-        
+
         return array_key_exists($key, $this->cachedFilesPaths) ? $this->cachedFilesPaths[$key] : null;
     }
 
@@ -577,6 +582,8 @@ class Parser
         // cache before returning
         $this->cachedFiles[$cacheKey] = $fileData;
 
+        $this->includedFiles[] = $fullPath;
+
         return $fileData;
     }
 
@@ -791,5 +798,10 @@ class Parser
             },
             $trait
         );
+    }
+
+    public function getIncludedFiles(): array
+    {
+        return $this->includedFiles;
     }
 }
