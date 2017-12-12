@@ -800,7 +800,7 @@ class Parser
         );
     }
 
-    public function getIncludedFiles(): array
+    public function getIncludedFiles()
     {
         return $this->includedFiles;
     }
