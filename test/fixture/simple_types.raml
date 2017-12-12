@@ -30,6 +30,10 @@ mediaType: application/json
           body:
             application/json:
               type: _Null
+        205:
+          body:
+            application/json:
+              type: Dates
 
 types:
   Song:
@@ -54,4 +58,12 @@ types:
   _Null:
     properties:
       var:
-        type: 'null'
+        type: null
+  Dates:
+    properties:
+      datetimeOnly:
+        type: datetime-only
+        required: false
+      dateOnly:
+        type: date-only
+        required: false

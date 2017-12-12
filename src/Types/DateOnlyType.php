@@ -2,6 +2,7 @@
 
 namespace Raml\Types;
 
+use DateTime;
 use Raml\Type;
 
 /**
@@ -32,7 +33,7 @@ class DateOnlyType extends Type
 
         $d = DateTime::createFromFormat('Y-m-d', $value);
 
-        if ($d && $d->format('Y-m-d') !== $value) {
+        if (!$d || $d->format('Y-m-d') !== $value) {
             $this->errors[] = TypeValidationError::unexpectedValueType($this->getName(), 'date-only', $value);
         }
     }

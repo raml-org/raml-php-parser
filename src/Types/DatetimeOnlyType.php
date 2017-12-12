@@ -10,7 +10,7 @@ use Raml\Type;
  *
  * @author Melvin Loos <m.loos@infopact.nl>
  */
-class DateTimeOnlyType extends Type
+class DatetimeOnlyType extends Type
 {
     /**
     * Create a new DateTimeOnlyType from an array of data
@@ -31,9 +31,9 @@ class DateTimeOnlyType extends Type
     {
         parent::validate($value);
 
-        $d = DateTime::createFromFormat(DATE_RFC3339, $value);
+        $d = DateTime::createFromFormat("Y-m-d\TH:i:s", $value);
 
-        if ($d && $d->format(DATE_RFC3339) !== $value) {
+        if (!$d || $d->format("Y-m-d\TH:i:s") !== $value) {
             $this->errors[] = TypeValidationError::unexpectedValueType($this->getName(), 'datetime-only', $value);
         }
     }
