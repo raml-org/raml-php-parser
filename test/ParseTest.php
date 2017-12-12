@@ -64,6 +64,7 @@ RAML;
         $this->assertEquals('ZEncoder API', $simpleRaml->getTitle());
         $this->assertEquals('Home', $docList['title']);
         $this->assertEquals('v2', $simpleRaml->getVersion());
+        $this->assertEquals([__DIR__ . '/fixture/child.raml'], $this->parser->getIncludedFiles());
     }
 
     /** @test */
