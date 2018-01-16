@@ -40,7 +40,7 @@ class RequestValidator
         $this->assertNoMissingParameters($request);
         $this->assertValidParameters($request);
 
-        if (strtolower($request->getMethod()) !== 'get') {
+        if (!in_array(strtolower($request->getMethod()), ['get', 'delete'], true)) {
             $this->assertValidBody($request);
         }
     }
