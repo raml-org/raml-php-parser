@@ -149,10 +149,7 @@ class ResponseValidatorTest extends PHPUnit_Framework_TestCase
         $this->response->method('getHeaderLine')->with('Content-Type')->willReturn('application/json');
         $this->response->method('getBody')->willReturn($body);
 
-        $this->setExpectedException(
-            '\Raml\Validator\ValidatorResponseException',
-            'title (required), artist (required)'
-        );
+        $this->setExpectedException('\Raml\Validator\ValidatorResponseException');
 
         $validator = $this->getValidatorForSchema(__DIR__ . '/../fixture/validator/responseBody.raml');
         $validator->validateResponse($this->request, $this->response);

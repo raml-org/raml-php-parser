@@ -5,6 +5,7 @@ namespace Raml;
 use Raml\Schema\SchemaDefinitionInterface;
 
 use Raml\Exception\BadParameter\InvalidSchemaDefinitionException;
+use Raml\Types\ObjectType;
 
 /**
  * A body
@@ -43,6 +44,15 @@ class Body implements BodyInterface, ArrayInstantiationInterface
     private $schema;
 
     /**
+     * The type of the body
+     *
+     * @see http://raml.org/spec.html#raml-data-types
+     *
+     * @var TypeInterface
+     */
+    private $type;
+
+    /**
      * A list of examples
      *
      * @see http://raml.org/spec.html#schema
@@ -75,6 +85,7 @@ class Body implements BodyInterface, ArrayInstantiationInterface
      * @param string $mediaType
      * @param array $data
      * [
+     *  type:       ?string
      *  schema:     ?string
      *  example:    ?string
      *  examples:   ?array
@@ -94,6 +105,16 @@ class Body implements BodyInterface, ArrayInstantiationInterface
 
         if (isset($data['schema'])) {
             $body->setSchema($data['schema']);
+        } elseif (isset($data['type'])) {
+            $type = ApiDefinition::determineType($data['type'], $data);
+            if ($type instanceof ObjectType) {
+                $type->inheritFromParent();
+            }
+            $body->setType($type);
+        } else {
+            // nothing defined means a default of the any type
+            // see https://github.com/raml-org/raml-spec/blob/master/versions/raml-10/raml-10.md/#determine-default-types
+            $body->setType(new Type('default'));
         }
 
         if (isset($data['example'])) {
@@ -105,7 +126,6 @@ class Body implements BodyInterface, ArrayInstantiationInterface
                 $body->addExample($example);
             }
         }
-
 
         return $body;
     }
@@ -155,6 +175,16 @@ class Body implements BodyInterface, ArrayInstantiationInterface
     }
 
     /**
+     * Get validator, either type or schema, with type having more priority
+     *
+     * @return ValidatorInterface
+     */
+    public function getValidator()
+    {
+        return $this->getType() ?: $this->getSchema();
+    }
+
+    /**
      * Set the schema
      *
      * @param SchemaDefinitionInterface|string $schema
@@ -168,6 +198,30 @@ class Body implements BodyInterface, ArrayInstantiationInterface
         }
 
         $this->schema = $schema;
+    }
+
+    // --
+
+    /**
+     * Get the type
+     *
+     * @return TypeInterface
+     */
+    public function getType()
+    {
+        return $this->type;
+    }
+
+    /**
+     * Set the type
+     *
+     * @param \Raml\TypeInterface $type
+     *
+     * @throws \Exception Throws exception when type does not parse
+     */
+    public function setType(TypeInterface $type)
+    {
+        $this->type = $type;
     }
 
     // --

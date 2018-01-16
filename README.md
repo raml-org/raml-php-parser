@@ -1,10 +1,32 @@
 # PHP RAML Parser
 
+## **!!Attention!!** this is a work-in-progress of the RAML 1.0 specification, for RAML 0.8 see the [master branch](https://github.com/alecsammon/php-raml-parser/tree/master)
+
+### What is done and should work
+  - Part of RAML 1.0 [type expressions](https://github.com/raml-org/raml-spec/blob/master/versions/raml-10/raml-10.md/#type-expressions)
+  - Enums
+  - Union type expression (the "or" `|` operator)
+  - Array of types
+  - `discriminator` and `discriminatorValue` facets
+
+### Still TODO:
+- [Libraries](https://github.com/raml-org/raml-spec/blob/master/versions/raml-10/raml-10.md/#libraries)
+- [User defined facets](https://github.com/raml-org/raml-spec/blob/master/versions/raml-10/raml-10.md/#user-defined-facets)
+- Full implementation of [type expressions](https://github.com/raml-org/raml-spec/blob/master/versions/raml-10/raml-10.md/#type-expressions)
+	- The shorthand array and the union type have been implemented
+	- Bi-dimensional array and the array-union combination have **NOT** been implemented yet.
+- [Multiple inheritance](https://github.com/raml-org/raml-spec/blob/master/versions/raml-10/raml-10.md/#multiple-inheritance)
+- [Annotations](https://github.com/raml-org/raml-spec/blob/master/versions/raml-10/raml-10.md/#annotations)
+- [Overlays and Extensions](https://github.com/raml-org/raml-spec/blob/master/versions/raml-10/raml-10.md/#overlays-and-extensions)
+- [Improved Security Schemes](https://github.com/raml-org/raml-spec/blob/master/versions/raml-10/raml-10.md/#security-schemes)
+
+## Original documentation
+
 Parses a RAML file into a PHP object.
 
-[![Build Status](https://travis-ci.org/alecsammon/php-raml-parser.svg?branch=master)](https://travis-ci.org/alecsammon/php-raml-parser)
-[![Coverage Status](https://img.shields.io/coveralls/alecsammon/php-raml-parser.svg)](https://coveralls.io/r/alecsammon/php-raml-parser?branch=master)
-[![HHVM Status](http://hhvm.h4cc.de/badge/alecsammon/php-raml-parser.png)](http://hhvm.h4cc.de/package/alecsammon/php-raml-parser)
+[![Build Status](https://travis-ci.org/eLama/php-raml-parser.svg?branch=master)](https://travis-ci.org/eLama/php-raml-parser)
+[![Coverage Status](https://coveralls.io/repos/github/eLama/php-raml-parser/badge.svg?branch=master)](https://coveralls.io/github/eLama/php-raml-parser?branch=master)
+[![HHVM Status](http://hhvm.h4cc.de/badge/eLama/php-raml-parser.svg)](http://hhvm.h4cc.de/package/eLama/php-raml-parser)
 
 See the RAML spec here: https://github.com/raml-org/raml-spec
 
@@ -14,7 +36,7 @@ Requires:
 - composer (see [https://getcomposer.org](https://getcomposer.org))
  
 ```bash
-composer require alecsammon/php-raml-parser --dev
+composer require elama/php-raml-parser
 ```
 
 ```php
