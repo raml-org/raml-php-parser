@@ -34,6 +34,10 @@ mediaType: application/json
           body:
             application/json:
               type: Dates
+        206:
+          body:
+            application/json:
+              type: ScalarArrays
 
 types:
   Song:
@@ -67,3 +71,14 @@ types:
       dateOnly:
         type: date-only
         required: false
+  ScalarArrays:
+    properties:
+      intArray?:
+        type: integer[]
+      strArray?:
+        type: string[]
+      boolArray?:
+        type: boolean[]
+      numberArray?:
+        type: number[]
+

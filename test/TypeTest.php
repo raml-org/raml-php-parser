@@ -160,4 +160,116 @@ class TypeTest extends PHPUnit_Framework_TestCase
         self::assertFalse($type->isValid());
 
     }
+
+    /** @test */
+    public function shouldCorrectlyValidateArrayIntegerRightTypes()
+    {
+        $simpleRaml = $this->parser->parse(__DIR__ . '/fixture/simple_types.raml');
+        $resource = $simpleRaml->getResourceByUri('/songs');
+        $method = $resource->getMethod('get');
+        $response = $method->getResponse(206);
+        $body = $response->getBodyByType('application/json');
+        $type = $body->getType();
+
+        $type->validate(json_decode('{"intArray": [1,2,3]}', true));
+        self::assertTrue($type->isValid());
+    }
+
+    /** @test */
+    public function shouldCorrectlyValidateArrayIntegerWrongTypes()
+    {
+        $simpleRaml = $this->parser->parse(__DIR__ . '/fixture/simple_types.raml');
+        $resource = $simpleRaml->getResourceByUri('/songs');
+        $method = $resource->getMethod('get');
+        $response = $method->getResponse(206);
+        $body = $response->getBodyByType('application/json');
+        $type = $body->getType();
+
+        $type->validate(json_decode('{"intArray": [1,2,"str"]}', true));
+        self::assertFalse($type->isValid());
+    }
+
+    /** @test */
+    public function shouldCorrectlyValidateArrayStringRightTypes()
+    {
+        $simpleRaml = $this->parser->parse(__DIR__ . '/fixture/simple_types.raml');
+        $resource = $simpleRaml->getResourceByUri('/songs');
+        $method = $resource->getMethod('get');
+        $response = $method->getResponse(206);
+        $body = $response->getBodyByType('application/json');
+        $type = $body->getType();
+
+        $type->validate(json_decode('{"strArray": ["one", "two"]}', true));
+        self::assertTrue($type->isValid());
+    }
+
+    /** @test */
+    public function shouldCorrectlyValidateArrayStringWrongTypes()
+    {
+        $simpleRaml = $this->parser->parse(__DIR__ . '/fixture/simple_types.raml');
+        $resource = $simpleRaml->getResourceByUri('/songs');
+        $method = $resource->getMethod('get');
+        $response = $method->getResponse(206);
+        $body = $response->getBodyByType('application/json');
+        $type = $body->getType();
+
+        $type->validate(json_decode('{"strArray": [1, "two"]}', true));
+        self::assertFalse($type->isValid());
+    }
+
+    /** @test */
+    public function shouldCorrectlyValidateArrayBooleanRightTypes()
+    {
+        $simpleRaml = $this->parser->parse(__DIR__ . '/fixture/simple_types.raml');
+        $resource = $simpleRaml->getResourceByUri('/songs');
+        $method = $resource->getMethod('get');
+        $response = $method->getResponse(206);
+        $body = $response->getBodyByType('application/json');
+        $type = $body->getType();
+
+        $type->validate(json_decode('{"boolArray": [true, false]}', true));
+        self::assertTrue($type->isValid());
+    }
+
+    /** @test */
+    public function shouldCorrectlyValidateArrayBooleanWrongTypes()
+    {
+        $simpleRaml = $this->parser->parse(__DIR__ . '/fixture/simple_types.raml');
+        $resource = $simpleRaml->getResourceByUri('/songs');
+        $method = $resource->getMethod('get');
+        $response = $method->getResponse(206);
+        $body = $response->getBodyByType('application/json');
+        $type = $body->getType();
+
+        $type->validate(json_decode('{"boolArray": [true, 0]}', true));
+        self::assertFalse($type->isValid());
+    }
+
+    /** @test */
+    public function shouldCorrectlyValidateArrayNumberRightTypes()
+    {
+        $simpleRaml = $this->parser->parse(__DIR__ . '/fixture/simple_types.raml');
+        $resource = $simpleRaml->getResourceByUri('/songs');
+        $method = $resource->getMethod('get');
+        $response = $method->getResponse(206);
+        $body = $response->getBodyByType('application/json');
+        $type = $body->getType();
+
+        $type->validate(json_decode('{"numberArray": [12, 13.5, 0]}', true));
+        self::assertTrue($type->isValid());
+    }
+
+    /** @test */
+    public function shouldCorrectlyValidateArrayNumberWrongTypes()
+    {
+        $simpleRaml = $this->parser->parse(__DIR__ . '/fixture/simple_types.raml');
+        $resource = $simpleRaml->getResourceByUri('/songs');
+        $method = $resource->getMethod('get');
+        $response = $method->getResponse(206);
+        $body = $response->getBodyByType('application/json');
+        $type = $body->getType();
+
+        $type->validate(json_decode('{"numberArray": ["12", 0]}', true));
+        self::assertFalse($type->isValid());
+    }
 }
