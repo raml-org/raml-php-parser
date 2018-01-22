@@ -17,7 +17,7 @@ class ArrayType extends Type
     /**
      * Scalar types which we can validate
      */
-    private const SCALAR_TYPES = [
+    const SCALAR_TYPES = [
         'integer',
         'string',
         'boolean',
