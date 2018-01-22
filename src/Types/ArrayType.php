@@ -17,7 +17,7 @@ class ArrayType extends Type
     /**
      * Scalar types which we can validate
      */
-    const SCALAR_TYPES = [
+    private static $SCALAR_TYPES = [
         'integer',
         'string',
         'boolean',
@@ -158,7 +158,7 @@ class ArrayType extends Type
             );
         }
 
-        if (in_array($this->items, self::SCALAR_TYPES)) {
+        if (in_array($this->items, self::$SCALAR_TYPES)) {
             $this->validateScalars($value);
         } else {
             $this->validateObjects($value);
