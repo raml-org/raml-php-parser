@@ -13,6 +13,17 @@ use Raml\TypeInterface;
  */
 class ArrayType extends Type
 {
+
+    /**
+     * Scalar types which we can validate
+     */
+    private const SCALAR_TYPES = [
+        'integer',
+        'string',
+        'boolean',
+        'number',
+    ];
+
     /**
      * Boolean value that indicates if items in the array MUST be unique.
      *
@@ -44,13 +55,13 @@ class ArrayType extends Type
     private $maxItems = 2147483647;
 
     /**
-    * Create a new ArrayType from an array of data
-    *
-    * @param string    $name
-    * @param array     $data
-    *
-    * @return ArrayType
-    */
+     * Create a new ArrayType from an array of data
+     *
+     * @param string $name
+     * @param array $data
+     *
+     * @return ArrayType
+     */
     public static function createFromArray($name, array $data = [])
     {
         /** @var ArrayType $type */
@@ -133,6 +144,7 @@ class ArrayType extends Type
 
         if (!is_array($value)) {
             $this->errors[] = TypeValidationError::unexpectedValueType($this->getName(), 'is array', $value);
+
             return;
         }
 
@@ -146,6 +158,59 @@ class ArrayType extends Type
             );
         }
 
+        if (in_array($this->items, self::SCALAR_TYPES)) {
+            $this->validateScalars($value);
+        } else {
+            $this->validateObjects($value);
+        }
+    }
+
+    private function validateScalars($value)
+    {
+        foreach ($value as $valueItem) {
+            switch ($this->items) {
+                case 'integer':
+                    if (!is_int($valueItem)) {
+                        $this->errors[] = TypeValidationError::unexpectedArrayValueType(
+                            $this->getName(),
+                            'integer',
+                            $valueItem
+                        );
+                    }
+                    break;
+                case 'string':
+                    if (!is_string($valueItem)) {
+                        $this->errors[] = TypeValidationError::unexpectedArrayValueType(
+                            $this->getName(),
+                            'string',
+                            $valueItem
+                        );
+                    }
+                    break;
+                case 'boolean':
+                    if (!is_bool($valueItem)) {
+                        $this->errors[] = TypeValidationError::unexpectedArrayValueType(
+                            $this->getName(),
+                            'boolean',
+                            $valueItem
+                        );
+                    }
+                    break;
+                case 'number':
+                    if (!is_float($valueItem) && !is_int($valueItem)) {
+                        $this->errors[] = TypeValidationError::unexpectedArrayValueType(
+                            $this->getName(),
+                            'number',
+                            $valueItem
+                        );
+                    }
+                    break;
+            }
+        }
+    }
+
+    private function validateObjects($value)
+    {
         foreach ($value as $valueItem) {
             $this->getItems()->validate($valueItem);
             if (!$this->getItems()->isValid()) {

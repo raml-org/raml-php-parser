@@ -98,6 +98,21 @@ class TypeValidationError
     }
 
     /**
+     * @param $constraint
+     * @param $actualValue
+     * @return TypeValidationError
+     */
+    public static function unexpectedArrayValueType($property, $constraint, $actualValue)
+    {
+        return new self($property, sprintf(
+            'Expected array element type %s, got (%s) "%s"',
+            $constraint,
+            gettype($actualValue),
+            $actualValue
+        ));
+    }
+
+    /**
      * @param $property
      * @param $minLength
      * @param $actualValue
