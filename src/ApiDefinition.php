@@ -587,6 +587,7 @@ class ApiDefinition implements ArrayInstantiationInterface
             'boolean',
             'string',
             'null',
+            'nil',
             'file',
             'array',
             'object'
