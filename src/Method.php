@@ -341,7 +341,7 @@ class Method implements ArrayInstantiationInterface, MessageSchemaInterface
             throw new \InvalidArgumentException(sprintf('"%s" is not a valid protocol', $protocol));
         }
 
-        if (in_array($protocol, $this->protocols)) {
+        if (in_array($protocol, $this->protocols) === false) {
             $this->protocols[] = $protocol;
         }
     }
