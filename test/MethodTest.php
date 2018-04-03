@@ -59,10 +59,10 @@ class MethodTest extends PHPUnit_Framework_TestCase
                     200 => [
                         'body' => [
                             'text/xml' => ['description' => 'xml body'],
-                            'text/txt' => ['description' => 'plain text']
+                            'text/txt' => ['description' => 'plain text'],
                         ],
                         'description' => 'A dummy response',
-                        'headers' => []
+                        'headers' => [],
                     ]
                 ]
             ],
@@ -105,7 +105,7 @@ class MethodTest extends PHPUnit_Framework_TestCase
 
         $this->assertInternalType('array', $method->getProtocols());
         $this->assertCount(1, $method->getProtocols());
-        $this->assertSame(array('HTTP'), $method->getProtocols());
+        $this->assertSame(['HTTP'], $method->getProtocols());
     }
 
     /** @test */
@@ -118,16 +118,16 @@ class MethodTest extends PHPUnit_Framework_TestCase
             'get',
             [
                 'description' => 'A dummy method',
-                'protocols' => ['HTTP','HTTPS']
+                'protocols' => ['HTTP', 'HTTPS'],
             ],
             $apiDefinition
         );
 
         $this->assertInternalType('array', $method->getProtocols());
         $this->assertCount(2, $method->getProtocols());
-        $this->assertSame(array(
+        $this->assertSame([
             'HTTP',
-            'HTTPS'
-        ), $method->getProtocols());
+            'HTTPS',
+        ], $method->getProtocols());
     }
 }
