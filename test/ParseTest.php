@@ -88,15 +88,17 @@ RAML;
     /** @test */
     public function shouldThrowExceptionOnPathManipulationIfNotAllowed()
     {
-        $this->parser->preventDirectoryTraversal();
+        $config = new \Raml\ParseConfiguration();
+        $config->disableDirectoryTraversal();
+        $this->parser->setConfiguration($config);
         $this->setExpectedException('\Raml\Exception\InvalidJsonException');
         $this->parser->parse(__DIR__.'/fixture/treeTraversal/bad.raml');
     }
 
     /** @test */
-    public function shouldAllowDirectoryTraversalByDefault()
+    public function shouldPreventDirectoryTraversalByDefault()
     {
-        // @todo - switch this test in v2.0
+        $this->setExpectedException('\Raml\Exception\InvalidJsonException');
         $this->parser->parse(__DIR__.'/fixture/treeTraversal/bad.raml');
     }
 
@@ -104,7 +106,10 @@ RAML;
     /** @test */
     public function shouldNotThrowExceptionOnPathManipulationIfAllowed()
     {
-        $this->parser->allowDirectoryTraversal();
+        $config = new \Raml\ParseConfiguration();
+        $config->enableDirectoryTraversal();
+        $this->parser->setConfiguration($config);
+
         $simpleRaml = $this->parser->parse(__DIR__.'/fixture/treeTraversal/bad.raml');
 
         $resource = $simpleRaml->getResourceByUri('/songs');
@@ -285,7 +290,11 @@ RAML;
     /** @test */
     public function shouldNotParseJsonIfNotRequested()
     {
-        $simpleRaml = $this->parser->parse(__DIR__.'/fixture/simple.raml', false);
+        $config = new \Raml\ParseConfiguration();
+        $config->disableSchemaParsing();
+        $this->parser->setConfiguration($config);
+
+        $simpleRaml = $this->parser->parse(__DIR__.'/fixture/simple.raml');
         $resource = $simpleRaml->getResourceByUri('/songs/1');
         $method = $resource->getMethod('get');
         $response = $method->getResponse(200);
@@ -341,7 +350,11 @@ RAML;
     /** @test */
     public function shouldNotParseIncludedJsonIfNotRequired()
     {
-        $simpleRaml = $this->parser->parse(__DIR__.'/fixture/includeSchema.raml', false);
+        $config = new \Raml\ParseConfiguration();
+        $config->disableSchemaParsing();
+        $this->parser->setConfiguration($config);
+
+        $simpleRaml = $this->parser->parse(__DIR__.'/fixture/includeSchema.raml');
 
         $resource = $simpleRaml->getResourceByUri('/songs');
         $method = $resource->getMethod('get');
@@ -367,6 +380,23 @@ RAML;
         $this->assertEquals('A canonical song', $schemaObject->items->description);
     }
 
+    /** @test */
+    public function shouldSetCorrectSourceUriOnSchemaParsers()
+    {
+        $schemaParser = $this->getMock('\Raml\Schema\SchemaParserInterface');
+        $schemaParser->expects($this->any())->method('getCompatibleContentTypes')->willReturn([ 'application/json' ]);
+        
+        $schemaParser->expects($this->any())->method('setSourceUri')->withConsecutive(
+            [ 'file:'.__DIR__.'/fixture/songs.json' ]
+        );
+        
+        $parser = new \Raml\Parser([
+            $schemaParser
+        ]);
+        
+        $parser->parse(__DIR__.'/fixture/includeSchema.raml');
+    }
+    
     /** @test */
     public function shouldThrowErrorIfEmpty()
     {
@@ -405,7 +435,7 @@ RAML;
         $resource = $simpleRaml->getResourceByUri('/songs');
         $method = $resource->getMethod('get');
         $response = $method->getResponse(200);
-
+        
         $body = $response->getBodyByType('application/vnd.api-v1+json');
         $schema = $body->getSchema();
 
@@ -802,6 +832,7 @@ RAML;
         $schemes = $method->getSecuritySchemes();
         $this->assertArrayHasKey('oauth_1_0', $schemes);
         $this->assertArrayHasKey('oauth_2_0', $schemes);
+        $this->assertTrue(in_array(null, array_keys($schemes)));
     }
 
     /** @test */
@@ -827,5 +858,27 @@ RAML;
         $settingsObject = $schemes['oauth_2_0']->getSettings();
         $this->assertSame($settingsObject->getScopes(), array('ADMINISTRATOR', 'USER'));
         $this->assertSame($settingsObject->getAuthorizationUri(), 'https://www.dropbox.com/1/oauth2/authorize');
+    }
+
+    /** @test */
+    public function shouldParseResourcePathNameCorrectly()
+    {
+        $apiDefinition = $this->parser->parse(__DIR__ . '/fixture/resourcePathName.raml');
+
+        $foo = $apiDefinition->getResources()['/foo'];
+        $fooId = $foo->getResources()['/foo/{fooId}'];
+        $bar = $fooId->getResources()['/foo/{fooId}/bar'];
+
+        $this->assertEquals('Get a list of foo', $foo->getDescription());
+        $this->assertEquals('Get a single foo', $fooId->getDescription());
+        $this->assertEquals('Get a list of bar', $bar->getDescription());
+
+        $baz = $apiDefinition->getResources()['/baz'];
+        $bazId = $baz->getResources()['/baz/{bazId}'];
+        $qux = $bazId->getResources()['/baz/{bazId}/qux'];
+
+        $this->assertEquals('Get a list of bazDisplayname', $baz->getDescription());
+        $this->assertEquals('Get a single bazDisplayname', $bazId->getDescription());
+        $this->assertEquals('Get a list of quxDisplayname', $qux->getDescription());
     }
 }

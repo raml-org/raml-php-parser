@@ -86,7 +86,7 @@ class SecurityScheme implements ArrayInstantiationInterface
      */
     public static function createFromArray($key, array $data = [], ApiDefinition $apiDefinition = null)
     {
-        $securityScheme = new static($key);
+        $securityScheme = new static($key === 'null' ? null : $key);
 
         if (isset($data['description'])) {
             $securityScheme->setDescription($data['description']);
@@ -117,7 +117,7 @@ class SecurityScheme implements ArrayInstantiationInterface
      */
     public function getKey()
     {
-        return $this->key;
+        return $this->key ? $this->key : null;
     }
 
     // ---
@@ -221,7 +221,7 @@ class SecurityScheme implements ArrayInstantiationInterface
         } else {
             $settings = array_replace($this->getSettings(), $newSettings);
         }
-
+      
         $this->setSettings($settings);
     }
 }

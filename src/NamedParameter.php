@@ -404,9 +404,6 @@ class NamedParameter implements ArrayInstantiationInterface
     /**
      * Get the pattern regular expression
      *
-     * @param boolean $typeCheck Set to false to only return the "pattern" value from the RAML data (Defaults to
-     *                           true for backwards comparability to return type checking strings when a validation
-     *                           pattern is not present in the RAML data)
      * @return string
      */
     public function getValidationPattern()
@@ -549,6 +546,16 @@ class NamedParameter implements ArrayInstantiationInterface
     }
 
     /**
+     * Get all examples
+     *
+     * @return string[]
+     */
+    public function getExamples()
+    {
+        return $this->examples;
+    }
+
+    /**
      * Set the example
      *
      * @param string $example
@@ -679,8 +686,7 @@ class NamedParameter implements ArrayInstantiationInterface
                 
         }
         
-        switch($this->getType()) {
-            
+        switch ($this->getType()) {
             case static::TYPE_BOOLEAN:
                 
                 // Must be boolean
@@ -691,14 +697,12 @@ class NamedParameter implements ArrayInstantiationInterface
                 break;
                 
             case static::TYPE_DATE:
-                
+
                 // Must be a valid date
                 if (\DateTime::createFromFormat('D, d M Y H:i:s T', $param) === false) {
                     throw new ValidationException($this->getKey().' is not a valid date', static::VAL_NOTDATE);
                 }
 
-                break;
-    
             case static::TYPE_STRING:
     
                 // Must be a string
@@ -733,8 +737,6 @@ class NamedParameter implements ArrayInstantiationInterface
                 }
     
                 break;
-                
-
 
             case static::TYPE_INTEGER:
                 
@@ -827,6 +829,56 @@ class NamedParameter implements ArrayInstantiationInterface
                 static::VAL_NOTENUMVALUE
             );
         }
-    
+    }
+
+    /**
+     * Get a regex pattern for matching the parameter
+     *
+     * @return string
+     */
+    public function getMatchPattern()
+    {
+        if ($this->validationPattern) {
+            $pattern = $this->validationPattern;
+        } else {
+            switch ($this->getType()) {
+                case self::TYPE_NUMBER:
+                    // @see http://www.regular-expressions.info/floatingpoint.html
+                    $pattern = '[-+]?[0-9]*\.?[0-9]+';
+                    break;
+                case self::TYPE_INTEGER:
+                    $pattern = '[-+]?[0-9]+';
+                    break;
+                case self::TYPE_DATE:
+                    // @see https://snipt.net/DamienGarrido/
+                    //          http-date-regular-expression-validation-rfc-1123rfc-850asctime-f64e6aa3/
+                    $pattern = '^(?:(?:Mon|Tue|Wed|Thu|Fri|Sat|Sun), (?:[0-2][0-9]|3[01]) '.
+                        '(?:Jan|Feb|Mar|Apr|May|Jun|Jul|Aug|Sep|Oct|Nov|Dec) \d{4} '.
+                        '(?:[01][0-9]|2[0-3]):[012345][0-9]:[012345][0-9] '.
+                        'GMT|(?:Monday|Tuesday|Wednesday|Thursday|Friday|Saturday|Sunday), '.
+                        '(?:[0-2][0-9]|3[01])-(?:Jan|Feb|Mar|Apr|May|Jun|Jul|Aug|Sep|Oct|Nov|Dec)-\d{2} '.
+                        '(?:[01][0-9]|2[0-3]):[012345][0-9]:[012345][0-9] GMT|(?:Mon|Tue|Wed|Thu|Fri|Sat|Sun) '.
+                        '(?:Jan|Feb|Mar|Apr|May|Jun|Jul|Aug|Sep|Oct|Nov|Dec) (?:[ 1-2][0-9]|3[01]) '.
+                        '(?:[01][0-9]|2[0-3]):[012345][0-9]:[012345][0-9] \d{4})$';
+                    break;
+                case self::TYPE_BOOLEAN:
+                    $pattern = '(true|false)';
+                    break;
+                case self::TYPE_FILE:
+                    $pattern = '([^/]+)';
+                    break;
+                case self::TYPE_STRING:
+                    if ($this->getMinLength() || $this->getMaxLength()) {
+                        $pattern = '((?!\/).){' . $this->getMinLength() . ',' . $this->getMaxLength() . '}';
+                    } else {
+                        $pattern = '([^/]+)';
+                    }
+                    break;
+                default:
+                    $pattern = '([^/]+)';
+            }
+        }
+
+        return $pattern;
     }
 }

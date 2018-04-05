@@ -1,0 +1,24 @@
+#%RAML 0.8
+title: Example API
+version: v1
+
+/songs:
+  post:
+    body:
+      application/json:
+        schema: |
+          { "$schema": "http://json-schema.org/schema",
+            "type": "object",
+            "description": "A canonical song",
+            "properties": {
+              "title": {
+                "type": "string",
+                "required": true,
+                "minLength": 5
+              },
+              "artist": {
+                "type": "string",
+                "required": true
+              }
+            }
+          }

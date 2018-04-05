@@ -18,13 +18,6 @@
     }
   },
 
-  "repositories": [
-    {
-      "type": "vcs",
-      "url": "https://github.com/alecsammon/json-schema.git"
-    }
-  ],
-
   "require-dev": {
     "satooshi/php-coveralls": "~0.6",
     "phpunit/phpunit": "4.*",
@@ -32,9 +25,11 @@
   },
 
   "require": {
-    "justinrainbow/json-schema": "@dev",
-    "symfony/yaml": "~2.6",
-    "symfony/routing": "~2.5",
-    "oodle/inflect": "0.2.0"
+    "php": ">=5.5.9",
+    "justinrainbow/json-schema": "~1.5",
+    "symfony/yaml": "~3.0|~4.0",
+    "symfony/routing": "~3.0|~4.0",
+    "oodle/inflect": "~0.2",
+    "psr/http-message": "^1.0"
   }
 }

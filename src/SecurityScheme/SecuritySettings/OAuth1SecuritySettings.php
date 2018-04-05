@@ -8,8 +8,6 @@ class OAuth1SecuritySettings implements SecuritySettingsInterface
 {
     const TYPE = 'OAuth 1.0';
 
-    // --
-
     /**
      * The URI of the Temporary Credential Request endpoint as defined in RFC5849 Section 2.1
      *
@@ -30,8 +28,6 @@ class OAuth1SecuritySettings implements SecuritySettingsInterface
      * @var string
      */
     private $requestTokenUri;
-
-    // ---
 
     /**
      * Flesh out the settings
@@ -67,8 +63,6 @@ class OAuth1SecuritySettings implements SecuritySettingsInterface
         return $settings;
     }
 
-    // ---
-
     /**
      * Get the Token Credentials URI
      *
@@ -89,8 +83,6 @@ class OAuth1SecuritySettings implements SecuritySettingsInterface
         $this->tokenCredentialsUri = $tokenCredentialsUri;
     }
 
-    // --
-
     /**
      * Get the Request Token URI
      *
@@ -110,8 +102,6 @@ class OAuth1SecuritySettings implements SecuritySettingsInterface
     {
         $this->requestTokenUri = $requestTokenUri;
     }
-
-    // --
 
     /**
      * Get the Authorization URI

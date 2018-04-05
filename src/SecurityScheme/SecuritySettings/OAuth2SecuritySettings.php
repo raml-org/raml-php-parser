@@ -40,6 +40,50 @@ class OAuth2SecuritySettings implements SecuritySettingsInterface
     private $scopes;
 
     // ---
+    // SecuritySettingsInterface
+
+    /**
+     * Flesh out the settings
+     *
+     * @param array                     $data
+     * @param SecuritySettingsInterface $sourceSettings
+     *
+     * @throws \Exception
+     *
+     * @return OAuth2SecuritySettings
+     */
+    public static function createFromArray(array $data, SecuritySettingsInterface $sourceSettings = null)
+    {
+        if ($sourceSettings && !$sourceSettings instanceof OAuth2SecuritySettings) {
+            throw new \Exception();
+        }
+
+        $settings = $sourceSettings ? clone $sourceSettings : new static();
+
+        if (isset($data['authorizationUri'])) {
+            $settings->setAuthorizationUri($data['authorizationUri']);
+        }
+
+        if (isset($data['accessTokenUri'])) {
+            $settings->setAccessTokenUri($data['accessTokenUri']);
+        }
+
+        if (isset($data['authorizationGrants'])) {
+            foreach ($data['authorizationGrants'] as $grant) {
+                $settings->addAuthorizationGrants($grant);
+            }
+        }
+
+        if (isset($data['scopes'])) {
+            foreach ($data['scopes'] as $scope) {
+                $settings->addScope($scope);
+            }
+        }
+
+        return $settings;
+    }
+
+    // ---
 
     /**
      * Flesh out the settings

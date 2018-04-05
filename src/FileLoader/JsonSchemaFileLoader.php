@@ -4,13 +4,26 @@ namespace Raml\FileLoader;
 
 use JsonSchema\Uri\UriRetriever;
 use JsonSchema\RefResolver;
-use \Raml\Exception\InvalidJsonException;
+use Raml\Exception\InvalidJsonException;
 
 /**
  * Fetches JSON schema as a string, included refs
  */
 class JsonSchemaFileLoader implements FileLoaderInterface
 {
+    /**
+     * @var string[]
+     */
+    private $validExtensions;
+
+    /**
+     * @param string[] $validExtensions
+     */
+    public function __construct($validExtensions = ['json'])
+    {
+        $this->validExtensions = $validExtensions;
+    }
+
     /**
      * Load a json from a path and resolve references
      *
@@ -44,6 +57,6 @@ class JsonSchemaFileLoader implements FileLoaderInterface
      */
     public function getValidExtensions()
     {
-        return ['json'];
+        return $this->validExtensions;
     }
 }

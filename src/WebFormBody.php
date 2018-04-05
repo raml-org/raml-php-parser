@@ -62,9 +62,11 @@ class WebFormBody extends NamedParameter implements BodyInterface, ArrayInstanti
     {
         $webFormBody = new static($key);
 
-        if ($data['formParameters']) {
+        if (isset($data['formParameters'])) {
             foreach ($data['formParameters'] as $namedParam => $namedParamData) {
-                $webFormBody->addParameter(NamedParameter::createFromArray($namedParam, $namedParamData));
+                if (is_array($namedParamData)) {
+                    $webFormBody->addParameter(NamedParameter::createFromArray($namedParam, $namedParamData));
+                }
             }
         }
 

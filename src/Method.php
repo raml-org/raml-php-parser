@@ -6,7 +6,7 @@ namespace Raml;
  *
  * @see http://raml.org/spec.html#methods
  */
-class Method implements ArrayInstantiationInterface
+class Method implements ArrayInstantiationInterface, MessageSchemaInterface
 {
     /**
      * Valid METHODS
@@ -137,13 +137,15 @@ class Method implements ArrayInstantiationInterface
 
         if (isset($data['body'])) {
             foreach ($data['body'] as $key => $bodyData) {
-                if (in_array($key, WebFormBody::$validMediaTypes)) {
-                    $body = WebFormBody::createFromArray($key, $bodyData);
-                } else {
-                    $body = Body::createFromArray($key, $bodyData);
-                }
+                if (is_array($bodyData)) {
+                    if (in_array($key, WebFormBody::$validMediaTypes)) {
+                        $body = WebFormBody::createFromArray($key, $bodyData);
+                    } else {
+                        $body = Body::createFromArray($key, $bodyData);
+                    }
 
-                $method->addBody($body);
+                    $method->addBody($body);
+                }
             }
         }
 
@@ -323,7 +325,7 @@ class Method implements ArrayInstantiationInterface
      */
     public function getExampleByType($type)
     {
-        return isset($this->body[$type]['example']) ? $this->body[$type]['example'] : null;
+        return isset($this->bodyList[$type]['example']) ? $this->bodyList[$type]['example'] : null;
     }
 
     /**
@@ -339,7 +341,7 @@ class Method implements ArrayInstantiationInterface
             throw new \InvalidArgumentException(sprintf('"%s" is not a valid protocol', $protocol));
         }
 
-        if (in_array($protocol, $this->protocols)) {
+        if (in_array($protocol, $this->protocols) === false) {
             $this->protocols[] = $protocol;
         }
     }
@@ -454,39 +456,43 @@ class Method implements ArrayInstantiationInterface
 
     /**
      * @param SecurityScheme $securityScheme
+     * @param bool $merge Set to true to merge the security scheme data with the method, or false to not merge it.
      */
-    public function addSecurityScheme(SecurityScheme $securityScheme)
+    public function addSecurityScheme(SecurityScheme $securityScheme, $merge = true)
     {
         $this->securitySchemes[$securityScheme->getKey()] = $securityScheme;
 
-        $describedBy = $securityScheme->getDescribedBy();
-        if ($describedBy) {
-            foreach ($describedBy->getHeaders() as $header) {
-                $this->addHeader($header);
-            }
-
-            foreach ($describedBy->getResponses() as $response) {
-                $this->addResponse($response);
-            }
-
-            foreach ($describedBy->getQueryParameters() as $queryParameter) {
-                $this->addQueryParameter($queryParameter);
-            }
-
-            foreach ($this->getBodies() as $bodyType => $body) {
-                if (in_array($bodyType, array_keys($describedBy->getBodies())) &&
-                    in_array($bodyType, WebFormBody::$validMediaTypes)
-                ) {
-                    $params = $describedBy->getBodyByType($bodyType)->getParameters();
-
-                    foreach ($params as $parameterName => $namedParameter) {
-                        $body->addParameter($namedParameter);
-                    }
+        if ($merge === true) {
+            $describedBy = $securityScheme->getDescribedBy();
+            if ($describedBy) {
+                foreach ($describedBy->getHeaders() as $header) {
+                    $this->addHeader($header);
                 }
-
-                $this->addBody($body);
+            
+                foreach ($describedBy->getResponses() as $response) {
+                    $this->addResponse($response);
+                }
+            
+                foreach ($describedBy->getQueryParameters() as $queryParameter) {
+                    $this->addQueryParameter($queryParameter);
+                }
+            
+                foreach ($this->getBodies() as $bodyType => $body) {
+                    if (in_array($bodyType, array_keys($describedBy->getBodies())) &&
+                        in_array($bodyType, WebFormBody::$validMediaTypes)
+                    ) {
+                        $params = $describedBy->getBodyByType($bodyType)->getParameters();
+            
+                        foreach ($params as $parameterName => $namedParameter) {
+                            $body->addParameter($namedParameter);
+                        }
+                    }
+            
+                    $this->addBody($body);
+                }
+            
             }
-
+            
         }
     }
 }
