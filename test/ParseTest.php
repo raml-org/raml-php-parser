@@ -877,7 +877,6 @@ RAML;
         $bazId = $baz->getResources()['/baz/{bazId}'];
         $qux = $bazId->getResources()['/baz/{bazId}/qux'];
 
-
         $this->assertEquals('Get a list of bazDisplayname', $baz->getDescription());
         $this->assertEquals('Get a single bazDisplayname', $bazId->getDescription());
         $this->assertEquals('Get a list of quxDisplayname', $qux->getDescription());

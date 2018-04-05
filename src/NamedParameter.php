@@ -703,7 +703,6 @@ class NamedParameter implements ArrayInstantiationInterface
                     throw new ValidationException($this->getKey().' is not a valid date', static::VAL_NOTDATE);
                 }
 
-                // DATES are also strings
             case static::TYPE_STRING:
     
                 // Must be a string
@@ -738,8 +737,6 @@ class NamedParameter implements ArrayInstantiationInterface
                 }
     
                 break;
-                
-
 
             case static::TYPE_INTEGER:
                 
