@@ -1,0 +1,13 @@
+#%RAML 1.0
+
+title: Fancy API
+baseUri: http://example.api.com/{version}
+version: v1
+
+types:
+  User:
+    type: object
+    properties:
+      firstname: string
+      lastname:  string
+      age:       number
