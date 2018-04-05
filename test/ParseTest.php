@@ -845,7 +845,7 @@ RAML;
         $this->assertArrayHasKey('custom', $schemes);
         $this->assertArrayHasKey('oauth_2_0', $schemes);
 
-        $this->assertEquals($schemes['custom']->getSettings(), ['myKey'=>'heLikesItNotSoMuch']);
+        $this->assertEquals($schemes['custom']->getSettings()['myKey'], 'heLikesItNotSoMuch');
     }
 
     /** @test */
