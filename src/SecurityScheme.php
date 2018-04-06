@@ -215,8 +215,13 @@ class SecurityScheme implements ArrayInstantiationInterface
      */
     public function mergeSettings($newSettings)
     {
-        $settingsClass = get_class($this->getSettings());
-        $settings = $settingsClass::createFromArray($newSettings, $this->getSettings());
+        if (is_object($this->getSettings())) {
+            $settingsClass = get_class($this->getSettings());
+            $settings = $settingsClass::createFromArray($newSettings, $this->getSettings());
+        } else {
+            $settings = array_replace($this->getSettings(), $newSettings);
+        }
+      
         $this->setSettings($settings);
     }
 }

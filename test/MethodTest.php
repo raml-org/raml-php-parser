@@ -59,10 +59,10 @@ class MethodTest extends PHPUnit_Framework_TestCase
                     200 => [
                         'body' => [
                             'text/xml' => ['description' => 'xml body'],
-                            'text/txt' => ['description' => 'plain text']
+                            'text/txt' => ['description' => 'plain text'],
                         ],
                         'description' => 'A dummy response',
-                        'headers' => []
+                        'headers' => [],
                     ]
                 ]
             ],
@@ -87,5 +87,47 @@ class MethodTest extends PHPUnit_Framework_TestCase
         $apiDefinition = new \Raml\ApiDefinition('The title');
         $method = \Raml\Method::createFromArray('get', [], $apiDefinition);
         $this->assertEquals([], $method->getQueryParameters());
+    }
+
+    /** @test */
+    public function shouldGetGlobalProtocols()
+    {
+        $parser = new \Raml\Parser();
+        $apiDefinition = $parser->parse(__DIR__.'/fixture/protocols/noProtocolSpecified.raml');
+
+        $method = \Raml\Method::createFromArray(
+            'get',
+            [
+                'description' => 'A dummy method',
+            ],
+            $apiDefinition
+        );
+
+        $this->assertInternalType('array', $method->getProtocols());
+        $this->assertCount(1, $method->getProtocols());
+        $this->assertSame(['HTTP'], $method->getProtocols());
+    }
+
+    /** @test */
+    public function shouldGetOverrideProtocols()
+    {
+        $parser = new \Raml\Parser();
+        $apiDefinition = $parser->parse(__DIR__.'/fixture/protocols/noProtocolSpecified.raml');
+
+        $method = \Raml\Method::createFromArray(
+            'get',
+            [
+                'description' => 'A dummy method',
+                'protocols' => ['HTTP', 'HTTPS'],
+            ],
+            $apiDefinition
+        );
+
+        $this->assertInternalType('array', $method->getProtocols());
+        $this->assertCount(2, $method->getProtocols());
+        $this->assertSame([
+            'HTTP',
+            'HTTPS',
+        ], $method->getProtocols());
     }
 }
