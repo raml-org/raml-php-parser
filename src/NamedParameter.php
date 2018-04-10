@@ -665,9 +665,9 @@ class NamedParameter implements ArrayInstantiationInterface
     }
     
     /**
-     * Validate a paramater via RAML specifications
+     * Validate a parameter via RAML specifications
      *
-     * @param mixed $param The value of the paramater to validate
+     * @param mixed $param The value of the parameter to validate
      * @throws \Exception The code corresponds to the error that occured.
      */
     public function validate($param)
@@ -683,7 +683,6 @@ class NamedParameter implements ArrayInstantiationInterface
             }
                 
             return;
-                
         }
         
         switch ($this->getType()) {
@@ -794,7 +793,6 @@ class NamedParameter implements ArrayInstantiationInterface
                 // File type cannot be reliably validated based on its type alone.
                 
                 break;
-                
         }
     
         /**

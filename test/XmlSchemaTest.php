@@ -57,7 +57,7 @@ RAML;
     /** @test */
     public function shouldReturnXmlSchemeDefinition()
     {
-        $this->assertInstanceOf('Raml\Schema\Definition\XmlSchemaDefinition', $this->getSchema());
+        $this->assertInstanceOf('Raml\Type\XmlType', $this->getSchema());
     }
 
     /** @test */
@@ -101,7 +101,7 @@ XML;
     /** @test */
     public function shouldCorrectlyValidateInvalidXml()
     {
-        $this->setExpectedException('\Raml\Exception\InvalidXmlException', 'Invalid Xml.');
+        $this->setExpectedException('\Raml\Exception\InvalidSchemaException', 'Invalid Schema.');
 
         $xml = <<<'XML'
 <?xml version="1.0"?>
@@ -167,7 +167,7 @@ XML;
     public function shouldThrowExceptionOnInvalidXml()
     {
         $invalidXml = 'api-request></api-request';
-        $this->setExpectedException('\Raml\Exception\InvalidXmlException');
+        $this->setExpectedException('\Raml\Exception\InvalidSchemaException');
         $this->loadXmlSchema()->validate($invalidXml);
     }
 }

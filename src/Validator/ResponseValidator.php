@@ -8,6 +8,9 @@ use Raml\Exception\InvalidSchemaException;
 use Raml\Exception\ValidationException;
 use Raml\NamedParameter;
 
+/**
+ * @deprecated See Raml\Validator\Validator
+ */
 class ResponseValidator
 {
     /**

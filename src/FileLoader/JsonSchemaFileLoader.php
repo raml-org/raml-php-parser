@@ -39,8 +39,13 @@ class JsonSchemaFileLoader implements FileLoaderInterface
         $jsonSchemaParser = new RefResolver($retriever);
         try {
             $json = $jsonSchemaParser->fetchRef('file://' . $filePath, null);
+        } catch (\JsonSchema\Exception\JsonDecodingException $e) {
+            throw new InvalidJsonException($e->getMessage());
         } catch (\Exception $e) {
             $json = json_decode(file_get_contents($filePath));
+        }
+        if ($json === null) {
+            throw new InvalidJsonException(sprintf('Cannot load JSON file at %s', $filePath));
         }
 
         try {

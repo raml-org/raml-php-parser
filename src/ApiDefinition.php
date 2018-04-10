@@ -11,6 +11,16 @@ use Raml\Exception\InvalidKeyException;
 use Raml\Exception\BadParameter\ResourceNotFoundException;
 use Raml\Exception\BadParameter\InvalidSchemaDefinitionException;
 use Raml\Exception\BadParameter\InvalidProtocolException;
+use Raml\Exception\MutuallyExclusiveElementsException;
+
+use Raml\Utility\StringTransformer;
+
+use Raml\Type\UnionType;
+use Raml\Type\ArrayType;
+use Raml\Type\ObjectType;
+use Raml\Type\JsonType;
+use Raml\Type\XmlType;
+use Raml\Type\LazyProxyType;
 
 /**
  * The API Definition
@@ -21,6 +31,7 @@ class ApiDefinition implements ArrayInstantiationInterface
 {
     const PROTOCOL_HTTP = 'HTTP';
     const PROTOCOL_HTTPS = 'HTTPS';
+    const ROOT_ELEMENT_NAME = '__ROOT_ELEMENT__';
 
     // ---
 
@@ -41,6 +52,13 @@ class ApiDefinition implements ArrayInstantiationInterface
      * @var string
      */
     private $version;
+
+    /**
+     * Raml version
+     *
+     * @var string
+     */
+    private $ramlVersion;
 
     /**
      * The Base URL (optional for development, required in production)
@@ -90,6 +108,7 @@ class ApiDefinition implements ArrayInstantiationInterface
     /**
      * The schemas the API supplies defined in the root (optional)
      *
+     * @deprecated Replaced by types element.
      * @see http://raml.org/spec.html#schemas
      *
      * @var array[]
@@ -133,6 +152,15 @@ class ApiDefinition implements ArrayInstantiationInterface
      */
     private $securedBy = [];
 
+    /**
+     * A list of data types
+     *
+     * @link https://github.com/raml-org/raml-spec/blob/master/versions/raml-10/raml-10.md/#raml-data-types
+     *
+     * @var \Raml\TypeCollection
+     */
+    private $types = [];
+
     // ---
 
     /**
@@ -143,6 +171,9 @@ class ApiDefinition implements ArrayInstantiationInterface
     public function __construct($title)
     {
         $this->title = $title;
+        $this->types = TypeCollection::getInstance();
+        // since the TypeCollection is a singleton, we need to clear it for every parse
+        $this->types->clear();
     }
 
     /**
@@ -158,6 +189,7 @@ class ApiDefinition implements ArrayInstantiationInterface
      *  protocols:          ?array
      *  defaultMediaType:   ?string
      *  schemas:            ?array
+     *  types:              ?array
      *  securitySchemes:    ?array
      *  documentation:      ?array
      *  /*
@@ -170,7 +202,6 @@ class ApiDefinition implements ArrayInstantiationInterface
         $apiDefinition = new static($title);
 
         // --
-
 
         if (isset($data['version'])) {
             $apiDefinition->setVersion($data['version']);
@@ -207,12 +238,6 @@ class ApiDefinition implements ArrayInstantiationInterface
             $apiDefinition->setDefaultMediaType($data['defaultMediaType']);
         }
 
-        if (isset($data['schemas'])) {
-            foreach ($data['schemas'] as $name => $schema) {
-                $apiDefinition->addSchemaCollection($name, $schema);
-            }
-        }
-
         if (isset($data['securitySchemes'])) {
             foreach ($data['securitySchemes'] as $name => $securityScheme) {
                 $apiDefinition->addSecurityScheme(SecurityScheme::createFromArray($name, $securityScheme));
@@ -234,6 +259,20 @@ class ApiDefinition implements ArrayInstantiationInterface
                 $apiDefinition->addDocumentation($title, $documentation);
             }
         }
+
+        if (isset($data['schemas']) && isset($data['types'])) {
+            throw new MutuallyExclusiveElementsException();
+        }
+
+        if (isset($data['schemas']) || isset($data['types'])) {
+            $types = isset($data['schemas']) ? $data['schemas'] : $data['types'];
+            foreach ($types as $name => $definition) {
+                $apiDefinition->addType(ApiDefinition::determineType($name, $definition));
+            }
+        }
+
+        // resolve type inheritance
+        $apiDefinition->getTypes()->applyInheritance();
 
         // ---
 
@@ -401,7 +440,10 @@ class ApiDefinition implements ArrayInstantiationInterface
         $this->baseUrl = $baseUrl;
 
         if (!$this->protocols) {
-            $this->protocols = [strtoupper(parse_url($this->baseUrl, PHP_URL_SCHEME))];
+            $protocol = strtoupper(parse_url($this->baseUrl, PHP_URL_SCHEME));
+            if (!empty($protocol)) {
+                $this->protocols = [$protocol];
+            }
         }
     }
 
@@ -503,16 +545,18 @@ class ApiDefinition implements ArrayInstantiationInterface
     // --
 
     /**
+     * @deprecated Use types instead!
      * Get the schemas defined in the root of the API
      *
      * @return array[]
      */
     public function getSchemaCollections()
     {
-        return $this->schemaCollections;
+        return $this->types;
     }
 
     /**
+     * @deprecated Use types instead!
      * Add an schema
      *
      * @param string $collectionName
@@ -528,6 +572,7 @@ class ApiDefinition implements ArrayInstantiationInterface
     }
 
     /**
+     * @deprecated Use types instead!
      * Add a new schema to a collection
      *
      * @param string                            $collectionName
@@ -568,6 +613,110 @@ class ApiDefinition implements ArrayInstantiationInterface
         $this->documentationList[$title] = $documentation;
     }
 
+    /**
+     * Determines the right Type and returns a type instance
+     *
+     * @param string                    $name       Name of type.
+     * @param array                     $definition Definition of type.
+     * @param \Raml\TypeCollection|null $typeCollection Type collection object.
+     *
+     * @return Raml\TypeInterface Returns a (best) matched type object.
+     * @throws \Exception Thrown when no type is defined.
+     **/
+    public static function determineType($name, $definition)
+    {
+        if (is_string($definition)) {
+            $definition = ['type' => $definition];
+        } elseif (is_array($definition)) {
+            if (!isset($definition['type'])) {
+                $definition['type'] = isset($definition['properties']) ? 'object' : 'string';
+            }
+        } elseif ($definition instanceof \stdClass) {
+            return JsonType::createFromArray('schema', $definition);
+        } else {
+            throw new \Exception('Invalid datatype for $definition parameter.');
+        }
+        if (is_object($name)) {
+            throw new \Exception(var_export($name, true));
+        }
+        
+        
+        if (strpos($definition['type'], '?') !== false ||
+            $pos = strpos($name, '?') !== false) {
+            // shorthand for required = false
+            $definition['required'] = isset($definition['required']) ? $definition['required'] : false;
+        }
+        
+        // check if we can find a more appropriate Type subclass
+        $straightForwardTypes = [
+            \Raml\Type\TimeOnlyType::TYPE_NAME      => 'Raml\Type\TimeOnlyType',
+            \Raml\Type\DateTimeType::TYPE_NAME      => 'Raml\Type\DateTimeType',
+            \Raml\Type\DateTimeOnlyType::TYPE_NAME  => 'Raml\Type\DateTimeOnlyType',
+            \Raml\Type\DateOnlyType::TYPE_NAME      => 'Raml\Type\DateOnlyType',
+            \Raml\Type\NumberType::TYPE_NAME        => 'Raml\Type\NumberType',
+            \Raml\Type\IntegerType::TYPE_NAME       => 'Raml\Type\IntegerType',
+            \Raml\Type\BooleanType::TYPE_NAME       => 'Raml\Type\BooleanType',
+            \Raml\Type\StringType::TYPE_NAME        => 'Raml\Type\StringType',
+            \Raml\Type\NilType::TYPE_NAME           => 'Raml\Type\NilType',
+            \Raml\Type\FileType::TYPE_NAME          => 'Raml\Type\FileType',
+            \Raml\Type\ArrayType::TYPE_NAME         => 'Raml\Type\ArrayType',
+            \Raml\Type\ObjectType::TYPE_NAME        => 'Raml\Type\ObjectType',
+        ];
+        
+        $type = $definition['type'];
+
+        if (in_array($type, array_keys($straightForwardTypes))) {
+            return forward_static_call_array([$straightForwardTypes[$type],'createFromArray'], [$name, $definition]);
+        }
+
+        if (!in_array($type, ['','any'])) {
+            // if $type contains a '|' we can savely assume it's a combination of types (union)
+            if (strpos($type, '|') !== false) {
+                return UnionType::createFromArray($name, $definition);
+            }
+            // if $type contains a '[]' it means we have an array with a item restriction
+            if (strpos($type, '[]') !== false) {
+                return ArrayType::createFromArray($name, $definition);
+            }
+            // is it a XML schema?
+            if (substr(ltrim($type), 0, 1) === '<') {
+                return XmlType::createFromArray(self::ROOT_ELEMENT_NAME, $definition);
+            }
+            // is it a JSON schema?
+            if (substr(ltrim($type), 0, 1) === '{') {
+                return JsonType::createFromArray(self::ROOT_ELEMENT_NAME, $definition);
+            }
+
+            // no? then no standard type found so this must be a reference to a custom defined type.
+            // since the actual definition can be defined later then when it is referenced,
+            // we create a proxy object for lazy loading when it is needed
+            return LazyProxyType::createFromArray($name, $definition);
+        }
+        
+        // No subclass found, let's use base class
+        return Type::createFromArray($name, $definition);
+    }
+
+    /**
+     * Add data type
+     *
+     * @param \Raml\TypeInterface $type
+     */
+    public function addType(TypeInterface $type)
+    {
+        $this->types->add($type);
+    }
+
+    /**
+     * Get all data types defined in the root of the API
+     *
+     * @return \Raml\TypeCollection
+     */
+    public function getTypes()
+    {
+        return $this->types;
+    }
+
     // --
 
     /**
@@ -595,7 +744,7 @@ class ApiDefinition implements ArrayInstantiationInterface
     /**
      * Get a security scheme by it's name
      *
-     * @param $schemeName
+     * @param string $schemeName
      *
      * @return SecurityScheme
      */

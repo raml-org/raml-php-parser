@@ -16,12 +16,23 @@ use Raml\SecurityScheme\SecuritySettingsParser\OAuth1SecuritySettingsParser;
 use Raml\SecurityScheme\SecuritySettingsParser\OAuth2SecuritySettingsParser;
 use Raml\SecurityScheme\SecuritySettingsParserInterface;
 use Symfony\Component\Yaml\Yaml;
+use JsonSchema\Uri\UriRetriever;
+use JsonSchema\RefResolver;
+use Raml\Exception\InvalidJsonException;
 
 /**
  * Converts a RAML file into a API Documentation tree
  */
 class Parser
 {
+    // @TODO: pass the parsed RAML version to the ApiDefinition
+    /**
+     * RAML version
+     *
+     * @var string
+     */
+    private $ramlVersion;
+    
     /**
      * Array of cached files
      * No point in fetching them twice
@@ -41,6 +52,13 @@ class Parser
      * @var SchemaParserInterface[]
      */
     private $schemaParsers = [];
+
+    /**
+     * List of types
+     *
+     * @var string
+     **/
+    private $types = [];
 
     /**
      * List of security settings parsers
@@ -83,6 +101,7 @@ class Parser
         $this->configuration = $config ?: new ParseConfiguration();
 
         // ---
+        // @deprecated schema have been replaced by a dedicated (json/xml) type
         // add schema parsers
 
         // if null then use a default list
@@ -154,6 +173,16 @@ class Parser
     }
 
     /**
+     * Add a new type
+     *
+     * @param TypeInterface $type Type to add.
+     **/
+    public function addType(TypeInterface $type)
+    {
+        $this->types[$type->getName()] = $type;
+    }
+
+    /**
      * Add a new security scheme
      *
      * @param SecuritySettingsParserInterface $securitySettingsParser
@@ -201,8 +230,38 @@ class Parser
         $ramlString = file_get_contents($fileName);
 
         $ramlData = $this->parseRamlString($ramlString, $rootDir);
-
+        
         return $this->parseRamlData($ramlData, $rootDir);
+    }
+
+    /**
+     * Parse a RAML spec from a file to array
+     *
+     * @param string $rawFileName
+     *
+     * @throws FileNotFoundException
+     * @throws RamlParserException
+     *
+     * @return array
+     */
+    public function parseToArray($rawFileName)
+    {
+        $fileName = realpath($rawFileName);
+        
+        if (!is_file($fileName)) {
+            throw new FileNotFoundException($rawFileName);
+        }
+
+        $rootDir = dirname($fileName);
+        $ramlString = file_get_contents($fileName);
+
+        $ramlData = $this->parseRamlString($ramlString, $rootDir);
+
+        $ramlData = $this->parseTraits($ramlData);
+
+        $ramlData = $this->parseResourceTypes($ramlData);
+        
+        return $ramlData;
     }
 
     /**
@@ -244,27 +303,31 @@ class Parser
 
         $ramlData = $this->parseResourceTypes($ramlData);
 
-        if ($this->configuration->isSchemaParsingEnabled()) {
-            if (isset($ramlData['schemas'])) {
-                $schemas = [];
-                foreach ($ramlData['schemas'] as $schemaCollection) {
-                    foreach ($schemaCollection as $schemaName => $schema) {
-                        $schemas[$schemaName] = $schema;
-                    }
+        // if ($this->configuration->isSchemaParsingEnabled()) {
+        if (isset($ramlData['schemas']) || isset($ramlData['types'])) {
+            $collections = isset($ramlData['schemas']) ? $ramlData['schemas'] : $ramlData['types'];
+            $schemas = [];
+            foreach ($collections as $key => $schemaCollection) {
+                if (!is_array($schemaCollection)) {
+                    continue;
                 }
-            }
-            foreach ($ramlData as $key => $value) {
-                if (0 === strpos($key, '/')) {
-                    if (isset($schemas)) {
-                        $value = $this->replaceSchemas($value, $schemas);
-                    }
-                    if (is_array($value)) {
-                        $value = $this->recurseAndParseSchemas($value, $rootDir);
-                    }
-                    $ramlData[$key] = $value;
+                foreach ($schemaCollection as $schemaName => $schema) {
+                    $schemas[$schemaName] = $schema;
                 }
             }
         }
+        foreach ($ramlData as $key => $value) {
+            if (0 === strpos($key, '/')) {
+                if (isset($schemas)) {
+                    $value = $this->replaceSchemas($value, $schemas);
+                }
+                if (is_array($value)) {
+                    $value = $this->recurseAndParseSchemas($value, $rootDir);
+                }
+                $ramlData[$key] = $value;
+            }
+        }
+        // }
 
         if (isset($ramlData['securitySchemes'])) {
             $ramlData['securitySchemes'] = $this->parseSecuritySettings($ramlData['securitySchemes']);
@@ -277,7 +340,7 @@ class Parser
      * Replaces schema into the raml file
      *
      * @param  array $array
-     * @param  array $schemas List of available schema definition
+     * @param  array $schemas List of available schema definition.
      *
      * @return array
      */
@@ -287,8 +350,8 @@ class Parser
             return $array;
         }
         foreach ($array as $key => $value) {
-            if ('schema' === $key) {
-                if (isset($schemas[$value])) {
+            if (is_string($key) && in_array($key, ['schema', 'type'])) {
+                if (array_key_exists($value, $schemas)) {
                     $array[$key] = $schemas[$value];
                 }
             } else {
@@ -309,18 +372,40 @@ class Parser
      *
      * @return array
      */
-    private function recurseAndParseSchemas($array, $rootDir)
+    private function recurseAndParseSchemas(array $array, $rootDir)
     {
         foreach ($array as $key => &$value) {
             if (is_array($value)) {
                 if (isset($value['schema'])) {
-                    if (in_array($key, array_keys($this->schemaParsers))) {
-                        $schemaParser = $this->schemaParsers[$key];
-                        $fileDir = $this->getCachedFilePath($value['schema']);
-                        $schemaParser->setSourceUri('file:' . ($fileDir ? $fileDir : $rootDir . DIRECTORY_SEPARATOR));
-                        $value['schema'] = $schemaParser->createSchemaDefinition($value['schema']);
-                    } else {
-                        throw new InvalidSchemaTypeException($key);
+                    if ($value['schema'] === false) {
+                        throw new \Exception('Schema is false: '.var_export($array, true));
+                    }
+                    $value['type'] = $value['schema'];
+                    unset($value['schema']);
+                }
+                if (isset($value['type'])) {
+                    if ($value['type'] === false) {
+                        throw new \Exception('Type is false: '.var_export($array, true));
+                    }
+                    if (substr(ltrim($value['type']), 0, 1) === '{') {
+                        if (in_array($key, array_keys($this->schemaParsers))) {
+                            $fileDir = $this->getCachedFilePath($value['type']);
+                            $retriever = new UriRetriever;
+                            $jsonSchemaParser = new RefResolver($retriever);
+
+                            $data = json_decode($value['type']);
+
+                            if (json_last_error() !== JSON_ERROR_NONE) {
+                                throw new InvalidJsonException(json_last_error());
+                            }
+                            $jsonSchemaParser->resolve($data, 'file:' . ($fileDir ? $fileDir : $rootDir . DIRECTORY_SEPARATOR));
+                            $value['type'] = json_encode((array) $data);
+                        } else {
+                            throw new InvalidJsonException($key);
+                        }
+                    // } elseif (substr(ltrim($value['type']), 0, 1) === '<') {
+                    // } else {
+                    //     throw new InvalidJsonException('');
                     }
                 } else {
                     $value = $this->recurseAndParseSchemas($value, $rootDir);
@@ -344,7 +429,7 @@ class Parser
     /**
      * Parse the security settings data into an array
      *
-     * @param array $array
+     * @param array $schemesArray
      *
      * @return array
      */
@@ -383,30 +468,29 @@ class Parser
         }
 
         return $securitySchemes;
-
     }
 
     /**
      * Parse the resource types
      *
-     * @param $ramlData
+     * @param mixed $ramlData
      *
      * @return array
      */
     private function parseResourceTypes($ramlData)
     {
         if (isset($ramlData['resourceTypes'])) {
-            $keyedTraits = [];
-            foreach ($ramlData['resourceTypes'] as $trait) {
-                foreach ($trait as $k => $t) {
-                    $keyedTraits[$k] = $t;
+            $keyedResourceTypes = [];
+            foreach ($ramlData['resourceTypes'] as $resourceType) {
+                foreach ($resourceType as $k => $t) {
+                    $keyedResourceTypes[$k] = $t;
                 }
             }
 
             foreach ($ramlData as $key => $value) {
                 if (strpos($key, '/') === 0) {
                     $name = (isset($value['displayName'])) ? $value['displayName'] : substr($key, 1);
-                    $ramlData[$key] = $this->replaceTypes($value, $keyedTraits, $key, $name, $key);
+                    $ramlData[$key] = $this->replaceTypes($value, $keyedResourceTypes, $key, $name, $key);
                 }
             }
         }
@@ -417,7 +501,7 @@ class Parser
     /**
      * Parse the traits
      *
-     * @param $ramlData
+     * @param mixed $ramlData
      *
      * @return array
      */
@@ -425,9 +509,15 @@ class Parser
     {
         if (isset($ramlData['traits'])) {
             $keyedTraits = [];
-            foreach ($ramlData['traits'] as $trait) {
-                foreach ($trait as $k => $t) {
-                    $keyedTraits[$k] = $t;
+            foreach ($ramlData['traits'] as $key => $trait) {
+                if (is_int($key)) {
+                    foreach ($trait as $k => $t) {
+                        $keyedTraits[$k] = $t;
+                    }
+                } else {
+                    foreach ($trait as $k => $t) {
+                        $keyedTraits[$key][$k] = $t;
+                    }
                 }
             }
 
@@ -466,8 +556,8 @@ class Parser
         }
 
         if (strpos($header, '#%RAML') === 0) {
-            // @todo extract the vesion of the raml and do something with it
-
+            // @todo extract the version of the raml and do something with it
+            
             $data = $this->includeAndParseFiles(
                 $data,
                 $rootDir
@@ -503,18 +593,39 @@ class Parser
      */
     private function loadAndParseFile($fileName, $rootDir)
     {
-        $rootDir = realpath($rootDir);
-        $fullPath = realpath($rootDir . '/' . $fileName);
+        // first check if file is local or remote
+        $host = parse_url($fileName, PHP_URL_HOST);
+        if ($host === NULL) {
+            // local file
+            $rootDir = realpath($rootDir);
+            $fullPath = realpath($rootDir . '/' . $fileName);
 
-        if (is_readable($fullPath) === false) {
-            return false;
-        }
+            if (is_readable($fullPath) === false) {
+                return false;
+            }
 
-        // Prevent LFI directory traversal attacks
-        if (!$this->configuration->isDirectoryTraversalAllowed() &&
-            substr($fullPath, 0, strlen($rootDir)) !== $rootDir
-        ) {
-            return false;
+            // Prevent LFI directory traversal attacks
+            if (!$this->configuration->isDirectoryTraversalAllowed() &&
+                substr($fullPath, 0, strlen($rootDir)) !== $rootDir
+            ) {
+                return false;
+            }
+            $fileExtension = (pathinfo($fileName, PATHINFO_EXTENSION));
+        } else {
+            // remote file
+            $fullPath = $fileName;
+            $fileHeaders = get_headers($fileName, true);
+            $mimeType = isset($fileHeaders['Content-Type']) ? $fileHeaders['Content-Type'] : '';
+            $mapping = [
+                'application/json'      => 'json',
+                'application/xml'       => 'xml',
+                'application/soap+xml'  => 'xml',
+                'text/xml'              => 'xml'
+            ];
+            if (!isset($mapping[$mimeType])) {
+                return false;
+            }
+            $fileExtension = $mapping[$mimeType];
         }
 
         $cacheKey = md5($fullPath);
@@ -523,8 +634,6 @@ class Parser
         if (isset($this->cachedFiles[$cacheKey])) {
             return $this->cachedFiles[$cacheKey];
         }
-
-        $fileExtension = (pathinfo($fileName, PATHINFO_EXTENSION));
 
         if (in_array($fileExtension, ['yaml', 'yml', 'raml'])) {
             $rootDir = dirname($rootDir . '/' . $fileName);
@@ -570,7 +679,11 @@ class Parser
 
             return $result;
         } elseif (strpos($structure, '!include') === 0) {
-            return $this->loadAndParseFile(str_replace('!include ', '', $structure), $rootDir);
+            $result = $this->loadAndParseFile(str_replace('!include ', '', $structure), $rootDir);
+            if ($result === false) {
+                throw new RamlParserException('Could not load and/or parse include file.');
+            }
+            return $result;
         } else {
             return $structure;
         }
@@ -579,14 +692,14 @@ class Parser
     /**
      * Insert the traits into the RAML file
      *
-     * @param array  $raml
+     * @param string|array  $raml
      * @param array  $traits
      * @param string $path
      * @param string $name
      *
      * @return array
      */
-    private function replaceTraits($raml, $traits, $path, $name)
+    private function replaceTraits($raml, array $traits, $path, $name)
     {
         if (!is_array($raml)) {
             return $raml;
@@ -605,7 +718,7 @@ class Parser
                         $traitVariables['resourcePath'] = $path;
                         $traitVariables['resourcePathName'] = $name;
 
-                        $trait = $this->applyTraitVariables($traitVariables, $traits[$traitName]);
+                        $trait = $this->applyVariables($traitVariables, $traits[$traitName]);
                     } elseif (isset($traits[$traitName])) {
                         $trait = $traits[$traitName];
                     }
@@ -649,14 +762,14 @@ class Parser
             if ($key === 'type' && strpos($parentKey, '/') === 0) {
                 $type = [];
 
-                $traitVariables = ['resourcePath' => $path, 'resourcePathName' => $name];
+                $typeVariables = ['resourcePath' => $path, 'resourcePathName' => $name];
 
                 if (is_array($value)) {
-                    $traitVariables = array_merge($traitVariables, current($value));
-                    $traitName = key($value);
-                    $type = $this->applyTraitVariables($traitVariables, $types[$traitName]);
+                    $typeVariables = array_merge($typeVariables, current($value));
+                    $typeName = key($value);
+                    $type = $this->applyVariables($typeVariables, $types[$typeName]);
                 } elseif (isset($types[$value])) {
-                    $type = $this->applyTraitVariables($traitVariables, $types[$value]);
+                    $type = $this->applyVariables($typeVariables, $types[$value]);
                 }
 
                 $newArray = array_replace_recursive($newArray, $this->replaceTypes($type, $types, $path, $name, $key));
@@ -673,69 +786,84 @@ class Parser
                     $newArray[$key] = $newValue;
                 }
             }
-
         }
 
         return $newArray;
     }
 
     /**
-     * Add trait variables
+     * Add trait/type variables
      *
      * @param array $values
      * @param array $trait
      *
      * @return mixed
      */
-    private function applyTraitVariables(array $values, array $trait)
+    private function applyVariables(array $values, array $trait)
     {
-        $variables = implode('|', array_keys($values));
         $newTrait = [];
 
         foreach ($trait as $key => &$value) {
-            $newKey = preg_replace_callback(
-                '/<<(' . $variables . ')([\s]*\|[\s]*!(singularize|pluralize))?>>/',
-                function ($matches) use ($values) {
-                    $transformer = isset($matches[3]) ? $matches[3] : '';
-                    switch ($transformer) {
-                        case 'singularize':
-                            return Inflect::singularize($values[$matches[1]]);
-                            break;
-                        case 'pluralize':
-                            return Inflect::pluralize($values[$matches[1]]);
-                            break;
-                        default:
-                            return $values[$matches[1]];
-                    }
-                },
-                $key
-            );
+            $newKey = $this->applyFunctions($key, $values);
 
             if (is_array($value)) {
-                $value = $this->applyTraitVariables($values, $value);
+                $value = $this->applyVariables($values, $value);
             } else {
-                $value = preg_replace_callback(
-                    '/<<(' . $variables . ')([\s]*\|[\s]*!(singularize|pluralize))?>>/',
-                    function ($matches) use ($values) {
-                        $transformer = isset($matches[3]) ? $matches[3] : '';
-
-                        switch ($transformer) {
-                            case 'singularize':
-                                return Inflect::singularize($values[$matches[1]]);
-                                break;
-                            case 'pluralize':
-                                return Inflect::pluralize($values[$matches[1]]);
-                                break;
-                            default:
-                                return $values[$matches[1]];
-                        }
-                    },
-                    $value
-                );
+                $value = $this->applyFunctions($value, $values);
             }
             $newTrait[$newKey] = $value;
         }
 
         return $newTrait;
+    }
+
+    /**
+     * Applies functions on variable if they are defined
+     *
+     * @param mixed $trait
+     * @param array $values
+     *
+     * @return mixed    Return input $trait after applying functions (if any)
+     */
+    private function applyFunctions($trait, array $values)
+    {
+        $variables = implode('|', array_keys($values));
+        return preg_replace_callback(
+            '/<<(' . $variables . ')'.
+            '('.
+                '[\s]*\|[\s]*!'.
+                '('.
+                    'singularize|pluralize|uppercase|lowercase|lowercamelcase|uppercamelcase|lowerunderscorecase|upperunderscorecase|lowerhyphencase|upperhyphencase'.
+                ')'.
+            ')?>>/',
+            function ($matches) use ($values) {
+                $transformer = isset($matches[3]) ? $matches[3] : '';
+                switch ($transformer) {
+                    case 'singularize':
+                        return Inflect::singularize($values[$matches[1]]);
+                    case 'pluralize':
+                        return Inflect::pluralize($values[$matches[1]]);
+                    case 'uppercase':
+                        return strtoupper($values[$matches[1]]);
+                    case 'lowercase':
+                        return strtolower($values[$matches[1]]);
+                    case 'lowercamelcase':
+                        return StringTransformer::convertString($values[$matches[1]], StringTransformer::LOWER_CAMEL_CASE);
+                    case 'uppercamelcase':
+                        return StringTransformer::convertString($values[$matches[1]], StringTransformer::UPPER_CAMEL_CASE);
+                    case 'lowerunderscorecase':
+                        return StringTransformer::convertString($values[$matches[1]], StringTransformer::LOWER_UNDERSCORE_CASE);
+                    case 'upperunderscorecase':
+                        return StringTransformer::convertString($values[$matches[1]], StringTransformer::UPPER_UNDERSCORE_CASE);
+                    case 'lowerhyphencase':
+                        return StringTransformer::convertString($values[$matches[1]], StringTransformer::LOWER_HYPHEN_CASE);
+                    case 'upperhyphencase':
+                        return StringTransformer::convertString($values[$matches[1]], StringTransformer::UPPER_HYPHEN_CASE);
+                    default:
+                        return $values[$matches[1]];
+                }
+            },
+            $trait
+        );
     }
 }

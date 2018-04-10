@@ -1,6 +1,8 @@
 <?php
 namespace Raml;
 
+use Raml\Exception\BodyNotFoundException;
+
 /**
  * Method
  *
@@ -382,7 +384,7 @@ class Method implements ArrayInstantiationInterface, MessageSchemaInterface
     public function getBodyByType($type)
     {
         if (!isset($this->bodyList[$type])) {
-            throw new \Exception('No body of type "' . $type . '"');
+            throw new BodyNotFoundException('No body of type "' . $type . '"');
         }
 
         return $this->bodyList[$type];
