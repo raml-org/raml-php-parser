@@ -1,5 +1,10 @@
 <?php
 
+use Raml\Exception\BadParameter\FileNotFoundException;
+use Raml\Schema\Definition\JsonSchemaDefinition;
+use Raml\Schema\SchemaDefinitionInterface;
+use Raml\Schema\SchemaParserInterface;
+
 class ParseTest extends PHPUnit_Framework_TestCase
 {
     /**
@@ -59,6 +64,7 @@ RAML;
         $this->assertEquals('ZEncoder API', $simpleRaml->getTitle());
         $this->assertEquals('Home', $docList['title']);
         $this->assertEquals('v2', $simpleRaml->getVersion());
+        $this->assertEquals([__DIR__ . '/fixture/child.raml'], $this->parser->getIncludedFiles());
     }
 
     /** @test */
@@ -67,21 +73,23 @@ RAML;
         $simpleRaml = $this->parser->parse(__DIR__.'/fixture/simple.raml');
         $this->assertEquals('World Music API', $simpleRaml->getTitle());
         $this->assertEquals('v1', $simpleRaml->getVersion());
-        $this->assertEquals('http://example.api.com/v1', $simpleRaml->getBaseUrl());
-        $this->assertEquals('application/json', $simpleRaml->getDefaultMediaType());
+        $this->assertEquals('http://example.api.com/v1', $simpleRaml->getBaseUri());
+        $this->assertEquals(['application/json'], $simpleRaml->getDefaultMediaTypes());
     }
 
-    /** @test */
+    /**
+     * @test
+     */
     public function shouldThrowCorrectExceptionOnBadJson()
     {
-        $this->setExpectedException('\Raml\Exception\InvalidJsonException');
+        $this->setExpectedException(Raml\Exception\InvalidJsonException::class);
         $this->parser->parse(__DIR__.'/fixture/invalid/badJson.raml');
     }
 
     /** @test */
-    public function shouldThrowCorrectExceptionOnBadRamlFile()
+    public function shouldThrowFileNotFoundExceptionOnBadRamlFileWithNotExistingFile()
     {
-        $this->setExpectedException('\Raml\Exception\InvalidJsonException');
+        $this->setExpectedException(FileNotFoundException::class);
         $this->parser->parse(__DIR__.'/fixture/invalid/bad.raml');
     }
 
@@ -91,14 +99,14 @@ RAML;
         $config = new \Raml\ParseConfiguration();
         $config->disableDirectoryTraversal();
         $this->parser->setConfiguration($config);
-        $this->setExpectedException('\Raml\Exception\InvalidJsonException');
+        $this->setExpectedException(FileNotFoundException::class);
         $this->parser->parse(__DIR__.'/fixture/treeTraversal/bad.raml');
     }
 
     /** @test */
     public function shouldPreventDirectoryTraversalByDefault()
     {
-        $this->setExpectedException('\Raml\Exception\InvalidJsonException');
+        $this->setExpectedException(FileNotFoundException::class);
         $this->parser->parse(__DIR__.'/fixture/treeTraversal/bad.raml');
     }
 
@@ -115,6 +123,7 @@ RAML;
         $resource = $simpleRaml->getResourceByUri('/songs');
         $method = $resource->getMethod('get');
         $response = $method->getResponse(200);
+        /** @var \Raml\Body $body */
         $body = $response->getBodyByType('application/json');
 
         $schema = $body->getSchema();
@@ -207,6 +216,7 @@ RAML;
         $simpleRaml = $this->parser->parse(__DIR__.'/fixture/simple.raml');
         $resource = $simpleRaml->getResourceByUri('/songs/1');
         $method = $resource->getMethod('post');
+        /** @var \Raml\Body $body */
         $body = $method->getBodyByType('application/json');
         $schema = $body->getSchema();
 
@@ -238,7 +248,10 @@ RAML;
 
         $this->assertEquals(['application/json', 'application/xml'], $response->getTypes());
 
-        $schema = $response->getBodyByType('application/json')->getExample();
+        /** @var \Raml\Body $body */
+        $body = $response->getBodyByType('application/json');
+
+        $schema = $body->getExample();
 
         $this->assertEquals([
           "title" => "Wish You Were Here",
@@ -253,6 +266,7 @@ RAML;
         $resource = $simpleRaml->getResourceByUri('/songs/1');
         $method = $resource->getMethod('get');
         $response = $method->getResponse(200);
+        /** @var \Raml\Body $body */
         $body = $response->getBodyByType('application/json');
         $schema = $body->getSchema();
 
@@ -267,6 +281,7 @@ RAML;
         $resource = $simpleRaml->getResourceByUri('/songs');
         $method = $resource->getMethod('get');
         $response = $method->getResponse(200);
+        /** @var \Raml\Body $body */
         $body = $response->getBodyByType('application/json');
         $schema = $body->getSchema();
 
@@ -281,6 +296,7 @@ RAML;
         $resource = $simpleRaml->getResourceByUri('/');
         $method = $resource->getMethod('get');
         $response = $method->getResponse(200);
+        /** @var \Raml\Body $body */
         $body = $response->getBodyByType('application/json');
         $schema = $body->getSchema();
 
@@ -298,6 +314,7 @@ RAML;
         $resource = $simpleRaml->getResourceByUri('/songs/1');
         $method = $resource->getMethod('get');
         $response = $method->getResponse(200);
+        /** @var \Raml\Body $body */
         $body = $response->getBodyByType('application/json');
         $schema = $body->getSchema();
 
@@ -311,7 +328,9 @@ RAML;
         $resource = $simpleRaml->getResourceByUri('/songs');
         $method = $resource->getMethod('get');
         $response = $method->getResponse(200);
+        /** @var \Raml\Body $body */
         $body = $response->getBodyByType('application/json');
+        /** @var JsonSchemaDefinition $schema */
         $schema = $body->getSchema();
         $schemaObject = $schema->getJsonObject();
 
@@ -325,8 +344,10 @@ RAML;
         $resource = $simpleRaml->getResourceByUri('/songs');
         $method = $resource->getMethod('get');
         $response = $method->getResponse(200);
+        /** @var \Raml\Body $body */
         $body = $response->getBodyByType('application/json');
         $schema = $body->getSchema();
+        /** @var JsonSchemaDefinition $schema */
         $schemaArray = $schema->getJsonArray();
 
         $this->assertEquals('A canonical song', $schemaArray['items']['description']);
@@ -341,6 +362,7 @@ RAML;
         $resource = $simpleRaml->getResourceByUri('/songs');
         $method = $resource->getMethod('get');
         $response = $method->getResponse(200);
+        /** @var \Raml\Body $body */
         $body = $response->getBodyByType('application/json');
         $schema = $body->getSchema();
 
@@ -359,6 +381,7 @@ RAML;
         $resource = $simpleRaml->getResourceByUri('/songs');
         $method = $resource->getMethod('get');
         $response = $method->getResponse(200);
+        /** @var \Raml\Body $body */
         $body = $response->getBodyByType('application/json');
         $schema = $body->getSchema();
 
@@ -373,7 +396,9 @@ RAML;
         $resource = $simpleRaml->getResourceByUri('/songs');
         $method = $resource->getMethod('get');
         $response = $method->getResponse(200);
+        /** @var \Raml\Body $body */
         $body = $response->getBodyByType('application/json');
+        /** @var JsonSchemaDefinition $schema */
         $schema = $body->getSchema();
         $schemaObject = $schema->getJsonObject();
 
@@ -383,11 +408,13 @@ RAML;
     /** @test */
     public function shouldSetCorrectSourceUriOnSchemaParsers()
     {
-        $schemaParser = $this->getMock('\Raml\Schema\SchemaParserInterface');
+        $schemaParser = $this->getMock(SchemaParserInterface::class);
+        $schemaParser->method('createSchemaDefinition')->willReturn(
+            $this->getMock(SchemaDefinitionInterface::class)
+        );
         $schemaParser->expects($this->any())->method('getCompatibleContentTypes')->willReturn([ 'application/json' ]);
-        
         $schemaParser->expects($this->any())->method('setSourceUri')->withConsecutive(
-            [ 'file:'.__DIR__.'/fixture/songs.json' ]
+            [ 'file://'.__DIR__.'/fixture/songs.json' ]
         );
         
         $parser = new \Raml\Parser([
@@ -412,19 +439,6 @@ RAML;
     }
 
     /** @test */
-    public function shouldThrowErrorIfUnknownIncluded()
-    {
-        $this->setExpectedException('\Raml\Exception\InvalidSchemaTypeException');
-
-        try {
-            $this->parser->parse(__DIR__.'/fixture/includeUnknownSchema.raml');
-        } catch (\Raml\Exception\InvalidSchemaTypeException $e) {
-            $this->assertEquals('application/vnd.api-v1+json', $e->getType());
-            throw $e;
-        }
-    }
-
-    /** @test */
     public function shouldBeAbleToAddAdditionalSchemaTypes()
     {
         $schemaParser = new \Raml\Schema\Parser\JsonSchemaParser();
@@ -435,7 +449,8 @@ RAML;
         $resource = $simpleRaml->getResourceByUri('/songs');
         $method = $resource->getMethod('get');
         $response = $method->getResponse(200);
-        
+
+        /** @var \Raml\Body $body */
         $body = $response->getBodyByType('application/vnd.api-v1+json');
         $schema = $body->getSchema();
 
@@ -638,7 +653,9 @@ RAML;
     public function shouldReplaceParameterByJsonString()
     {
         $def = $this->parser->parse(__DIR__ . '/fixture/jsonStringExample.raml');
-        $example = $def->getResourceByUri('/songs')->getMethod('get')->getResponse(200)->getBodyByType('application/json')->getExample();
+        /** @var \Raml\Body $body */
+        $body = $def->getResourceByUri('/songs')->getMethod('get')->getResponse(200)->getBodyByType('application/json');
+        $example = $body->getExample();
 
         $this->assertEquals([
             'items' => [[
@@ -703,8 +720,9 @@ RAML;
     {
         $def = $this->parser->parse(__DIR__ . '/fixture/replaceSchemaByRootSchema.raml');
         $response = $def->getResourceByUri('/songs/{id}')->getMethod('get')->getResponse(200);
-
+        /** @var \Raml\Body $body */
         $body = $response->getBodyByType('application/json');
+        /** @var JsonSchemaDefinition $schema */
         $schema = $body->getSchema();
 
         $this->assertInstanceOf('Raml\Schema\Definition\JsonSchemaDefinition', $schema);
@@ -718,7 +736,9 @@ RAML;
     public function shouldParseAndReplaceSchemaOnlyInResources()
     {
         $def = $this->parser->parse(__DIR__ . '/fixture/schemaInTypes.raml');
-        $schema = $def->getResourceByUri('/projects')->getMethod('post')->getBodyByType('application/json')->getSchema();
+        /** @var \Raml\Body $body */
+        $body = $def->getResourceByUri('/projects')->getMethod('post')->getBodyByType('application/json');
+        $schema = $body->getSchema();
         $this->assertInstanceOf('Raml\Schema\Definition\JsonSchemaDefinition', $schema);
     }
 
@@ -809,6 +829,7 @@ RAML;
         $resource = $apiDefinition->getResourceByUri('/');
         $method = $resource->getMethod('get');
         $response = $method->getResponse(200);
+        /** @var \Raml\Body $body */
         $body = $response->getBodyByType('text/xml');
         $this->assertEquals('A generic description', $body->getDescription());
     }
@@ -861,12 +882,26 @@ RAML;
     }
 
     /** @test */
+    public function shouldParseIncludedTraits()
+    {
+        $apiDefinition = $this->parser->parse(__DIR__ . '/fixture/includedTraits.raml');
+        $resource = $apiDefinition->getResourceByUri('/category');
+        $method = $resource->getMethod('get');
+        $queryParams = $method->getQueryParameters();
+
+        $this->assertCount(3, $queryParams);
+        $this->assertSame(['id', 'parent_id', 'title'], array_keys($queryParams));
+    }
+
+    /** @test */
     public function shouldParseResourcePathNameCorrectly()
     {
         $apiDefinition = $this->parser->parse(__DIR__ . '/fixture/resourcePathName.raml');
 
         $foo = $apiDefinition->getResources()['/foo'];
+        /** @var \Raml\Resource $fooId */
         $fooId = $foo->getResources()['/foo/{fooId}'];
+        /** @var \Raml\Resource $bar */
         $bar = $fooId->getResources()['/foo/{fooId}/bar'];
 
         $this->assertEquals('Get a list of foo', $foo->getDescription());
@@ -874,7 +909,9 @@ RAML;
         $this->assertEquals('Get a list of bar', $bar->getDescription());
 
         $baz = $apiDefinition->getResources()['/baz'];
+        /** @var \Raml\Resource $bazId */
         $bazId = $baz->getResources()['/baz/{bazId}'];
+        /** @var \Raml\Response $qux */
         $qux = $bazId->getResources()['/baz/{bazId}/qux'];
 
         $this->assertEquals('Get a list of bazDisplayname', $baz->getDescription());

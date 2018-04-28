@@ -840,6 +840,8 @@ class NamedParameter implements ArrayInstantiationInterface
     {
         if ($this->validationPattern) {
             $pattern = $this->validationPattern;
+        } elseif ($enum = $this->getEnum()) {
+            $pattern = '^(' . implode('|', array_map('preg_quote', $enum)) . ')$';
         } else {
             switch ($this->getType()) {
                 case self::TYPE_NUMBER:

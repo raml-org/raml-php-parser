@@ -8,7 +8,13 @@
   "authors": [
     {
       "name": "Alec Sammon",
-      "email": "alec.sammon@googlemail.com"
+      "email": "alec.sammon@googlemail.com",
+      "role": "Developer"
+    },
+    {
+      "name": "eLama Team",
+      "email": "dev@elama.ru",
+      "role": "Developer"
     }
   ],
 
@@ -19,17 +25,18 @@
   },
 
   "require-dev": {
-    "satooshi/php-coveralls": "~0.6",
+    "satooshi/php-coveralls": "~2.0",
     "phpunit/phpunit": "4.*",
     "squizlabs/php_codesniffer": "@dev"
   },
 
   "require": {
     "php": ">=5.5.9",
-    "justinrainbow/json-schema": "~1.5",
+    "justinrainbow/json-schema": "~5.0",
     "symfony/yaml": "~3.0|~4.0",
     "symfony/routing": "~3.0|~4.0",
     "oodle/inflect": "~0.2",
-    "psr/http-message": "^1.0"
+    "psr/http-message": "^1.0",
+    "willdurand/negotiation": "^2.2.1"
   }
 }

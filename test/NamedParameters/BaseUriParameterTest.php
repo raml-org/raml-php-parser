@@ -10,12 +10,8 @@ class BaseUriParameterTest extends \PHPUnit_Framework_TestCase
 
     public function setUp()
     {
-        parent::setUp();
         $this->parser = new \Raml\Parser();
     }
-
-    // ---
-
 
     /**
      * Returns a valid api def
@@ -53,8 +49,6 @@ RAML;
         return $this->parser->parseFromString($raml, '');
     }
 
-    // ---
-
     /**
      * @test
      */
@@ -62,7 +56,7 @@ RAML;
     {
         $apiDef = $this->getValidDef();
 
-        $this->assertEquals('https://{apiDomain}.someapi.com/1.2', $apiDef->getBaseUrl());
+        $this->assertEquals('https://{apiDomain}.someapi.com/1.2', $apiDef->getBaseUri());
     }
 
     /** @test */
@@ -95,5 +89,44 @@ RAML;
         $resource = $apiDef->getResourceByUri('/users/1/image');
         $method = $resource->getMethod('PUT');
         $this->assertEquals(['content-update'], $method->getBaseUriParameters()['apiDomain']->getEnum());
+    }
+
+    /**
+     * @test
+     */
+    public function shouldCorrectlyParseNetBaseUri()
+    {
+        $raml =  <<<RAML
+#%RAML 0.8
+title: Test body
+baseUri: //some-host/
+/:
+  get: []
+RAML;
+
+        $protocols = $this->parser->parseFromString($raml, '')->getProtocols();
+
+        $this->assertContains('HTTP', $protocols);
+        $this->assertContains('HTTPS', $protocols);
+    }
+
+    /**
+     * @test
+     */
+    public function shouldOverrideBaseUriProtocols()
+    {
+        $raml =  <<<RAML
+#%RAML 0.8
+title: Test body
+baseUri: //some-host/
+protocols:  [ HTTP ]
+/:
+  get: []
+RAML;
+
+        $protocols = $this->parser->parseFromString($raml, '')->getProtocols();
+
+        $this->assertContains('HTTP', $protocols);
+        $this->assertNotContains('HTTPS', $protocols);
     }
 }
