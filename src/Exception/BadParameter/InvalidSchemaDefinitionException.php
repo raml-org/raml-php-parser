@@ -12,6 +12,6 @@ class InvalidSchemaDefinitionException extends RuntimeException implements
 {
     public function __construct()
     {
-        parent::__construct('Not a valid schema, must be string or instance of SchemaDefinitionInterface');
+        parent::__construct('Not a valid schema, must be string or instance of SchemaDefinitionInterface.');
     }
 }
