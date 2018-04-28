@@ -1,33 +1,34 @@
 # PHP RAML Parser
 
-## **!!Attention!!** this is a work-in-progress of the RAML 1.0 specification, for RAML 0.8 see the [master branch](https://github.com/alecsammon/php-raml-parser/tree/master)
+[![Build Status](https://travis-ci.org/alecsammon/php-raml-parser.svg?branch=master)](https://travis-ci.org/alecsammon/php-raml-parser)
+[![Coverage Status](https://img.shields.io/coveralls/alecsammon/php-raml-parser.svg)](https://coveralls.io/r/alecsammon/php-raml-parser?branch=master)
 
-### What is done and should work
+See the RAML spec here: https://github.com/raml-org/raml-spec
+
+## RAML 0.8 Support
+For RAML 0.8 support follow version 2.
+
+## RAML 1.0 Support
+For RAML 1.0 support follow version 3. RAML 1.0 support is still work in progress.
+
+_What is done and should work:_
   - Part of RAML 1.0 [type expressions](https://github.com/raml-org/raml-spec/blob/master/versions/raml-10/raml-10.md/#type-expressions)
   - Enums
   - Union type expression (the "or" `|` operator)
   - Array of types
   - `discriminator` and `discriminatorValue` facets
 
-### Still TODO:
-- [Libraries](https://github.com/raml-org/raml-spec/blob/master/versions/raml-10/raml-10.md/#libraries)
-- [User defined facets](https://github.com/raml-org/raml-spec/blob/master/versions/raml-10/raml-10.md/#user-defined-facets)
-- Full implementation of [type expressions](https://github.com/raml-org/raml-spec/blob/master/versions/raml-10/raml-10.md/#type-expressions)
+_To be implemented:_
+  - [Libraries](https://github.com/raml-org/raml-spec/blob/master/versions/raml-10/raml-10.md/#libraries)
+  - [User defined facets](https://github.com/raml-org/raml-spec/blob/master/versions/raml-10/raml-10.md/#user-defined-facets)
+  - Full implementation of [type expressions](https://github.com/raml-org/raml-spec/blob/master/versions/raml-10/raml-10.md/#type-expressions)
 	- The shorthand array and the union type have been implemented
 	- Bi-dimensional array and the array-union combination have **NOT** been implemented yet.
-- [Multiple inheritance](https://github.com/raml-org/raml-spec/blob/master/versions/raml-10/raml-10.md/#multiple-inheritance)
-- [Annotations](https://github.com/raml-org/raml-spec/blob/master/versions/raml-10/raml-10.md/#annotations)
-- [Overlays and Extensions](https://github.com/raml-org/raml-spec/blob/master/versions/raml-10/raml-10.md/#overlays-and-extensions)
-- [Improved Security Schemes](https://github.com/raml-org/raml-spec/blob/master/versions/raml-10/raml-10.md/#security-schemes)
+  - [Multiple inheritance](https://github.com/raml-org/raml-spec/blob/master/versions/raml-10/raml-10.md/#multiple-inheritance)
+  - [Annotations](https://github.com/raml-org/raml-spec/blob/master/versions/raml-10/raml-10.md/#annotations)
+  - [Overlays and Extensions](https://github.com/raml-org/raml-spec/blob/master/versions/raml-10/raml-10.md/#overlays-and-extensions)
+  - [Improved Security Schemes](https://github.com/raml-org/raml-spec/blob/master/versions/raml-10/raml-10.md/#security-schemes)
 
-## Original documentation
-
-Parses a RAML file into a PHP object.
-
-[![Build Status](https://travis-ci.org/alecsammon/php-raml-parser.svg?branch=master)](https://travis-ci.org/alecsammon/php-raml-parser)
-[![Coverage Status](https://img.shields.io/coveralls/alecsammon/php-raml-parser.svg)](https://coveralls.io/r/alecsammon/php-raml-parser?branch=master)
-
-See the RAML spec here: https://github.com/raml-org/raml-spec
 
 ### Get started
 Requires:
@@ -78,7 +79,7 @@ $routes = $api->getResourcesAsUri(new Raml\RouteFormatter\NoRouteFormatter());
 ```
 
 #### Route Formatters
-There are two Route Formatters included in this package:
+There are two Route Formatters included in the package:
 
 - `NoRouteFormatter` which does nothing and simply echoes the result
 - `SymfonyRouteFormatter` which adds the routes to a Symfony `RouteCollection`
@@ -89,18 +90,3 @@ There are two Route Formatters included in this package:
 ./vendor/bin/phpunit --coverage-text
 ./vendor/bin/phpcs --standard=PSR1,PSR2 src
 ```
-
-### TODO
-- Documentation/Markdown parser
-- Date Representations?
-- Parse RAML at provided URL
-
-### Supported (I Believe)
-- Includes
-    - .yml/.yaml
-    - .raml/.rml
-    - .json (parsed using json-schema)
-- Display Name
-- Traits
-- Resource Types
-
