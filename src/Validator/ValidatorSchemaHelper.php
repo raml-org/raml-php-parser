@@ -24,6 +24,11 @@ class ValidatorSchemaHelper
         $this->apiDefinition = $api;
     }
 
+    public function getDefaultMediaTypes()
+    {
+        return $this->apiDefinition->getDefaultMediaTypes();
+    }
+
     /**
      * @param string $method
      * @param string $path
@@ -58,6 +63,16 @@ class ValidatorSchemaHelper
         $schema = $this->getMethod($method, $path);
 
         return $this->getBody($schema, $method, $path, $contentType);
+    }
+
+    /**
+     * @param $method
+     * @param $path
+     * @return \Raml\Response[]
+     */
+    public function getResponses($method, $path)
+    {
+        return $this->getMethod($method, $path)->getResponses();
     }
 
     /**
