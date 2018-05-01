@@ -1,6 +1,8 @@
 <?php
 namespace Raml;
 
+use Raml\Exception\EmptyBodyException;
+
 /**
  * Method
  *
@@ -10,10 +12,9 @@ class Method implements ArrayInstantiationInterface, MessageSchemaInterface
 {
     /**
      * Valid METHODS
-     * - Currently missing OPTIONS as this is unlikely to be specified in RAML
      * @var array
      */
-    public static $validMethods = ['GET', 'HEAD', 'POST', 'PUT', 'DELETE', 'PATCH'];
+    public static $validMethods = ['GET', 'HEAD', 'POST', 'PUT', 'DELETE', 'PATCH', 'OPTIONS'];
 
     // ---
 
@@ -381,8 +382,12 @@ class Method implements ArrayInstantiationInterface, MessageSchemaInterface
      */
     public function getBodyByType($type)
     {
+        if (empty($this->getBodies())){
+            throw new EmptyBodyException();
+        }
+
         if (!isset($this->bodyList[$type])) {
-            throw new \Exception('No body of type "' . $type . '"');
+            throw new \Exception("No body of type '$type'");
         }
 
         return $this->bodyList[$type];

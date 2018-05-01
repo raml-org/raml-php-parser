@@ -5,6 +5,7 @@ use Exception;
 use Raml\ApiDefinition;
 use Raml\Body;
 use Raml\Exception\BadParameter\ResourceNotFoundException;
+use Raml\Exception\EmptyBodyException;
 use Raml\MessageSchemaInterface;
 use Raml\Method;
 use Raml\NamedParameter;
@@ -142,12 +143,15 @@ class ValidatorSchemaHelper
      * @param string $path
      * @param string $contentType
      * @return Body
+     * @throws EmptyBodyException
      * @throws ValidatorSchemaException
      */
     private function getBody(MessageSchemaInterface $schema, $method, $path, $contentType)
     {
         try {
             $body = $schema->getBodyByType($contentType);
+        } catch (EmptyBodyException $e) {
+            throw new EmptyBodyException($e->getMessage());
         } catch (Exception $exception) {
             $message = sprintf(
                 'Schema for %s %s with content type %s was not found in API definition',
@@ -155,7 +159,7 @@ class ValidatorSchemaHelper
                 $path,
                 $contentType
             );
-            
+
             throw new ValidatorSchemaException($message, 0, $exception);
         }
 

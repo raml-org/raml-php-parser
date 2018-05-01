@@ -12,6 +12,9 @@ class MethodTest extends PHPUnit_Framework_TestCase
 
         $method = \Raml\Method::createFromArray('Post', [], $apiDefinition);
         $this->assertSame('POST', $method->getType());
+
+        $method = \Raml\Method::createFromArray('options', [], $apiDefinition);
+        $this->assertSame('OPTIONS', $method->getType());
     }
 
     /** @test */
