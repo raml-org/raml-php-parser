@@ -1,7 +1,7 @@
 # PHP RAML Parser
 
-[![Build Status](https://travis-ci.org/alecsammon/php-raml-parser.svg?branch=master)](https://travis-ci.org/alecsammon/php-raml-parser)
-[![Coverage Status](https://img.shields.io/coveralls/alecsammon/php-raml-parser.svg)](https://coveralls.io/r/alecsammon/php-raml-parser?branch=master)
+[![Build Status](https://travis-ci.org/raml-org/raml-php-parser.svg?branch=master)](https://travis-ci.org/raml-org/raml-php-parser)
+[![Coverage Status](https://img.shields.io/coveralls/raml-org/raml-php-parser.svg)](https://coveralls.io/r/raml-org/raml-php-parser?branch=master)
 
 See the RAML spec here: https://github.com/raml-org/raml-spec
 
@@ -36,7 +36,7 @@ Requires:
 - composer (see [https://getcomposer.org](https://getcomposer.org))
  
 ```bash
-composer require alecsammon/php-raml-parser
+composer require raml-org/raml-php-parser
 ```
 
 ```php
@@ -55,7 +55,7 @@ Additional parsers and schema definitions can be created and passed into the `\R
 
 ### Exporting routes
 It is also possible to export the entire RAML file to an array of the full endpoints. For example, considering
-a [basic RAML](https://github.com/alecsammon/php-raml-parser/blob/master/test/fixture/simple.raml), this can be
+a [basic RAML](https://github.com/raml-org/raml-php-parser/blob/master/test/fixture/simple.raml), this can be
 returned using:
 
 
