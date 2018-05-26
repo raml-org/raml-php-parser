@@ -76,6 +76,11 @@ class Resource implements ArrayInstantiationInterface
      */
     private $methods = [];
 
+    /**
+     * @var TraitDefinition[]
+     */
+    private $traits = [];
+
     // ---
 
     /**
@@ -161,6 +166,12 @@ class Resource implements ArrayInstantiationInterface
             }
         }
 
+        if (isset($data['is'])) {
+            foreach ((array)$data['is'] as $traitName) {
+                $resource->addTrait(TraitCollection::getInstance()->getTraitByName($traitName));
+            }
+        }
+
         foreach ($data as $key => $value) {
             if (strpos($key, '/') === 0) {
                 $value = $value ?: [];
@@ -183,6 +194,12 @@ class Resource implements ArrayInstantiationInterface
                         $apiDefinition
                     )
                 );
+            }
+        }
+
+        foreach ($resource->getMethods() as $method) {
+            foreach ($resource->getTraits() as $trait) {
+                $method->addTrait($trait);
             }
         }
 
@@ -418,5 +435,23 @@ class Resource implements ArrayInstantiationInterface
     public function addSecurityScheme(SecurityScheme $securityScheme)
     {
         $this->securitySchemes[$securityScheme->getKey()] = $securityScheme;
+    }
+
+    /**
+     * @return TraitDefinition[]
+     */
+    public function getTraits()
+    {
+        return $this->traits;
+    }
+
+    /**
+     * @param TraitDefinition $trait
+     * @return $this
+     */
+    public function addTrait($trait)
+    {
+        $this->traits[] = $trait;
+        return $this;
     }
 }

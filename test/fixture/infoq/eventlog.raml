@@ -11,7 +11,7 @@ schemas:
     eventListJson: !include eventListSchema.json
 
 securitySchemes:
-  - oauth_2:
+  oauth_2:
       description: Eventlog uses OAuth2 security scheme only.
       type: OAuth 2.0
       describedBy:
@@ -43,33 +43,33 @@ resourceTypes:
             body:
 
 traits:
-  - slidingwindow:
-      description: Query parameters related to retrieving a sliding window of timestamped entities relative to now.
-      queryParameters:
-        windowstart:
-          description: The begining of the sliding window expressed as a time interval from now represented as an integer concatenated with units h (hours), m (minutes), s (seconds) or ms (milliseconds).
-          type: string
-          example: 1h, 30m, 86164s
-        windowsize:
-          description: The end of the sliding window expressed as a time interval from the start as a concatenated integer and unit suffix.
-          type: string
-          example: 10s, 1h, 25m
-  - paginated:
-      queryParameters:
-        pagenumber:
-          description: The page number of the result-set to return.
-          type: integer
-          minimum: 0
-        pagesize:
-          description: The number of rows in a page request.
-          type: integer
-          maximum: 100
-  - limited:
-      queryParameters:
-        limit:
-          description: A general limit on the number of rows to return in any request.
-          type: integer
-          default: 100
+  slidingwindow:
+    description: Query parameters related to retrieving a sliding window of timestamped entities relative to now.
+    queryParameters:
+      windowstart:
+        description: The begining of the sliding window expressed as a time interval from now represented as an integer concatenated with units h (hours), m (minutes), s (seconds) or ms (milliseconds).
+        type: string
+        example: 1h, 30m, 86164s
+      windowsize:
+        description: The end of the sliding window expressed as a time interval from the start as a concatenated integer and unit suffix.
+        type: string
+        example: 10s, 1h, 25m
+  paginated:
+    queryParameters:
+      pagenumber:
+        description: The page number of the result-set to return.
+        type: integer
+        minimum: 0
+      pagesize:
+        description: The number of rows in a page request.
+        type: integer
+        maximum: 100
+  limited:
+    queryParameters:
+      limit:
+        description: A general limit on the number of rows to return in any request.
+        type: integer
+        default: 100
 
 
 /streams/{streamName}:

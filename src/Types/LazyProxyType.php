@@ -2,7 +2,7 @@
 
 namespace Raml\Types;
 
-use Raml\ArrayInstantiationInterface;
+use Raml\Type;
 use Raml\TypeInterface;
 use Raml\TypeCollection;
 use Raml\ApiDefinition;
@@ -10,88 +10,53 @@ use Raml\ApiDefinition;
 /**
  * LazyProxyType class for lazy loading datatype objects
  */
-class LazyProxyType implements TypeInterface, ArrayInstantiationInterface
+class LazyProxyType extends Type
 {
-    /**
-     * name/id of type
-     *
-     * @var string
-     **/
-    private $name;
-
-    /**
-     * original type name, used for resolving
-     *
-     * @var string
-     **/
-    private $type;
-
     /**
      * original type
      *
-     * @var \Raml\TypeInterface
+     * @var TypeInterface
      **/
     private $wrappedObject = null;
 
     /**
-     * raml definition
-     *
-     * @var array
-     **/
-    private $definition = [];
+     * @var TypeInterface[]
+     */
+    private $properties;
 
-    private $errors = [];
+    public function __construct($name)
+    {
+        parent::__construct($name);
+
+        $this->properties = [];
+    }
 
     /**
      * Create a new LazyProxyType from an array of data
      *
-     * @param string                 $name Type name.
-     * @param array                  $data Type data.
+     * @param string $name Type name.
+     * @param array $data Type data.
      *
      * @return LazyProxyType
+     * @throws \Exception
      */
     public static function createFromArray($name, array $data = [])
     {
-        $proxy = new static();
-        $proxy->name = $name;
-        $proxy->definition = $data;
+        $proxy = new static($name);
+        $proxy->setDefinition($data);
         if (!isset($data['type'])) {
             throw new \Exception('Missing "type" key in $data param to determine datatype!');
         }
+        if (isset($data['properties'])) {
+            $proxy->properties = $data['properties'];
+        }
 
-        $proxy->type = $data['type'];
+        $proxy->setType($data['type']);
+        if ($name !== $data['type']) {
+            $proxy->setParent($data['type']);
+        }
 
         return $proxy;
-    }
-
-    /**
-     * Dumps object to array
-     *
-     * @return array Object dumped to array.
-     */
-    public function toArray()
-    {
-        return $this->definition;
-    }
-
-    /**
-     * Returns type definition
-     *
-     * @return array Definition of object.
-     */
-    public function getDefinition()
-    {
-        return $this->definition;
-    }
-
-    /**
-     * Get the value of name
-     *
-     * @return string Returns name property.
-     */
-    public function getName()
-    {
-        return $this->name;
     }
 
     public function discriminate($value)
@@ -110,9 +75,39 @@ class LazyProxyType implements TypeInterface, ArrayInstantiationInterface
     }
 
     /**
+     * @return string
+     */
+    public function getDiscriminator()
+    {
+        return $this->getResolvedObject()->getDiscriminator();
+    }
+
+    /**
+     * @return string
+     */
+    public function getDiscriminatorValue()
+    {
+        return $this->getResolvedObject()->getDiscriminatorValue();
+    }
+
+    /**
+     * @return TypeInterface[]
+     */
+    public function getProperties()
+    {
+        foreach ($this->properties as $name => $property) {
+            if (!$property instanceof TypeInterface) {
+                $property = ApiDefinition::determineType($name, $property);
+            }
+            $this->properties[$name] = $property;
+        }
+        return $this->properties;
+    }
+
+    /**
      * Magic method to proxy all method calls to original object
-     * @param string    $name       Name of called method.
-     * @param mixed     $params     Parameteres of called method.
+     * @param string $name       Name of called method.
+     * @param array $params     Parameters of called method.
      *
      * @return mixed Returns whatever the actual method returns.
      */
@@ -123,10 +118,18 @@ class LazyProxyType implements TypeInterface, ArrayInstantiationInterface
         return call_user_func_array(array($original, $name), $params);
     }
 
+    /**
+     * @return string
+     */
+    public function getOriginalType()
+    {
+        return $this->type;
+    }
+
     public function getRequired()
     {
-        if (isset($this->definition['required'])) {
-            return $this->definition['required'];
+        if (isset($this->getDefinition()['required'])) {
+            return $this->getDefinition()['required'];
         }
 
         return $this->getResolvedObject()->getRequired();
@@ -161,12 +164,15 @@ class LazyProxyType implements TypeInterface, ArrayInstantiationInterface
         return empty($this->errors);
     }
 
+    /**
+     * @return ObjectType
+     */
     public function getResolvedObject()
     {
         $object = $this->getWrappedObject();
         if ($object instanceof self) {
             $definition = $object->getDefinitionRecursive();
-            return ApiDefinition::determineType($this->name, $definition);
+            return ApiDefinition::determineType($this->getName(), $definition);
         }
 
         return $object;

@@ -5,11 +5,11 @@ baseUri: http://example.api.com/{version}
 version: v1
 mediaType: application/json
 traits:
-  - paged:
-      queryParameters:
-        pages:
-          description: The number of pages to return
-          type: number
+  paged:
+    queryParameters:
+      pages:
+        description: The number of pages to return
+        type: number
 /songs:
   get:
     is: [ paged ]

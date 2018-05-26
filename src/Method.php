@@ -96,6 +96,11 @@ class Method implements ArrayInstantiationInterface, MessageSchemaInterface
      */
     private $securitySchemes = [];
 
+    /**
+     * @var TraitDefinition[]
+     */
+    private $traits = [];
+
     // ---
 
     /**
@@ -204,6 +209,12 @@ class Method implements ArrayInstantiationInterface, MessageSchemaInterface
                 } else {
                     $method->addSecurityScheme(SecurityScheme::createFromArray('null', array(), $apiDefinition));
                 }
+            }
+        }
+
+        if (isset($data['is'])) {
+            foreach ((array)$data['is'] as $traitName) {
+                $method->addTrait(TraitCollection::getInstance()->getTraitByName($traitName));
             }
         }
 
@@ -499,5 +510,23 @@ class Method implements ArrayInstantiationInterface, MessageSchemaInterface
             }
             
         }
+    }
+
+    /**
+     * @return TraitDefinition[]
+     */
+    public function getTraits()
+    {
+        return $this->traits;
+    }
+
+    /**
+     * @param TraitDefinition $trait
+     * @return $this
+     */
+    public function addTrait($trait)
+    {
+        $this->traits[] = $trait;
+        return $this;
     }
 }

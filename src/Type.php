@@ -37,7 +37,7 @@ class Type implements ArrayInstantiationInterface, TypeInterface
      *
      * @var string
      **/
-    private $type;
+    protected $type;
 
     /**
      * Required
@@ -177,7 +177,7 @@ class Type implements ArrayInstantiationInterface, TypeInterface
     /**
      * Get definition
      *
-     * @return string Returns definition property.
+     * @return array Returns definition property.
      */
     public function getDefinition()
     {

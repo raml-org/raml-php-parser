@@ -15,6 +15,7 @@ use Raml\SecurityScheme\SecuritySettingsParser\DefaultSecuritySettingsParser;
 use Raml\SecurityScheme\SecuritySettingsParser\OAuth1SecuritySettingsParser;
 use Raml\SecurityScheme\SecuritySettingsParser\OAuth2SecuritySettingsParser;
 use Raml\SecurityScheme\SecuritySettingsParserInterface;
+use Raml\Utility\TraitParserHelper;
 use Symfony\Component\Yaml\Yaml;
 
 /**
@@ -244,7 +245,7 @@ class Parser
     /**
      * Parse RAML data
      *
-     * @param string $ramlData
+     * @param array $ramlData
      * @param string $rootDir
      *
      * @throws RamlParserException
@@ -256,6 +257,8 @@ class Parser
         if (!isset($ramlData['title'])) {
             throw new RamlParserException();
         }
+
+        $ramlData = $this->parseLibraries($ramlData, $rootDir);
 
         $ramlData = $this->parseTraits($ramlData);
 
@@ -380,33 +383,29 @@ class Parser
     {
         $securitySchemes = [];
 
-        foreach ($schemesArray as $securitySchemeData) {
+        foreach ($schemesArray as $key => $securitySchemeData) {
             // Create the default parser.
             if (isset($this->securitySettingsParsers['*'])) {
                 $parser = $this->securitySettingsParsers['*'];
             } else {
                 $parser = false;
             }
-            // RAML spec defines a list of one security type per scheme
-            if (count($securitySchemeData) == 1) {
-                $key = key($securitySchemeData);
-                $securitySchemes[$key] = $securitySchemeData[$key];
-                $securityScheme = $securitySchemes[$key];
+            $securitySchemes[$key] = $securitySchemeData;
+            $securityScheme = $securitySchemes[$key];
 
-                // If we're using protocol specific parsers, see if we have one to use.
-                if ($this->configuration->isSchemaSecuritySchemeParsingEnabled()) {
-                    if (isset($securityScheme['type']) &&
-                        isset($this->securitySettingsParsers[$securityScheme['type']])
-                    ) {
-                        $parser = $this->securitySettingsParsers[$securityScheme['type']];
-                    }
+            // If we're using protocol specific parsers, see if we have one to use.
+            if ($this->configuration->isSchemaSecuritySchemeParsingEnabled()) {
+                if (isset($securityScheme['type']) &&
+                    isset($this->securitySettingsParsers[$securityScheme['type']])
+                ) {
+                    $parser = $this->securitySettingsParsers[$securityScheme['type']];
                 }
+            }
 
-                // If we found a parser, create it's settings object.
-                if ($parser) {
-                    $settings = isset($securityScheme['settings']) ? $securityScheme['settings'] : [];
-                    $securitySchemes[$key]['settings'] = $parser->createSecuritySettings($settings);
-                }
+            // If we found a parser, create it's settings object.
+            if ($parser) {
+                $settings = isset($securityScheme['settings']) ? $securityScheme['settings'] : [];
+                $securitySchemes[$key]['settings'] = $parser->createSecuritySettings($settings);
             }
         }
 
@@ -439,6 +438,76 @@ class Parser
         }
 
         return $ramlData;
+    }
+
+    /**
+     * @param array $ramlData
+     * @param string $rootDir
+     * @return array
+     */
+    private function parseLibraries(array $ramlData, $rootDir)
+    {
+        if (isset($ramlData['uses'])) {
+            foreach ($ramlData['uses'] as $nameSpace => $import) {
+                $fileName = $import;
+                $dir = $rootDir;
+
+                if (filter_var($import, FILTER_VALIDATE_URL) !== false) {
+                    $fileName = basename($import);
+                    $dir = dirname($import);
+                }
+                $library = $this->loadAndParseFile($fileName, $dir);
+                $library = $this->parseLibraries($library, $dir . '/' . dirname($fileName));
+                foreach ($library as $key => $item) {
+                    if (
+                        in_array(
+                            $key,
+                            [
+                                'types',
+                                'traits',
+                                'annotationTypes',
+                                'securitySchemes',
+                                'resourceTypes',
+                                'schemas',
+                            ],
+                            true
+                        )) {
+                        foreach ($item as $itemName => $itemData) {
+                            $itemData = $this->addNamespacePrefix($nameSpace, $itemData);
+                            $ramlData[$key][$nameSpace . '.' . $itemName] = $itemData;
+                        }
+                    }
+                }
+            }
+        }
+        return $ramlData;
+    }
+
+    /**
+     * @param string $nameSpace
+     * @param array $definition
+     * @return array
+     */
+    private function addNamespacePrefix($nameSpace, array $definition)
+    {
+        foreach ($definition as $key => $item) {
+            if (in_array($key, ['type', 'is'])) {
+                if (is_array($item)) {
+                    foreach ($item as $itemKey => $itemValue) {
+                        if (!in_array($itemValue, ApiDefinition::getStraightForwardTypes(), true)) {
+                            $definition[$key][$itemKey] = $nameSpace . '.' . $itemValue;
+                        }
+                    }
+                } else {
+                    if (!in_array($item, ApiDefinition::getStraightForwardTypes(), true)) {
+                        $definition[$key] = $nameSpace . '.' . $item;
+                    }
+                }
+            } elseif (is_array($definition[$key])) {
+                $definition[$key] = $this->addNamespacePrefix($nameSpace, $definition[$key]);
+            }
+        }
+        return $definition;
     }
 
     /**
@@ -536,11 +605,18 @@ class Parser
      */
     private function loadAndParseFile($fileName, $rootDir)
     {
-        $rootDir = realpath($rootDir);
-        $fullPath = realpath($rootDir . '/' . $fileName);
+        if (!$this->configuration->isRemoteFileInclusionEnabled()) {
+            $rootDir = realpath($rootDir);
+            $fullPath = realpath($rootDir . '/' . $fileName);
 
-        if (is_readable($fullPath) === false) {
-            throw new FileNotFoundException($fileName);
+            if (is_readable($fullPath) === false) {
+                throw new FileNotFoundException($fileName);
+            }
+        } else {
+            $fullPath = $rootDir . '/' . $fileName;
+            if (filter_var($fullPath, FILTER_VALIDATE_URL) === false && is_readable($fullPath) === false) {
+                throw new FileNotFoundException($fileName);
+            }
         }
 
         // Prevent LFI directory traversal attacks
@@ -646,6 +722,7 @@ class Parser
                     }
                     $newArray = array_replace_recursive($newArray, $this->replaceTraits($trait, $traits, $path, $name));
                 }
+                $newArray['is'] = $value;
             } else {
                 $newValue = $this->replaceTraits($value, $traits, $path, $name);
 
@@ -720,84 +797,11 @@ class Parser
      * @param array $values
      * @param array $trait
      *
-     * @return mixed
+     * @return array
      */
     private function applyVariables(array $values, array $trait)
     {
-        $newTrait = [];
-
-        foreach ($trait as $key => &$value) {
-            $newKey = $this->applyFunctions($key, $values);
-
-            if (is_array($value)) {
-                $value = $this->applyVariables($values, $value);
-            } else {
-                $value = $this->applyFunctions($value, $values);
-            }
-            $newTrait[$newKey] = $value;
-        }
-
-        return $newTrait;
-    }
-
-    /**
-     * Applies functions on variable if they are defined
-     *
-     * @param mixed $trait
-     * @param array $values
-     *
-     * @return mixed    Return input $trait after applying functions (if any)
-     */
-    private function applyFunctions($trait, array $values)
-    {
-        $variables = implode('|', array_keys($values));
-        return preg_replace_callback(
-            '/<<(' . $variables . ')'.
-            '('.
-                '[\s]*\|[\s]*!'.
-                '('.
-                    'singularize|pluralize|uppercase|lowercase|lowercamelcase|uppercamelcase|lowerunderscorecase|upperunderscorecase|lowerhyphencase|upperhyphencase'.
-                ')'.
-            ')?>>/',
-            function ($matches) use ($values) {
-                $transformer = isset($matches[3]) ? $matches[3] : '';
-                switch ($transformer) {
-                    case 'singularize':
-                        return Inflect::singularize($values[$matches[1]]);
-                        break;
-                    case 'pluralize':
-                        return Inflect::pluralize($values[$matches[1]]);
-                        break;
-                    case 'uppercase':
-                        return strtoupper($values[$matches[1]]);
-                        break;
-                    case 'lowercase':
-                        return strtolower($values[$matches[1]]);
-                        break;
-                    case 'lowercamelcase':
-                        return StringTransformer::convertString($values[$matches[1]], StringTransformer::LOWER_CAMEL_CASE);
-                        break;
-                    case 'uppercamelcase':
-                        return StringTransformer::convertString($values[$matches[1]], StringTransformer::UPPER_CAMEL_CASE);
-                        break;
-                    case 'lowerunderscorecase':
-                        return StringTransformer::convertString($values[$matches[1]], StringTransformer::LOWER_UNDERSCORE_CASE);
-                        break;
-                    case 'upperunderscorecase':
-                        return StringTransformer::convertString($values[$matches[1]], StringTransformer::UPPER_UNDERSCORE_CASE);
-                        break;
-                    case 'lowerhyphencase':
-                        return StringTransformer::convertString($values[$matches[1]], StringTransformer::LOWER_HYPHEN_CASE);
-                        break;
-                    case 'upperhyphencase':
-                        return StringTransformer::convertString($values[$matches[1]], StringTransformer::UPPER_HYPHEN_CASE);
-                        break;
-                    default:
-                        return $values[$matches[1]];
-                }
-            },
-            $trait
-        );
+        return TraitParserHelper::applyVariables($values, $trait);
     }
 
     public function getIncludedFiles()

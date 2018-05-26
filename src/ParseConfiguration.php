@@ -27,6 +27,13 @@ class ParseConfiguration
      */
     private $parseSecuritySchemes = true;
 
+    /**
+     * Enable inclusion of Remote resources, i.e. RAML files from web
+     *
+     * @var boolean
+     */
+    private $remoteFileInclusionEnabled = false;
+
     // ----
 
     /**
@@ -109,5 +116,23 @@ class ParseConfiguration
     public function isSchemaSecuritySchemeParsingEnabled()
     {
         return $this->parseSecuritySchemes;
+    }
+
+    /**
+     * @return bool
+     */
+    public function isRemoteFileInclusionEnabled()
+    {
+        return $this->remoteFileInclusionEnabled;
+    }
+
+    public function allowRemoteFileInclusion()
+    {
+        $this->remoteFileInclusionEnabled = true;
+    }
+
+    public function forbidRemoteFileInclusion()
+    {
+        $this->remoteFileInclusionEnabled = false;
     }
 }
