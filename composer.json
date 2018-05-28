@@ -31,8 +31,8 @@
   "require": {
     "php": ">=5.5.9",
     "justinrainbow/json-schema": "5.1.*",
-    "symfony/yaml": "~3.0",
-    "symfony/routing": "~3.0",
+    "symfony/yaml": "^3.0|^4.0",
+    "symfony/routing": "^3.0|^4.0",
     "oodle/inflect": "~0.2",
     "psr/http-message": "^1.0",
     "willdurand/negotiation": "^2.2"
