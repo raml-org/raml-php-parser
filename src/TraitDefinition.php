@@ -52,6 +52,11 @@ class TraitDefinition implements ArrayInstantiationInterface
         $this->traits = [];
     }
 
+    /**
+     * @param string $name
+     * @param array $data
+     * @return TraitDefinition
+     */
     public static function createFromArray($name, array $data = [])
     {
         $class = new static($name);
@@ -85,11 +90,18 @@ class TraitDefinition implements ArrayInstantiationInterface
         return $class;
     }
 
+    /**
+     * @return array
+     */
     public function toArray()
     {
         return $this->definition;
     }
 
+    /**
+     * @param array $variables
+     * @return TraitDefinition
+     */
     public function parseVariables(array $variables)
     {
         $definition = TraitParserHelper::applyVariables($variables, $this->getDefinition());

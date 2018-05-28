@@ -447,35 +447,37 @@ class Parser
      */
     private function parseLibraries(array $ramlData, $rootDir)
     {
-        if (isset($ramlData['uses'])) {
-            foreach ($ramlData['uses'] as $nameSpace => $import) {
-                $fileName = $import;
-                $dir = $rootDir;
+        if (!isset($ramlData['uses'])) {
+            return $ramlData;
+        }
 
-                if (filter_var($import, FILTER_VALIDATE_URL) !== false) {
-                    $fileName = basename($import);
-                    $dir = dirname($import);
-                }
-                $library = $this->loadAndParseFile($fileName, $dir);
-                $library = $this->parseLibraries($library, $dir . '/' . dirname($fileName));
-                foreach ($library as $key => $item) {
-                    if (
-                        in_array(
-                            $key,
-                            [
-                                'types',
-                                'traits',
-                                'annotationTypes',
-                                'securitySchemes',
-                                'resourceTypes',
-                                'schemas',
-                            ],
-                            true
-                        )) {
-                        foreach ($item as $itemName => $itemData) {
-                            $itemData = $this->addNamespacePrefix($nameSpace, $itemData);
-                            $ramlData[$key][$nameSpace . '.' . $itemName] = $itemData;
-                        }
+        foreach ($ramlData['uses'] as $nameSpace => $import) {
+            $fileName = $import;
+            $dir = $rootDir;
+
+            if (filter_var($import, FILTER_VALIDATE_URL) !== false) {
+                $fileName = basename($import);
+                $dir = dirname($import);
+            }
+            $library = $this->loadAndParseFile($fileName, $dir);
+            $library = $this->parseLibraries($library, $dir . '/' . dirname($fileName));
+            foreach ($library as $key => $item) {
+                if (
+                    in_array(
+                        $key,
+                        [
+                            'types',
+                            'traits',
+                            'annotationTypes',
+                            'securitySchemes',
+                            'resourceTypes',
+                            'schemas',
+                        ],
+                        true
+                    )) {
+                    foreach ($item as $itemName => $itemData) {
+                        $itemData = $this->addNamespacePrefix($nameSpace, $itemData);
+                        $ramlData[$key][$nameSpace . '.' . $itemName] = $itemData;
                     }
                 }
             }

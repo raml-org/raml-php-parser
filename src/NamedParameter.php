@@ -20,7 +20,7 @@ class NamedParameter implements ArrayInstantiationInterface
     const TYPE_DATE     = 'date';
     const TYPE_BOOLEAN  = 'boolean';
     const TYPE_FILE     = 'file';
-    const TYPE_ARRAY     = 'array';
+    const TYPE_ARRAY    = 'array';
 
     // ---
     // Validation exception codes

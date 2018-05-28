@@ -3,6 +3,7 @@
 namespace Raml;
 
 use Exception;
+use Raml\Exception\InvalidKeyException;
 
 /**
  *  Singleton class used to register all traits in one place
@@ -19,14 +20,14 @@ class TraitCollection implements \Iterator
     /**
      * Collection
      *
-     * @var array
+     * @var TraitDefinition[]
      **/
     private $collection = [];
 
     /**
      * Current position
      *
-     * @var string
+     * @var int
      **/
     private $position = 0;
 
@@ -55,11 +56,20 @@ class TraitCollection implements \Iterator
         return self::$instance;
     }
 
+    /**
+     * @return TraitDefinition
+     */
     public function current()
     {
-        return $this->collection[$this->position];
+        if ($this->valid()) {
+            return $this->collection[$this->position];
+        }
+        throw new InvalidKeyException($this->position);
     }
 
+    /**
+     * @return int
+     */
     public function key()
     {
         return $this->position;
@@ -75,6 +85,9 @@ class TraitCollection implements \Iterator
         $this->position = 0;
     }
 
+    /**
+     * @return bool
+     */
     public function valid()
     {
         return isset($this->collection[$this->position]);
@@ -83,11 +96,16 @@ class TraitCollection implements \Iterator
     /**
      * Adds a Type to the collection
      *
-     * @param TraitDefinition $trait Type to add.
+     * @param TraitDefinition $traitToAdd Type to add.
      **/
-    public function add(TraitDefinition $trait)
+    public function add(TraitDefinition $traitToAdd)
     {
-        $this->collection[] = $trait;
+        foreach ($this->collection as $key => $trait) {
+            if ($trait === $traitToAdd) {
+                throw new Exception(sprintf('Trait already exists %s', var_export($traitToAdd, true)));
+            }
+        }
+        $this->collection[] = $traitToAdd;
     }
 
     /**
@@ -105,7 +123,7 @@ class TraitCollection implements \Iterator
                 return;
             }
         }
-        throw new Exception(sprintf('Cannot remove given trait %s', var_export($type, true)));
+        throw new Exception(sprintf('Cannot remove given trait %s', var_export($traitToRemove, true)));
     }
 
     /**
@@ -140,8 +158,7 @@ class TraitCollection implements \Iterator
     public function toArray()
     {
         $types = [];
-        foreach ($this->collection as $trait)
-        {
+        foreach ($this->collection as $trait) {
             $types[$trait->getName()] = $trait->toArray();
         }
         return $types;

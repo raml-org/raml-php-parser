@@ -6,11 +6,16 @@ use Inflect\Inflect;
 
 class TraitParserHelper
 {
-    public static function applyVariables(array $values, array $trait)
+    /**
+     * @param array $values
+     * @param array $traitDefinition
+     * @return array
+     */
+    public static function applyVariables(array $values, array $traitDefinition)
     {
         $newTrait = [];
 
-        foreach ($trait as $key => &$value) {
+        foreach ($traitDefinition as $key => &$value) {
             $newKey = static::applyFunctions($key, $values);
 
             if (is_array($value)) {
@@ -24,6 +29,11 @@ class TraitParserHelper
         return $newTrait;
     }
 
+    /**
+     * @param string $trait
+     * @param array $values
+     * @return string
+     */
     private static function applyFunctions($trait, array $values)
     {
         $variables = implode('|', array_keys($values));
