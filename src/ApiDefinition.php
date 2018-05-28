@@ -57,6 +57,13 @@ class ApiDefinition implements ArrayInstantiationInterface
     private $baseUri;
 
     /**
+     * Prefix to prepend all urls
+     *
+     * @var string
+     */
+    private $urlPrefix;
+
+    /**
      * Parameters defined in the Base URI
      * - There appears to be a bug in the RAML 0.8 spec related to this,
      * however the baseUriParameters appears to be correct
@@ -208,6 +215,10 @@ class ApiDefinition implements ArrayInstantiationInterface
             }
         }
 
+        if (isset($data['urlPrefix'])) {
+            $apiDefinition->urlPrefix = $data['urlPrefix'];
+        }
+
         if (isset($data['mediaType'])) {
             $apiDefinition->defaultMediaTypes = (array) $data['mediaType'];
         }
@@ -274,7 +285,7 @@ class ApiDefinition implements ArrayInstantiationInterface
             if (strpos($resourceName, '/') === 0) {
                 $apiDefinition->addResource(
                     Resource::createFromArray(
-                        $resourceName,
+                        $apiDefinition->getUrlPrefix().$resourceName,
                         $resource,
                         $apiDefinition
                     )
@@ -431,6 +442,14 @@ class ApiDefinition implements ArrayInstantiationInterface
     public function addBaseUriParameter(NamedParameter $namedParameter)
     {
         $this->baseUriParameters[$namedParameter->getKey()] = $namedParameter;
+    }
+
+    /**
+     * @return string
+     */
+    public function getUrlPrefix()
+    {
+        return $this->urlPrefix;
     }
 
     // --

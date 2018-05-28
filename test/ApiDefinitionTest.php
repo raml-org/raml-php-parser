@@ -378,4 +378,14 @@ class ApiDefinitionTest extends PHPUnit_Framework_TestCase
             );
         }
     }
+
+
+    /** @test */
+    public function shouldReturnFullResourcesForRamlFileWithDefaultFormatter1()
+    {
+        $api = $this->parser->parse(__DIR__.'/fixture/includeUrlPrefix.raml');
+        $this->assertEquals([
+            '/prefix/songs',
+        ], array_keys($api->getResources()));
+    }
 }
