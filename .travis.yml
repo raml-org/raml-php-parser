@@ -20,7 +20,7 @@ matrix:
     - php: nightly
     
 before_script:
-  - composer install --dev --no-interaction
+  - composer install --no-interaction
   # Disable xdebug, there is no use of it being enabled
   - mv ~/.phpenv/versions/$(phpenv version-name)/etc/conf.d/xdebug.ini{,.disabled} || echo "xdebug not available"
   # Prevent Travis throwing an out of memory error

@@ -30,7 +30,7 @@ return PhpCsFixer\Config::create()
             'include' => true,
             'is_null' => true,
             'linebreak_after_opening_tag' => true,
-            'list_syntax' => ['syntax' => 'short'],
+            'list_syntax' => ['syntax' => 'long'],
             'lowercase_cast' => true,
             'magic_constant_casing' => true,
             'mb_str_functions' => false,

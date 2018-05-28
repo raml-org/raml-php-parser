@@ -52,15 +52,15 @@ class ContentConverter
         $params = [];
         foreach ($parts as $i => $param) {
             if (strpos($param, '=') !== false) {
-                [$k, $v] = explode('=', trim($param));
+                list($k, $v) = explode('=', trim($param));
                 $params[$k] = $v;
             }
         }
         $fullType = trim($parts[0]);
-        if ($fullType == '*') {
+        if ($fullType === '*') {
             return '*/*';
         }
-        [$type, $subtype] = explode('/', $fullType);
+        list($type, $subtype) = explode('/', $fullType);
         if (!$subtype) {
             throw new \UnexpectedValueException('Malformed media-range: ' . $mediaRange);
         }
