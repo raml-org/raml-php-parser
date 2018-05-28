@@ -21,14 +21,14 @@ resourceTypes:
                     "type": "object"
                   }
 traits:
-  - secured:
-      queryParameters:
-        <<tokenName>>:
-          description: A valid <<tokenName>> is required
-    paged:
-      queryParameters:
-        numPages:
-          description: The number of pages to return
+  secured:
+    queryParameters:
+      <<tokenName>>:
+        description: A valid <<tokenName>> is required
+  paged:
+    queryParameters:
+      numPages:
+        description: The number of pages to return
 /books:
   type: { searchableCollection: { queryParamName: title, fallbackParamName: digest_all_fields } }
   get:

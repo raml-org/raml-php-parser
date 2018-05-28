@@ -78,6 +78,10 @@ class ArrayType extends Type
                     $type->setUniqueItems($value);
                     break;
                 case 'items':
+                    if (is_array($value) && isset($value['type'])) {
+                        $type->setItems($value['type']);
+                        break;
+                    }
                     $type->setItems($value);
                     break;
                 case 'minItems':

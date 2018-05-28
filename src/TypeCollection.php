@@ -148,6 +148,19 @@ class TypeCollection implements \Iterator
     }
 
     /**
+     * @param string $name
+     * @return bool
+     */
+    public function hasTypeByName($name)
+    {
+        try {
+            return $this->getTypeByName($name) !== null;
+        } catch (\Exception $exception) {
+            return null;
+        }
+    }
+
+    /**
      * Applies inheritance on all types that have a parent
      **/
     public function applyInheritance()

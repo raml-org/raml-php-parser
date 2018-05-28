@@ -1,5 +1,6 @@
 <?php
 
+use Raml\Types\LazyProxyType;
 use Raml\Types\TypeValidationError;
 use Raml\ValidatorInterface;
 
@@ -90,6 +91,52 @@ class ApiDefinitionTest extends PHPUnit_Framework_TestCase
                 )
             )
         ), $api->getTypes()->toArray());
+    }
+
+    /** @test */
+    public function shouldBeAbleToAccessOriginalInheritanceTypes()
+    {
+        $api = $this->parser->parse(__DIR__.'/fixture/raml-1.0/inheritanceTypes.raml');
+        /** @var LazyProxyType $adminType */
+        $adminType = $api->getTypes()->getTypeByName('Admin');
+        $this->assertInstanceOf(LazyProxyType::class, $adminType);
+        $this->assertCount(1, $adminType->getProperties());
+        foreach ($adminType->getProperties() as $property) {
+            if ($property->getName() === 'clearanceLevel') {
+                $this->assertTrue($property->getRequired());
+            }
+        }
+        $parent = $adminType->getParent();
+        $this->assertNotNull($parent);
+        $this->assertCount(4, $parent->getProperties());
+
+        /** @var LazyProxyType $managerType */
+        $managerType = $api->getTypes()->getTypeByName('Manager');
+        foreach ($managerType->getProperties() as $property) {
+            if ($property->getName() === 'clearanceLevel') {
+                $this->assertFalse($property->getRequired());
+            }
+        }
+    }
+
+    /** @test */
+    public function shouldParseLibraries()
+    {
+        $this->parser->configuration->allowRemoteFileInclusion();
+        $api = $this->parser->parse(__DIR__.'/fixture/raml-1.0/types.raml');
+        /** @var \Raml\Types\ObjectType $fileType */
+        $fileType = $api->getTypes()->getTypeByName('Library.File');
+        /** @var \Raml\Types\ObjectType $folderType */
+        $folderType = $api->getTypes()->getTypeByName('Library.Folder');
+
+        $this->assertNotNull($fileType);
+        $this->assertNotNull($folderType);
+
+        /** @var \Raml\Types\ArrayType $property */
+        $property = $folderType->getPropertyByName('files');
+        $this->assertSame($fileType, $property->getItems());
+
+        $this->parser->configuration->forbidRemoteFileInclusion();
     }
 
     /** @test */

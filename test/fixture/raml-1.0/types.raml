@@ -1,6 +1,10 @@
 #%RAML 1.0
 title: Example API
 version: v1
+
+uses:
+  Library: library/library.raml
+
 types:
   TestType:
     type: object
@@ -8,6 +12,12 @@ types:
         id: integer
         name: string
     example: !include example/test.json
+  LibraryFile:
+    type: Library.File
+    properties:
+      author:
+        type: string
+
 /test:
   get:
     responses:
@@ -23,3 +33,25 @@ types:
         body:
           application/json:
             type: TestType
+  /library:
+    get:
+      responses:
+        200:
+          body:
+            application/json:
+              type: LibraryFile
+    post:
+      body:
+        type: LibraryFile
+      responses:
+        200:
+          body:
+            application/json:
+              type: LibraryFile
+    /file:
+      get:
+        responses:
+          200:
+            body:
+              application/json:
+                type: Library.File
