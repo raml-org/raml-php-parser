@@ -2,6 +2,10 @@ language: php
 
 sudo: false
 
+cache:
+  directories:
+    - $HOME/.composer/cache
+
 matrix:
   include:
     - php: 5.5
@@ -17,6 +21,12 @@ matrix:
     
 before_script:
   - composer install --dev --no-interaction
+  # Disable xdebug, there is no use of it being enabled
+  - mv ~/.phpenv/versions/$(phpenv version-name)/etc/conf.d/xdebug.ini{,.disabled} || echo "xdebug not available"
+  # Prevent Travis throwing an out of memory error
+  - echo "memory_limit=-1" >> ~/.phpenv/versions/$(phpenv version-name)/etc/conf.d/travis.ini
+  # Test if we have a token for github as the project may hit the 60 rph limit some day
+  - if [ -n "$GH_TOKEN" ]; then composer config github-oauth.github.com ${GH_TOKEN}; fi;
 
 script:
   - mkdir -p build/logs

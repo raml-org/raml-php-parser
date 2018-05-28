@@ -1,6 +1,7 @@
 <?php
 
 use Negotiation\Negotiator;
+use Raml\Parser;
 use Raml\Validator\RequestValidator;
 use Raml\Validator\ValidatorSchemaHelper;
 
@@ -21,8 +22,7 @@ class RequestValidatorTest extends PHPUnit_Framework_TestCase
 
     public function setUp()
     {
-        parent::setUp();
-        $this->parser = new \Raml\Parser();
+        $this->parser = new Parser();
         $this->uri = $this->getMock('\Psr\Http\Message\UriInterface');
         $this->request = $this->getMock('\Psr\Http\Message\RequestInterface');
         $this->request->method('getUri')->willReturn($this->uri);
