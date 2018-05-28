@@ -31,7 +31,7 @@ class LazyProxyType implements TypeInterface, ArrayInstantiationInterface
      *
      * @var \Raml\TypeInterface
      **/
-    private $wrappedObject = null;
+    private $wrappedObject;
 
     /**
      * raml definition
@@ -120,7 +120,7 @@ class LazyProxyType implements TypeInterface, ArrayInstantiationInterface
     {
         $original = $this->getResolvedObject();
 
-        return call_user_func_array(array($original, $name), $params);
+        return call_user_func_array([$original, $name], $params);
     }
 
     public function getRequired()
@@ -154,7 +154,7 @@ class LazyProxyType implements TypeInterface, ArrayInstantiationInterface
     }
 
     /**
-     * @return boolean
+     * @return bool
      */
     public function isValid()
     {
@@ -166,6 +166,7 @@ class LazyProxyType implements TypeInterface, ArrayInstantiationInterface
         $object = $this->getWrappedObject();
         if ($object instanceof self) {
             $definition = $object->getDefinitionRecursive();
+
             return ApiDefinition::determineType($this->name, $definition);
         }
 

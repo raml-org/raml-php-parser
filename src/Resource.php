@@ -1,4 +1,5 @@
 <?php
+
 namespace Raml;
 
 /**
@@ -65,7 +66,7 @@ class Resource implements ArrayInstantiationInterface
     /**
      * List of resources under this resource
      *
-     * @var Resource[]
+     * @var resource[]
      */
     private $subResources = [];
 
@@ -156,7 +157,7 @@ class Resource implements ArrayInstantiationInterface
                         $resource->addSecurityScheme($apiDefinition->getSecurityScheme($securedBy));
                     }
                 } else {
-                    $resource->addSecurityScheme(SecurityScheme::createFromArray('null', array(), $apiDefinition));
+                    $resource->addSecurityScheme(SecurityScheme::createFromArray('null', [], $apiDefinition));
                 }
             }
         }
@@ -169,8 +170,8 @@ class Resource implements ArrayInstantiationInterface
                     $value['uriParameters'] = array_merge($currentParameters, $data['uriParameters']);
                 }
                 $resource->addResource(
-                    Resource::createFromArray(
-                        $uri.$key,
+                    self::createFromArray(
+                        $uri . $key,
                         $value,
                         $apiDefinition
                     )
@@ -194,7 +195,7 @@ class Resource implements ArrayInstantiationInterface
      *
      * @param $uri
      *
-     * @return boolean
+     * @return bool
      */
     public function matchesUri($uri)
     {
@@ -211,14 +212,14 @@ class Resource implements ArrayInstantiationInterface
             }
 
             $regexUri = str_replace(
-                '/{'.$uriParameter->getKey().'}',
-                '/'.$matchPattern,
+                '/{' . $uriParameter->getKey() . '}',
+                '/' . $matchPattern,
                 $regexUri
             );
 
             $regexUri = str_replace(
-                '/~{'.$uriParameter->getKey().'}',
-                '/(('.$matchPattern.')|())',
+                '/~{' . $uriParameter->getKey() . '}',
+                '/((' . $matchPattern . ')|())',
                 $regexUri
             );
         }
@@ -227,7 +228,7 @@ class Resource implements ArrayInstantiationInterface
         $regexUri = preg_replace('/\/{.*}/U', '\/([^/]+)', $regexUri);
         $regexUri = preg_replace('/\/~{.*}/U', '\/([^/]*)', $regexUri);
         // начало и конец регулярки - символ, который гарантированно не встретится
-        $regexUri = chr(128).'^'.$regexUri.'$'.chr(128);
+        $regexUri = chr(128) . '^' . $regexUri . '$' . chr(128);
 
         return (bool) preg_match($regexUri, $uri);
     }
@@ -349,7 +350,7 @@ class Resource implements ArrayInstantiationInterface
      *
      * @param self $resource
      */
-    public function addResource(Resource $resource)
+    public function addResource(self $resource)
     {
         $this->subResources[$resource->getUri()] = $resource;
     }
@@ -368,7 +369,6 @@ class Resource implements ArrayInstantiationInterface
         foreach ($this->getSecuritySchemes() as $securityScheme) {
             $method->addSecurityScheme($securityScheme);
         }
-
     }
 
     /**

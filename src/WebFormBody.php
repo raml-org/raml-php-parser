@@ -12,7 +12,7 @@ class WebFormBody extends NamedParameter implements BodyInterface, ArrayInstanti
     /**
      * var array $namedParameters An array of \NamedParameter objects
      */
-    private $namedParameters = array();
+    private $namedParameters = [];
 
     /**
      * List of valid media types

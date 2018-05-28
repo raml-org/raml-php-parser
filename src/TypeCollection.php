@@ -46,7 +46,7 @@ class TypeCollection implements \Iterator
         $this->collection = [];
         $this->position = 0;
     }
- 
+
     /**
      *  The object is created from within the class itself
      * only if the class has no instance.
@@ -56,9 +56,9 @@ class TypeCollection implements \Iterator
     public static function getInstance()
     {
         if (self::$instance == null) {
-            self::$instance = new TypeCollection();
+            self::$instance = new self();
         }
-    
+
         return self::$instance;
     }
 
@@ -83,7 +83,7 @@ class TypeCollection implements \Iterator
      **/
     public function next()
     {
-        ++$this->position;
+        $this->position++;
     }
 
     /**
@@ -122,9 +122,11 @@ class TypeCollection implements \Iterator
         foreach ($this->collection as $key => $type) {
             if ($type === $typeToRemove) {
                 unset($this->collection[$key]);
+
                 return;
             }
         }
+
         throw new \Exception(sprintf('Cannot remove given type %s', var_export($type, true)));
     }
 
@@ -144,6 +146,7 @@ class TypeCollection implements \Iterator
                 return $type;
             }
         }
+
         throw new \Exception(sprintf('No type found for name %s, list: %s', var_export($name, true), var_export($this->collection, true)));
     }
 
@@ -169,6 +172,7 @@ class TypeCollection implements \Iterator
     public function addTypeWithInheritance(ObjectType $type)
     {
         $this->typesWithInheritance[] = $type;
+
         return $this;
     }
 
@@ -180,10 +184,10 @@ class TypeCollection implements \Iterator
     public function toArray()
     {
         $types = [];
-        foreach ($this->collection as $type)
-        {
+        foreach ($this->collection as $type) {
             $types[$type->getName()] = $type->toArray();
         }
+
         return $types;
     }
 

@@ -1,4 +1,5 @@
 <?php
+
 namespace Raml;
 
 use Inflect\Inflect;
@@ -22,7 +23,6 @@ use Symfony\Component\Yaml\Yaml;
  */
 class Parser
 {
-
     /**
      * Array of cached files
      * No point in fetching them twice
@@ -363,7 +363,8 @@ class Parser
      * @param string $data
      * @return string
      */
-    private function getCachedFilePath($data) {
+    private function getCachedFilePath($data)
+    {
         $key = md5($data);
 
         return array_key_exists($key, $this->cachedFilesPaths) ? $this->cachedFilesPaths[$key] : null;
@@ -395,8 +396,8 @@ class Parser
 
                 // If we're using protocol specific parsers, see if we have one to use.
                 if ($this->configuration->isSchemaSecuritySchemeParsingEnabled()) {
-                    if (isset($securityScheme['type']) &&
-                        isset($this->securitySettingsParsers[$securityScheme['type']])
+                    if (isset($securityScheme['type'], $this->securitySettingsParsers[$securityScheme['type']])
+
                     ) {
                         $parser = $this->securitySettingsParsers[$securityScheme['type']];
                     }
@@ -598,17 +599,18 @@ class Parser
     private function includeAndParseFiles($structure, $rootDir)
     {
         if (is_array($structure)) {
-            $result = array();
+            $result = [];
             foreach ($structure as $key => $structureElement) {
                 $result[$key] = $this->includeAndParseFiles($structureElement, $rootDir);
             }
 
             return $result;
-        } elseif (strpos($structure, '!include') === 0) {
-            return $this->loadAndParseFile(str_replace('!include ', '', $structure), $rootDir);
-        } else {
-            return $structure;
         }
+        if (strpos($structure, '!include') === 0) {
+            return $this->loadAndParseFile(str_replace('!include ', '', $structure), $rootDir);
+        }
+
+        return $structure;
     }
 
     /**
@@ -655,7 +657,6 @@ class Parser
                     $newArray[$key] = $newValue;
                 }
             }
-
         }
 
         return $newArray;
@@ -708,7 +709,6 @@ class Parser
                     $newArray[$key] = $newValue;
                 }
             }
-
         }
 
         return $newArray;
@@ -751,46 +751,57 @@ class Parser
     private function applyFunctions($trait, array $values)
     {
         $variables = implode('|', array_keys($values));
+
         return preg_replace_callback(
-            '/<<(' . $variables . ')'.
-            '('.
-                '[\s]*\|[\s]*!'.
-                '('.
-                    'singularize|pluralize|uppercase|lowercase|lowercamelcase|uppercamelcase|lowerunderscorecase|upperunderscorecase|lowerhyphencase|upperhyphencase'.
-                ')'.
+            '/<<(' . $variables . ')' .
+            '(' .
+                '[\s]*\|[\s]*!' .
+                '(' .
+                    'singularize|pluralize|uppercase|lowercase|lowercamelcase|uppercamelcase|lowerunderscorecase|upperunderscorecase|lowerhyphencase|upperhyphencase' .
+                ')' .
             ')?>>/',
             function ($matches) use ($values) {
                 $transformer = isset($matches[3]) ? $matches[3] : '';
                 switch ($transformer) {
                     case 'singularize':
                         return Inflect::singularize($values[$matches[1]]);
+
                         break;
                     case 'pluralize':
                         return Inflect::pluralize($values[$matches[1]]);
+
                         break;
                     case 'uppercase':
                         return strtoupper($values[$matches[1]]);
+
                         break;
                     case 'lowercase':
                         return strtolower($values[$matches[1]]);
+
                         break;
                     case 'lowercamelcase':
                         return StringTransformer::convertString($values[$matches[1]], StringTransformer::LOWER_CAMEL_CASE);
+
                         break;
                     case 'uppercamelcase':
                         return StringTransformer::convertString($values[$matches[1]], StringTransformer::UPPER_CAMEL_CASE);
+
                         break;
                     case 'lowerunderscorecase':
                         return StringTransformer::convertString($values[$matches[1]], StringTransformer::LOWER_UNDERSCORE_CASE);
+
                         break;
                     case 'upperunderscorecase':
                         return StringTransformer::convertString($values[$matches[1]], StringTransformer::UPPER_UNDERSCORE_CASE);
+
                         break;
                     case 'lowerhyphencase':
                         return StringTransformer::convertString($values[$matches[1]], StringTransformer::LOWER_HYPHEN_CASE);
+
                         break;
                     case 'upperhyphencase':
                         return StringTransformer::convertString($values[$matches[1]], StringTransformer::UPPER_HYPHEN_CASE);
+
                         break;
                     default:
                         return $values[$matches[1]];

@@ -1,4 +1,5 @@
 <?php
+
 namespace Raml\SecurityScheme;
 
 /**
@@ -14,5 +15,5 @@ interface SecuritySettingsInterface
      *
      * @return SecuritySettingsInterface
      */
-    public static function createFromArray(array $data, SecuritySettingsInterface $sourceSettings = null);
+    public static function createFromArray(array $data, self $sourceSettings = null);
 }

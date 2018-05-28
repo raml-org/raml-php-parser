@@ -7,8 +7,7 @@ namespace Raml;
  */
 class _Trait
 {
-    
-    function __construct()
+    public function __construct()
     {
         # code...
     }

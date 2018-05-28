@@ -2,13 +2,9 @@
 
 namespace Raml;
 
-/**
- * 
- */
 class QueryParameter
 {
-    
-    function __construct()
+    public function __construct()
     {
         # code...
     }

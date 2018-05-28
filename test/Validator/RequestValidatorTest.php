@@ -149,7 +149,6 @@ class RequestValidatorTest extends PHPUnit_Framework_TestCase
 
         $validator = $this->getValidatorForSchema(__DIR__ . '/../fixture/validator/requestBody.raml');
         $validator->validateRequest($this->request);
-
     }
 
     /**

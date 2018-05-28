@@ -1,4 +1,5 @@
 <?php
+
 namespace Raml;
 
 use Raml\Exception\EmptyBodyException;
@@ -202,7 +203,7 @@ class Method implements ArrayInstantiationInterface, MessageSchemaInterface
                         $method->addSecurityScheme($apiDefinition->getSecurityScheme($securedBy));
                     }
                 } else {
-                    $method->addSecurityScheme(SecurityScheme::createFromArray('null', array(), $apiDefinition));
+                    $method->addSecurityScheme(SecurityScheme::createFromArray('null', [], $apiDefinition));
                 }
             }
         }
@@ -291,7 +292,7 @@ class Method implements ArrayInstantiationInterface, MessageSchemaInterface
     /**
      * Does the API support HTTP (non SSL) requests?
      *
-     * @return boolean
+     * @return bool
      */
     public function supportsHttp()
     {
@@ -301,7 +302,7 @@ class Method implements ArrayInstantiationInterface, MessageSchemaInterface
     /**
      * Does the API support HTTPS (SSL enabled) requests?
      *
-     * @return boolean
+     * @return bool
      */
     public function supportsHttps()
     {
@@ -382,7 +383,7 @@ class Method implements ArrayInstantiationInterface, MessageSchemaInterface
      */
     public function getBodyByType($type)
     {
-        if (empty($this->getBodies())){
+        if (empty($this->getBodies())) {
             throw new EmptyBodyException();
         }
 
@@ -428,7 +429,7 @@ class Method implements ArrayInstantiationInterface, MessageSchemaInterface
     /**
      * Get a response by the response code (200, 404,....)
      *
-     * @param integer $responseCode
+     * @param int $responseCode
      *
      * @return Response
      */
@@ -473,31 +474,29 @@ class Method implements ArrayInstantiationInterface, MessageSchemaInterface
                 foreach ($describedBy->getHeaders() as $header) {
                     $this->addHeader($header);
                 }
-            
+
                 foreach ($describedBy->getResponses() as $response) {
                     $this->addResponse($response);
                 }
-            
+
                 foreach ($describedBy->getQueryParameters() as $queryParameter) {
                     $this->addQueryParameter($queryParameter);
                 }
-            
+
                 foreach ($this->getBodies() as $bodyType => $body) {
                     if (in_array($bodyType, array_keys($describedBy->getBodies())) &&
                         in_array($bodyType, WebFormBody::$validMediaTypes)
                     ) {
                         $params = $describedBy->getBodyByType($bodyType)->getParameters();
-            
+
                         foreach ($params as $parameterName => $namedParameter) {
                             $body->addParameter($namedParameter);
                         }
                     }
-            
+
                     $this->addBody($body);
                 }
-            
             }
-            
         }
     }
 }

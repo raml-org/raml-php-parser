@@ -50,12 +50,15 @@ class FileType extends Type
             switch ($key) {
                 case 'fileTypes':
                     $type->setFileTypes($value);
+
                     break;
                 case 'minLength':
                     $type->setMinLength($value);
+
                     break;
                 case 'maxLength':
                     $type->setMaxLength($value);
+
                     break;
             }
         }

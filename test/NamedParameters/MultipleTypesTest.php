@@ -1,4 +1,5 @@
 <?php
+
 namespace Raml\Test\NamedParameters;
 
 class MultipleTypesTest extends \PHPUnit_Framework_TestCase

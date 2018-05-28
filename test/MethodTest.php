@@ -75,7 +75,7 @@ class MethodTest extends PHPUnit_Framework_TestCase
         $this->assertInternalType('array', $method->getResponses());
         $this->assertCount(1, $method->getResponses());
 
-        $responses =  $method->getResponses();
+        $responses = $method->getResponses();
         $this->assertInstanceOf('\Raml\Response', array_values($responses)[0]);
         $this->assertInstanceOf('\Raml\Response', $method->getResponse(200));
         $this->assertSame(null, $method->getResponse(400));
@@ -96,7 +96,7 @@ class MethodTest extends PHPUnit_Framework_TestCase
     public function shouldGetGlobalProtocols()
     {
         $parser = new \Raml\Parser();
-        $apiDefinition = $parser->parse(__DIR__.'/fixture/protocols/noProtocolSpecified.raml');
+        $apiDefinition = $parser->parse(__DIR__ . '/fixture/protocols/noProtocolSpecified.raml');
 
         $method = \Raml\Method::createFromArray(
             'get',
@@ -115,7 +115,7 @@ class MethodTest extends PHPUnit_Framework_TestCase
     public function shouldGetOverrideProtocols()
     {
         $parser = new \Raml\Parser();
-        $apiDefinition = $parser->parse(__DIR__.'/fixture/protocols/noProtocolSpecified.raml');
+        $apiDefinition = $parser->parse(__DIR__ . '/fixture/protocols/noProtocolSpecified.raml');
 
         $method = \Raml\Method::createFromArray(
             'get',

@@ -1,4 +1,5 @@
 <?php
+
 namespace Raml\Test\NamedParameters;
 
 class UriParameterTest extends \PHPUnit_Framework_TestCase
@@ -105,12 +106,12 @@ RAML;
 
         $apiDef = $this->parser->parseFromString($raml, '');
 
-        $resource = $apiDef->getResourceByPath("/base/{param1}/sub/{param2}");
+        $resource = $apiDef->getResourceByPath('/base/{param1}/sub/{param2}');
         $this->assertInstanceOf('\Raml\Resource', $resource);
 
         $uriParameters = $resource->getUriParameters();
 
-        $this->assertCount(2, $uriParameters, "should contain 2 uri parameters");
+        $this->assertCount(2, $uriParameters, 'should contain 2 uri parameters');
 
         $this->assertArrayHasKey('param1', $uriParameters, 'should contain uri parameter from parent');
         $this->assertArrayHasKey('param2', $uriParameters, 'should contain uri parameter from sub');

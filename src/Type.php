@@ -2,7 +2,6 @@
 
 namespace Raml;
 
-use Raml\Types;
 use Raml\Types\ObjectType;
 use Raml\Types\TypeValidationError;
 
@@ -23,7 +22,7 @@ class Type implements ArrayInstantiationInterface, TypeInterface
      *
      * @var ObjectType|string
      **/
-    private $parent = null;
+    private $parent;
 
     /**
      * Key used for type
@@ -234,6 +233,7 @@ class Type implements ArrayInstantiationInterface, TypeInterface
         if (is_string($this->parent)) {
             $this->parent = TypeCollection::getInstance()->getTypeByName($this->parent);
         }
+
         return $this->parent;
     }
 
@@ -244,7 +244,7 @@ class Type implements ArrayInstantiationInterface, TypeInterface
      */
     public function hasParent()
     {
-        return ($this->parent !== null);
+        return $this->parent !== null;
     }
 
     /**
@@ -272,7 +272,7 @@ class Type implements ArrayInstantiationInterface, TypeInterface
             return $this;
         }
         $parent = $this->getParent();
-        // recurse if 
+        // recurse if
         if ($parent instanceof $this && $parent->hasParent()) {
             $this->parent = $parent->inheritFromParent();
             unset($parent);
@@ -303,10 +303,9 @@ class Type implements ArrayInstantiationInterface, TypeInterface
             }
         }
         $properties = array_keys(array_merge($getters, $setters));
-        
+
         foreach ($properties as $prop) {
-            if (!isset($getters[$prop]) || !isset($setters[$prop]))
-            {
+            if (!isset($getters[$prop]) || !isset($setters[$prop])) {
                 continue;
             }
             $getter = $getters[$prop];
@@ -320,9 +319,11 @@ class Type implements ArrayInstantiationInterface, TypeInterface
             if (is_array($currentValue)) {
                 $newValue = array_merge($this->getParent()->$getter(), $currentValue);
                 $this->$setter($newValue);
+
                 continue;
             }
         }
+
         return $this;
     }
 
@@ -350,7 +351,7 @@ class Type implements ArrayInstantiationInterface, TypeInterface
     }
 
     /**
-     * @return boolean
+     * @return bool
      */
     public function isValid()
     {

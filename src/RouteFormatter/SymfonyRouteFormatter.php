@@ -13,7 +13,7 @@ class SymfonyRouteFormatter implements RouteFormatterInterface
     private $routes;
 
     /**
-     * @var boolean
+     * @var bool
      */
     private $addTrailingSlash = true;
 
@@ -24,7 +24,7 @@ class SymfonyRouteFormatter implements RouteFormatterInterface
      * append a trailing slash to the final routes or not.
      *
      * @param RouteCollection $routes
-     * @param boolean $addTrailingSlash
+     * @param bool $addTrailingSlash
      *  By default this is true
      */
     public function __construct(RouteCollection $routes, $addTrailingSlash = true)

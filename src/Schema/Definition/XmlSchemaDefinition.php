@@ -3,7 +3,7 @@
 namespace Raml\Schema\Definition;
 
 use DOMDocument;
-use \Raml\Schema\SchemaDefinitionInterface;
+use Raml\Schema\SchemaDefinitionInterface;
 use Raml\Types\TypeValidationError;
 
 class XmlSchemaDefinition implements SchemaDefinitionInterface
@@ -81,7 +81,7 @@ class XmlSchemaDefinition implements SchemaDefinitionInterface
     }
 
     /**
-     * @return boolean
+     * @return bool
      */
     public function isValid()
     {
