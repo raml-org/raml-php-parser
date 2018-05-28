@@ -381,7 +381,7 @@ class ApiDefinitionTest extends PHPUnit_Framework_TestCase
 
 
     /** @test */
-    public function shouldReturnFullResourcesForRamlFileWithDefaultFormatter1()
+    public function shouldReturnFullResourcesNameForRamlFileWithUrlPrefix()
     {
         $api = $this->parser->parse(__DIR__.'/fixture/includeUrlPrefix.raml');
         $this->assertEquals([
