@@ -20,8 +20,11 @@ before_script:
 
 script:
   - mkdir -p build/logs
-  - ./vendor/bin/phpunit --coverage-clover build/logs/clover.xml
+  - bin/phpunit --coverage-clover build/logs/clover.xml
 
 after_script:
- -  ./vendor/bin/coveralls -v
- -  ./vendor/bin/phpcs --report=summary --standard=PSR1,PSR2 src
+  - composer validate-files
+  - if [ $(phpenv version-name) != "5.5" ]; then composer check-code-style; fi;
+  - composer check-security
+  - composer run-tests
+  - ./vendor/bin/coveralls -v
