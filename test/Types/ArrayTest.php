@@ -49,6 +49,21 @@ class ArrayTest extends PHPUnit_Framework_TestCase
     }
 
     /** @test */
+    public function shouldCorrectlyParseTypeFacet()
+    {
+        $simpleRaml = $this->parser->parse(__DIR__ . '/../fixture/simple_types.raml');
+        $resource = $simpleRaml->getResourceByUri('/songs');
+        $method = $resource->getMethod('get');
+        $response = $method->getResponse(208);
+        /** @var \Raml\Body $body */
+        $body = $response->getBodyByType('application/json');
+        /** @var \Raml\Types\ArrayType $type */
+        $type = $body->getType();
+
+        $this->assertSame('Sample', $type->getItems()->getName());
+    }
+
+    /** @test */
     public function shouldCorrectlyValidateIncorrectTypeWhenArraySizeExceedsMaximum()
     {
         $simpleRaml = $this->parser->parse(__DIR__ . '/../fixture/simple_types.raml');

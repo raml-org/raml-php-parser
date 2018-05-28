@@ -8,41 +8,47 @@ mediaType: application/json
 /songs:
   get:
     responses:
-        200:
-          body:
-            application/json:
-              type: Song
-        201:
-          body:
-            application/json:
+      200:
+        body:
+          application/json:
+            type: Song
+      201:
+        body:
+          application/json:
+            type: Sample
+      202:
+        body:
+          application/json:
+            type: Sample[]
+            minItems: 1
+            maxItems: 2
+      203:
+        body:
+          application/json:
+            type: Nullable
+      204:
+        body:
+          application/json:
+            type: _Null
+      205:
+        body:
+          application/json:
+            type: Dates
+      206:
+        body:
+          application/json:
+            type: ScalarArrays
+      207:
+        body:
+          application/json:
+            type: string | nil
+            required: true
+      208:
+        body:
+          application/json:
+            type: array
+            items:
               type: Sample
-        202:
-          body:
-            application/json:
-              type: Sample[]
-              minItems: 1
-              maxItems: 2
-        203:
-          body:
-            application/json:
-              type: Nullable
-        204:
-          body:
-            application/json:
-              type: _Null
-        205:
-          body:
-            application/json:
-              type: Dates
-        206:
-          body:
-            application/json:
-              type: ScalarArrays
-        207:
-          body:
-            application/json:
-              type: string | nil
-              required: true
 
 types:
   Song:

@@ -78,6 +78,11 @@ class ArrayType extends Type
 
                     break;
                 case 'items':
+                    if (is_array($value) && isset($value['type'])) {
+                        $type->setItems($value['type']);
+
+                        break;
+                    }
                     $type->setItems($value);
 
                     break;

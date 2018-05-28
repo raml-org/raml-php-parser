@@ -141,9 +141,16 @@ class ApiDefinition implements ArrayInstantiationInterface
      *
      * @link https://github.com/raml-org/raml-spec/blob/master/versions/raml-10/raml-10.md/#raml-data-types
      *
-     * @var \Raml\TypeCollection
+     * @var TypeCollection
      */
     private $types;
+
+    /**
+     * A list of traits
+     *
+     * @var TraitCollection
+     */
+    private $traits;
 
     // ---
 
@@ -158,6 +165,10 @@ class ApiDefinition implements ArrayInstantiationInterface
         $this->types = TypeCollection::getInstance();
         // since the TypeCollection is a singleton, we need to clear it for every parse
         $this->types->clear();
+
+        $this->traits = TraitCollection::getInstance();
+        // since the TraitCollection is a singleton, we need to clear it for every parse
+        $this->traits->clear();
     }
 
     /**
@@ -258,6 +269,12 @@ class ApiDefinition implements ArrayInstantiationInterface
         if (isset($data['types'])) {
             foreach ($data['types'] as $name => $definition) {
                 $apiDefinition->addType(self::determineType($name, $definition));
+            }
+        }
+
+        if (isset($data['traits'])) {
+            foreach ($data['traits'] as $name => $definition) {
+                $apiDefinition->addTrait(self::determineTrait($name, $definition));
             }
         }
 
@@ -561,19 +578,9 @@ class ApiDefinition implements ArrayInstantiationInterface
         $this->documentationList[$title] = $documentation;
     }
 
-    /**
-     * Determines the right Type and returns an instance
-     *
-     * @param string                    $name       Name of type.
-     * @param array                     $definition Definition of type.
-     * @param \Raml\TypeCollection|null $typeCollection Type collection object.
-     *
-     * @return \Raml\TypeInterface Returns a (best) matched type object.
-     **/
-    public static function determineType($name, $definition)
+    public static function getStraightForwardTypes()
     {
-        // check if we can find a more appropriate Type subclass
-        $straightForwardTypes = [
+        return [
             'time-only',
             'datetime',
             'datetime-only',
@@ -586,8 +593,23 @@ class ApiDefinition implements ArrayInstantiationInterface
             'nil',
             'file',
             'array',
-            'object'
+            'object',
         ];
+    }
+
+    /**
+     * Determines the right Type and returns an instance
+     *
+     * @param string $name Name of type.
+     * @param array $definition Definition of type.
+     *
+     * @return \Raml\TypeInterface Returns a (best) matched type object.
+     *
+     * @throws \Exception
+     */
+    public static function determineType($name, $definition)
+    {
+        // check if we can find a more appropriate Type subclass
         if (is_string($definition)) {
             $definition = ['type' => $definition];
         } elseif (is_array($definition)) {
@@ -601,7 +623,7 @@ class ApiDefinition implements ArrayInstantiationInterface
         $type = $definition['type'] ?: 'null';
 
         if (!in_array($type, ['', 'any'])) {
-            if (in_array($type, $straightForwardTypes)) {
+            if (in_array($type, static::getStraightForwardTypes())) {
                 $className = sprintf(
                     'Raml\Types\%sType',
                     StringTransformer::convertString($type, StringTransformer::UPPER_CAMEL_CASE)
@@ -609,7 +631,7 @@ class ApiDefinition implements ArrayInstantiationInterface
 
                 return forward_static_call_array([$className, 'createFromArray'], [$name, $definition]);
             }
-            // if $type contains a '|' we can savely assume it's a combination of types (union)
+            // if $type contains a '|' we can safely assume it's a combination of types (union)
             if (strpos($type, '|') !== false) {
                 return UnionType::createFromArray($name, $definition);
             }
@@ -627,6 +649,11 @@ class ApiDefinition implements ArrayInstantiationInterface
         return Type::createFromArray($name, $definition);
     }
 
+    public static function determineTrait($name, $definition)
+    {
+        return TraitDefinition::createFromArray($name, $definition);
+    }
+
     /**
      * Add data type
      *
@@ -640,11 +667,31 @@ class ApiDefinition implements ArrayInstantiationInterface
     /**
      * Get data types
      *
-     * @return \Raml\TypeCollection
+     * @return TypeCollection
      */
     public function getTypes()
     {
         return $this->types;
+    }
+
+    /**
+     * Add trait
+     *
+     * @param TraitDefinition $trait
+     */
+    public function addTrait(TraitDefinition $trait)
+    {
+        $this->traits->add($trait);
+    }
+
+    /**
+     * Get data types
+     *
+     * @return TraitCollection
+     */
+    public function getTraits()
+    {
+        return $this->traits;
     }
 
     // --
