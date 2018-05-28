@@ -1,4 +1,5 @@
 <?php
+
 namespace Raml;
 
 use Inflect\Inflect;
@@ -74,10 +75,10 @@ class Parser
      * - Optionally pass a list of parsers to use
      * - If null is passed then the default schemaParsers are used
      *
-     * @param SchemaParserInterface[]           $schemaParsers
+     * @param SchemaParserInterface[] $schemaParsers
      * @param SecuritySettingsParserInterface[] $securitySettingsParsers
-     * @param FileLoaderInterface[]             $fileLoaders
-     * @param ParseConfiguration                $config
+     * @param FileLoaderInterface[] $fileLoaders
+     * @param ParseConfiguration $config
      */
     public function __construct(
         array $schemaParsers = null,
@@ -96,7 +97,7 @@ class Parser
         if ($schemaParsers === null) {
             $schemaParsers = [
                 new JsonSchemaParser(),
-                new XmlSchemaParser()
+                new XmlSchemaParser(),
             ];
         }
 
@@ -112,7 +113,7 @@ class Parser
             $securitySettingsParsers = [
                 new OAuth1SecuritySettingsParser(),
                 new OAuth2SecuritySettingsParser(),
-                new DefaultSecuritySettingsParser()
+                new DefaultSecuritySettingsParser(),
             ];
         }
 
@@ -127,7 +128,7 @@ class Parser
         if ($fileLoaders === null) {
             $fileLoaders = [
                 new JsonSchemaFileLoader(),
-                new DefaultFileLoader()
+                new DefaultFileLoader(),
             ];
         }
 
@@ -319,7 +320,7 @@ class Parser
     /**
      * Recurses though resources and replaces schema strings
      *
-     * @param array  $array
+     * @param array $array
      * @param string $rootDir
      *
      * @throws InvalidSchemaFormatException
@@ -336,7 +337,7 @@ class Parser
                     foreach ($this->schemaParsers as $schemaParser) {
                         try {
                             $schemaParser->setSourceUri(
-                                'file://' . ($fileDir ? $fileDir : $rootDir . DIRECTORY_SEPARATOR)
+                                'file://'.($fileDir ? $fileDir : $rootDir.DIRECTORY_SEPARATOR)
                             );
                             $schema = $schemaParser->createSchemaDefinition($value['schema']);
 
@@ -363,7 +364,8 @@ class Parser
      * @param string $data
      * @return string
      */
-    private function getCachedFilePath($data) {
+    private function getCachedFilePath($data)
+    {
         $key = md5($data);
 
         return array_key_exists($key, $this->cachedFilesPaths) ? $this->cachedFilesPaths[$key] : null;
@@ -521,7 +523,10 @@ class Parser
      */
     private function parseYaml($fileData)
     {
-        return Yaml::parse($fileData, Yaml::PARSE_EXCEPTION_ON_INVALID_TYPE & Yaml::PARSE_OBJECT);
+        return Yaml::parse(
+            $fileData,
+            Yaml::PARSE_EXCEPTION_ON_INVALID_TYPE | Yaml::PARSE_OBJECT | Yaml::PARSE_CUSTOM_TAGS
+        );
     }
 
     /**
@@ -537,7 +542,7 @@ class Parser
     private function loadAndParseFile($fileName, $rootDir)
     {
         $rootDir = realpath($rootDir);
-        $fullPath = realpath($rootDir . '/' . $fileName);
+        $fullPath = realpath($rootDir.'/'.$fileName);
 
         if (is_readable($fullPath) === false) {
             throw new FileNotFoundException($fileName);
@@ -560,7 +565,7 @@ class Parser
         $fileExtension = (pathinfo($fileName, PATHINFO_EXTENSION));
 
         if (in_array($fileExtension, ['yaml', 'yml', 'raml'])) {
-            $rootDir = dirname($rootDir . '/' . $fileName);
+            $rootDir = dirname($rootDir.'/'.$fileName);
 
             // RAML and YAML files are always parsed
             $fileData = $this->parseRamlString(
@@ -591,7 +596,7 @@ class Parser
      * Recurse through the structure and load includes
      *
      * @param array|string $structure
-     * @param string       $rootDir
+     * @param string $rootDir
      *
      * @return array
      */
@@ -604,18 +609,24 @@ class Parser
             }
 
             return $result;
-        } elseif (strpos($structure, '!include') === 0) {
-            return $this->loadAndParseFile(str_replace('!include ', '', $structure), $rootDir);
-        } else {
-            return $structure;
         }
+
+        if ($structure instanceof TaggedValue && $structure->getTag() == 'include') {
+            return $this->loadAndParseFile($structure->getValue(), $rootDir);
+        }
+
+        if (strpos($structure, '!include') === 0) {
+            return $this->loadAndParseFile(str_replace('!include ', '', $structure), $rootDir);
+        }
+
+        return $structure;
     }
 
     /**
      * Insert the traits into the RAML file
      *
-     * @param string|array  $raml
-     * @param array  $traits
+     * @param string|array $raml
+     * @param array $traits
      * @param string $path
      * @param string $name
      *
@@ -664,8 +675,8 @@ class Parser
     /**
      * Insert the types into the RAML file
      *
-     * @param array  $raml
-     * @param array  $types
+     * @param array $raml
+     * @param array $types
      * @param string $path
      * @param string $name
      * @param string $parentKey
@@ -751,13 +762,14 @@ class Parser
     private function applyFunctions($trait, array $values)
     {
         $variables = implode('|', array_keys($values));
+
         return preg_replace_callback(
-            '/<<(' . $variables . ')'.
+            '/<<('.$variables.')'.
             '('.
-                '[\s]*\|[\s]*!'.
-                '('.
-                    'singularize|pluralize|uppercase|lowercase|lowercamelcase|uppercamelcase|lowerunderscorecase|upperunderscorecase|lowerhyphencase|upperhyphencase'.
-                ')'.
+            '[\s]*\|[\s]*!'.
+            '('.
+            'singularize|pluralize|uppercase|lowercase|lowercamelcase|uppercamelcase|lowerunderscorecase|upperunderscorecase|lowerhyphencase|upperhyphencase'.
+            ')'.
             ')?>>/',
             function ($matches) use ($values) {
                 $transformer = isset($matches[3]) ? $matches[3] : '';
@@ -775,22 +787,40 @@ class Parser
                         return strtolower($values[$matches[1]]);
                         break;
                     case 'lowercamelcase':
-                        return StringTransformer::convertString($values[$matches[1]], StringTransformer::LOWER_CAMEL_CASE);
+                        return StringTransformer::convertString(
+                            $values[$matches[1]],
+                            StringTransformer::LOWER_CAMEL_CASE
+                        );
                         break;
                     case 'uppercamelcase':
-                        return StringTransformer::convertString($values[$matches[1]], StringTransformer::UPPER_CAMEL_CASE);
+                        return StringTransformer::convertString(
+                            $values[$matches[1]],
+                            StringTransformer::UPPER_CAMEL_CASE
+                        );
                         break;
                     case 'lowerunderscorecase':
-                        return StringTransformer::convertString($values[$matches[1]], StringTransformer::LOWER_UNDERSCORE_CASE);
+                        return StringTransformer::convertString(
+                            $values[$matches[1]],
+                            StringTransformer::LOWER_UNDERSCORE_CASE
+                        );
                         break;
                     case 'upperunderscorecase':
-                        return StringTransformer::convertString($values[$matches[1]], StringTransformer::UPPER_UNDERSCORE_CASE);
+                        return StringTransformer::convertString(
+                            $values[$matches[1]],
+                            StringTransformer::UPPER_UNDERSCORE_CASE
+                        );
                         break;
                     case 'lowerhyphencase':
-                        return StringTransformer::convertString($values[$matches[1]], StringTransformer::LOWER_HYPHEN_CASE);
+                        return StringTransformer::convertString(
+                            $values[$matches[1]],
+                            StringTransformer::LOWER_HYPHEN_CASE
+                        );
                         break;
                     case 'upperhyphencase':
-                        return StringTransformer::convertString($values[$matches[1]], StringTransformer::UPPER_HYPHEN_CASE);
+                        return StringTransformer::convertString(
+                            $values[$matches[1]],
+                            StringTransformer::UPPER_HYPHEN_CASE
+                        );
                         break;
                     default:
                         return $values[$matches[1]];
