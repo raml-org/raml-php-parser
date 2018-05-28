@@ -68,7 +68,8 @@ RAML;
     public function shouldCorrectlyValidateCorrectXml()
     {
         $xml = new DOMDocument();
-        $xml->loadXML(<<<'XML'
+        $xml->loadXML(
+            <<<'XML'
 <?xml version="1.0"?>
 <api-request>
     <input>v1.0</input>
@@ -85,7 +86,8 @@ XML
     public function shouldCorrectlyValidateIncorrectXml()
     {
         $xml = new DOMDocument();
-        $xml->loadXML(<<<'XML'
+        $xml->loadXML(
+            <<<'XML'
 <?xml version="1.0"?>
 <api-response>
     <input>v1.0</input>
@@ -133,6 +135,7 @@ XML
     private function loadXmlSchema()
     {
         $xmlRaml = $this->parser->parse(__DIR__ . '/fixture/xmlSchema.raml');
+
         return $xmlRaml->getResourceByUri('/jobs')
             ->getMethod('get')
             ->getResponse(200)

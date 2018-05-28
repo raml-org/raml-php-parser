@@ -7,7 +7,6 @@ use Raml\SecurityScheme\SecuritySettingsParserInterface;
 
 class DefaultSecuritySettingsParser implements SecuritySettingsParserInterface
 {
-
     // ---
     // SecuritySettingsParserInterface
 

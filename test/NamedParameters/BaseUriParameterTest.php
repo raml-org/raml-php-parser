@@ -1,4 +1,5 @@
 <?php
+
 namespace Raml\Test\NamedParameters;
 
 class BaseUriParameterTest extends \PHPUnit_Framework_TestCase
@@ -96,7 +97,7 @@ RAML;
      */
     public function shouldCorrectlyParseNetBaseUri()
     {
-        $raml =  <<<RAML
+        $raml = <<<RAML
 #%RAML 0.8
 title: Test body
 baseUri: //some-host/
@@ -115,7 +116,7 @@ RAML;
      */
     public function shouldOverrideBaseUriProtocols()
     {
-        $raml =  <<<RAML
+        $raml = <<<RAML
 #%RAML 0.8
 title: Test body
 baseUri: //some-host/

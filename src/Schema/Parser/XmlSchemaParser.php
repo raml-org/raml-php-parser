@@ -7,7 +7,6 @@ use Raml\Schema\Definition\XmlSchemaDefinition;
 
 class XmlSchemaParser extends SchemaParserAbstract
 {
-
     /**
      * List of known XML content types
      *

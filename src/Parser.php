@@ -1,7 +1,7 @@
 <?php
+
 namespace Raml;
 
-use Inflect\Inflect;
 use Raml\Exception\BadParameter\FileNotFoundException;
 use Raml\Exception\InvalidSchemaFormatException;
 use Raml\Exception\RamlParserException;
@@ -23,7 +23,6 @@ use Symfony\Component\Yaml\Yaml;
  */
 class Parser
 {
-
     /**
      * Array of cached files
      * No point in fetching them twice
@@ -366,7 +365,8 @@ class Parser
      * @param string $data
      * @return string
      */
-    private function getCachedFilePath($data) {
+    private function getCachedFilePath($data)
+    {
         $key = md5($data);
 
         return array_key_exists($key, $this->cachedFilesPaths) ? $this->cachedFilesPaths[$key] : null;
@@ -390,13 +390,14 @@ class Parser
             } else {
                 $parser = false;
             }
+
             $securitySchemes[$key] = $securitySchemeData;
             $securityScheme = $securitySchemes[$key];
 
             // If we're using protocol specific parsers, see if we have one to use.
             if ($this->configuration->isSchemaSecuritySchemeParsingEnabled()) {
-                if (isset($securityScheme['type']) &&
-                    isset($this->securitySettingsParsers[$securityScheme['type']])
+                if (isset($securityScheme['type'], $this->securitySettingsParsers[$securityScheme['type']])
+
                 ) {
                     $parser = $this->securitySettingsParsers[$securityScheme['type']];
                 }
@@ -482,6 +483,7 @@ class Parser
                 }
             }
         }
+
         return $ramlData;
     }
 
@@ -509,6 +511,7 @@ class Parser
                 $definition[$key] = $this->addNamespacePrefix($nameSpace, $definition[$key]);
             }
         }
+
         return $definition;
     }
 
@@ -676,17 +679,18 @@ class Parser
     private function includeAndParseFiles($structure, $rootDir)
     {
         if (is_array($structure)) {
-            $result = array();
+            $result = [];
             foreach ($structure as $key => $structureElement) {
                 $result[$key] = $this->includeAndParseFiles($structureElement, $rootDir);
             }
 
             return $result;
-        } elseif (strpos($structure, '!include') === 0) {
-            return $this->loadAndParseFile(str_replace('!include ', '', $structure), $rootDir);
-        } else {
-            return $structure;
         }
+        if (strpos($structure, '!include') === 0) {
+            return $this->loadAndParseFile(str_replace('!include ', '', $structure), $rootDir);
+        }
+
+        return $structure;
     }
 
     /**
@@ -734,7 +738,6 @@ class Parser
                     $newArray[$key] = $newValue;
                 }
             }
-
         }
 
         return $newArray;
@@ -787,7 +790,6 @@ class Parser
                     $newArray[$key] = $newValue;
                 }
             }
-
         }
 
         return $newArray;

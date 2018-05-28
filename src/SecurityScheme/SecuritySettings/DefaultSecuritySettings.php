@@ -35,7 +35,7 @@ class DefaultSecuritySettings implements SecuritySettingsInterface, \ArrayAccess
      */
     public static function createFromArray(array $data, SecuritySettingsInterface $sourceSettings = null)
     {
-        if ($sourceSettings && !$sourceSettings instanceof DefaultSecuritySettings) {
+        if ($sourceSettings && !$sourceSettings instanceof self) {
             throw new \Exception();
         }
 
@@ -70,7 +70,7 @@ class DefaultSecuritySettings implements SecuritySettingsInterface, \ArrayAccess
      */
     public function offsetSet($offset, $value)
     {
-        if (is_null($offset)) {
+        if (null === $offset) {
             $this->settings[] = $value;
         } else {
             $this->settings[$offset] = $value;
@@ -113,7 +113,7 @@ class DefaultSecuritySettings implements SecuritySettingsInterface, \ArrayAccess
     {
         return isset($this->settings[$offset]) ? $this->settings[$offset] : null;
     }
-    
+
     /**
      * Get the array of settings data
      *

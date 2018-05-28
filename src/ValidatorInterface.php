@@ -17,7 +17,7 @@ interface ValidatorInterface
     public function getErrors();
 
     /**
-     * @return boolean
+     * @return bool
      */
     public function isValid();
 }

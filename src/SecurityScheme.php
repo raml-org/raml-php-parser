@@ -11,7 +11,6 @@ use Raml\SecurityScheme\SecuritySchemeDescribedBy;
  */
 class SecurityScheme implements ArrayInstantiationInterface
 {
-
     /**
      * The key of the security scheme
      *
@@ -221,7 +220,7 @@ class SecurityScheme implements ArrayInstantiationInterface
         } else {
             $settings = array_replace($this->getSettings(), $newSettings);
         }
-      
+
         $this->setSettings($settings);
     }
 }

@@ -1,4 +1,5 @@
 <?php
+
 namespace Raml\Test\NamedParameters;
 
 class WebFormBodyTest extends \PHPUnit_Framework_TestCase
@@ -26,7 +27,7 @@ class WebFormBodyTest extends \PHPUnit_Framework_TestCase
     /** @test */
     public function shouldBeCreatedForValidMediaTypeUrlEncoded()
     {
-        $raml =  <<<RAML
+        $raml = <<<RAML
 #%RAML 0.8
 title: Test named parameters
 /:
@@ -50,7 +51,7 @@ RAML;
     /** @test */
     public function shouldBeCreatedForValidMediaTypeFormData()
     {
-        $raml =  <<<RAML
+        $raml = <<<RAML
 #%RAML 0.8
 title: Test named parameters
 /:
@@ -74,7 +75,7 @@ RAML;
     /** @test */
     public function shouldThrowErrorOnAttemptGetInvalidParameter()
     {
-        $raml =  <<<RAML
+        $raml = <<<RAML
 #%RAML 0.8
 title: Test named parameters
 /:
@@ -98,6 +99,7 @@ RAML;
             $body->getParameter('badKey');
         } catch (\Raml\Exception\InvalidKeyException $e) {
             $this->assertEquals('badKey', $e->getKey());
+
             throw $e;
         }
     }
@@ -105,7 +107,7 @@ RAML;
     /** @test */
     public function shouldBeAbleToGetAllParameters()
     {
-        $raml =  <<<RAML
+        $raml = <<<RAML
 #%RAML 0.8
 title: Test named parameters
 /:

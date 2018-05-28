@@ -2,9 +2,9 @@
 
 namespace Raml\SecurityScheme;
 
-use \Raml\ArrayInstantiationInterface;
-use \Raml\NamedParameter;
-use \Raml\Response;
+use Raml\ArrayInstantiationInterface;
+use Raml\NamedParameter;
+use Raml\Response;
 
 /**
  * A description of a security scheme
@@ -13,7 +13,6 @@ use \Raml\Response;
  */
 class SecuritySchemeDescribedBy implements ArrayInstantiationInterface
 {
-
     /**
      * The key of the security scheme
      *
@@ -162,7 +161,6 @@ class SecuritySchemeDescribedBy implements ArrayInstantiationInterface
         $this->bodyList[$body->getMediaType()] = $body;
     }
 
-
     /**
      * Returns the headers
      *
@@ -220,7 +218,7 @@ class SecuritySchemeDescribedBy implements ArrayInstantiationInterface
     /**
      * Get a response by the response code (200, 404,....)
      *
-     * @param integer $responseCode
+     * @param int $responseCode
      *
      * @return Response
      */

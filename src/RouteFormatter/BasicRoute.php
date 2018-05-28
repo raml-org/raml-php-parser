@@ -2,7 +2,7 @@
 
 namespace Raml\RouteFormatter;
 
-use \Raml\Method;
+use Raml\Method;
 
 class BasicRoute
 {

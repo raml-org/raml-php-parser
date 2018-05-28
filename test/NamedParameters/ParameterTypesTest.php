@@ -1,4 +1,5 @@
 <?php
+
 namespace Raml\Test\NamedParameters;
 
 class ParameterTypesTest extends \PHPUnit_Framework_TestCase
@@ -7,7 +8,7 @@ class ParameterTypesTest extends \PHPUnit_Framework_TestCase
      * @var \Raml\Parser
      */
     private $parser;
-    
+
     /**
      * @var object Used in multiple tests
      */
@@ -17,8 +18,8 @@ class ParameterTypesTest extends \PHPUnit_Framework_TestCase
     {
         parent::setUp();
         $this->parser = new \Raml\Parser();
-        
-        $validateRaml =  <<<RAML
+
+        $validateRaml = <<<RAML
 #%RAML 0.8
 title: Test named parameters
 /:
@@ -57,19 +58,19 @@ RAML;
     }
 
     // ---
-    
+
     /** @test */
     public function shouldValidateWithoutExceptions()
     {
         // Not Required
         $namedParameter = $this->validateBody->getParameter('string');
         $namedParameter->validate(null);
-        
+
         // Valid date
         $namedParameter = $this->validateBody->getParameter('date');
         $namedParameter->validate('Sun, 06 Nov 1994 08:49:37 GMT');
     }
-    
+
     /** @test */
     public function shouldValidateRequired()
     {
@@ -78,7 +79,7 @@ RAML;
         $namedParameter = $this->validateBody->getParameter('requiredstring');
         $namedParameter->validate(null);
     }
-    
+
     /** @test */
     public function shouldValidateString()
     {
@@ -87,7 +88,7 @@ RAML;
         $namedParameter = $this->validateBody->getParameter('string');
         $namedParameter->validate(1);
     }
-    
+
     /** @test */
     public function shouldValidateShortString()
     {
@@ -96,7 +97,7 @@ RAML;
         $namedParameter = $this->validateBody->getParameter('string');
         $namedParameter->validate('a');
     }
-    
+
     /** @test */
     public function shouldValidateLongString()
     {
@@ -105,16 +106,16 @@ RAML;
         $namedParameter = $this->validateBody->getParameter('string');
         $namedParameter->validate('aaaaaa');
     }
-    
+
     /** @test */
     public function shouldValidateNumber()
     {
         // When is a number not a number? When it's an... array!
         $this->setExpectedException('\Raml\Exception\ValidationException', 'number is not a number', 5);
         $namedParameter = $this->validateBody->getParameter('number');
-        $namedParameter->validate(array());
+        $namedParameter->validate([]);
     }
-    
+
     /** @test */
     public function shouldValidateSmallNumber()
     {
@@ -123,7 +124,7 @@ RAML;
         $namedParameter = $this->validateBody->getParameter('number');
         $namedParameter->validate(0);
     }
-    
+
     /** @test */
     public function shouldValidateLargeNumber()
     {
@@ -132,7 +133,7 @@ RAML;
         $namedParameter = $this->validateBody->getParameter('number');
         $namedParameter->validate(11);
     }
-    
+
     /** @test */
     public function shouldValidateInteger()
     {
@@ -141,7 +142,7 @@ RAML;
         $namedParameter = $this->validateBody->getParameter('integer');
         $namedParameter->validate('a');
     }
-    
+
     /** @test */
     public function shouldValidatePattern()
     {
@@ -150,7 +151,7 @@ RAML;
         $namedParameter = $this->validateBody->getParameter('pattern');
         $namedParameter->validate(6);
     }
-    
+
     /** @test */
     public function shouldValidateEnum()
     {
@@ -159,7 +160,7 @@ RAML;
         $namedParameter = $this->validateBody->getParameter('enum');
         $namedParameter->validate('Grandma');
     }
-    
+
     /** @test */
     public function shouldValidateBoolean()
     {
@@ -168,7 +169,7 @@ RAML;
         $namedParameter = $this->validateBody->getParameter('boolean');
         $namedParameter->validate(1);
     }
-    
+
     /** @test */
     public function shouldValidateDate()
     {
@@ -183,7 +184,7 @@ RAML;
     /** @test */
     public function shouldThrowExceptionOnInvalidString()
     {
-        $raml =  <<<RAML
+        $raml = <<<RAML
 #%RAML 0.8
 title: Test named parameters
 /:
@@ -204,7 +205,7 @@ RAML;
     /** @test */
     public function shouldThrowExceptionOnInvalidNumber()
     {
-        $raml =  <<<RAML
+        $raml = <<<RAML
 #%RAML 0.8
 title: Test named parameters
 /:
@@ -225,7 +226,7 @@ RAML;
     /** @test */
     public function shouldThrowExceptionOnInvalidInteger()
     {
-        $raml =  <<<RAML
+        $raml = <<<RAML
 #%RAML 0.8
 title: Test named parameters
 /:
@@ -246,7 +247,7 @@ RAML;
     /** @test */
     public function shouldThrowExceptionOnInvalidDate()
     {
-        $raml =  <<<RAML
+        $raml = <<<RAML
 #%RAML 0.8
 title: Test named parameters
 /:
@@ -267,7 +268,7 @@ RAML;
     /** @test */
     public function shouldThrowExceptionOnInvalidBoolean()
     {
-        $raml =  <<<RAML
+        $raml = <<<RAML
 #%RAML 0.8
 title: Test named parameters
 /:
@@ -288,7 +289,7 @@ RAML;
     /** @test */
     public function shouldThrowExceptionOnInvalidFile()
     {
-        $raml =  <<<RAML
+        $raml = <<<RAML
 #%RAML 0.8
 title: Test named parameters
 /:

@@ -3,8 +3,8 @@
 namespace Raml\Schema\Definition;
 
 use JsonSchema\Constraints\Constraint;
-use \Raml\Schema\SchemaDefinitionInterface;
-use \JsonSchema\Validator;
+use Raml\Schema\SchemaDefinitionInterface;
+use JsonSchema\Validator;
 use Raml\Types\TypeValidationError;
 
 final class JsonSchemaDefinition implements SchemaDefinitionInterface
@@ -91,7 +91,7 @@ final class JsonSchemaDefinition implements SchemaDefinitionInterface
     }
 
     /**
-     * @return boolean
+     * @return bool
      */
     public function isValid()
     {

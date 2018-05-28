@@ -26,7 +26,7 @@ class ContentConverter
                 throw new InvalidJsonException(json_last_error_msg());
             }
         } elseif (in_array($generalContentType, self::$xmlTypes, true)) {
-            $value = new \DOMDocument;
+            $value = new \DOMDocument();
 
             $originalErrorLevel = libxml_use_internal_errors(true);
 
@@ -49,7 +49,7 @@ class ContentConverter
     private static function parseMediaRange($mediaRange)
     {
         $parts = explode(';', $mediaRange);
-        $params = array();
+        $params = [];
         foreach ($parts as $i => $param) {
             if (strpos($param, '=') !== false) {
                 list($k, $v) = explode('=', trim($param));
@@ -57,12 +57,12 @@ class ContentConverter
             }
         }
         $fullType = trim($parts[0]);
-        if ($fullType == '*') {
+        if ($fullType === '*') {
             return '*/*';
         }
         list($type, $subtype) = explode('/', $fullType);
         if (!$subtype) {
-            throw new \UnexpectedValueException('Malformed media-range: '.$mediaRange);
+            throw new \UnexpectedValueException('Malformed media-range: ' . $mediaRange);
         }
         $plusPos = strpos($subtype, '+');
         if (false !== $plusPos) {

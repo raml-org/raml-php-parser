@@ -1,4 +1,5 @@
 <?php
+
 namespace Raml\Validator;
 
 use Exception;
@@ -66,7 +67,7 @@ class RequestValidator
             'Missing request parameters required by the schema for `%s %s`: %s',
             strtoupper($method),
             $path,
-            join(', ', array_keys($missingParameters))
+            implode(', ', array_keys($missingParameters))
         ));
     }
 
@@ -149,7 +150,7 @@ class RequestValidator
      */
     private function getSchemaErrorsAsString(array $errors)
     {
-        return join(', ', array_map(function (array $error) {
+        return implode(', ', array_map(function (array $error) {
             return sprintf('%s (%s)', $error['property'], $error['constraint']);
         }, $errors));
     }
@@ -187,7 +188,7 @@ class RequestValidator
 
     private function getTypeValidationErrorsAsString(array $errors)
     {
-        return join(', ', array_map(function (TypeValidationError $error) {
+        return implode(', ', array_map(function (TypeValidationError $error) {
             return $error->__toString();
         }, $errors));
     }
