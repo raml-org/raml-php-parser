@@ -17,6 +17,10 @@
       "role": "Developer"
     }
   ],
+  
+  "replace": {
+    "alecsammon/php-raml-parser": "*"
+  },
 
   "autoload": {
     "psr-4": {
