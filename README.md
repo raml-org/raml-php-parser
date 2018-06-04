@@ -26,7 +26,6 @@ Parses a RAML file into a PHP object.
 
 [![Build Status](https://travis-ci.org/eLama/php-raml-parser.svg?branch=master)](https://travis-ci.org/eLama/php-raml-parser)
 [![Coverage Status](https://coveralls.io/repos/github/eLama/php-raml-parser/badge.svg?branch=master)](https://coveralls.io/github/eLama/php-raml-parser?branch=master)
-[![HHVM Status](http://hhvm.h4cc.de/badge/eLama/php-raml-parser.svg)](http://hhvm.h4cc.de/package/eLama/php-raml-parser)
 
 See the RAML spec here: https://github.com/raml-org/raml-spec
 

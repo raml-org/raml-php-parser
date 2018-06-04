@@ -11,6 +11,7 @@ class BaseUriParameterTest extends \PHPUnit_Framework_TestCase
     public function setUp()
     {
         $this->parser = new \Raml\Parser();
+        setlocale(LC_NUMERIC, 'C');
     }
 
     /**
