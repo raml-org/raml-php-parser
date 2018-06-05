@@ -14,6 +14,7 @@ class ApiDefinitionTest extends PHPUnit_Framework_TestCase
     {
         parent::setUp();
         $this->parser = new \Raml\Parser();
+        setlocale(LC_NUMERIC, 'C');
     }
 
     /** @test */
