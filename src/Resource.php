@@ -81,6 +81,11 @@ class Resource implements ArrayInstantiationInterface
      */
     private $traits = [];
 
+    /**
+     * @var Resource|null
+     */
+    private $parentResource;
+
     // ---
 
     /**
@@ -369,6 +374,7 @@ class Resource implements ArrayInstantiationInterface
     public function addResource(Resource $resource)
     {
         $this->subResources[$resource->getUri()] = $resource;
+        $resource->setParentResource($this);
     }
 
     // --
@@ -452,6 +458,25 @@ class Resource implements ArrayInstantiationInterface
     public function addTrait($trait)
     {
         $this->traits[] = $trait;
+        return $this;
+    }
+
+    /**
+     * @return Resource|null
+     */
+    public function getParentResource()
+    {
+        return $this->parentResource;
+    }
+
+    /**
+     * @param Resource $parentResource
+     *
+     * @return $this
+     */
+    public function setParentResource($parentResource)
+    {
+        $this->parentResource = $parentResource;
         return $this;
     }
 }
