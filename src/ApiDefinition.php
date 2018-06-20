@@ -716,6 +716,16 @@ class ApiDefinition implements ArrayInstantiationInterface
         $this->resources[$resource->getUri()] = $resource;
     }
 
+    /**
+     * Removes Resource from ApiDefinition
+     *
+     * @param \Raml\Resource $resource
+     */
+    public function removeResource(Resource $resource)
+    {
+        unset($this->resources[$resource->getUri()]);
+    }
+
     // --
 
     /**
