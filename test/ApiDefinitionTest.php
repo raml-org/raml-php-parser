@@ -156,8 +156,7 @@ class ApiDefinitionTest extends PHPUnit_Framework_TestCase
                         "firstname": "Archie",
                         "lastname": "Ark",
                         "age": 40,
-                        "kind": "Admin",
-                        "clearanceLevel": "low"
+                        "kind": "Admin"
                     }
                 ],
                 "phone": "123-23"
