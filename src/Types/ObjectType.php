@@ -39,7 +39,7 @@ class ObjectType extends Type
      *
      * @var bool
      **/
-    private $additionalProperties = false;
+    private $additionalProperties = true;
 
     /**
      * Determines the concrete type of an individual object at runtime when,
