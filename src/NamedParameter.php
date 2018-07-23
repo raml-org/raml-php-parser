@@ -15,13 +15,13 @@ class NamedParameter implements ArrayInstantiationInterface
     // ---
     // Type constants
 
-    const TYPE_STRING   = 'string';
-    const TYPE_NUMBER   = 'number';
-    const TYPE_INTEGER  = 'integer';
-    const TYPE_DATE     = 'date';
-    const TYPE_BOOLEAN  = 'boolean';
-    const TYPE_FILE     = 'file';
-    const TYPE_ARRAY    = 'array';
+    const TYPE_STRING = 'string';
+    const TYPE_NUMBER = 'number';
+    const TYPE_INTEGER = 'integer';
+    const TYPE_DATE = 'date';
+    const TYPE_BOOLEAN = 'boolean';
+    const TYPE_FILE = 'file';
+    const TYPE_ARRAY = 'array';
     // ---
     // Validation exception codes
 
@@ -646,7 +646,7 @@ class NamedParameter implements ArrayInstantiationInterface
 
                 break;
             case self::TYPE_INTEGER:
-                if (!is_numeric($default) || (int)$default !=$default) {
+                if (!is_numeric($default) || (int) $default != $default) {
                     throw new \Exception('Default parameter is not an integer');
                 }
 

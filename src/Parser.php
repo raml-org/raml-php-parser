@@ -391,16 +391,16 @@ class Parser
                 $parser = false;
             }
 
-                $securitySchemes[$key] = $securitySchemeData;
-                $securityScheme = $securitySchemes[$key];
+            $securitySchemes[$key] = $securitySchemeData;
+            $securityScheme = $securitySchemes[$key];
 
-                // If we're using protocol specific parsers, see if we have one to use.
-                if ($this->configuration->isSchemaSecuritySchemeParsingEnabled()) {
-                    if (isset($securityScheme['type'], $this->securitySettingsParsers[$securityScheme['type']])
+            // If we're using protocol specific parsers, see if we have one to use.
+            if ($this->configuration->isSchemaSecuritySchemeParsingEnabled()) {
+                if (isset($securityScheme['type'], $this->securitySettingsParsers[$securityScheme['type']])
                     ) {
-                        $parser = $this->securitySettingsParsers[$securityScheme['type']];
-                    }
+                    $parser = $this->securitySettingsParsers[$securityScheme['type']];
                 }
+            }
 
             // If we found a parser, create it's settings object.
             if ($parser) {
@@ -482,6 +482,7 @@ class Parser
                 }
             }
         }
+
         return $ramlData;
     }
 
@@ -509,6 +510,7 @@ class Parser
                 $definition[$key] = $this->addNamespacePrefix($nameSpace, $definition[$key]);
             }
         }
+
         return $definition;
     }
 
