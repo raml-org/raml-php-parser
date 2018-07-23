@@ -278,12 +278,6 @@ class ApiDefinition implements ArrayInstantiationInterface
             }
         }
 
-        if (isset($data['traits'])) {
-            foreach ($data['traits'] as $name => $definition) {
-                $apiDefinition->addTrait(ApiDefinition::determineTrait($name, $definition));
-            }
-        }
-
         // resolve type inheritance
         $apiDefinition->getTypes()->applyInheritance();
 
