@@ -396,7 +396,7 @@ class Parser
 
                 // If we're using protocol specific parsers, see if we have one to use.
                 if ($this->configuration->isSchemaSecuritySchemeParsingEnabled()) {
-                    if (isset($securityScheme['type'],$this->securitySettingsParsers[$securityScheme['type']])
+                    if (isset($securityScheme['type'], $this->securitySettingsParsers[$securityScheme['type']])
                     ) {
                         $parser = $this->securitySettingsParsers[$securityScheme['type']];
                     }
@@ -438,6 +438,78 @@ class Parser
         }
 
         return $ramlData;
+    }
+
+    /**
+     * @param array $ramlData
+     * @param string $rootDir
+     * @return array
+     */
+    private function parseLibraries(array $ramlData, $rootDir)
+    {
+        if (!isset($ramlData['uses'])) {
+            return $ramlData;
+        }
+
+        foreach ($ramlData['uses'] as $nameSpace => $import) {
+            $fileName = $import;
+            $dir = $rootDir;
+
+            if (filter_var($import, FILTER_VALIDATE_URL) !== false) {
+                $fileName = basename($import);
+                $dir = dirname($import);
+            }
+            $library = $this->loadAndParseFile($fileName, $dir);
+            $library = $this->parseLibraries($library, $dir . '/' . dirname($fileName));
+            foreach ($library as $key => $item) {
+                if (
+                    in_array(
+                        $key,
+                        [
+                            'types',
+                            'traits',
+                            'annotationTypes',
+                            'securitySchemes',
+                            'resourceTypes',
+                            'schemas',
+                        ],
+                        true
+                    )) {
+                    foreach ($item as $itemName => $itemData) {
+                        $itemData = $this->addNamespacePrefix($nameSpace, $itemData);
+                        $ramlData[$key][$nameSpace . '.' . $itemName] = $itemData;
+                    }
+                }
+            }
+        }
+        return $ramlData;
+    }
+
+    /**
+     * @param string $nameSpace
+     * @param array $definition
+     * @return array
+     */
+    private function addNamespacePrefix($nameSpace, array $definition)
+    {
+        foreach ($definition as $key => $item) {
+            if (in_array($key, ['type', 'is'])) {
+                if (is_array($item)) {
+                    foreach ($item as $itemKey => $itemValue) {
+                        if (!in_array($itemValue, ApiDefinition::getStraightForwardTypes(), true)) {
+                            $definition[$key][$itemKey] = $nameSpace . '.' . $itemValue;
+                        }
+                    }
+                } else {
+                    if (!in_array($item, ApiDefinition::getStraightForwardTypes(), true)) {
+                        $definition[$key] = $nameSpace . '.' . $item;
+                    }
+                }
+            } elseif (is_array($definition[$key])) {
+                $definition[$key] = $this->addNamespacePrefix($nameSpace, $definition[$key]);
+            }
+        }
+        return $definition;
     }
 
     /**
