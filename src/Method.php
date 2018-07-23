@@ -397,11 +397,18 @@ class Method implements ArrayInstantiationInterface, MessageSchemaInterface
             throw new EmptyBodyException();
         }
 
-        if (!isset($this->bodyList[$type])) {
-            throw new \Exception("No body of type '$type'");
+        if (isset($this->bodyList[$type])) {
+            return $this->bodyList[$type];
         }
 
-        return $this->bodyList[$type];
+        if (($pos = strpos($type, ';')) !== false) {
+            $type = substr($type, 0, $pos);
+            if (isset($this->bodyList[$type])) {
+                return $this->bodyList[$type];
+            }
+        }
+
+        throw new \Exception(sprintf('No body of type "%s"', $type));
     }
 
     /**

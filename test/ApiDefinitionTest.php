@@ -15,6 +15,7 @@ class ApiDefinitionTest extends PHPUnit_Framework_TestCase
     {
         parent::setUp();
         $this->parser = new \Raml\Parser();
+        setlocale(LC_NUMERIC, 'C');
     }
 
     /** @test */
@@ -202,8 +203,7 @@ class ApiDefinitionTest extends PHPUnit_Framework_TestCase
                         "firstname": "Archie",
                         "lastname": "Ark",
                         "age": 40,
-                        "kind": "Admin",
-                        "clearanceLevel": "low"
+                        "kind": "Admin"
                     }
                 ],
                 "phone": "123-23"
@@ -424,5 +424,15 @@ class ApiDefinitionTest extends PHPUnit_Framework_TestCase
                 $checkObjectidentity = false
             );
         }
+    }
+
+
+    /** @test */
+    public function shouldReturnFullResourcesNameForRamlFileWithUrlPrefix()
+    {
+        $api = $this->parser->parse(__DIR__.'/fixture/includeUrlPrefix.raml');
+        $this->assertEquals([
+            '/prefix/songs',
+        ], array_keys($api->getResources()));
     }
 }

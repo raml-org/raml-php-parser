@@ -61,22 +61,40 @@ class TraitParserHelper
                         return strtolower($values[$matches[1]]);
                         break;
                     case 'lowercamelcase':
-                        return StringTransformer::convertString($values[$matches[1]], StringTransformer::LOWER_CAMEL_CASE);
+                        return StringTransformer::convertString(
+                            $values[$matches[1]],
+                            StringTransformer::LOWER_CAMEL_CASE
+                        );
                         break;
                     case 'uppercamelcase':
-                        return StringTransformer::convertString($values[$matches[1]], StringTransformer::UPPER_CAMEL_CASE);
+                        return StringTransformer::convertString(
+                            $values[$matches[1]],
+                            StringTransformer::UPPER_CAMEL_CASE
+                        );
                         break;
                     case 'lowerunderscorecase':
-                        return StringTransformer::convertString($values[$matches[1]], StringTransformer::LOWER_UNDERSCORE_CASE);
+                        return StringTransformer::convertString(
+                            $values[$matches[1]],
+                            StringTransformer::LOWER_UNDERSCORE_CASE
+                        );
                         break;
                     case 'upperunderscorecase':
-                        return StringTransformer::convertString($values[$matches[1]], StringTransformer::UPPER_UNDERSCORE_CASE);
+                        return StringTransformer::convertString(
+                            $values[$matches[1]],
+                            StringTransformer::UPPER_UNDERSCORE_CASE
+                        );
                         break;
                     case 'lowerhyphencase':
-                        return StringTransformer::convertString($values[$matches[1]], StringTransformer::LOWER_HYPHEN_CASE);
+                        return StringTransformer::convertString(
+                            $values[$matches[1]],
+                            StringTransformer::LOWER_HYPHEN_CASE
+                        );
                         break;
                     case 'upperhyphencase':
-                        return StringTransformer::convertString($values[$matches[1]], StringTransformer::UPPER_HYPHEN_CASE);
+                        return StringTransformer::convertString(
+                            $values[$matches[1]],
+                            StringTransformer::UPPER_HYPHEN_CASE
+                        );
                         break;
                     default:
                         return $values[$matches[1]];

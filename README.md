@@ -9,7 +9,7 @@ See the RAML spec here: https://github.com/raml-org/raml-spec
 For RAML 0.8 support follow version 2.
 
 ## RAML 1.0 Support
-For RAML 1.0 support follow version 3. RAML 1.0 support is still work in progress.
+For RAML 1.0 support follow version 3 or above. RAML 1.0 support is still work in progress.
 
 _What is done and should work:_
   - Part of RAML 1.0 [type expressions](https://github.com/raml-org/raml-spec/blob/master/versions/raml-10/raml-10.md/#type-expressions)
@@ -28,7 +28,6 @@ _To be implemented:_
   - [Annotations](https://github.com/raml-org/raml-spec/blob/master/versions/raml-10/raml-10.md/#annotations)
   - [Overlays and Extensions](https://github.com/raml-org/raml-spec/blob/master/versions/raml-10/raml-10.md/#overlays-and-extensions)
   - [Improved Security Schemes](https://github.com/raml-org/raml-spec/blob/master/versions/raml-10/raml-10.md/#security-schemes)
-
 
 ### Get started
 Requires:

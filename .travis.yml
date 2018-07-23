@@ -14,7 +14,7 @@ matrix:
   allow_failures:
     - php: hhvm
     - php: nightly
-    
+
 before_script:
   - composer install --dev --no-interaction
 
@@ -23,5 +23,5 @@ script:
   - ./vendor/bin/phpunit --coverage-clover build/logs/clover.xml
 
 after_script:
- -  ./vendor/bin/coveralls -v
- -  ./vendor/bin/phpcs --report=summary --standard=PSR1,PSR2 src
+  - ./vendor/bin/coveralls -v
+  - ./vendor/bin/phpcs --report=summary --standard=PSR1,PSR2 src
