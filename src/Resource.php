@@ -178,12 +178,6 @@ class Resource implements ArrayInstantiationInterface
             }
         }
 
-        if (isset($data['is'])) {
-            foreach ((array)$data['is'] as $traitName) {
-                $resource->addTrait(TraitCollection::getInstance()->getTraitByName($traitName));
-            }
-        }
-
         foreach ($data as $key => $value) {
             if (strpos($key, '/') === 0) {
                 $value = $value ?: [];
