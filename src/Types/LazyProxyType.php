@@ -13,11 +13,9 @@ use Raml\ApiDefinition;
 class LazyProxyType extends Type
 {
     /**
-     * original type
-     *
      * @var TypeInterface
-     **/
-    private $wrappedObject = null;
+     */
+    private $wrappedObject;
 
     /**
      * @var TypeInterface[]
@@ -101,6 +99,7 @@ class LazyProxyType extends Type
             }
             $this->properties[$name] = $property;
         }
+
         return $this->properties;
     }
 
@@ -115,7 +114,7 @@ class LazyProxyType extends Type
     {
         $original = $this->getResolvedObject();
 
-        return call_user_func_array(array($original, $name), $params);
+        return call_user_func_array([$original, $name], $params);
     }
 
     /**
@@ -157,7 +156,7 @@ class LazyProxyType extends Type
     }
 
     /**
-     * @return boolean
+     * @return bool
      */
     public function isValid()
     {
@@ -172,6 +171,7 @@ class LazyProxyType extends Type
         $object = $this->getWrappedObject();
         if ($object instanceof self) {
             $definition = $object->getDefinitionRecursive();
+
             return ApiDefinition::determineType($this->getName(), $definition);
         }
 

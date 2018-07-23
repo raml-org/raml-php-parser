@@ -44,7 +44,6 @@ class TypeTest extends PHPUnit_Framework_TestCase
     /** @test */
     public function shouldCorrectlyValidateCorrectTypeMissingRequired()
     {
-
         $simpleRaml = $this->parser->parse(__DIR__ . '/fixture/simple_types.raml');
         $resource = $simpleRaml->getResourceByUri('/songs');
         $method = $resource->getMethod('get');
@@ -99,7 +98,6 @@ class TypeTest extends PHPUnit_Framework_TestCase
 
         $type->validate(json_decode('{"var": 10}', true));
         self::assertFalse($type->isValid());
-
     }
 
     /** @test */
@@ -128,7 +126,6 @@ class TypeTest extends PHPUnit_Framework_TestCase
 
         $type->validate(json_decode('{"datetimeOnly": "2017-12 15:50:48"}', true));
         self::assertFalse($type->isValid());
-
     }
 
     /** @test */
@@ -145,7 +142,6 @@ class TypeTest extends PHPUnit_Framework_TestCase
         self::assertTrue($type->isValid());
     }
 
-
     /** @test */
     public function shouldCorrectlyValidateWrongDateOnlyTypes()
     {
@@ -158,7 +154,6 @@ class TypeTest extends PHPUnit_Framework_TestCase
 
         $type->validate(json_decode('{"dateOnly": "2017-12-07T15:50:48"}', true));
         self::assertFalse($type->isValid());
-
     }
 
     /** @test */

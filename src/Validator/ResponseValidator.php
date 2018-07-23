@@ -85,7 +85,7 @@ class ResponseValidator
                         $schemaHeader->validate($headerValue);
                     } catch (ValidationException $exception) {
                         $message = sprintf(
-                            'Response header %s with value "%s" for %s %s '.
+                            'Response header %s with value "%s" for %s %s ' .
                                 'with status code %s does not match schema: %s',
                             $key,
                             $headerValue,
@@ -139,14 +139,14 @@ class ResponseValidator
      */
     private function getNamedParametersAsString(array $errors)
     {
-        return join(', ', array_map(function (NamedParameter $parameter) {
+        return implode(', ', array_map(function (NamedParameter $parameter) {
             return $parameter->getDisplayName();
         }, $errors));
     }
 
     private function getTypeValidationErrorsAsString(array $errors)
     {
-        return join(', ', array_map(function (TypeValidationError $error) {
+        return implode(', ', array_map(function (TypeValidationError $error) {
             return $error->__toString();
         }, $errors));
     }

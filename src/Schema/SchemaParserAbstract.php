@@ -13,7 +13,7 @@ abstract class SchemaParserAbstract implements SchemaParserInterface
      *
      * @var string
      */
-    private $sourceUri = null;
+    private $sourceUri;
 
     /**
      * List of compatible content types for this parser

@@ -66,7 +66,7 @@ class ResponseValidatorTest extends PHPUnit_Framework_TestCase
     public function shouldCatchInvalidHeaders()
     {
         $headers = [
-            'X-Required-Header'      => ['123456'],
+            'X-Required-Header' => ['123456'],
             'X-Long-Optional-Header' => ['Abcdefg', 'Abc'],
         ];
 
@@ -95,7 +95,7 @@ class ResponseValidatorTest extends PHPUnit_Framework_TestCase
         $json = '';
 
         $headers = [
-            'X-Required-Header'      => ['123456'],
+            'X-Required-Header' => ['123456'],
             'X-Long-Optional-Header' => ['Abcdefghijkl'],
         ];
 
@@ -129,7 +129,7 @@ class ResponseValidatorTest extends PHPUnit_Framework_TestCase
         $json = '{}';
 
         $headers = [
-            'X-Required-Header'      => ['123456'],
+            'X-Required-Header' => ['123456'],
             'X-Long-Optional-Header' => ['Abcdefghijkl'],
         ];
 

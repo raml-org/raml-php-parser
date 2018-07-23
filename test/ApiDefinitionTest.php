@@ -20,7 +20,7 @@ class ApiDefinitionTest extends PHPUnit_Framework_TestCase
     /** @test */
     public function shouldReturnFullResourcesForRamlFileWithDefaultFormatter()
     {
-        $api = $this->parser->parse(__DIR__.'/fixture/includeSchema.raml');
+        $api = $this->parser->parse(__DIR__ . '/fixture/includeSchema.raml');
         $routes = $api->getResourcesAsUri();
 
         $this->assertCount(4, $routes->getRoutes());
@@ -35,7 +35,7 @@ class ApiDefinitionTest extends PHPUnit_Framework_TestCase
     /** @test */
     public function shouldReturnFullResourcesForRamlFileWithNoFormatter()
     {
-        $api = $this->parser->parse(__DIR__.'/fixture/includeSchema.raml');
+        $api = $this->parser->parse(__DIR__ . '/fixture/includeSchema.raml');
 
         $noFormatter = new Raml\RouteFormatter\NoRouteFormatter();
         $routes = $api->getResourcesAsUri($noFormatter, $api->getResources());
@@ -52,9 +52,9 @@ class ApiDefinitionTest extends PHPUnit_Framework_TestCase
     /** @test */
     public function shouldReturnFullResourcesForRamlFileWithSymfonyFormatter()
     {
-        $api = $this->parser->parse(__DIR__.'/fixture/includeSchema.raml');
+        $api = $this->parser->parse(__DIR__ . '/fixture/includeSchema.raml');
 
-        $routeCollection= new Symfony\Component\Routing\RouteCollection();
+        $routeCollection = new Symfony\Component\Routing\RouteCollection();
         $routeFormatter = new Raml\RouteFormatter\SymfonyRouteFormatter($routeCollection);
         $routes = $api->getResourcesAsUri($routeFormatter, $api->getResources());
 
@@ -69,28 +69,74 @@ class ApiDefinitionTest extends PHPUnit_Framework_TestCase
     /** @test */
     public function shouldReturnURIProtocol()
     {
-        $api = $this->parser->parse(__DIR__.'/fixture/protocols/noProtocolSpecified.raml');
+        $api = $this->parser->parse(__DIR__ . '/fixture/protocols/noProtocolSpecified.raml');
         $this->assertCount(1, $api->getProtocols());
-        $this->assertSame(array(
+        $this->assertSame([
             'HTTP',
-        ), $api->getProtocols());
+        ], $api->getProtocols());
     }
 
     /** @test */
     public function shouldProcessTypes()
     {
-        $api = $this->parser->parse(__DIR__.'/fixture/types.raml');
+        $api = $this->parser->parse(__DIR__ . '/fixture/types.raml');
         $this->assertCount(1, $api->getTypes());
-        $this->assertSame(array(
-            'User' => array(
+        $this->assertSame([
+            'User' => [
                 'type' => 'object',
-                'properties' => array(
+                'properties' => [
                     'firstname' => 'string',
                     'lastname' => 'string',
                     'age' => 'number',
-                )
-            )
-        ), $api->getTypes()->toArray());
+                ]
+            ]
+        ], $api->getTypes()->toArray());
+    }
+
+    /** @test */
+    public function shouldBeAbleToAccessOriginalInheritanceTypes()
+    {
+        $api = $this->parser->parse(__DIR__ . '/fixture/raml-1.0/inheritanceTypes.raml');
+        /** @var LazyProxyType $adminType */
+        $adminType = $api->getTypes()->getTypeByName('Admin');
+        $this->assertInstanceOf(LazyProxyType::class, $adminType);
+        $this->assertCount(1, $adminType->getProperties());
+        foreach ($adminType->getProperties() as $property) {
+            if ($property->getName() === 'clearanceLevel') {
+                $this->assertTrue($property->getRequired());
+            }
+        }
+        $parent = $adminType->getParent();
+        $this->assertNotNull($parent);
+        $this->assertCount(4, $parent->getProperties());
+
+        /** @var LazyProxyType $managerType */
+        $managerType = $api->getTypes()->getTypeByName('Manager');
+        foreach ($managerType->getProperties() as $property) {
+            if ($property->getName() === 'clearanceLevel') {
+                $this->assertFalse($property->getRequired());
+            }
+        }
+    }
+
+    /** @test */
+    public function shouldParseLibraries()
+    {
+        $this->parser->configuration->allowRemoteFileInclusion();
+        $api = $this->parser->parse(__DIR__ . '/fixture/raml-1.0/types.raml');
+        /** @var \Raml\Types\ObjectType $fileType */
+        $fileType = $api->getTypes()->getTypeByName('Library.File');
+        /** @var \Raml\Types\ObjectType $folderType */
+        $folderType = $api->getTypes()->getTypeByName('Library.Folder');
+
+        $this->assertNotNull($fileType);
+        $this->assertNotNull($folderType);
+
+        /** @var \Raml\Types\ArrayType $property */
+        $property = $folderType->getPropertyByName('files');
+        $this->assertSame($fileType, $property->getItems());
+
+        $this->parser->configuration->forbidRemoteFileInclusion();
     }
 
     /** @test */
@@ -142,7 +188,7 @@ class ApiDefinitionTest extends PHPUnit_Framework_TestCase
     /** @test */
     public function shouldParseTypesToSubTypes()
     {
-        $api = $this->parser->parse(__DIR__.'/fixture/raml-1.0/types.raml');
+        $api = $this->parser->parse(__DIR__ . '/fixture/raml-1.0/types.raml');
         $types = $api->getTypes();
         $object = $types->current();
         $this->assertInstanceOf('\Raml\Types\ObjectType', $object);
@@ -153,7 +199,7 @@ class ApiDefinitionTest extends PHPUnit_Framework_TestCase
     /** @test */
     public function shouldParseComplexTypes()
     {
-        $api = $this->parser->parse(__DIR__.'/fixture/raml-1.0/complexTypes.raml');
+        $api = $this->parser->parse(__DIR__ . '/fixture/raml-1.0/complexTypes.raml');
         // check types
         $org = $api->getTypes()->getTypeByName('Org');
         $this->assertInstanceOf('\Raml\Types\ObjectType', $org);
@@ -211,13 +257,13 @@ class ApiDefinitionTest extends PHPUnit_Framework_TestCase
         }';
         $type = $body->getType();
         $type->validate(json_decode($validResponse, true));
-        self::assertTrue($type->isValid(), sprintf("Validation failed with following errors: %s", implode(', ', array_map('strval', $type->getErrors()))));
+        self::assertTrue($type->isValid(), sprintf('Validation failed with following errors: %s', implode(', ', array_map('strval', $type->getErrors()))));
     }
 
     /** @test */
     public function shouldRejectMissingParameterResponse()
     {
-        $api = $this->parser->parse(__DIR__.'/fixture/raml-1.0/complexTypes.raml');
+        $api = $this->parser->parse(__DIR__ . '/fixture/raml-1.0/complexTypes.raml');
         $body = $api->getResourceByPath('/orgs/{orgId}')->getMethod('get')->getResponse(200)->getBodyByType('application/json');
         /* @var $body \Raml\Body */
         $type = $body->getType();
@@ -245,35 +291,35 @@ class ApiDefinitionTest extends PHPUnit_Framework_TestCase
     /** @test */
     public function shouldRejectInvalidIntegerParameterResponse()
     {
-        $api = $this->parser->parse(__DIR__.'/fixture/raml-1.0/complexTypes.raml');
+        $api = $this->parser->parse(__DIR__ . '/fixture/raml-1.0/complexTypes.raml');
         $body = $api->getResourceByPath('/orgs/{orgId}')->getMethod('get')->getResponse(200)->getBodyByType('application/json');
         /* @var $body \Raml\Body */
         $type = $body->getType();
 
         $invalidResponse = [
             'onCall' => [
-                "firstname" => "John",
-                "lastname" => "Flare",
-                "age" => 18.5,
-                "kind" => "AlertableAdmin",
-                "clearanceLevel" => "low",
-                "phone" => "12321",
+                'firstname' => 'John',
+                'lastname' => 'Flare',
+                'age' => 18.5,
+                'kind' => 'AlertableAdmin',
+                'clearanceLevel' => 'low',
+                'phone' => '12321',
             ],
             'Head' => [
-                "firstname" => "Nico",
-                "lastname" => "Ark",
-                "age" => 71,
-                "kind" => "Manager",
-                "reports" => [
+                'firstname' => 'Nico',
+                'lastname' => 'Ark',
+                'age' => 71,
+                'kind' => 'Manager',
+                'reports' => [
                     [
-                        "firstname" => "Archie",
-                        "lastname" => "Ark",
-                        "kind" => "Admin",
-                        "age" => 17,
-                        "clearanceLevel" => "low",
+                        'firstname' => 'Archie',
+                        'lastname' => 'Ark',
+                        'kind' => 'Admin',
+                        'age' => 17,
+                        'clearanceLevel' => 'low',
                     ],
                 ],
-                "phone" => "123-23"
+                'phone' => '123-23'
             ]
         ];
 
@@ -295,35 +341,35 @@ class ApiDefinitionTest extends PHPUnit_Framework_TestCase
     /** @test */
     public function shouldRejectInvalidStringParameterResponse()
     {
-        $api = $this->parser->parse(__DIR__.'/fixture/raml-1.0/complexTypes.raml');
+        $api = $this->parser->parse(__DIR__ . '/fixture/raml-1.0/complexTypes.raml');
         $body = $api->getResourceByPath('/orgs/{orgId}')->getMethod('get')->getResponse(200)->getBodyByType('application/json');
         /* @var $body \Raml\Body */
         $type = $body->getType();
 
         $invalidResponse = [
             'onCall' => [
-                "firstname" => "John",
-                "lastname" => "F",
-                "age" => 30,
-                "kind" => "AlertableAdmin",
-                "clearanceLevel" => "low",
-                "phone" => "12321",
+                'firstname' => 'John',
+                'lastname' => 'F',
+                'age' => 30,
+                'kind' => 'AlertableAdmin',
+                'clearanceLevel' => 'low',
+                'phone' => '12321',
             ],
             'Head' => [
-                "firstname" => "Nico von Teufelspieler, the true duke of northern Blasphomores",
-                "lastname" => "Ark",
-                "age" => 30,
-                "kind" => "Manager",
-                "reports" => [
+                'firstname' => 'Nico von Teufelspieler, the true duke of northern Blasphomores',
+                'lastname' => 'Ark',
+                'age' => 30,
+                'kind' => 'Manager',
+                'reports' => [
                     [
-                        "firstname" => "Archie",
-                        "lastname" => "Ark",
-                        "kind" => "Admin",
-                        "age" => 30,
-                        "clearanceLevel" => "low",
+                        'firstname' => 'Archie',
+                        'lastname' => 'Ark',
+                        'kind' => 'Admin',
+                        'age' => 30,
+                        'clearanceLevel' => 'low',
                     ],
                 ],
-                "phone" => "123-23 33 22"
+                'phone' => '123-23 33 22'
             ]
         ];
 
@@ -345,34 +391,34 @@ class ApiDefinitionTest extends PHPUnit_Framework_TestCase
     /** @test */
     public function shouldRejectInvalidEnumParameterResponse()
     {
-        $api = $this->parser->parse(__DIR__.'/fixture/raml-1.0/complexTypes.raml');
+        $api = $this->parser->parse(__DIR__ . '/fixture/raml-1.0/complexTypes.raml');
         $body = $api->getResourceByPath('/orgs/{orgId}')->getMethod('get')->getResponse(200)->getBodyByType('application/json');
         /* @var $body \Raml\Body */
         $type = $body->getType();
 
         $invalidResponse = [
             'onCall' => [
-                "firstname" => "John",
-                "lastname" => "Flare",
-                "age" => 30,
-                "kind" => "AlertableAdmin",
-                "clearanceLevel" => "average",
-                "phone" => "12321",
+                'firstname' => 'John',
+                'lastname' => 'Flare',
+                'age' => 30,
+                'kind' => 'AlertableAdmin',
+                'clearanceLevel' => 'average',
+                'phone' => '12321',
             ],
             'Head' => [
-                "firstname" => "Nico",
-                "lastname" => "Ark",
-                "age" => 30,
-                "kind" => "Manager",
-                "reports" => [
+                'firstname' => 'Nico',
+                'lastname' => 'Ark',
+                'age' => 30,
+                'kind' => 'Manager',
+                'reports' => [
                     [
-                        "firstname" => "Archie",
-                        "lastname" => "Ark",
-                        "kind" => "Admin",
-                        "age" => 30,
+                        'firstname' => 'Archie',
+                        'lastname' => 'Ark',
+                        'kind' => 'Admin',
+                        'age' => 30,
                     ],
                 ],
-                "phone" => "123-23"
+                'phone' => '123-23'
             ]
         ];
 
@@ -392,12 +438,12 @@ class ApiDefinitionTest extends PHPUnit_Framework_TestCase
     /** @test */
     public function shouldReturnProtocolsIfSpecified()
     {
-        $api = $this->parser->parse(__DIR__.'/fixture/protocols/protocolsSpecified.raml');
+        $api = $this->parser->parse(__DIR__ . '/fixture/protocols/protocolsSpecified.raml');
         $this->assertCount(2, $api->getProtocols());
-        $this->assertSame(array(
+        $this->assertSame([
             'HTTP',
             'HTTPS'
-        ), $api->getProtocols());
+        ], $api->getProtocols());
     }
 
     /** @test */
@@ -405,7 +451,7 @@ class ApiDefinitionTest extends PHPUnit_Framework_TestCase
     {
         $this->setExpectedException('Raml\Exception\BadParameter\InvalidProtocolException');
 
-        $this->parser->parse(__DIR__.'/fixture/protocols/invalidProtocolsSpecified.raml');
+        $this->parser->parse(__DIR__ . '/fixture/protocols/invalidProtocolsSpecified.raml');
     }
 
     /**

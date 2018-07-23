@@ -13,6 +13,7 @@ use Raml\Type;
 class DatetimeOnlyType extends Type
 {
     const FORMAT = "Y-m-d\TH:i:s";
+
     /**
     * Create a new DateTimeOnlyType from an array of data
     *

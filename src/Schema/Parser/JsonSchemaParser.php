@@ -9,7 +9,6 @@ use Raml\Schema\Definition\JsonSchemaDefinition;
 
 class JsonSchemaParser extends SchemaParserAbstract
 {
-
     /**
      * List of known JSON content types
      *
@@ -61,7 +60,7 @@ class JsonSchemaParser extends SchemaParserAbstract
             }
 
             if (is_array($value)) {
-                $data->{$key} = array_map(function($val) use ($schemaStorage) {
+                $data->{$key} = array_map(function ($val) use ($schemaStorage) {
                     return $this->resolveRefSchemaRecursively($val, $schemaStorage);
                 }, $value);
             }

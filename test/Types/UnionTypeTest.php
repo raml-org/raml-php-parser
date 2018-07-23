@@ -76,10 +76,10 @@ class UnionTypeTest extends PHPUnit_Framework_TestCase
         $type->validate(null);
         self::assertTrue($type->isValid());
 
-        $type->validate("");
+        $type->validate('');
         self::assertTrue($type->isValid());
 
-        $type->validate("string");
+        $type->validate('string');
         self::assertTrue($type->isValid());
 
         $type->validate(1);

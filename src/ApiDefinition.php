@@ -143,14 +143,14 @@ class ApiDefinition implements ArrayInstantiationInterface
      *
      * @var TypeCollection
      */
-    private $types = null;
+    private $types;
 
     /**
      * A list of traits
      *
      * @var TraitCollection
      */
-    private $traits = null;
+    private $traits;
 
     // ---
 
@@ -196,7 +196,7 @@ class ApiDefinition implements ArrayInstantiationInterface
         $apiDefinition = new static($title);
 
         if (isset($data['version'])) {
-            $apiDefinition->version  = $data['version'];
+            $apiDefinition->version = $data['version'];
         }
 
         if (isset($data['baseUrl'])) {
@@ -234,13 +234,13 @@ class ApiDefinition implements ArrayInstantiationInterface
             $apiDefinition->setDefaultMediaType($data['defaultMediaType']);
         }
 
-        if (isset($data['schemas']) && isset($data['types'])) {
+        if (isset($data['schemas'], $data['types'])) {
             throw new MutuallyExclusiveElementsException();
         }
 
         if (isset($data['schemas'])) {
             foreach ($data['schemas'] as $name => $schema) {
-                $apiDefinition->addType(ApiDefinition::determineType($name, $schema));
+                $apiDefinition->addType(self::determineType($name, $schema));
             }
         }
 
@@ -268,7 +268,13 @@ class ApiDefinition implements ArrayInstantiationInterface
 
         if (isset($data['types'])) {
             foreach ($data['types'] as $name => $definition) {
-                $apiDefinition->addType(ApiDefinition::determineType($name, $definition));
+                $apiDefinition->addType(self::determineType($name, $definition));
+            }
+        }
+
+        if (isset($data['traits'])) {
+            foreach ($data['traits'] as $name => $definition) {
+                $apiDefinition->addTrait(self::determineTrait($name, $definition));
             }
         }
 
@@ -348,7 +354,6 @@ class ApiDefinition implements ArrayInstantiationInterface
         // we never returned so throw exception
         throw new ResourceNotFoundException($path);
     }
-
 
     /**
      * Returns all the resources as a URI, essentially documenting the entire API Definition.
@@ -450,7 +455,7 @@ class ApiDefinition implements ArrayInstantiationInterface
     // --
 
     /**
-     * @return boolean
+     * @return bool
      */
     public function supportsHttp()
     {
@@ -458,7 +463,7 @@ class ApiDefinition implements ArrayInstantiationInterface
     }
 
     /**
-     * @return boolean
+     * @return bool
      */
     public function supportsHttps()
     {
@@ -623,13 +628,14 @@ class ApiDefinition implements ArrayInstantiationInterface
 
         $type = $definition['type'] ?: 'null';
 
-        if (!in_array($type, ['','any'])) {
+        if (!in_array($type, ['', 'any'])) {
             if (in_array($type, static::getStraightForwardTypes())) {
                 $className = sprintf(
                     'Raml\Types\%sType',
                     StringTransformer::convertString($type, StringTransformer::UPPER_CAMEL_CASE)
                 );
-                return forward_static_call_array([$className,'createFromArray'], [$name, $definition]);
+
+                return forward_static_call_array([$className, 'createFromArray'], [$name, $definition]);
             }
             // if $type contains a '|' we can safely assume it's a combination of types (union)
             if (strpos($type, '|') !== false) {

@@ -33,7 +33,7 @@ class XmlType extends Type
         /* @var $type StringType */
 
         $type->xml = $data;
-        
+
         return $type;
     }
 
@@ -61,7 +61,7 @@ class XmlType extends Type
 
             return;
         }
-        
+
         libxml_use_internal_errors($originalErrorLevel);
     }
 }

@@ -33,7 +33,7 @@ class JsonType extends Type
         /* @var $type StringType */
 
         $type->json = $data;
-        
+
         return $type;
     }
 
@@ -41,7 +41,7 @@ class JsonType extends Type
      * Validate a JSON string against the schema
      * - Converts the string into a JSON object then uses the JsonSchema Validator to validate
      *
-     * @param $string 
+     * @param $string
      *
      * @return bool
      */

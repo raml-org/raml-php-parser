@@ -40,7 +40,6 @@ class TraitCollection implements \Iterator
         $this->collection = [];
         $this->position = 0;
     }
- 
     /**
      * The object is created from within the class itself
      * only if the class has no instance.
@@ -50,9 +49,9 @@ class TraitCollection implements \Iterator
     public static function getInstance()
     {
         if (self::$instance == null) {
-            self::$instance = new TraitCollection();
+            self::$instance = new self();
         }
-    
+
         return self::$instance;
     }
 
@@ -64,6 +63,7 @@ class TraitCollection implements \Iterator
         if ($this->valid()) {
             return $this->collection[$this->position];
         }
+
         throw new InvalidKeyException($this->position);
     }
 
@@ -77,7 +77,7 @@ class TraitCollection implements \Iterator
 
     public function next()
     {
-        ++$this->position;
+        $this->position++;
     }
 
     public function rewind()
@@ -120,9 +120,11 @@ class TraitCollection implements \Iterator
         foreach ($this->collection as $key => $trait) {
             if ($trait === $traitToRemove) {
                 unset($this->collection[$key]);
+
                 return;
             }
         }
+
         throw new Exception(sprintf('Cannot remove given trait %s', var_export($traitToRemove, true)));
     }
 
@@ -147,6 +149,7 @@ class TraitCollection implements \Iterator
                 return $trait->parseVariables($variables);
             }
         }
+
         throw new Exception(sprintf('No trait found for name %s, list: %s', var_export($name, true), var_export($this->collection, true)));
     }
 
@@ -161,6 +164,7 @@ class TraitCollection implements \Iterator
         foreach ($this->collection as $trait) {
             $types[$trait->getName()] = $trait->toArray();
         }
+
         return $types;
     }
 

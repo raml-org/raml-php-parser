@@ -1,7 +1,7 @@
 <?php
+
 namespace Raml;
 
-use Inflect\Inflect;
 use Raml\Exception\BadParameter\FileNotFoundException;
 use Raml\Exception\InvalidSchemaFormatException;
 use Raml\Exception\RamlParserException;
@@ -23,7 +23,6 @@ use Symfony\Component\Yaml\Yaml;
  */
 class Parser
 {
-
     /**
      * Array of cached files
      * No point in fetching them twice
@@ -366,7 +365,8 @@ class Parser
      * @param string $data
      * @return string
      */
-    private function getCachedFilePath($data) {
+    private function getCachedFilePath($data)
+    {
         $key = md5($data);
 
         return array_key_exists($key, $this->cachedFilesPaths) ? $this->cachedFilesPaths[$key] : null;
@@ -390,17 +390,17 @@ class Parser
             } else {
                 $parser = false;
             }
-            $securitySchemes[$key] = $securitySchemeData;
-            $securityScheme = $securitySchemes[$key];
 
-            // If we're using protocol specific parsers, see if we have one to use.
-            if ($this->configuration->isSchemaSecuritySchemeParsingEnabled()) {
-                if (isset($securityScheme['type']) &&
-                    isset($this->securitySettingsParsers[$securityScheme['type']])
-                ) {
-                    $parser = $this->securitySettingsParsers[$securityScheme['type']];
+                $securitySchemes[$key] = $securitySchemeData;
+                $securityScheme = $securitySchemes[$key];
+
+                // If we're using protocol specific parsers, see if we have one to use.
+                if ($this->configuration->isSchemaSecuritySchemeParsingEnabled()) {
+                    if (isset($securityScheme['type'],$this->securitySettingsParsers[$securityScheme['type']])
+                    ) {
+                        $parser = $this->securitySettingsParsers[$securityScheme['type']];
+                    }
                 }
-            }
 
             // If we found a parser, create it's settings object.
             if ($parser) {
@@ -438,78 +438,6 @@ class Parser
         }
 
         return $ramlData;
-    }
-
-    /**
-     * @param array $ramlData
-     * @param string $rootDir
-     * @return array
-     */
-    private function parseLibraries(array $ramlData, $rootDir)
-    {
-        if (!isset($ramlData['uses'])) {
-            return $ramlData;
-        }
-
-        foreach ($ramlData['uses'] as $nameSpace => $import) {
-            $fileName = $import;
-            $dir = $rootDir;
-
-            if (filter_var($import, FILTER_VALIDATE_URL) !== false) {
-                $fileName = basename($import);
-                $dir = dirname($import);
-            }
-            $library = $this->loadAndParseFile($fileName, $dir);
-            $library = $this->parseLibraries($library, $dir . '/' . dirname($fileName));
-            foreach ($library as $key => $item) {
-                if (
-                    in_array(
-                        $key,
-                        [
-                            'types',
-                            'traits',
-                            'annotationTypes',
-                            'securitySchemes',
-                            'resourceTypes',
-                            'schemas',
-                        ],
-                        true
-                    )) {
-                    foreach ($item as $itemName => $itemData) {
-                        $itemData = $this->addNamespacePrefix($nameSpace, $itemData);
-                        $ramlData[$key][$nameSpace . '.' . $itemName] = $itemData;
-                    }
-                }
-            }
-        }
-        return $ramlData;
-    }
-
-    /**
-     * @param string $nameSpace
-     * @param array $definition
-     * @return array
-     */
-    private function addNamespacePrefix($nameSpace, array $definition)
-    {
-        foreach ($definition as $key => $item) {
-            if (in_array($key, ['type', 'is'])) {
-                if (is_array($item)) {
-                    foreach ($item as $itemKey => $itemValue) {
-                        if (!in_array($itemValue, ApiDefinition::getStraightForwardTypes(), true)) {
-                            $definition[$key][$itemKey] = $nameSpace . '.' . $itemValue;
-                        }
-                    }
-                } else {
-                    if (!in_array($item, ApiDefinition::getStraightForwardTypes(), true)) {
-                        $definition[$key] = $nameSpace . '.' . $item;
-                    }
-                }
-            } elseif (is_array($definition[$key])) {
-                $definition[$key] = $this->addNamespacePrefix($nameSpace, $definition[$key]);
-            }
-        }
-        return $definition;
     }
 
     /**
@@ -676,17 +604,18 @@ class Parser
     private function includeAndParseFiles($structure, $rootDir)
     {
         if (is_array($structure)) {
-            $result = array();
+            $result = [];
             foreach ($structure as $key => $structureElement) {
                 $result[$key] = $this->includeAndParseFiles($structureElement, $rootDir);
             }
 
             return $result;
-        } elseif (strpos($structure, '!include') === 0) {
-            return $this->loadAndParseFile(str_replace('!include ', '', $structure), $rootDir);
-        } else {
-            return $structure;
         }
+        if (strpos($structure, '!include') === 0) {
+            return $this->loadAndParseFile(str_replace('!include ', '', $structure), $rootDir);
+        }
+
+        return $structure;
     }
 
     /**
@@ -734,7 +663,6 @@ class Parser
                     $newArray[$key] = $newValue;
                 }
             }
-
         }
 
         return $newArray;
@@ -787,7 +715,6 @@ class Parser
                     $newArray[$key] = $newValue;
                 }
             }
-
         }
 
         return $newArray;

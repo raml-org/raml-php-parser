@@ -54,7 +54,7 @@ class OAuth2SecuritySettings implements SecuritySettingsInterface
      */
     public static function createFromArray(array $data, SecuritySettingsInterface $sourceSettings = null)
     {
-        if ($sourceSettings && !$sourceSettings instanceof OAuth2SecuritySettings) {
+        if ($sourceSettings && !$sourceSettings instanceof self) {
             throw new \Exception();
         }
 
