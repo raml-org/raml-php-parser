@@ -17,21 +17,21 @@ class ObjectType extends Type
      *
      * @var \Raml\Type[]
      **/
-    private $properties = null;
+    private $properties;
 
     /**
      * The minimum number of properties allowed for instances of this type.
      *
      * @var int
      **/
-    private $minProperties = null;
+    private $minProperties;
 
     /**
      * The maximum number of properties allowed for instances of this type.
      *
      * @var int
      **/
-    private $maxProperties = null;
+    private $maxProperties;
 
     /**
      * A Boolean that indicates if an object instance has additional properties.
@@ -49,7 +49,7 @@ class ObjectType extends Type
      *
      * @var string
      **/
-    protected $discriminator = null;
+    protected $discriminator;
 
     /**
      * Identifies the declaring type.
@@ -60,7 +60,7 @@ class ObjectType extends Type
      *
      * @var string
      **/
-    private $discriminatorValue = null;
+    private $discriminatorValue;
 
     /**
      * Create a new ObjectType from an array of data
@@ -79,21 +79,27 @@ class ObjectType extends Type
             switch ($key) {
                 case 'properties':
                     $type->setProperties($value);
+
                     break;
                 case 'minProperties':
                     $type->setMinProperties($value);
+
                     break;
                 case 'maxProperties':
                     $type->setMinProperties($value);
+
                     break;
                 case 'additionalProperties':
                     $type->setAdditionalProperties($value);
+
                     break;
                 case 'discriminator':
                     $type->setDiscriminator($value);
+
                     break;
                 case 'discriminatorValue':
                     $type->setDiscriminatorValue($value);
+
                     break;
             }
         }
@@ -163,8 +169,6 @@ class ObjectType extends Type
 
         return null;
     }
-
-
 
     /**
      * Get the value of Min Properties
@@ -294,13 +298,14 @@ class ObjectType extends Type
         if (!is_array($value)) {
             if (!is_object($value)) {
                 $this->errors[] = TypeValidationError::unexpectedValueType($this->getName(), 'object', $value);
+
                 return;
             }
             // in case of stdClass - convert it to array for convenience
             $value = get_object_vars($value);
         }
         foreach ($this->getProperties() as $property) {
-            if ($property->getRequired()&& !array_key_exists($property->getName(), $value)) {
+            if ($property->getRequired() && !array_key_exists($property->getName(), $value)) {
                 $this->errors[] = TypeValidationError::missingRequiredProperty($property->getName());
             }
         }
@@ -310,11 +315,16 @@ class ObjectType extends Type
                 if ($this->additionalProperties === false) {
                     $this->errors[] = TypeValidationError::unexpectedProperty($name);
                 }
+
                 continue;
             }
+
             $property->validate($propertyValue);
-            if (!$property->isValid()) {
-                $this->errors = array_merge($this->errors, $property->getErrors());
+            if ($property->isValid()) {
+                continue;
+            }
+            foreach ($property->getErrors() as $error) {
+                $this->errors[] = $error;
             }
         }
     }

@@ -16,7 +16,7 @@ class StringType extends Type
      *
      * @var string
      **/
-    private $pattern = null;
+    private $pattern;
 
     /**
      * Minimum length of the string. Value MUST be equal to or greater than 0.
@@ -24,7 +24,7 @@ class StringType extends Type
      *
      * @var int
      **/
-    private $minLength = null;
+    private $minLength;
 
     /**
      * Maximum length of the string. Value MUST be equal to or greater than 0.
@@ -32,7 +32,7 @@ class StringType extends Type
      *
      * @var int
      **/
-    private $maxLength = null;
+    private $maxLength;
 
     /**
     * Create a new StringType from an array of data
@@ -51,16 +51,19 @@ class StringType extends Type
             switch ($key) {
                 case 'pattern':
                     $type->setPattern($value);
+
                     break;
                 case 'minLength':
                     $type->setMinLength($value);
+
                     break;
                 case 'maxLength':
                     $type->setMaxLength($value);
+
                     break;
             }
         }
-        
+
         return $type;
     }
 
@@ -143,17 +146,17 @@ class StringType extends Type
         if (!is_string($value)) {
             $this->errors[] = TypeValidationError::unexpectedValueType($this->getName(), 'string', $value);
         }
-        if (!is_null($this->pattern)) {
-            if (preg_match('/'.$this->pattern.'/', $value) == false) {
+        if (null !== $this->pattern) {
+            if (preg_match('/' . $this->pattern . '/', $value) == false) {
                 $this->errors[] = TypeValidationError::stringPatternMismatch($this->getName(), $this->pattern, $value);
             }
         }
-        if (!is_null($this->minLength)) {
+        if (null !== $this->minLength) {
             if (strlen($value) < $this->minLength) {
                 $this->errors[] = TypeValidationError::stringLengthExceedsMinimum($this->getName(), $this->minLength, $value);
             }
         }
-        if (!is_null($this->maxLength)) {
+        if (null !== $this->maxLength) {
             if (strlen($value) > $this->maxLength) {
                 $this->errors[] = TypeValidationError::stringLengthExceedsMaximum($this->getName(), $this->maxLength, $value);
             }

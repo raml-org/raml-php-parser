@@ -14,7 +14,7 @@ class ValidatorSchemaHelperTest extends PHPUnit_Framework_TestCase
         parent::setUp();
         $this->parser = new \Raml\Parser();
     }
-    
+
     /**
      * @param string $fixturePath
      * @return ValidatorSchemaHelper

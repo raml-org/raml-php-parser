@@ -4,7 +4,7 @@ namespace Raml\Types;
 
 /**
  * IntegerType class
- * 
+ *
  * @author Melvin Loos <m.loos@infopact.nl>
  */
 class IntegerType extends NumberType

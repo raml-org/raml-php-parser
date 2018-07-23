@@ -33,6 +33,7 @@ class DateTimeType extends Type
             switch ($key) {
                 case 'format':
                     $type->setFormat($value);
+
                     break;
             }
         }

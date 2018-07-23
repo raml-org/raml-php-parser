@@ -44,7 +44,7 @@ class TraitDefinition implements ArrayInstantiationInterface
     /**
      * @param string $name
      */
-    function __construct($name)
+    public function __construct($name)
     {
         $this->name = $name;
         $this->queryParameters = [];
@@ -82,7 +82,7 @@ class TraitDefinition implements ArrayInstantiationInterface
             $class->setHeaders($headers);
         }
         if (isset($data['is'])) {
-            $class->traits = (array)$data['is'];
+            $class->traits = (array) $data['is'];
         }
 
         $class->setDefinition($data);
@@ -105,6 +105,7 @@ class TraitDefinition implements ArrayInstantiationInterface
     public function parseVariables(array $variables)
     {
         $definition = TraitParserHelper::applyVariables($variables, $this->getDefinition());
+
         return static::createFromArray($this->getName(), $definition);
     }
 
@@ -124,6 +125,7 @@ class TraitDefinition implements ArrayInstantiationInterface
     public function setName($name)
     {
         $this->name = $name;
+
         return $this;
     }
 
@@ -143,6 +145,7 @@ class TraitDefinition implements ArrayInstantiationInterface
     public function setQueryParameters($queryParameters)
     {
         $this->queryParameters = $queryParameters;
+
         return $this;
     }
 
@@ -162,6 +165,7 @@ class TraitDefinition implements ArrayInstantiationInterface
     public function setUsage($usage)
     {
         $this->usage = $usage;
+
         return $this;
     }
 
@@ -181,6 +185,7 @@ class TraitDefinition implements ArrayInstantiationInterface
     public function setDescription($description)
     {
         $this->description = $description;
+
         return $this;
     }
 
@@ -200,6 +205,7 @@ class TraitDefinition implements ArrayInstantiationInterface
     public function setHeaders($headers)
     {
         $this->headers = $headers;
+
         return $this;
     }
 
@@ -209,7 +215,7 @@ class TraitDefinition implements ArrayInstantiationInterface
     public function getTraits()
     {
         foreach ($this->traits as $key => $item) {
-            if (!$item instanceof TraitDefinition) {
+            if (!$item instanceof self) {
                 $this->traits[$key] = TraitCollection::getInstance()->getTraitByName($item);
             }
         }
@@ -225,6 +231,7 @@ class TraitDefinition implements ArrayInstantiationInterface
     public function setTraits($traits)
     {
         $this->traits = $traits;
+
         return $this;
     }
 
@@ -244,6 +251,7 @@ class TraitDefinition implements ArrayInstantiationInterface
     public function setDefinition($definition)
     {
         $this->definition = $definition;
+
         return $this;
     }
 }

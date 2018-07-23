@@ -176,7 +176,7 @@ class TypeValidationError
      * @param string $property
      * @param $min $expected
      * @param $max $expected
-     * @param integer $actual
+     * @param int $actual
      * @return TypeValidationError
      */
     public static function arraySizeValidationFailed($property, $min, $max, $actual)

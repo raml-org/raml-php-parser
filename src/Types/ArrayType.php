@@ -13,7 +13,6 @@ use Raml\TypeInterface;
  */
 class ArrayType extends Type
 {
-
     /**
      * Scalar types which we can validate
      */
@@ -76,19 +75,24 @@ class ArrayType extends Type
             switch ($key) {
                 case 'uniqueItems':
                     $type->setUniqueItems($value);
+
                     break;
                 case 'items':
                     if (is_array($value) && isset($value['type'])) {
                         $type->setItems($value['type']);
+
                         break;
                     }
                     $type->setItems($value);
+
                     break;
                 case 'minItems':
                     $type->setMinItems($value);
+
                     break;
                 case 'maxItems':
                     $type->setMaxItems($value);
+
                     break;
             }
         }
@@ -181,6 +185,7 @@ class ArrayType extends Type
                             $valueItem
                         );
                     }
+
                     break;
                 case 'string':
                     if (!is_string($valueItem)) {
@@ -190,6 +195,7 @@ class ArrayType extends Type
                             $valueItem
                         );
                     }
+
                     break;
                 case 'boolean':
                     if (!is_bool($valueItem)) {
@@ -199,6 +205,7 @@ class ArrayType extends Type
                             $valueItem
                         );
                     }
+
                     break;
                 case 'number':
                     if (!is_float($valueItem) && !is_int($valueItem)) {
@@ -208,6 +215,7 @@ class ArrayType extends Type
                             $valueItem
                         );
                     }
+
                     break;
             }
         }
