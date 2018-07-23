@@ -219,12 +219,6 @@ class Method implements ArrayInstantiationInterface, MessageSchemaInterface
             }
         }
 
-        if (isset($data['is'])) {
-            foreach ((array)$data['is'] as $traitName) {
-                $method->addTrait(TraitCollection::getInstance()->getTraitByName($traitName));
-            }
-        }
-
         return $method;
     }
 
