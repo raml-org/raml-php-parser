@@ -17,6 +17,7 @@ _What is done and should work:_
   - Union type expression (the "or" `|` operator)
   - Array of types
   - `discriminator` and `discriminatorValue` facets
+  - Traits inheritance
 
 _To be implemented:_
   - [Libraries](https://github.com/raml-org/raml-spec/blob/master/versions/raml-10/raml-10.md/#libraries)
@@ -47,10 +48,10 @@ $title = $apiDef->getTitle();
 
 ### Parsing schemas
 The library can convert schemas into an validation object. There is a default list, or they can be configured manually.
-Each schema parser needs to conform to `\Raml\Schema\SchemaParserInterface` and will return a instance of 
-`\Raml\Schema\SchemaDefinitionInterface`.
+Each schema parser needs to conform to `Raml\Schema\SchemaParserInterface` and will return a instance of 
+`Raml\Schema\SchemaDefinitionInterface`.
 
-Additional parsers and schema definitions can be created and passed into the `\Raml\Parser` constructor
+Additional parsers and schema definitions can be created and passed into the `Raml\Parser` constructor
 
 ### Exporting routes
 It is also possible to export the entire RAML file to an array of the full endpoints. For example, considering
@@ -68,10 +69,10 @@ $routes = $api->getResourcesAsUri();
 To return:
 ```php
 [
-	GET /songs => ...
-	POST /songs => ...
-	GET /songs/{songId} => ...
-	DELETE /songs/{songId} => ...
+    GET /songs => ...
+    POST /songs => ...
+    GET /songs/{songId} => ...
+    DELETE /songs/{songId} => ...
 ]
 
 $routes = $api->getResourcesAsUri(new Raml\RouteFormatter\NoRouteFormatter());
