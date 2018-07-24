@@ -6,36 +6,66 @@ cache:
   directories:
     - $HOME/.composer/cache
 
-matrix:
-  include:
-    - php: 5.5
-    - php: 5.6
-    - php: 7.0
-    - php: 7.1
-    - php: 7.2
-    - php: hhvm
-    - php: nightly
-  allow_failures:
-    - php: hhvm
-    - php: nightly
+php:
+  - 5.5
+  - 5.6
+  - 7.0
+  - 7.1.18
+  - 7.2
+  - nightly
 
-before_script:
-  - composer install --no-interaction
-  # Disable xdebug, there is no use of it being enabled
-  - mv ~/.phpenv/versions/$(phpenv version-name)/etc/conf.d/xdebug.ini{,.disabled} || echo "xdebug not available"
-  # Prevent Travis throwing an out of memory error
+env:
+  global:
+    - LATEST_PHP_VERSION="7.2"
+  matrix:
+    - DEPENDENCIES="low"
+    - DEPENDENCIES="beta"
+
+matrix:
+  fast_finish: true
+  allow_failures:
+    - php: nightly
+    - env: DEPENDENCIES="beta"
+
+before_install:
   - echo "memory_limit=-1" >> ~/.phpenv/versions/$(phpenv version-name)/etc/conf.d/travis.ini
-  # Test if we have a token for github as the project may hit the 60 rph limit some day
-  - if [ -n "$GH_TOKEN" ]; then composer config github-oauth.github.com ${GH_TOKEN}; fi;
+  - if [ -n "$GH_TOKEN" ]; then
+      composer config github-oauth.github.com ${GH_TOKEN};
+    fi;
+  - mkdir -p build/logs
+
+install:
+  - if [ "$DEPENDENCIES" = "beta" ]; then
+      composer config minimum-stability beta;
+    fi;
+  - if [ "$(phpenv version-name)" != "$LATEST_PHP_VERSION" ]; then
+      composer remove friendsofphp/php-cs-fixer --dev;
+      composer remove phpstan/phpstan --dev;
+    fi
+  - composer update -n --prefer-dist
 
 script:
-  - mkdir -p build/logs
-  - bin/phpunit --coverage-clover build/logs/clover.xml
+  - if [ "$(phpenv version-name)" != "$LATEST_PHP_VERSION" ]; then
+      echo "File validation is skipped for older PHP versions";
+    else
+      composer validate-files;
+    fi;
+  - if [ "$(phpenv version-name)" != "$LATEST_PHP_VERSION" ]; then
+      echo "Static analysis is skipped for older PHP versions";
+    else
+      composer run-static-analysis;
+    fi;
+  - if [ "$(phpenv version-name)" != "$LATEST_PHP_VERSION" ]; then
+      echo "Code style check is skipped for older PHP versions";
+    else
+      composer check-code-style;
+    fi;
+  - if [ "$(phpenv version-name)" < 7.1 ]; then
+      echo "Security check is skipped due to security-checker issue 100";
+    else
+      composer check-security;
+    fi;
+  - composer run-tests-with-clover
 
 after_script:
-  - composer validate-files
-  - if [ $(phpenv version-name) = "7.2" ]; then composer run-static-analysis; fi;
-  - if [ $(phpenv version-name) != "5.5" ]; then composer check-code-style; fi;
-  - composer check-security
-  - composer run-tests
-  - ./vendor/bin/coveralls -v
+  - php bin/coveralls -v
