@@ -16,6 +16,7 @@ use Raml\SecurityScheme\SecuritySettingsParser\OAuth1SecuritySettingsParser;
 use Raml\SecurityScheme\SecuritySettingsParser\OAuth2SecuritySettingsParser;
 use Raml\SecurityScheme\SecuritySettingsParserInterface;
 use Raml\Utility\TraitParserHelper;
+use Symfony\Component\Yaml\Tag\TaggedValue;
 use Symfony\Component\Yaml\Yaml;
 
 /**
@@ -74,10 +75,10 @@ class Parser
      * - Optionally pass a list of parsers to use
      * - If null is passed then the default schemaParsers are used
      *
-     * @param SchemaParserInterface[]           $schemaParsers
+     * @param SchemaParserInterface[] $schemaParsers
      * @param SecuritySettingsParserInterface[] $securitySettingsParsers
-     * @param FileLoaderInterface[]             $fileLoaders
-     * @param ParseConfiguration                $config
+     * @param FileLoaderInterface[] $fileLoaders
+     * @param ParseConfiguration $config
      */
     public function __construct(
         array $schemaParsers = null,
@@ -96,7 +97,7 @@ class Parser
         if ($schemaParsers === null) {
             $schemaParsers = [
                 new JsonSchemaParser(),
-                new XmlSchemaParser()
+                new XmlSchemaParser(),
             ];
         }
 
@@ -112,7 +113,7 @@ class Parser
             $securitySettingsParsers = [
                 new OAuth1SecuritySettingsParser(),
                 new OAuth2SecuritySettingsParser(),
-                new DefaultSecuritySettingsParser()
+                new DefaultSecuritySettingsParser(),
             ];
         }
 
@@ -127,7 +128,7 @@ class Parser
         if ($fileLoaders === null) {
             $fileLoaders = [
                 new JsonSchemaFileLoader(),
-                new DefaultFileLoader()
+                new DefaultFileLoader(),
             ];
         }
 
@@ -321,7 +322,7 @@ class Parser
     /**
      * Recurses though resources and replaces schema strings
      *
-     * @param array  $array
+     * @param array $array
      * @param string $rootDir
      *
      * @throws InvalidSchemaFormatException
@@ -573,7 +574,7 @@ class Parser
         }
 
         if (strpos($header, '#%RAML') === 0) {
-            // @todo extract the vesion of the raml and do something with it
+            // @todo extract the raml version and do something with it
 
             $data = $this->includeAndParseFiles(
                 $data,
@@ -595,7 +596,10 @@ class Parser
      */
     private function parseYaml($fileData)
     {
-        return Yaml::parse($fileData, Yaml::PARSE_EXCEPTION_ON_INVALID_TYPE & Yaml::PARSE_OBJECT);
+        return Yaml::parse(
+            $fileData,
+            Yaml::PARSE_EXCEPTION_ON_INVALID_TYPE | Yaml::PARSE_OBJECT | Yaml::PARSE_CUSTOM_TAGS
+        );
     }
 
     /**
@@ -671,8 +675,8 @@ class Parser
     /**
      * Recurse through the structure and load includes
      *
-     * @param array|string $structure
-     * @param string       $rootDir
+     * @param array|string|TaggedValue $structure
+     * @param string $rootDir
      *
      * @return array
      */
@@ -686,6 +690,11 @@ class Parser
 
             return $result;
         }
+
+        if ($structure instanceof TaggedValue && $structure->getTag() === 'include') {
+            return $this->loadAndParseFile($structure->getValue(), $rootDir);
+        }
+
         if (strpos($structure, '!include') === 0) {
             return $this->loadAndParseFile(str_replace('!include ', '', $structure), $rootDir);
         }
@@ -696,8 +705,8 @@ class Parser
     /**
      * Insert the traits into the RAML file
      *
-     * @param string|array  $raml
-     * @param array  $traits
+     * @param string|array $raml
+     * @param array $traits
      * @param string $path
      * @param string $name
      *
@@ -726,6 +735,8 @@ class Parser
                     } elseif (isset($traits[$traitName])) {
                         $trait = $traits[$traitName];
                     }
+                    // @todo Refactor as can be resource greedy
+                    // @see https://github.com/kalessil/phpinspectionsea/blob/master/docs/performance.md#slow-array-function-used-in-loop
                     $newArray = array_replace_recursive($newArray, $this->replaceTraits($trait, $traits, $path, $name));
                 }
                 $newArray['is'] = $value;
@@ -733,6 +744,8 @@ class Parser
                 $newValue = $this->replaceTraits($value, $traits, $path, $name);
 
                 if (isset($newArray[$key]) && is_array($newArray[$key])) {
+                    // @todo Refactor as can be resource greedy
+                    // @see https://github.com/kalessil/phpinspectionsea/blob/master/docs/performance.md#slow-array-function-used-in-loop
                     $newArray[$key] = array_replace_recursive($newArray[$key], $newValue);
                 } else {
                     $newArray[$key] = $newValue;
@@ -746,11 +759,11 @@ class Parser
     /**
      * Insert the types into the RAML file
      *
-     * @param array  $raml
-     * @param array  $types
+     * @param string|array $raml
+     * @param array $types
      * @param string $path
      * @param string $name
-     * @param string $parentKey
+     * @param string|null $parentKey
      *
      * @return array
      */

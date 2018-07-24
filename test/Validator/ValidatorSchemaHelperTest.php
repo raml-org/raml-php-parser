@@ -75,6 +75,14 @@ class ValidatorSchemaHelperTest extends PHPUnit_Framework_TestCase
     }
 
     /** @test */
+    public function shouldCorrectlyReturnResponseBodyWithCompositeMediaType()
+    {
+        $helper = $this->getHelperForSchema(__DIR__ . '/../fixture/validator/requestBody.raml');
+        $actual = $helper->getRequestBody('post', '/songs', 'application/json;charset=UTF-8');
+        $this->assertInstanceOf('\Raml\Body', $actual);
+    }
+
+    /** @test */
     public function shouldThrowExceptionIfResponseBodyIsNotABodyObject()
     {
         $this->setExpectedException(

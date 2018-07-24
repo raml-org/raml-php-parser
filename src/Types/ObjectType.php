@@ -39,7 +39,7 @@ class ObjectType extends Type
      *
      * @var bool
      **/
-    private $additionalProperties;
+    private $additionalProperties = true;
 
     /**
      * Determines the concrete type of an individual object at runtime when,
@@ -318,9 +318,13 @@ class ObjectType extends Type
 
                 continue;
             }
+
             $property->validate($propertyValue);
-            if (!$property->isValid()) {
-                $this->errors = array_merge($this->errors, $property->getErrors());
+            if ($property->isValid()) {
+                continue;
+            }
+            foreach ($property->getErrors() as $error) {
+                $this->errors[] = $error;
             }
         }
     }
