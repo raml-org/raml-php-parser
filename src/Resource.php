@@ -66,7 +66,7 @@ class Resource implements ArrayInstantiationInterface
     /**
      * List of resources under this resource
      *
-     * @var resource[]
+     * @var Resource[]
      */
     private $subResources = [];
 
@@ -83,7 +83,7 @@ class Resource implements ArrayInstantiationInterface
     private $traits = [];
 
     /**
-     * @var resource|null
+     * @var Resource|null
      */
     private $parentResource;
 
@@ -463,7 +463,7 @@ class Resource implements ArrayInstantiationInterface
     }
 
     /**
-     * @return resource|null
+     * @return Resource|null
      */
     public function getParentResource()
     {
@@ -471,7 +471,7 @@ class Resource implements ArrayInstantiationInterface
     }
 
     /**
-     * @param resource $parentResource
+     * @param Resource $parentResource
      *
      * @return $this
      */
