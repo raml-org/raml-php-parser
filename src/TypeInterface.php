@@ -11,7 +11,7 @@ interface TypeInterface extends ValidatorInterface
 {
     /**
      * Returns the name of the Type.
-     **/
+     */
     public function getName();
 
     /**

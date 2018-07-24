@@ -6,15 +6,11 @@ use Raml\Exception\InvalidQueryParameterTypeException;
 use Raml\Exception\ValidationException;
 
 /**
- * Named Parameters
- *
  * @see http://raml.org/spec.html#named-parameters
  */
 class NamedParameter implements ArrayInstantiationInterface
 {
-    // ---
     // Type constants
-
     const TYPE_STRING = 'string';
     const TYPE_NUMBER = 'number';
     const TYPE_INTEGER = 'integer';
@@ -23,9 +19,7 @@ class NamedParameter implements ArrayInstantiationInterface
     const TYPE_FILE = 'file';
     const TYPE_ARRAY = 'array';
 
-    // ---
     // Validation exception codes
-
     const VAL_NOTBOOLEAN = 1;
     const VAL_NOTDATE = 2;
     const VAL_NOTSTRING = 3;
@@ -54,8 +48,6 @@ class NamedParameter implements ArrayInstantiationInterface
         self::TYPE_FILE,
         self::TYPE_ARRAY,
     ];
-
-    // ---
 
     /**
      * The key of the named parameter (required)
@@ -210,8 +202,8 @@ class NamedParameter implements ArrayInstantiationInterface
     /**
      * Create a Query Parameter from an Array
      *
-     * @param $key
-     * @param $data
+     * @param string $key
+     * @param array $data
      * [
      *  displayName:        ?string
      *  description:        ?string
@@ -232,7 +224,7 @@ class NamedParameter implements ArrayInstantiationInterface
      *
      * @throws \Exception
      *
-     * @return NamedParameter
+     * @return self
      */
     public static function createFromArray($key, array $data = [])
     {
@@ -467,7 +459,7 @@ class NamedParameter implements ArrayInstantiationInterface
     /**
      * Set maxLength
      *
-     * @param int $minLength
+     * @param int $maxLength
      *
      * @throws \Exception
      */
@@ -541,11 +533,13 @@ class NamedParameter implements ArrayInstantiationInterface
     /**
      * Get the example
      *
+     * @param int $position
+     *
      * @return string
      */
-    public function getExample()
+    public function getExample($position = 0)
     {
-        return $this->examples[0];
+        return $this->examples[$position];
     }
 
     /**
@@ -575,7 +569,7 @@ class NamedParameter implements ArrayInstantiationInterface
      *
      * @return bool
      */
-    public function canBeRepeated()
+    public function canRepeat()
     {
         return $this->repeat;
     }
@@ -583,11 +577,11 @@ class NamedParameter implements ArrayInstantiationInterface
     /**
      * Set if the parameter can be repeated
      *
-     * @param bool $repeated
+     * @param bool $repeat
      */
-    public function setRepeat($repeated)
+    public function setRepeat($repeat)
     {
-        $this->repeated = (bool) $repeated;
+        $this->repeat = (bool) $repeat;
     }
 
     // --

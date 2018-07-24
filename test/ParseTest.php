@@ -237,7 +237,7 @@ RAML;
         $this->assertInstanceOf('\Raml\Response', $response);
     }
 
-    /** @test **/
+    /** @test */
     public function shouldReturnAnExampleForType()
     {
         $simpleRaml = $this->parser->parse(__DIR__ . '/fixture/simple.raml');

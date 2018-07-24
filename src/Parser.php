@@ -53,7 +53,7 @@ class Parser
      * List of types
      *
      * @var string
-     **/
+     */
     private $types = [];
 
     /**
@@ -71,6 +71,11 @@ class Parser
     private $fileLoaders = [];
 
     /**
+     * @var ParseConfiguration
+     */
+    private $configuration;
+
+    /**
      * Create a new parser object
      * - Optionally pass a list of parsers to use
      * - If null is passed then the default schemaParsers are used
@@ -78,17 +83,17 @@ class Parser
      * @param SchemaParserInterface[] $schemaParsers
      * @param SecuritySettingsParserInterface[] $securitySettingsParsers
      * @param FileLoaderInterface[] $fileLoaders
-     * @param ParseConfiguration $config
+     * @param ParseConfiguration $configuration
      */
     public function __construct(
         array $schemaParsers = null,
         array $securitySettingsParsers = null,
         array $fileLoaders = null,
-        ParseConfiguration $config = null
+        ParseConfiguration $configuration = null
     ) {
         // ---
         // parse settings
-        $this->configuration = $config ?: new ParseConfiguration();
+        $this->configuration = $configuration ?: new ParseConfiguration();
 
         // ---
         // add schema parsers
@@ -165,7 +170,7 @@ class Parser
      * Add a new type
      *
      * @param TypeInterface $type Type to add.
-     **/
+     */
     public function addType(TypeInterface $type)
     {
         $this->types[$type->getName()] = $type;

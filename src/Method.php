@@ -505,7 +505,9 @@ class Method implements ArrayInstantiationInterface, MessageSchemaInterface
                     if (in_array($bodyType, array_keys($describedBy->getBodies(), true)) &&
                         in_array($bodyType, WebFormBody::$validMediaTypes, true)
                     ) {
-                        $params = $describedBy->getBodyByType($bodyType)->getParameters();
+                        $body = $describedBy->getBodyByType($bodyType);
+                        assert($body instanceof WebFormBody);
+                        $params = $body->getParameters();
 
                         foreach ($params as $parameterName => $namedParameter) {
                             $body->addParameter($namedParameter);

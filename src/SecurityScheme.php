@@ -61,7 +61,7 @@ class SecurityScheme implements ArrayInstantiationInterface
     /**
      * Create a new security scheme
      *
-     * @param $key
+     * @param string $key
      */
     public function __construct($key)
     {

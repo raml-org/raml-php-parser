@@ -20,6 +20,7 @@ class IntegerType extends NumberType
     public static function createFromArray($name, array $data = [])
     {
         $type = parent::createFromArray($name, $data);
+        assert($type instanceof self);
         if (!$type->getFormat()) {
             $type->setFormat('int');
         }

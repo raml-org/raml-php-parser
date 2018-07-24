@@ -32,7 +32,7 @@ final class JsonSchemaDefinition implements SchemaDefinitionInterface
      * Validate a JSON string against the schema
      * - Converts the string into a JSON object then uses the JsonSchema Validator to validate
      *
-     * @param $value
+     * @param mixed $value
      *
      * @throws \Exception
      */

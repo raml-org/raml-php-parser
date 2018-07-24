@@ -7,7 +7,7 @@ use Raml\Types\TypeValidationError;
 interface ValidatorInterface
 {
     /**
-     * @param $value
+     * @param mixed $value
      */
     public function validate($value);
 

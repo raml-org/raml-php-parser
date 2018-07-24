@@ -4,7 +4,6 @@ namespace Raml\Schema;
 
 /**
  * Adapter between third party parser and RAML parser
- *
  */
 abstract class SchemaParserAbstract implements SchemaParserInterface
 {
@@ -23,13 +22,10 @@ abstract class SchemaParserAbstract implements SchemaParserInterface
      */
     protected $compatibleContentTypes = [];
 
-    // ---
-    // SchemaParserInterface
-
     /**
      * Set the sourceUri for the RAML file in order to fetch relative paths
      *
-     * @param $sourceUri
+     * @param string $sourceUri
      */
     public function setSourceUri($sourceUri)
     {
@@ -55,8 +51,6 @@ abstract class SchemaParserAbstract implements SchemaParserInterface
         return $this->compatibleContentTypes;
     }
 
-    // --
-
     /**
      * Get the source uri;
      *
@@ -68,9 +62,9 @@ abstract class SchemaParserAbstract implements SchemaParserInterface
     }
 
     /**
-     * Add an aditional supported content type
+     * Add an additional supported content type
      *
-     * @param $contentType
+     * @param string $contentType
      */
     public function addCompatibleContentType($contentType)
     {

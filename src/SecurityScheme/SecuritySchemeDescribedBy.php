@@ -3,6 +3,7 @@
 namespace Raml\SecurityScheme;
 
 use Raml\ArrayInstantiationInterface;
+use Raml\BodyInterface;
 use Raml\NamedParameter;
 use Raml\Response;
 
@@ -19,8 +20,6 @@ class SecuritySchemeDescribedBy implements ArrayInstantiationInterface
      * @var string
      */
     private $key;
-
-    // --
 
     /**
      * A list of non default headers (optional)
@@ -53,9 +52,6 @@ class SecuritySchemeDescribedBy implements ArrayInstantiationInterface
      * @var BodyInterface[]
      */
     private $bodyList = [];
-
-
-    // ---
 
     /**
      * Create a new security scheme description
@@ -156,7 +152,7 @@ class SecuritySchemeDescribedBy implements ArrayInstantiationInterface
      *
      * @param BodyInterface $body
      */
-    public function addBody(\Raml\BodyInterface $body)
+    public function addBody(BodyInterface $body)
     {
         $this->bodyList[$body->getMediaType()] = $body;
     }

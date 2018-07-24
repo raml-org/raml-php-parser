@@ -3,8 +3,6 @@
 namespace Raml;
 
 /**
- * Named Parameters
- *
  * @see http://raml.org/spec.html#resources-and-nested-resources
  */
 class Resource implements ArrayInstantiationInterface
@@ -66,7 +64,7 @@ class Resource implements ArrayInstantiationInterface
     /**
      * List of resources under this resource
      *
-     * @var resource[]
+     * @var Resource[]
      */
     private $subResources = [];
 
@@ -210,7 +208,7 @@ class Resource implements ArrayInstantiationInterface
     /**
      * Does a uri match this resource
      *
-     * @param $uri
+     * @param string $uri
      *
      * @return bool
      */

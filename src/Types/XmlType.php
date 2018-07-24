@@ -16,7 +16,7 @@ class XmlType extends Type
      * XML schema
      *
      * @var string
-     **/
+     */
     private $xml;
 
     /**
@@ -25,13 +25,12 @@ class XmlType extends Type
     * @param string    $name
     * @param array     $data
     *
-    * @return StringType
+    * @return self
     */
     public static function createFromArray($name, array $data = [])
     {
         $type = parent::createFromArray($name, $data);
-        /* @var $type StringType */
-
+        assert($type instanceof self);
         $type->xml = $data;
 
         return $type;
@@ -40,7 +39,7 @@ class XmlType extends Type
     /**
      * Validate an XML string against the schema
      *
-     * @param $string
+     * @param mixed $value
      */
     public function validate($value)
     {

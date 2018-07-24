@@ -23,7 +23,7 @@ class XmlSchemaParser extends SchemaParserAbstract
     /**
      * Create a new XML Schema definition from a string
      *
-     * @param $schemaString
+     * @param string $schemaString
      *
      * @return \Raml\Schema\Definition\XmlSchemaDefinition
      */
