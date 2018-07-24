@@ -86,7 +86,7 @@ class SecuritySchemeDescribedBy implements ArrayInstantiationInterface
 
         if (isset($data['body'])) {
             foreach ($data['body'] as $key => $bodyData) {
-                if (in_array($key, \Raml\WebFormBody::$validMediaTypes)) {
+                if (in_array($key, \Raml\WebFormBody::$validMediaTypes, true)) {
                     $body = \Raml\WebFormBody::createFromArray($key, $bodyData);
                 } else {
                     $body = \Raml\Body::createFromArray($key, $bodyData);

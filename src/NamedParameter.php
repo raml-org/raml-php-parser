@@ -373,7 +373,7 @@ class NamedParameter implements ArrayInstantiationInterface
      */
     public function setType($type = 'string')
     {
-        if (!in_array($type, $this->validTypes)) {
+        if (!in_array($type, $this->validTypes, true)) {
             throw new InvalidQueryParameterTypeException($type, $this->validTypes);
         }
 
@@ -501,7 +501,7 @@ class NamedParameter implements ArrayInstantiationInterface
      */
     public function setMinimum($minimum)
     {
-        if (!in_array($this->type, [self::TYPE_INTEGER, self::TYPE_NUMBER])) {
+        if (!in_array($this->type, [self::TYPE_INTEGER, self::TYPE_NUMBER], true)) {
             throw new \Exception('minimum can only be set on type "integer" or "number');
         }
 
@@ -529,7 +529,7 @@ class NamedParameter implements ArrayInstantiationInterface
      */
     public function setMaximum($maximum)
     {
-        if (!in_array($this->type, [self::TYPE_INTEGER, self::TYPE_NUMBER])) {
+        if (!in_array($this->type, [self::TYPE_INTEGER, self::TYPE_NUMBER], true)) {
             throw new \Exception('maximum can only be set on type "integer" or "number');
         }
 
@@ -830,9 +830,7 @@ class NamedParameter implements ArrayInstantiationInterface
          *
          * @link http://raml.org/spec.html#enum
          */
-        if (is_array($enum = $this->getEnum()) &&
-            !in_array($param, $enum)
-        ) {
+        if (is_array($enum = $this->getEnum()) && !in_array($param, $enum, true)) {
             throw new ValidationException(
                 $this->getKey() . ' must be one of the following: ' . implode(', ', $enum),
                 static::VAL_NOTENUMVALUE

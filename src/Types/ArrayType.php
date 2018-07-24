@@ -166,7 +166,7 @@ class ArrayType extends Type
             );
         }
 
-        if (in_array($this->items, self::$SCALAR_TYPES)) {
+        if (in_array($this->items, self::$SCALAR_TYPES, true)) {
             $this->validateScalars($value);
         } else {
             $this->validateObjects($value);

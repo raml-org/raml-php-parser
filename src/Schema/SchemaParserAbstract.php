@@ -74,7 +74,7 @@ abstract class SchemaParserAbstract implements SchemaParserInterface
      */
     public function addCompatibleContentType($contentType)
     {
-        if (!in_array($contentType, $this->compatibleContentTypes)) {
+        if (!in_array($contentType, $this->compatibleContentTypes, true)) {
             $this->compatibleContentTypes[] = $contentType;
         }
     }

@@ -496,7 +496,7 @@ class Parser
     private function addNamespacePrefix($nameSpace, array $definition)
     {
         foreach ($definition as $key => $item) {
-            if (in_array($key, ['type', 'is'])) {
+            if (in_array($key, ['type', 'is'], true)) {
                 if (is_array($item)) {
                     foreach ($item as $itemKey => $itemValue) {
                         if (!in_array($itemValue, ApiDefinition::getStraightForwardTypes(), true)) {
@@ -644,7 +644,7 @@ class Parser
 
         $fileExtension = (pathinfo($fileName, PATHINFO_EXTENSION));
 
-        if (in_array($fileExtension, ['yaml', 'yml', 'raml'])) {
+        if (in_array($fileExtension, ['yaml', 'yml', 'raml'], true)) {
             $rootDir = dirname($rootDir . '/' . $fileName);
 
             // RAML and YAML files are always parsed
@@ -654,7 +654,7 @@ class Parser
             );
             $fileData = $this->includeAndParseFiles($fileData, $rootDir);
         } else {
-            if (in_array($fileExtension, array_keys($this->fileLoaders))) {
+            if (in_array($fileExtension, array_keys($this->fileLoaders), true)) {
                 $loader = $this->fileLoaders[$fileExtension];
             } else {
                 $loader = $this->fileLoaders['*'];

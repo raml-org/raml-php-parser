@@ -497,7 +497,7 @@ class ApiDefinition implements ArrayInstantiationInterface
      */
     private function addProtocol($protocol)
     {
-        if (!in_array($protocol, [self::PROTOCOL_HTTP, self::PROTOCOL_HTTPS])) {
+        if (!in_array($protocol, [self::PROTOCOL_HTTP, self::PROTOCOL_HTTPS], true)) {
             throw new InvalidProtocolException(sprintf('"%s" is not a valid protocol', $protocol));
         }
 
@@ -641,8 +641,8 @@ class ApiDefinition implements ArrayInstantiationInterface
 
         $type = $definition['type'] ?: 'null';
 
-        if (!in_array($type, ['', 'any'])) {
-            if (in_array($type, static::getStraightForwardTypes())) {
+        if (!in_array($type, ['', 'any'], true)) {
+            if (in_array($type, static::getStraightForwardTypes(), true)) {
                 $className = sprintf(
                     'Raml\Types\%sType',
                     StringTransformer::convertString($type, StringTransformer::UPPER_CAMEL_CASE)

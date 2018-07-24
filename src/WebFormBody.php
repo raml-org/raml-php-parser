@@ -33,7 +33,7 @@ class WebFormBody extends NamedParameter implements BodyInterface, ArrayInstanti
      */
     public function __construct($mediaType)
     {
-        if (!in_array($mediaType, self::$validMediaTypes)) {
+        if (!in_array($mediaType, self::$validMediaTypes, true)) {
             throw new \Exception('Invalid type');
         }
 

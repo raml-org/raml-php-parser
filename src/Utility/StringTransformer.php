@@ -30,7 +30,7 @@ class StringTransformer
      **/
     public static function convertString($string, $convertTo)
     {
-        if (!in_array($convertTo, self::$possibleTransformations)) {
+        if (!in_array($convertTo, self::$possibleTransformations, true)) {
             throw new \Exception('Invalid parameter "' . $convertTo . '" given for ' . __CLASS__ . __METHOD__);
         }
 

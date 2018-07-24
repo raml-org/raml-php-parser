@@ -187,7 +187,7 @@ class Resource implements ArrayInstantiationInterface
                         $apiDefinition
                     )
                 );
-            } elseif (in_array(strtoupper($key), Method::$validMethods)) {
+            } elseif (in_array(strtoupper($key), Method::$validMethods, true)) {
                 $resource->addMethod(
                     Method::createFromArray(
                         $key,

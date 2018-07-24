@@ -143,8 +143,8 @@ class NumberType extends Type
      */
     public function setFormat($format)
     {
-        if (!in_array($format, ['int32', 'int64', 'int', 'long', 'float', 'double', 'int16', 'int8'])) {
-            throw new \Exception(sprinf('Incorrect format given: "%s"', $format));
+        if (!in_array($format, ['int32', 'int64', 'int', 'long', 'float', 'double', 'int16', 'int8'], true)) {
+            throw new \Exception(sprintf('Incorrect format given: "%s"', $format));
         }
         $this->format = $format;
 
