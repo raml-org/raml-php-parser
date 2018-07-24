@@ -5,6 +5,7 @@
 # Test and composer files
 /vendor
 /build
+/.php_cs_cache
 /composer.lock
 /composer.phar
 

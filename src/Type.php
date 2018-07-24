@@ -18,38 +18,35 @@ class Type implements ArrayInstantiationInterface, TypeInterface
     protected $errors = [];
 
     /**
-     * Parent object
-     *
      * @var ObjectType|string
-     **/
+     */
     private $parent;
 
     /**
      * Key used for type
      *
      * @var string
-     **/
+     */
     private $name;
 
     /**
-     * Type
      *
      * @var string
-     **/
+     */
     protected $type;
 
     /**
      * Required
      *
      * @var bool
-     **/
+     */
     private $required = true;
 
     /**
      * Raml definition
      *
      * @var array
-     **/
+     */
     private $definition;
 
     /**
@@ -58,9 +55,9 @@ class Type implements ArrayInstantiationInterface, TypeInterface
     private $enum = [];
 
     /**
-     *  Create new type
+     * Create new type
      *
-     *  @param string   $name
+     * @param string $name
      */
     public function __construct($name)
     {
@@ -83,6 +80,7 @@ class Type implements ArrayInstantiationInterface, TypeInterface
 
         $class->setType($data['type']);
         if (isset($data['usage'])) {
+            assert($class instanceof TraitDefinition);
             $class->setUsage($data['usage']);
         }
         if (isset($data['required'])) {
@@ -167,7 +165,7 @@ class Type implements ArrayInstantiationInterface, TypeInterface
      * Set definition
      *
      * @param array $data Definition data of type.
-     **/
+     */
     public function setDefinition(array $data = [])
     {
         $this->definition = $data;
@@ -265,7 +263,7 @@ class Type implements ArrayInstantiationInterface, TypeInterface
      * Inherit properties from parent (recursively)
      *
      * @return self Returns the new object with inherited properties.
-     **/
+     */
     public function inheritFromParent()
     {
         if (!$this->hasParent()) {

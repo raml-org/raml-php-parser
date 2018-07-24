@@ -7,34 +7,34 @@ use Raml\Exception\InvalidKeyException;
 
 /**
  *  Singleton class used to register all traits in one place
- **/
+ */
 class TraitCollection implements \Iterator
 {
     /**
      * Hold the class instance.
      *
      * @var self
-     **/
+     */
     private static $instance = null;
 
     /**
      * Collection
      *
      * @var TraitDefinition[]
-     **/
+     */
     private $collection = [];
 
     /**
      * Current position
      *
      * @var int
-     **/
+     */
     private $position = 0;
 
     /**
     * prevent initiation from outside, there can be only one!
     *
-    **/
+    */
     private function __construct()
     {
         $this->collection = [];
@@ -46,10 +46,10 @@ class TraitCollection implements \Iterator
      * only if the class has no instance.
      *
      * @return TraitCollection
-     **/
+     */
     public static function getInstance()
     {
-        if (self::$instance == null) {
+        if (self::$instance === null) {
             self::$instance = new self();
         }
 
@@ -98,7 +98,7 @@ class TraitCollection implements \Iterator
      * Adds a Type to the collection
      *
      * @param TraitDefinition $traitToAdd Type to add.
-     **/
+     */
     public function add(TraitDefinition $traitToAdd)
     {
         foreach ($this->collection as $key => $trait) {
@@ -136,7 +136,7 @@ class TraitCollection implements \Iterator
      *
      * @return TraitDefinition Returns Trait matching given name if found.
      * @throws Exception When no type is found.
-     **/
+     */
     public function getTraitByName($name)
     {
         $variables = [];
@@ -158,7 +158,7 @@ class TraitCollection implements \Iterator
      * Returns types in a plain multidimensional array
      *
      * @return array Returns plain array.
-     **/
+     */
     public function toArray()
     {
         $types = [];
@@ -172,7 +172,7 @@ class TraitCollection implements \Iterator
     /**
      * Clears the TraitCollection of any registered types
      *
-     **/
+     */
     public function clear()
     {
         $this->collection = [];

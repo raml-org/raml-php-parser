@@ -53,7 +53,7 @@ class Parser
      * List of types
      *
      * @var string
-     **/
+     */
     private $types = [];
 
     /**
@@ -71,6 +71,11 @@ class Parser
     private $fileLoaders = [];
 
     /**
+     * @var ParseConfiguration
+     */
+    private $configuration;
+
+    /**
      * Create a new parser object
      * - Optionally pass a list of parsers to use
      * - If null is passed then the default schemaParsers are used
@@ -78,17 +83,17 @@ class Parser
      * @param SchemaParserInterface[] $schemaParsers
      * @param SecuritySettingsParserInterface[] $securitySettingsParsers
      * @param FileLoaderInterface[] $fileLoaders
-     * @param ParseConfiguration $config
+     * @param ParseConfiguration $configuration
      */
     public function __construct(
         array $schemaParsers = null,
         array $securitySettingsParsers = null,
         array $fileLoaders = null,
-        ParseConfiguration $config = null
+        ParseConfiguration $configuration = null
     ) {
         // ---
         // parse settings
-        $this->configuration = $config ?: new ParseConfiguration();
+        $this->configuration = $configuration ?: new ParseConfiguration();
 
         // ---
         // add schema parsers
@@ -165,7 +170,7 @@ class Parser
      * Add a new type
      *
      * @param TypeInterface $type Type to add.
-     **/
+     */
     public function addType(TypeInterface $type)
     {
         $this->types[$type->getName()] = $type;
@@ -496,7 +501,7 @@ class Parser
     private function addNamespacePrefix($nameSpace, array $definition)
     {
         foreach ($definition as $key => $item) {
-            if (in_array($key, ['type', 'is'])) {
+            if (in_array($key, ['type', 'is'], true)) {
                 if (is_array($item)) {
                     foreach ($item as $itemKey => $itemValue) {
                         if (!in_array($itemValue, ApiDefinition::getStraightForwardTypes(), true)) {
@@ -644,7 +649,7 @@ class Parser
 
         $fileExtension = (pathinfo($fileName, PATHINFO_EXTENSION));
 
-        if (in_array($fileExtension, ['yaml', 'yml', 'raml'])) {
+        if (in_array($fileExtension, ['yaml', 'yml', 'raml'], true)) {
             $rootDir = dirname($rootDir . '/' . $fileName);
 
             // RAML and YAML files are always parsed
@@ -654,7 +659,7 @@ class Parser
             );
             $fileData = $this->includeAndParseFiles($fileData, $rootDir);
         } else {
-            if (in_array($fileExtension, array_keys($this->fileLoaders))) {
+            if (in_array($fileExtension, array_keys($this->fileLoaders), true)) {
                 $loader = $this->fileLoaders[$fileExtension];
             } else {
                 $loader = $this->fileLoaders['*'];

@@ -17,20 +17,21 @@ class UnionType extends Type
      * Possible Types
      *
      * @var array
-     **/
+     */
     private $possibleTypes = [];
 
     /**
     * Create a new UnionType from an array of data
     *
-    * @param string    $name
-    * @param array     $data
+    * @param string $name
+    * @param array $data
     *
     * @return UnionType
     */
     public static function createFromArray($name, array $data = [])
     {
         $type = parent::createFromArray($name, $data);
+        assert($type instanceof self);
         $type->setPossibleTypes(explode('|', $type->getType()));
         $type->setType('union');
 
@@ -65,6 +66,8 @@ class UnionType extends Type
 
     public function validate($value)
     {
+        $errors = [];
+
         foreach ($this->getPossibleTypes() as $type) {
             if (!$type->discriminate($value)) {
                 continue;

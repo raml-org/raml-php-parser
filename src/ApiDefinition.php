@@ -23,8 +23,8 @@ use Raml\Types\LazyProxyType;
  */
 class ApiDefinition implements ArrayInstantiationInterface
 {
-    const PROTOCOL_HTTP = 'HTTP';
-    const PROTOCOL_HTTPS = 'HTTPS';
+    /* public */ const PROTOCOL_HTTP = 'HTTP';
+    /* public */ const PROTOCOL_HTTPS = 'HTTPS';
 
     /**
      * The API Title (required)
@@ -121,7 +121,7 @@ class ApiDefinition implements ArrayInstantiationInterface
      *
      * @see http://raml.org/spec.html#resources-and-nested-resources
      *
-     * @var \Raml\Resource[]
+     * @var Resource[]
      */
     private $resources = [];
 
@@ -193,7 +193,6 @@ class ApiDefinition implements ArrayInstantiationInterface
      *  schemas:            ?array
      *  securitySchemes:    ?array
      *  documentation:      ?array
-     *  /*
      * ]
      *
      * @return ApiDefinition
@@ -310,8 +309,6 @@ class ApiDefinition implements ArrayInstantiationInterface
         return $apiDefinition;
     }
 
-    // ---
-
     /**
      * Get a resource by a uri
      *
@@ -319,7 +316,7 @@ class ApiDefinition implements ArrayInstantiationInterface
      *
      * @throws InvalidKeyException
      *
-     * @return \Raml\Resource
+     * @return Resource
      */
     public function getResourceByUri($uri)
     {
@@ -343,7 +340,7 @@ class ApiDefinition implements ArrayInstantiationInterface
      *
      * @throws InvalidKeyException
      *
-     * @return \Raml\Resource
+     * @return Resource
      */
     public function getResourceByPath($path)
     {
@@ -383,9 +380,9 @@ class ApiDefinition implements ArrayInstantiationInterface
     }
 
     /**
-     * @param \Raml\Resource[] $resources
+     * @param Resource[] $resources
      *
-     * @return \Raml\Resource[]
+     * @return Resource[]
      */
     private function getResourcesAsArray($resources)
     {
@@ -465,8 +462,6 @@ class ApiDefinition implements ArrayInstantiationInterface
         return $this->urlPrefix;
     }
 
-    // --
-
     /**
      * @return bool
      */
@@ -497,7 +492,7 @@ class ApiDefinition implements ArrayInstantiationInterface
      */
     private function addProtocol($protocol)
     {
-        if (!in_array($protocol, [self::PROTOCOL_HTTP, self::PROTOCOL_HTTPS])) {
+        if (!in_array($protocol, [self::PROTOCOL_HTTP, self::PROTOCOL_HTTPS], true)) {
             throw new InvalidProtocolException(sprintf('"%s" is not a valid protocol', $protocol));
         }
 
@@ -505,8 +500,6 @@ class ApiDefinition implements ArrayInstantiationInterface
             $this->protocols[] = $protocol;
         }
     }
-
-    // ---
 
     /**
      * Get the default media type
@@ -521,20 +514,20 @@ class ApiDefinition implements ArrayInstantiationInterface
     /**
      * Set a default media type
      *
-     * @param $defaultMediaType
+     * @param string $defaultMediaType
      */
     public function setDefaultMediaType($defaultMediaType)
     {
-        // @todo - Should this validate?
-        $this->defaultMediaType = $defaultMediaType;
+        if (!in_array($defaultMediaType, $this->defaultMediaTypes, true)) {
+            return;
+        }
+        $this->defaultMediaTypes[] = $defaultMediaType;
     }
-
-    // --
 
     /**
      * Get the schemas defined in the root of the API
      *
-     * @return array[]
+     * @return TypeCollection
      */
     public function getSchemaCollections()
     {
@@ -622,7 +615,7 @@ class ApiDefinition implements ArrayInstantiationInterface
      * @param string $name Name of type.
      * @param array $definition Definition of type.
      *
-     * @return \Raml\TypeInterface Returns a (best) matched type object.
+     * @return TypeInterface Returns a (best) matched type object.
      *
      * @throws \Exception
      */
@@ -641,8 +634,8 @@ class ApiDefinition implements ArrayInstantiationInterface
 
         $type = $definition['type'] ?: 'null';
 
-        if (!in_array($type, ['', 'any'])) {
-            if (in_array($type, static::getStraightForwardTypes())) {
+        if (!in_array($type, ['', 'any'], true)) {
+            if (in_array($type, static::getStraightForwardTypes(), true)) {
                 $className = sprintf(
                     'Raml\Types\%sType',
                     StringTransformer::convertString($type, StringTransformer::UPPER_CAMEL_CASE)
@@ -676,7 +669,7 @@ class ApiDefinition implements ArrayInstantiationInterface
     /**
      * Add data type
      *
-     * @param \Raml\TypeInterface $type
+     * @param TypeInterface $type
      */
     public function addType(TypeInterface $type)
     {
@@ -718,7 +711,7 @@ class ApiDefinition implements ArrayInstantiationInterface
     /**
      * Get the resources tree
      *
-     * @return \Raml\Resource[]
+     * @return Resource[]
      */
     public function getResources()
     {
@@ -728,7 +721,7 @@ class ApiDefinition implements ArrayInstantiationInterface
     /**
      * Add an additional resource
      *
-     * @param \Raml\Resource $resource
+     * @param Resource $resource
      */
     public function addResource(Resource $resource)
     {
@@ -787,7 +780,7 @@ class ApiDefinition implements ArrayInstantiationInterface
      * GET /songs => [api.example.org, /songs, GET, [https], Raml\Method]
      * GET /songs/{songId} => [api.example.org, /songs/{songId}, GET, [https], Raml\Method]
      *
-     * @param \Raml\Resource[] $resources
+     * @param Resource[] $resources
      *
      * @return array[BasicRoute]
      */

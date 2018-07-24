@@ -6,41 +6,41 @@ use Raml\Types\ObjectType;
 
 /**
  *  Singleton class used to register all types in one place
- **/
+ */
 class TypeCollection implements \Iterator
 {
     /**
      * Hold the class instance.
      *
      * @var self
-     **/
+     */
     private static $instance = null;
 
     /**
      * Collection
      *
      * @var array
-     **/
+     */
     private $collection = [];
 
     /**
      * Current position
      *
      * @var string
-     **/
+     */
     private $position = 0;
 
     /**
      * Types which need to inherit properties from their parent
      *
      * @var ObjectType[]
-     **/
+     */
     private $typesWithInheritance = [];
 
     /**
     * prevent initiation from outside, there can be only one!
     *
-    **/
+    */
     private function __construct()
     {
         $this->collection = [];
@@ -52,10 +52,10 @@ class TypeCollection implements \Iterator
      * only if the class has no instance.
      *
      * @return TypeCollection
-     **/
+     */
     public static function getInstance()
     {
-        if (self::$instance == null) {
+        if (self::$instance === null) {
             self::$instance = new self();
         }
 
@@ -64,7 +64,7 @@ class TypeCollection implements \Iterator
 
     /**
      * {@inheritDoc}
-     **/
+     */
     public function current()
     {
         return $this->collection[$this->position];
@@ -72,7 +72,7 @@ class TypeCollection implements \Iterator
 
     /**
      * {@inheritDoc}
-     **/
+     */
     public function key()
     {
         return $this->position;
@@ -80,7 +80,7 @@ class TypeCollection implements \Iterator
 
     /**
      * {@inheritDoc}
-     **/
+     */
     public function next()
     {
         $this->position++;
@@ -88,7 +88,7 @@ class TypeCollection implements \Iterator
 
     /**
      * {@inheritDoc}
-     **/
+     */
     public function rewind()
     {
         $this->position = 0;
@@ -96,7 +96,7 @@ class TypeCollection implements \Iterator
 
     /**
      * {@inheritDoc}
-     **/
+     */
     public function valid()
     {
         return isset($this->collection[$this->position]);
@@ -105,9 +105,9 @@ class TypeCollection implements \Iterator
     /**
      * Adds a Type to the collection
      *
-     * @param \Raml\TypeInterface $type Type to add.
-     **/
-    public function add(\Raml\TypeInterface $type)
+     * @param TypeInterface $type Type to add.
+     */
+    public function add(TypeInterface $type)
     {
         $this->collection[] = $type;
     }
@@ -115,9 +115,9 @@ class TypeCollection implements \Iterator
     /**
      * Remove given Type from the collection
      *
-     * @param \Raml\TypeInterface $typeToRemove Type to remove.
-     **/
-    public function remove(\Raml\TypeInterface $typeToRemove)
+     * @param TypeInterface $typeToRemove Type to remove.
+     */
+    public function remove(TypeInterface $typeToRemove)
     {
         foreach ($this->collection as $key => $type) {
             if ($type === $typeToRemove) {
@@ -127,7 +127,7 @@ class TypeCollection implements \Iterator
             }
         }
 
-        throw new \Exception(sprintf('Cannot remove given type %s', var_export($type, true)));
+        throw new \Exception(sprintf('Cannot remove given type %s', var_export($typeToRemove, true)));
     }
 
     /**
@@ -135,13 +135,13 @@ class TypeCollection implements \Iterator
      *
      * @param string $name Name of the Type to retrieve.
      *
-     * @return \Raml\TypeInterface Returns Type matching given name if found.
+     * @return TypeInterface Returns Type matching given name if found.
      * @throws \Exception When no type is found.
-     **/
+     */
     public function getTypeByName($name)
     {
         foreach ($this->collection as $type) {
-            /** @var $type \Raml\TypeInterface */
+            /** @var $type TypeInterface */
             if ($type->getName() === $name) {
                 return $type;
             }
@@ -165,7 +165,7 @@ class TypeCollection implements \Iterator
 
     /**
      * Applies inheritance on all types that have a parent
-     **/
+     */
     public function applyInheritance()
     {
         foreach ($this->typesWithInheritance as $key => $type) {
@@ -181,7 +181,7 @@ class TypeCollection implements \Iterator
      * @param ObjectType $type Type to add.
      *
      * @return self Returns self for chaining.
-     **/
+     */
     public function addTypeWithInheritance(ObjectType $type)
     {
         $this->typesWithInheritance[] = $type;
@@ -193,7 +193,7 @@ class TypeCollection implements \Iterator
      * Returns types in a plain multidimensional array
      *
      * @return array Returns plain array.
-     **/
+     */
     public function toArray()
     {
         $types = [];
@@ -206,8 +206,7 @@ class TypeCollection implements \Iterator
 
     /**
      * Clears the TypeCollection of any registered types
-     *
-     **/
+     */
     public function clear()
     {
         $this->collection = [];

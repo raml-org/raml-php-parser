@@ -30,6 +30,8 @@
 
   "require": {
     "php": ">=5.5.9",
+    "ext-dom": "*",
+    "ext-pcre": "*",
     "justinrainbow/json-schema": "~5.0",
     "symfony/yaml": "~3.0|~4.0",
     "symfony/routing": "~3.0|~4.0",
@@ -41,6 +43,7 @@
   "require-dev": {
     "friendsofphp/php-cs-fixer": "*",
     "jakub-onderka/php-parallel-lint": "^1.0",
+    "phpstan/phpstan": "^0.10.2",
     "phpunit/phpunit": "4.*",
     "satooshi/php-coveralls": "~2.0",
     "sensiolabs/security-checker": "^4.1"
@@ -58,6 +61,9 @@
     ],
     "run-tests": [
       "bin/phpunit"
+    ],
+    "run-static-analysis": [
+      "bin/phpstan analyse --level=1 src/"
     ],
     "check-security": [
       "bin/security-checker security:check"

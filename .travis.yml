@@ -34,6 +34,7 @@ script:
 
 after_script:
   - composer validate-files
+  - if [ $(phpenv version-name) = "7.2" ]; then composer run-static-analysis; fi;
   - if [ $(phpenv version-name) != "5.5" ]; then composer check-code-style; fi;
   - composer check-security
   - composer run-tests

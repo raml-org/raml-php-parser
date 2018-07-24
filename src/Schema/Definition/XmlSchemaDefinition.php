@@ -35,7 +35,7 @@ class XmlSchemaDefinition implements SchemaDefinitionInterface
     /**
      * Validate an XML string against the schema
      *
-     * @param $value
+     * @param mixed $value
      *
      * @throws \Exception
      */

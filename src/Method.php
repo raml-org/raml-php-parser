@@ -145,7 +145,7 @@ class Method implements ArrayInstantiationInterface, MessageSchemaInterface
         if (isset($data['body'])) {
             foreach ($data['body'] as $key => $bodyData) {
                 if (is_array($bodyData)) {
-                    if (in_array($key, WebFormBody::$validMediaTypes)) {
+                    if (in_array($key, WebFormBody::$validMediaTypes, true)) {
                         $body = WebFormBody::createFromArray($key, $bodyData);
                     } else {
                         $body = Body::createFromArray($key, $bodyData);
@@ -307,7 +307,7 @@ class Method implements ArrayInstantiationInterface, MessageSchemaInterface
      */
     public function supportsHttp()
     {
-        return in_array(ApiDefinition::PROTOCOL_HTTP, $this->protocols);
+        return in_array(ApiDefinition::PROTOCOL_HTTP, $this->protocols, true);
     }
 
     /**
@@ -317,7 +317,7 @@ class Method implements ArrayInstantiationInterface, MessageSchemaInterface
      */
     public function supportsHttps()
     {
-        return in_array(ApiDefinition::PROTOCOL_HTTPS, $this->protocols);
+        return in_array(ApiDefinition::PROTOCOL_HTTPS, $this->protocols, true);
     }
 
     /**
@@ -350,11 +350,11 @@ class Method implements ArrayInstantiationInterface, MessageSchemaInterface
      */
     public function addProtocol($protocol)
     {
-        if (!in_array($protocol, [ApiDefinition::PROTOCOL_HTTP, ApiDefinition::PROTOCOL_HTTPS])) {
+        if (!in_array($protocol, [ApiDefinition::PROTOCOL_HTTP, ApiDefinition::PROTOCOL_HTTPS], true)) {
             throw new \InvalidArgumentException(sprintf('"%s" is not a valid protocol', $protocol));
         }
 
-        if (in_array($protocol, $this->protocols) === false) {
+        if (in_array($protocol, $this->protocols, true) === false) {
             $this->protocols[] = $protocol;
         }
     }
@@ -502,10 +502,12 @@ class Method implements ArrayInstantiationInterface, MessageSchemaInterface
                 }
 
                 foreach ($this->getBodies() as $bodyType => $body) {
-                    if (in_array($bodyType, array_keys($describedBy->getBodies())) &&
-                        in_array($bodyType, WebFormBody::$validMediaTypes)
+                    if (in_array($bodyType, array_keys($describedBy->getBodies(), true)) &&
+                        in_array($bodyType, WebFormBody::$validMediaTypes, true)
                     ) {
-                        $params = $describedBy->getBodyByType($bodyType)->getParameters();
+                        $body = $describedBy->getBodyByType($bodyType);
+                        assert($body instanceof WebFormBody);
+                        $params = $body->getParameters();
 
                         foreach ($params as $parameterName => $namedParameter) {
                             $body->addParameter($namedParameter);

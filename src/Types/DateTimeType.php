@@ -14,7 +14,7 @@ class DateTimeType extends Type
      * DateTime format to use
      *
      * @var string
-     **/
+     */
     private $format;
 
     /**
@@ -28,6 +28,7 @@ class DateTimeType extends Type
     public static function createFromArray($name, array $data = [])
     {
         $type = parent::createFromArray($name, $data);
+        assert($type instanceof self);
 
         foreach ($data as $key => $value) {
             switch ($key) {

@@ -15,28 +15,28 @@ class NumberType extends Type
      * The minimum value of the parameter. Applicable only to parameters of type number or integer.
      *
      * @var int
-     **/
+     */
     private $minimum;
 
     /**
      * The maximum value of the parameter. Applicable only to parameters of type number or integer.
      *
      * @var int
-     **/
+     */
     private $maximum;
 
     /**
      * The format of the value. The value MUST be one of the following: int32, int64, int, long, float, double, int16, int8
      *
      * @var string
-     **/
+     */
     private $format;
 
     /**
      * A numeric instance is valid against "multipleOf" if the result of dividing the instance by this keyword's value is an integer.
      *
      * @var int
-     **/
+     */
     private $multipleOf;
 
     /**
@@ -50,6 +50,7 @@ class NumberType extends Type
     public static function createFromArray($name, array $data = [])
     {
         $type = parent::createFromArray($name, $data);
+        assert($type instanceof self);
 
         foreach ($data as $key => $value) {
             switch ($key) {
@@ -139,12 +140,12 @@ class NumberType extends Type
      * @param string $format
      *
      * @return self
-     * @throws Exception Thrown when given format is not any of allowed types.
+     * @throws \Exception Thrown when given format is not any of allowed types.
      */
     public function setFormat($format)
     {
-        if (!in_array($format, ['int32', 'int64', 'int', 'long', 'float', 'double', 'int16', 'int8'])) {
-            throw new \Exception(sprinf('Incorrect format given: "%s"', $format));
+        if (!in_array($format, ['int32', 'int64', 'int', 'long', 'float', 'double', 'int16', 'int8'], true)) {
+            throw new \Exception(sprintf('Incorrect format given: "%s"', $format));
         }
         $this->format = $format;
 
