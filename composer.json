@@ -61,9 +61,6 @@
     ],
     "check-security": [
       "bin/security-checker security:check"
-    ],
-    "download-php-cs-fixer": [
-      "wget https://cs.sensiolabs.org/download/php-cs-fixer-v2.phar -O bin/php-cs-fixer; chmod a+x bin/php-cs-fixer"
     ]
   },
 
