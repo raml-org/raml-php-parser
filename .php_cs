@@ -78,7 +78,7 @@ return PhpCsFixer\Config::create()
             'phpdoc_scalar' => true,
             'phpdoc_single_line_var_spacing' => true,
             'phpdoc_to_comment' => true,
-            'phpdoc_types' => true,
+            'phpdoc_types' => false,
             'phpdoc_var_without_name' => true,
             'increment_style' => ['style' => 'post'],
             'return_type_declaration' => true,
