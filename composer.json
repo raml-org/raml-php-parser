@@ -62,6 +62,9 @@
     "run-tests": [
       "bin/phpunit"
     ],
+    "run-tests-with-clover": [
+      "bin/phpunit --coverage-clover build/logs/clover.xml"
+    ],
     "run-static-analysis": [
       "bin/phpstan analyse --level=1 src/"
     ],
