@@ -917,4 +917,69 @@ RAML;
         $this->assertEquals('Get a single bazDisplayname', $bazId->getDescription());
         $this->assertEquals('Get a list of quxDisplayname', $qux->getDescription());
     }
+
+    /** @test */
+    public function shouldNestedResourcesHaveParentResourceDefined()
+    {
+        $apiDefinition = $this->parser->parse(__DIR__ . '/fixture/resourcePathName.raml');
+
+        $foo = $apiDefinition->getResources()['/foo'];
+        /** @var \Raml\Resource $fooId */
+        $fooId = $foo->getResources()['/foo/{fooId}'];
+        /** @var \Raml\Resource $bar */
+        $bar = $fooId->getResources()['/foo/{fooId}/bar'];
+
+        $this->assertEquals($fooId, $bar->getParentResource());
+        $this->assertEquals($foo, $fooId->getParentResource());
+        $this->assertEquals(null, $foo->getParentResource());
+    }
+
+    /** @test */
+    public function shouldParseTraits()
+    {
+        $raml = <<<RAML
+#%RAML 1.0
+title: ZEncoder API
+version: v2
+baseUri: https://app.zencoder.com/api/{version}
+
+traits:
+  secured:
+    usage: Apply this to any method that needs to be secured
+    description: Some requests require authentication.
+    headers:
+      access_token:
+        description: Access Token
+        example: 5757gh76
+        required: true
+    queryParameters:
+      <<tokenName>>:
+        description: A valid <<tokenName>> is required
+  paged:
+    queryParameters:
+      page:
+        type: string
+        required: true
+  filtered:
+    is: [paged]
+    queryParameters:
+      limit:
+        type: integer
+        required: false
+      offset:
+        type: integer
+        required: false
+/users:
+  is: [secured: { tokenName: access_token }]
+  get:
+    is: [filtered]
+RAML;
+
+        $simpleRaml = $this->parser->parseFromString($raml, '');
+
+        $this->assertCount(3, $simpleRaml->getTraits()->toArray());
+        $this->assertCount(1, $simpleRaml->getTraits()->getTraitByName('filtered')->getTraits());
+        $this->assertCount(1, $simpleRaml->getResourceByPath('/users')->getTraits());
+        $this->assertCount(2, $simpleRaml->getResourceByPath('/users')->getMethod('get')->getTraits());
+    }
 }

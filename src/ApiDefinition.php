@@ -723,6 +723,9 @@ class ApiDefinition implements ArrayInstantiationInterface
      */
     public function removeResource(Resource $resource)
     {
+        if (!isset($this->resources[$resource->getUri()])) {
+            return;
+        }
         unset($this->resources[$resource->getUri()]);
     }
 
