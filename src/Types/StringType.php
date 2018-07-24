@@ -147,7 +147,13 @@ class StringType extends Type
             $this->errors[] = TypeValidationError::unexpectedValueType($this->getName(), 'string', $value);
         }
         if (null !== $this->pattern) {
-            if (preg_match('/' . $this->pattern . '/', $value) == false) {
+            $pregMatchResult = preg_match('/' . $this->pattern . '/', $value);
+            $failed = $pregMatchResult === false;
+            if ($failed) {
+                throw new \RuntimeException(sprintf('Failed to look up for "%s" with regex "%s"', var_export($value, true), $this->pattern));
+            }
+            $foundNothing = $pregMatchResult === 0;
+            if ($foundNothing) {
                 $this->errors[] = TypeValidationError::stringPatternMismatch($this->getName(), $this->pattern, $value);
             }
         }
