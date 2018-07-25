@@ -15,7 +15,7 @@ class StringType extends Type
      * Regular expression that this string should match.
      *
      * @var string
-     **/
+     */
     private $pattern;
 
     /**
@@ -23,7 +23,7 @@ class StringType extends Type
      * Default: 0
      *
      * @var int
-     **/
+     */
     private $minLength;
 
     /**
@@ -31,7 +31,7 @@ class StringType extends Type
      * Default: 2147483647
      *
      * @var int
-     **/
+     */
     private $maxLength;
 
     /**
@@ -45,7 +45,7 @@ class StringType extends Type
     public static function createFromArray($name, array $data = [])
     {
         $type = parent::createFromArray($name, $data);
-        /* @var $type StringType */
+        assert($type instanceof self);
 
         foreach ($data as $key => $value) {
             switch ($key) {
@@ -147,7 +147,13 @@ class StringType extends Type
             $this->errors[] = TypeValidationError::unexpectedValueType($this->getName(), 'string', $value);
         }
         if (null !== $this->pattern) {
-            if (preg_match('/' . $this->pattern . '/', $value) == false) {
+            $pregMatchResult = preg_match('/' . $this->pattern . '/', $value);
+            $failed = $pregMatchResult === false;
+            if ($failed) {
+                throw new \RuntimeException(sprintf('Failed to look up for "%s" with regex "%s"', var_export($value, true), $this->pattern));
+            }
+            $foundNothing = $pregMatchResult === 0;
+            if ($foundNothing) {
                 $this->errors[] = TypeValidationError::stringPatternMismatch($this->getName(), $this->pattern, $value);
             }
         }

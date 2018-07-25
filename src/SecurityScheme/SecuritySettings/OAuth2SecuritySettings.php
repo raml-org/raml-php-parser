@@ -55,10 +55,11 @@ class OAuth2SecuritySettings implements SecuritySettingsInterface
     public static function createFromArray(array $data, SecuritySettingsInterface $sourceSettings = null)
     {
         if ($sourceSettings && !$sourceSettings instanceof self) {
-            throw new \Exception();
+            throw new \InvalidArgumentException('Provide an instance of OAuth2SecuritySettings for $sourceSettings');
         }
 
         $settings = $sourceSettings ? clone $sourceSettings : new static();
+        assert($settings instanceof self);
 
         if (isset($data['authorizationUri'])) {
             $settings->setAuthorizationUri($data['authorizationUri']);

@@ -9,7 +9,7 @@ See the RAML spec here: https://github.com/raml-org/raml-spec
 For RAML 0.8 support follow version 2.
 
 ## RAML 1.0 Support
-For RAML 1.0 support follow version 3. RAML 1.0 support is still work in progress.
+For RAML 1.0 support follow version 3 or above. RAML 1.0 support is still work in progress.
 
 _What is done and should work:_
   - Part of RAML 1.0 [type expressions](https://github.com/raml-org/raml-spec/blob/master/versions/raml-10/raml-10.md/#type-expressions)
@@ -17,6 +17,7 @@ _What is done and should work:_
   - Union type expression (the "or" `|` operator)
   - Array of types
   - `discriminator` and `discriminatorValue` facets
+  - Traits inheritance
 
 _To be implemented:_
   - [Libraries](https://github.com/raml-org/raml-spec/blob/master/versions/raml-10/raml-10.md/#libraries)
@@ -28,7 +29,6 @@ _To be implemented:_
   - [Annotations](https://github.com/raml-org/raml-spec/blob/master/versions/raml-10/raml-10.md/#annotations)
   - [Overlays and Extensions](https://github.com/raml-org/raml-spec/blob/master/versions/raml-10/raml-10.md/#overlays-and-extensions)
   - [Improved Security Schemes](https://github.com/raml-org/raml-spec/blob/master/versions/raml-10/raml-10.md/#security-schemes)
-
 
 ### Get started
 Requires:
@@ -48,10 +48,10 @@ $title = $apiDef->getTitle();
 
 ### Parsing schemas
 The library can convert schemas into an validation object. There is a default list, or they can be configured manually.
-Each schema parser needs to conform to `\Raml\Schema\SchemaParserInterface` and will return a instance of 
-`\Raml\Schema\SchemaDefinitionInterface`.
+Each schema parser needs to conform to `Raml\Schema\SchemaParserInterface` and will return a instance of 
+`Raml\Schema\SchemaDefinitionInterface`.
 
-Additional parsers and schema definitions can be created and passed into the `\Raml\Parser` constructor
+Additional parsers and schema definitions can be created and passed into the `Raml\Parser` constructor
 
 ### Exporting routes
 It is also possible to export the entire RAML file to an array of the full endpoints. For example, considering
@@ -69,10 +69,10 @@ $routes = $api->getResourcesAsUri();
 To return:
 ```php
 [
-	GET /songs => ...
-	POST /songs => ...
-	GET /songs/{songId} => ...
-	DELETE /songs/{songId} => ...
+    GET /songs => ...
+    POST /songs => ...
+    GET /songs/{songId} => ...
+    DELETE /songs/{songId} => ...
 ]
 
 $routes = $api->getResourcesAsUri(new Raml\RouteFormatter\NoRouteFormatter());
@@ -86,7 +86,8 @@ There are two Route Formatters included in the package:
 
 ### Contributing
 ```bash
-./vendor/bin/phpunit
-./vendor/bin/phpunit --coverage-text
-./vendor/bin/phpcs --standard=PSR1,PSR2 src
+composer validate-files
+composer run-static-analysis
+composer check-code-style
+composer run-tests
 ```

@@ -33,7 +33,7 @@ class WebFormBody extends NamedParameter implements BodyInterface, ArrayInstanti
      */
     public function __construct($mediaType)
     {
-        if (!in_array($mediaType, self::$validMediaTypes)) {
+        if (!in_array($mediaType, self::$validMediaTypes, true)) {
             throw new \Exception('Invalid type');
         }
 
@@ -54,7 +54,7 @@ class WebFormBody extends NamedParameter implements BodyInterface, ArrayInstanti
      * Create a new WebFormObject from an array
      *
      * @param string $key The valid media type to use as the key
-     * @param array $data The array of data to create \NamedParameter objects from
+     * @param array $data The array of data to create NamedParameter objects from
      *
      * @return \Raml\WebFormBody
      */
@@ -76,9 +76,9 @@ class WebFormBody extends NamedParameter implements BodyInterface, ArrayInstanti
     /**
      * Add a NamedParameter object to the list
      *
-     * @param namedParameter $namedParameter
+     * @param NamedParameter $namedParameter
      */
-    public function addParameter(namedParameter $namedParameter)
+    public function addParameter(NamedParameter $namedParameter)
     {
         $this->namedParameters[$namedParameter->getKey()] = $namedParameter;
     }
@@ -103,7 +103,7 @@ class WebFormBody extends NamedParameter implements BodyInterface, ArrayInstanti
     /**
      * Get all NamedParameter objects
      *
-     * @return NamedParameter[] An array of NamedParameter objects
+     * @return NamedParameter[]
      */
     public function getParameters()
     {

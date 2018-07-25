@@ -72,7 +72,7 @@ class Body implements BodyInterface, ArrayInstantiationInterface
      */
     public function __construct($mediaType)
     {
-        if (in_array($mediaType, WebFormBody::$validMediaTypes)) {
+        if (in_array($mediaType, WebFormBody::$validMediaTypes, true)) {
             throw new \Exception('Invalid media type');
         }
 

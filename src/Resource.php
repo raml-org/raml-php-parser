@@ -3,8 +3,6 @@
 namespace Raml;
 
 /**
- * Named Parameters
- *
  * @see http://raml.org/spec.html#resources-and-nested-resources
  */
 class Resource implements ArrayInstantiationInterface
@@ -192,7 +190,7 @@ class Resource implements ArrayInstantiationInterface
                         $apiDefinition
                     )
                 );
-            } elseif (in_array(strtoupper($key), Method::$validMethods)) {
+            } elseif (in_array(strtoupper($key), Method::$validMethods, true)) {
                 $resource->addMethod(
                     Method::createFromArray(
                         $key,
@@ -215,7 +213,7 @@ class Resource implements ArrayInstantiationInterface
     /**
      * Does a uri match this resource
      *
-     * @param $uri
+     * @param string $uri
      *
      * @return bool
      */

@@ -22,6 +22,7 @@ class NullType extends Type
     public static function createFromArray($name, array $data = [])
     {
         $type = parent::createFromArray($name, $data);
+        assert($type instanceof self);
 
         return $type;
     }

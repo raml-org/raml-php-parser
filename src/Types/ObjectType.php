@@ -16,21 +16,21 @@ class ObjectType extends Type
      * The properties that instances of this type can or must have.
      *
      * @var \Raml\Type[]
-     **/
+     */
     private $properties;
 
     /**
      * The minimum number of properties allowed for instances of this type.
      *
      * @var int
-     **/
+     */
     private $minProperties;
 
     /**
      * The maximum number of properties allowed for instances of this type.
      *
      * @var int
-     **/
+     */
     private $maxProperties;
 
     /**
@@ -38,8 +38,8 @@ class ObjectType extends Type
      * Default: true
      *
      * @var bool
-     **/
-    private $additionalProperties;
+     */
+    private $additionalProperties = true;
 
     /**
      * Determines the concrete type of an individual object at runtime when,
@@ -48,7 +48,7 @@ class ObjectType extends Type
      * Unsupported practices are inline type declarations and using discriminator with non-scalar properties.
      *
      * @var string
-     **/
+     */
     protected $discriminator;
 
     /**
@@ -59,7 +59,7 @@ class ObjectType extends Type
      * Default: The name of the type
      *
      * @var string
-     **/
+     */
     private $discriminatorValue;
 
     /**
@@ -73,6 +73,7 @@ class ObjectType extends Type
     public static function createFromArray($name, array $data = [])
     {
         $type = parent::createFromArray($name, $data);
+        assert($type instanceof self);
         $type->setType('object');
 
         foreach ($data as $key => $value) {
@@ -318,9 +319,13 @@ class ObjectType extends Type
 
                 continue;
             }
+
             $property->validate($propertyValue);
-            if (!$property->isValid()) {
-                $this->errors = array_merge($this->errors, $property->getErrors());
+            if ($property->isValid()) {
+                continue;
+            }
+            foreach ($property->getErrors() as $error) {
+                $this->errors[] = $error;
             }
         }
     }

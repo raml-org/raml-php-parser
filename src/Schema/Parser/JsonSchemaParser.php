@@ -24,7 +24,7 @@ class JsonSchemaParser extends SchemaParserAbstract
     /**
      * Create a new JSON Schema definition from a string
      *
-     * @param $schemaString
+     * @param string $schemaString
      *
      * @throws InvalidJsonException
      *

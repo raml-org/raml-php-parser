@@ -1,11 +1,6 @@
-# IDE and OS files
-.idea
-.DS_Store
-
-# Test and composer files
-/vendor
-/build
-/composer.lock
-/composer.phar
-
 bin
+build
+vendor
+.php_cs.cache
+composer.lock
+composer.phar
