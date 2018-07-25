@@ -6,9 +6,9 @@ use DateTime;
 use Raml\Type;
 
 /**
- * DateTimeType type class
+ * DatetimeType type class
  */
-class DateTimeType extends Type
+class DatetimeType extends Type
 {
     /**
      * DateTime format to use
@@ -18,12 +18,12 @@ class DateTimeType extends Type
     private $format;
 
     /**
-     * Create a new DateTimeType from an array of data
+     * Create a new DatetimeType from an array of data
      *
      * @param string    $name
      * @param array     $data
      *
-     * @return DateTimeType
+     * @return DatetimeType
      */
     public static function createFromArray($name, array $data = [])
     {

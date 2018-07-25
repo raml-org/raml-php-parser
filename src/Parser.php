@@ -403,8 +403,7 @@ class Parser
             // If we're using protocol specific parsers, see if we have one to use.
             if ($this->configuration->isSchemaSecuritySchemeParsingEnabled()) {
                 if (isset($securityScheme['type'], $this->securitySettingsParsers[$securityScheme['type']])
-
-                ) {
+                    ) {
                     $parser = $this->securitySettingsParsers[$securityScheme['type']];
                 }
             }

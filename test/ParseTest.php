@@ -919,6 +919,22 @@ RAML;
     }
 
     /** @test */
+    public function shouldNestedResourcesHaveParentResourceDefined()
+    {
+        $apiDefinition = $this->parser->parse(__DIR__ . '/fixture/resourcePathName.raml');
+
+        $foo = $apiDefinition->getResources()['/foo'];
+        /** @var \Raml\Resource $fooId */
+        $fooId = $foo->getResources()['/foo/{fooId}'];
+        /** @var \Raml\Resource $bar */
+        $bar = $fooId->getResources()['/foo/{fooId}/bar'];
+
+        $this->assertEquals($fooId, $bar->getParentResource());
+        $this->assertEquals($foo, $fooId->getParentResource());
+        $this->assertEquals(null, $foo->getParentResource());
+    }
+
+    /** @test */
     public function shouldParseTraits()
     {
         $raml = <<<RAML
