@@ -18,7 +18,7 @@ abstract class SchemaParserAbstract implements SchemaParserInterface
      * List of compatible content types for this parser
      * - Should be populated with any content types that this parser will support
      *
-     * @var array
+     * @var string[]
      */
     protected $compatibleContentTypes = [];
 
@@ -36,8 +36,7 @@ abstract class SchemaParserAbstract implements SchemaParserInterface
      * Create a new schema definition from a string
      *
      * @param string $schema
-     *
-     * @return \Raml\Schema\SchemaDefinitionInterface
+     * @return SchemaDefinitionInterface
      */
     abstract public function createSchemaDefinition($schema);
 

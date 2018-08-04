@@ -37,7 +37,7 @@ class NamedParameter implements ArrayInstantiationInterface
     /**
      * Valid types
      *
-     * @var array
+     * @var string[]
      */
     protected $validTypes = [
         self::TYPE_STRING,
@@ -623,43 +623,43 @@ class NamedParameter implements ArrayInstantiationInterface
      *
      * @param mixed $default
      *
-     * @throws \Exception
+     * @throws \InvalidArgumentException
      */
     public function setDefault($default)
     {
         switch ($this->type) {
             case self::TYPE_STRING:
                 if (!is_string($default)) {
-                    throw new \Exception('Default parameter is not a string');
+                    throw new \InvalidArgumentException('Default parameter is not a string');
                 }
 
                 break;
             case self::TYPE_NUMBER:
                 if (!is_numeric($default)) {
-                    throw new \Exception('Default parameter is not a number');
+                    throw new \InvalidArgumentException('Default parameter is not a number');
                 }
 
                 break;
             case self::TYPE_INTEGER:
                 if (!is_numeric($default) || (int) $default != $default) {
-                    throw new \Exception('Default parameter is not an integer');
+                    throw new \InvalidArgumentException('Default parameter is not an integer');
                 }
 
                 break;
             case self::TYPE_DATE:
                 if (!$default instanceof \DateTime) {
-                    throw new \Exception('Default parameter is not a dateTime object');
+                    throw new \InvalidArgumentException('Default parameter is not a dateTime object');
                 }
 
                 break;
             case self::TYPE_BOOLEAN:
                 if (!is_bool($default)) {
-                    throw new \Exception('Default parameter is not a boolean');
+                    throw new \InvalidArgumentException('Default parameter is not a boolean');
                 }
 
                 break;
             case self::TYPE_FILE:
-                throw new \Exception('A default value cannot be set for a file');
+                throw new \InvalidArgumentException('A default value cannot be set for a file');
 
                 break;
         }
@@ -668,16 +668,15 @@ class NamedParameter implements ArrayInstantiationInterface
     }
 
     /**
-     * Validate a paramater via RAML specifications
+     * Validate a parameter via RAML specifications
      *
-     * @param mixed $param The value of the paramater to validate
-     * @throws \Exception The code corresponds to the error that occured.
+     * @param mixed $param The value of the parameter to validate
+     * @throws ValidationException The code corresponds to the error that occurred.
      */
     public function validate($param)
     {
         /*
          * If we don't have a value to validate, check if it's required.
-         *
          * @link http://raml.org/spec.html#required
          */
         if (in_array($param, [null, ''], true)) {
@@ -793,11 +792,9 @@ class NamedParameter implements ArrayInstantiationInterface
                 break;
 
             case static::TYPE_FILE:
-
                 // File type cannot be reliably validated based on its type alone.
 
                 break;
-
         }
 
         /**

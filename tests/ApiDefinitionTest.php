@@ -1,14 +1,27 @@
 <?php
 
+namespace Raml\Tests;
+
+use PHPUnit\Framework\TestCase;
+use Raml\Body;
+use Raml\Exception\BadParameter\InvalidProtocolException;
 use Raml\ParseConfiguration;
 use Raml\Parser;
+use Raml\RouteFormatter\NoRouteFormatter;
+use Raml\RouteFormatter\SymfonyRouteFormatter;
+use Raml\Types\ArrayType;
+use Raml\Types\IntegerType;
 use Raml\Types\LazyProxyType;
+use Raml\Types\ObjectType;
+use Raml\Types\StringType;
 use Raml\Types\TypeValidationError;
+use Raml\Types\UnionType;
 use Raml\ValidatorInterface;
+use Symfony\Component\Routing\RouteCollection;
 
-class ApiDefinitionTest extends PHPUnit_Framework_TestCase
+class ApiDefinitionTest extends TestCase
 {
-    public function setUp()
+    protected function setUp()
     {
         parent::setUp();
         setlocale(LC_NUMERIC, 'C');
@@ -22,7 +35,9 @@ class ApiDefinitionTest extends PHPUnit_Framework_TestCase
         return new Parser();
     }
 
-    /** @test */
+    /**
+     * @test
+     */
     public function shouldReturnFullResourcesForRamlFileWithDefaultFormatter()
     {
         $api = $this->buildParser()->parse(__DIR__ . '/fixture/includeSchema.raml');
@@ -37,12 +52,14 @@ class ApiDefinitionTest extends PHPUnit_Framework_TestCase
         ], array_keys($routes->getRoutes()));
     }
 
-    /** @test */
+    /**
+     * @test
+     */
     public function shouldReturnFullResourcesForRamlFileWithNoFormatter()
     {
         $api = $this->buildParser()->parse(__DIR__ . '/fixture/includeSchema.raml');
 
-        $noFormatter = new Raml\RouteFormatter\NoRouteFormatter();
+        $noFormatter = new NoRouteFormatter();
         $routes = $api->getResourcesAsUri($noFormatter, $api->getResources());
 
         $this->assertCount(4, $routes->getRoutes());
@@ -54,13 +71,15 @@ class ApiDefinitionTest extends PHPUnit_Framework_TestCase
         ], array_keys($routes->getRoutes()));
     }
 
-    /** @test */
+    /**
+     * @test
+     */
     public function shouldReturnFullResourcesForRamlFileWithSymfonyFormatter()
     {
         $api = $this->buildParser()->parse(__DIR__ . '/fixture/includeSchema.raml');
 
-        $routeCollection = new Symfony\Component\Routing\RouteCollection();
-        $routeFormatter = new Raml\RouteFormatter\SymfonyRouteFormatter($routeCollection);
+        $routeCollection = new RouteCollection();
+        $routeFormatter = new SymfonyRouteFormatter($routeCollection);
         $routes = $api->getResourcesAsUri($routeFormatter, $api->getResources());
 
         $this->assertEquals($routeFormatter, $routes);
@@ -71,7 +90,9 @@ class ApiDefinitionTest extends PHPUnit_Framework_TestCase
         $this->assertEquals(['http'], $routeFormatter->getRoutes()->get('GET /songs/')->getSchemes());
     }
 
-    /** @test */
+    /**
+     * @test
+     */
     public function shouldReturnURIProtocol()
     {
         $api = $this->buildParser()->parse(__DIR__ . '/fixture/protocols/noProtocolSpecified.raml');
@@ -81,7 +102,9 @@ class ApiDefinitionTest extends PHPUnit_Framework_TestCase
         ], $api->getProtocols());
     }
 
-    /** @test */
+    /**
+     * @test
+     */
     public function shouldProcessTypes()
     {
         $api = $this->buildParser()->parse(__DIR__ . '/fixture/types.raml');
@@ -98,7 +121,9 @@ class ApiDefinitionTest extends PHPUnit_Framework_TestCase
         ], $api->getTypes()->toArray());
     }
 
-    /** @test */
+    /**
+     * @test
+     */
     public function shouldBeAbleToAccessOriginalInheritanceTypes()
     {
         $api = $this->buildParser()->parse(__DIR__ . '/fixture/raml-1.0/inheritanceTypes.raml');
@@ -124,7 +149,9 @@ class ApiDefinitionTest extends PHPUnit_Framework_TestCase
         }
     }
 
-    /** @test */
+    /**
+     * @test
+     */
     public function shouldParseLibraries()
     {
         $configuration = new ParseConfiguration();
@@ -132,63 +159,68 @@ class ApiDefinitionTest extends PHPUnit_Framework_TestCase
 
         $parser = new Parser(null, null, null, $configuration);
         $api = $parser->parse(__DIR__ . '/fixture/raml-1.0/types.raml');
-        /** @var \Raml\Types\ObjectType $fileType */
+        /** @var ObjectType $fileType */
         $fileType = $api->getTypes()->getTypeByName('Library.File');
-        /** @var \Raml\Types\ObjectType $folderType */
+        /** @var ObjectType $folderType */
         $folderType = $api->getTypes()->getTypeByName('Library.Folder');
 
         $this->assertNotNull($fileType);
         $this->assertNotNull($folderType);
 
-        /** @var \Raml\Types\ArrayType $property */
+        /** @var ArrayType $property */
         $property = $folderType->getPropertyByName('files');
         $this->assertSame($fileType, $property->getItems());
     }
 
-    /** @test */
+    /**
+     * @test
+     */
     public function shouldParseTypesToSubTypes()
     {
         $api = $this->buildParser()->parse(__DIR__ . '/fixture/raml-1.0/types.raml');
         $types = $api->getTypes();
         $object = $types->current();
-        $this->assertInstanceOf('\Raml\Types\ObjectType', $object);
-        $this->assertInstanceOf('\Raml\Types\IntegerType', $object->getPropertyByName('id'));
-        $this->assertInstanceOf('\Raml\Types\StringType', $object->getPropertyByName('name'));
+        $this->assertInstanceOf(ObjectType::class, $object);
+        $this->assertInstanceOf(IntegerType::class, $object->getPropertyByName('id'));
+        $this->assertInstanceOf(StringType::class, $object->getPropertyByName('name'));
     }
 
-    /** @test */
+    /**
+     * @test
+     */
     public function shouldParseComplexTypes()
     {
         $api = $this->buildParser()->parse(__DIR__ . '/fixture/raml-1.0/complexTypes.raml');
         // check types
         $org = $api->getTypes()->getTypeByName('Org');
-        $this->assertInstanceOf('\Raml\Types\ObjectType', $org);
+        $this->assertInstanceOf(ObjectType::class, $org);
         // property will return a proxy object so to compare to actual type we will need to ask for the resolved object
-        $this->assertInstanceOf('\Raml\Types\UnionType', $org->getPropertyByName('onCall')->getResolvedObject());
+        $this->assertInstanceOf(UnionType::class, $org->getPropertyByName('onCall')->getResolvedObject());
         $head = $org->getPropertyByName('Head');
-        $this->assertInstanceOf('\Raml\Types\ObjectType', $head->getResolvedObject());
-        $this->assertInstanceOf('\Raml\Types\StringType', $head->getPropertyByName('firstname'));
-        $this->assertInstanceOf('\Raml\Types\StringType', $head->getPropertyByName('lastname'));
-        $this->assertInstanceOf('\Raml\Types\StringType', $head->getPropertyByName('title'));
-        $this->assertInstanceOf('\Raml\Types\StringType', $head->getPropertyByName('kind'));
+        $this->assertInstanceOf(ObjectType::class, $head->getResolvedObject());
+        $this->assertInstanceOf(StringType::class, $head->getPropertyByName('firstname'));
+        $this->assertInstanceOf(StringType::class, $head->getPropertyByName('lastname'));
+        $this->assertInstanceOf(StringType::class, $head->getPropertyByName('title'));
+        $this->assertInstanceOf(StringType::class, $head->getPropertyByName('kind'));
         $reports = $head->getPropertyByName('reports');
-        $this->assertInstanceOf('\Raml\Types\ArrayType', $reports);
+        $this->assertInstanceOf(ArrayType::class, $reports);
         $phone = $head->getPropertyByName('phone')->getResolvedObject();
-        $this->assertInstanceOf('\Raml\Types\StringType', $phone);
+        $this->assertInstanceOf(StringType::class, $phone);
         // check resources
         $type = $api->getResourceByPath('/orgs/{orgId}')->getMethod('get')->getResponse(200)->getBodyByType('application/json')->getType();
-        $this->assertInstanceOf('\Raml\Types\ObjectType', $type->getResolvedObject());
+        $this->assertInstanceOf(ObjectType::class, $type->getResolvedObject());
     }
 
-    /** @test */
+    /**
+     * @test
+     */
     public function shouldPassValidResponse()
     {
         $api = $this->buildParser()->parse(__DIR__ . '/fixture/raml-1.0/complexTypes.raml');
         $body = $api->getResourceByPath('/orgs/{orgId}')->getMethod('get')->getResponse(200)->getBodyByType(
             'application/json'
         );
-        /* @var $body \Raml\Body */
-
+        /** @var Body $body */
         $validResponse = '{
             "onCall": {
                 "firstname": "John",
@@ -216,15 +248,17 @@ class ApiDefinitionTest extends PHPUnit_Framework_TestCase
         }';
         $type = $body->getType();
         $type->validate(json_decode($validResponse, true));
-        self::assertTrue($type->isValid(), sprintf('Validation failed with following errors: %s', implode(', ', array_map('strval', $type->getErrors()))));
+        $this->assertTrue($type->isValid(), sprintf('Validation failed with following errors: %s', implode(', ', array_map('strval', $type->getErrors()))));
     }
 
-    /** @test */
+    /**
+     * @test
+     */
     public function shouldRejectMissingParameterResponse()
     {
         $api = $this->buildParser()->parse(__DIR__ . '/fixture/raml-1.0/complexTypes.raml');
         $body = $api->getResourceByPath('/orgs/{orgId}')->getMethod('get')->getResponse(200)->getBodyByType('application/json');
-        /* @var $body \Raml\Body */
+        /** @var Body $body */
         $type = $body->getType();
 
         $invalidResponse = [
@@ -247,12 +281,14 @@ class ApiDefinitionTest extends PHPUnit_Framework_TestCase
         );
     }
 
-    /** @test */
+    /**
+     * @test
+     */
     public function shouldRejectInvalidIntegerParameterResponse()
     {
         $api = $this->buildParser()->parse(__DIR__ . '/fixture/raml-1.0/complexTypes.raml');
         $body = $api->getResourceByPath('/orgs/{orgId}')->getMethod('get')->getResponse(200)->getBodyByType('application/json');
-        /* @var $body \Raml\Body */
+        /** @var Body $body */
         $type = $body->getType();
 
         $invalidResponse = [
@@ -297,12 +333,14 @@ class ApiDefinitionTest extends PHPUnit_Framework_TestCase
         );
     }
 
-    /** @test */
+    /**
+     * @test
+     */
     public function shouldRejectInvalidStringParameterResponse()
     {
         $api = $this->buildParser()->parse(__DIR__ . '/fixture/raml-1.0/complexTypes.raml');
         $body = $api->getResourceByPath('/orgs/{orgId}')->getMethod('get')->getResponse(200)->getBodyByType('application/json');
-        /* @var $body \Raml\Body */
+        /* @var $body Body */
         $type = $body->getType();
 
         $invalidResponse = [
@@ -347,12 +385,14 @@ class ApiDefinitionTest extends PHPUnit_Framework_TestCase
         );
     }
 
-    /** @test */
+    /**
+     * @test
+     */
     public function shouldRejectInvalidEnumParameterResponse()
     {
         $api = $this->buildParser()->parse(__DIR__ . '/fixture/raml-1.0/complexTypes.raml');
         $body = $api->getResourceByPath('/orgs/{orgId}')->getMethod('get')->getResponse(200)->getBodyByType('application/json');
-        /* @var $body \Raml\Body */
+        /** @var Body $body */
         $type = $body->getType();
 
         $invalidResponse = [
@@ -394,7 +434,9 @@ class ApiDefinitionTest extends PHPUnit_Framework_TestCase
         );
     }
 
-    /** @test */
+    /**
+     * @test
+     */
     public function shouldReturnProtocolsIfSpecified()
     {
         $api = $this->buildParser()->parse(__DIR__ . '/fixture/protocols/protocolsSpecified.raml');
@@ -405,23 +447,24 @@ class ApiDefinitionTest extends PHPUnit_Framework_TestCase
         ], $api->getProtocols());
     }
 
-    /** @test */
+    /**
+     * @test
+     */
     public function shouldThrowInvalidProtocolExceptionIfWrongProtocol()
     {
-        $this->setExpectedException('Raml\Exception\BadParameter\InvalidProtocolException');
+        $this->expectException(InvalidProtocolException::class);
 
         $this->buildParser()->parse(__DIR__ . '/fixture/protocols/invalidProtocolsSpecified.raml');
     }
 
     /**
-     * @param ValidatorInterface $validator
      * @param TypeValidationError[] $errors
      */
     private function assertValidationFailedWithErrors(ValidatorInterface $validator, $errors)
     {
-        self::assertFalse($validator->isValid(), 'Validator expected to fail');
+        $this->assertFalse($validator->isValid(), 'Validator expected to fail');
         foreach ($errors as $error) {
-            self::assertContains(
+            $this->assertContains(
                 $error,
                 $validator->getErrors(),
                 $message = sprintf('Validator expected to contain error: %s', $error->__toString()),
@@ -431,7 +474,9 @@ class ApiDefinitionTest extends PHPUnit_Framework_TestCase
         }
     }
 
-    /** @test */
+    /**
+     * @test
+     */
     public function shouldReturnFullResourcesNameForRamlFileWithUrlPrefix()
     {
         $api = $this->buildParser()->parse(__DIR__ . '/fixture/includeUrlPrefix.raml');

@@ -1,26 +1,26 @@
 <?php
 
-namespace Raml\Test\NamedParameters;
+namespace Raml\Tests\NamedParameters;
 
-class BaseUriParameterTest extends \PHPUnit_Framework_TestCase
+use PHPUnit\Framework\TestCase;
+use Raml\ApiDefinition;
+use Raml\Parser;
+
+class BaseUriParameterTest extends TestCase
 {
     /**
-     * @var \Raml\Parser
+     * @var Parser
      */
     private $parser;
 
-    public function setUp()
+    protected function setUp()
     {
-        $this->parser = new \Raml\Parser();
+        $this->parser = new Parser();
         setlocale(LC_NUMERIC, 'C');
     }
 
     /**
-     * Returns a valid api def
-     *
-     * @throws \Exception
-     *
-     * @return \Raml\ApiDefinition
+     * @return ApiDefinition
      */
     private function getValidDef()
     {
@@ -61,7 +61,9 @@ RAML;
         $this->assertEquals('https://{apiDomain}.someapi.com/1.2', $apiDef->getBaseUri());
     }
 
-    /** @test */
+    /**
+     * @test
+     */
     public function shouldCorrectlyParseBaseUriParameters()
     {
         $apiDef = $this->getValidDef();
@@ -76,7 +78,9 @@ RAML;
         $this->assertTrue($baseUriParameters['apiDomain']->isRequired());
     }
 
-    /** @test */
+    /**
+     * @test
+     */
     public function shouldOverrideBaseUriParametersInResource()
     {
         $apiDef = $this->getValidDef();
@@ -84,7 +88,9 @@ RAML;
         $this->assertEquals(['static'], $resource->getBaseUriParameters()['apiDomain']->getEnum());
     }
 
-    /** @test */
+    /**
+     * @test
+     */
     public function shouldOverrideBaseUriParametersInMethod()
     {
         $apiDef = $this->getValidDef();
@@ -105,7 +111,6 @@ baseUri: //some-host/
 /:
   get: []
 RAML;
-
         $protocols = $this->parser->parseFromString($raml, '')->getProtocols();
 
         $this->assertContains('HTTP', $protocols);
@@ -125,7 +130,6 @@ protocols:  [ HTTP ]
 /:
   get: []
 RAML;
-
         $protocols = $this->parser->parseFromString($raml, '')->getProtocols();
 
         $this->assertContains('HTTP', $protocols);

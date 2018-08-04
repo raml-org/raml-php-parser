@@ -1,36 +1,45 @@
 <?php
 
+namespace Raml\Tests\Validator;
+
+use PHPUnit\Framework\TestCase;
+use Psr\Http\Message\RequestInterface;
+use Psr\Http\Message\ResponseInterface;
+use Psr\Http\Message\StreamInterface;
+use Psr\Http\Message\UriInterface;
+use Raml\Parser;
 use Raml\Validator\ResponseValidator;
+use Raml\Validator\ValidatorResponseException;
 use Raml\Validator\ValidatorSchemaHelper;
 
-class ResponseValidatorTest extends PHPUnit_Framework_TestCase
+class ResponseValidatorTest extends TestCase
 {
     /**
-     * @var \Raml\Parser
+     * @var Parser
      */
     private $parser;
     /**
-     * @var \Psr\Http\Message\RequestInterface|PHPUnit_Framework_MockObject_MockObject
+     * @var RequestInterface|PHPUnit_Framework_MockObject_MockObject
      */
     private $request;
     /**
-     * @var \Psr\Http\Message\ResponseInterface|PHPUnit_Framework_MockObject_MockObject
+     * @var ResponseInterface|PHPUnit_Framework_MockObject_MockObject
      */
     private $response;
     /**
-     * @var \Psr\Http\Message\UriInterface|PHPUnit_Framework_MockObject_MockObject
+     * @var UriInterface|PHPUnit_Framework_MockObject_MockObject
      */
     private $uri;
 
-    public function setUp()
+    protected function setUp()
     {
         parent::setUp();
-        $this->parser = new \Raml\Parser();
-        $this->uri = $this->getMock('\Psr\Http\Message\UriInterface');
-        $this->request = $this->getMock('\Psr\Http\Message\RequestInterface');
+        $this->parser = new Parser();
+        $this->uri = $this->createMock(UriInterface::class);
+        $this->request = $this->createMock(RequestInterface::class);
         $this->request->method('getUri')->willReturn($this->uri);
 
-        $this->response = $this->getMock('\Psr\Http\Message\ResponseInterface');
+        $this->response = $this->createMock(ResponseInterface::class);
     }
 
     /**
@@ -45,7 +54,9 @@ class ResponseValidatorTest extends PHPUnit_Framework_TestCase
         return new ResponseValidator($helper);
     }
 
-    /** @test */
+    /**
+     * @test
+     */
     public function shouldCatchMissingHeaders()
     {
         $this->request->method('getMethod')->willReturn('get');
@@ -53,16 +64,16 @@ class ResponseValidatorTest extends PHPUnit_Framework_TestCase
         $this->response->method('getStatusCode')->willReturn(200);
         $this->response->method('getHeaders')->willReturn([]);
 
-        $this->setExpectedException(
-            '\Raml\Validator\ValidatorResponseException',
-            'X-Required-Header'
-        );
+        $this->expectException(ValidatorResponseException::class);
+        $this->expectExceptionMessage('X-Required-Header');
 
         $validator = $this->getValidatorForSchema(__DIR__ . '/../fixture/validator/responseHeaders.raml');
         $validator->validateResponse($this->request, $this->response);
     }
 
-    /** @test */
+    /**
+     * @test
+     */
     public function shouldCatchInvalidHeaders()
     {
         $headers = [
@@ -81,15 +92,16 @@ class ResponseValidatorTest extends PHPUnit_Framework_TestCase
         $this->response->method('getHeader')->willReturnMap($map);
         $this->response->method('getHeaders')->willReturn($headers);
 
-        $this->setExpectedException(
-            '\Raml\Validator\ValidatorResponseException',
-            'X-Long-Optional-Header'
-        );
+        $this->expectException(ValidatorResponseException::class);
+        $this->expectExceptionMessage('X-Long-Optional-Header');
 
         $validator = $this->getValidatorForSchema(__DIR__ . '/../fixture/validator/responseHeaders.raml');
         $validator->validateResponse($this->request, $this->response);
     }
 
+    /**
+     * @test
+     */
     public function shouldPassOnEmptyBodyIfNotRequired()
     {
         $json = '';
@@ -104,7 +116,7 @@ class ResponseValidatorTest extends PHPUnit_Framework_TestCase
             ['X-Long-Optional-Header', [['Abcdefg', 'Abc']]],
         ];
 
-        $body = $this->getMock('\Psr\Http\Message\StreamInterface');
+        $body = $this->createMock(StreamInterface::class);
         $body->method('getContents')->willReturn($json);
 
         $this->request->method('getMethod')->willReturn('get');
@@ -114,16 +126,16 @@ class ResponseValidatorTest extends PHPUnit_Framework_TestCase
         $this->response->method('getHeaders')->willReturn($headers);
         $this->response->method('getBody')->willReturn($body);
 
-        $this->setExpectedException(
-            '\Raml\Validator\ValidatorResponseException',
-            'X-Long-Optional-Header'
-        );
+        $this->expectException(ValidatorResponseException::class);
+        $this->expectExceptionMessage('X-Long-Optional-Header');
 
         $validator = $this->getValidatorForSchema(__DIR__ . '/../fixture/validator/responseHeaders.raml');
         $validator->validateResponse($this->request, $this->response);
     }
 
-    /** @test */
+    /**
+     * @test
+     */
     public function shouldCatchInvalidBody()
     {
         $json = '{}';
@@ -138,7 +150,7 @@ class ResponseValidatorTest extends PHPUnit_Framework_TestCase
             ['X-Long-Optional-Header', [['Abcdefg', 'Abc']]],
         ];
 
-        $body = $this->getMock('\Psr\Http\Message\StreamInterface');
+        $body = $this->createMock(StreamInterface::class);
         $body->method('getContents')->willReturn($json);
 
         $this->request->method('getMethod')->willReturn('post');
@@ -149,7 +161,7 @@ class ResponseValidatorTest extends PHPUnit_Framework_TestCase
         $this->response->method('getHeaderLine')->with('Content-Type')->willReturn('application/json');
         $this->response->method('getBody')->willReturn($body);
 
-        $this->setExpectedException('\Raml\Validator\ValidatorResponseException');
+        $this->expectException(ValidatorResponseException::class);
 
         $validator = $this->getValidatorForSchema(__DIR__ . '/../fixture/validator/responseBody.raml');
         $validator->validateResponse($this->request, $this->response);

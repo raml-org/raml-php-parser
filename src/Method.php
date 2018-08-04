@@ -12,12 +12,9 @@ use Raml\Exception\EmptyBodyException;
 class Method implements ArrayInstantiationInterface, MessageSchemaInterface
 {
     /**
-     * Valid METHODS
-     * @var array
+     * @var string[]
      */
     public static $validMethods = ['GET', 'HEAD', 'POST', 'PUT', 'DELETE', 'PATCH', 'OPTIONS'];
-
-    // ---
 
     /**
      * The method type (required)
@@ -28,8 +25,6 @@ class Method implements ArrayInstantiationInterface, MessageSchemaInterface
      * @var string
      */
     private $type;
-
-    // --
 
     /**
      * The description of the method (optional)
@@ -107,7 +102,7 @@ class Method implements ArrayInstantiationInterface, MessageSchemaInterface
     /**
      * Create a new Method from an array
      *
-     * @param string        $type
+     * @param string $type
      * @param ApiDefinition $apiDefinition
      */
     public function __construct($type, ApiDefinition $apiDefinition)
@@ -133,9 +128,6 @@ class Method implements ArrayInstantiationInterface, MessageSchemaInterface
      *  queryParameters:    ?array
      * ]
      * @param ApiDefinition $apiDefinition
-     *
-     * @throws \Exception
-     *
      * @return Method
      */
     public static function createFromArray($method, array $data = [], ApiDefinition $apiDefinition = null)
@@ -334,7 +326,7 @@ class Method implements ArrayInstantiationInterface, MessageSchemaInterface
      * Get example by type (application/json, text/plain, ...)
      *
      * @param string $type
-     * @return array
+     * @return string[]
      */
     public function getExampleByType($type)
     {
@@ -387,10 +379,10 @@ class Method implements ArrayInstantiationInterface, MessageSchemaInterface
      * Get the body by type
      *
      * @param string $type
-     *
-     * @throws \Exception
-     *
      * @return BodyInterface
+     *
+     * @throws EmptyBodyException
+     * @throws \InvalidArgumentException
      */
     public function getBodyByType($type)
     {
@@ -409,13 +401,13 @@ class Method implements ArrayInstantiationInterface, MessageSchemaInterface
             }
         }
 
-        throw new \Exception(sprintf('No body of type "%s"', $type));
+        throw new \InvalidArgumentException(sprintf('No body of type "%s"', $type));
     }
 
     /**
      * Get an array of all bodies
      *
-     * @return array The array of bodies
+     * @return BodyInterface[]
      */
     public function getBodies()
     {
@@ -479,7 +471,6 @@ class Method implements ArrayInstantiationInterface, MessageSchemaInterface
     }
 
     /**
-     * @param SecurityScheme $securityScheme
      * @param bool $merge Set to true to merge the security scheme data with the method, or false to not merge it.
      */
     public function addSecurityScheme(SecurityScheme $securityScheme, $merge = true)
@@ -530,7 +521,7 @@ class Method implements ArrayInstantiationInterface, MessageSchemaInterface
 
     /**
      * @param TraitDefinition $trait
-     * @return $this
+     * @return self
      */
     public function addTrait($trait)
     {

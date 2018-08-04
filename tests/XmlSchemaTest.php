@@ -1,23 +1,28 @@
 <?php
 
+namespace Raml\Tests;
+
+use PHPUnit\Framework\TestCase;
+use Raml\Parser;
+use Raml\Schema\Definition\XmlSchemaDefinition;
 use Raml\Types\TypeValidationError;
 use Raml\ValidatorInterface;
 
-class XmlSchemaTest extends PHPUnit_Framework_TestCase
+class XmlSchemaTest extends TestCase
 {
     /**
-     * @var \Raml\Parser
+     * @var Parser
      */
     private $parser;
 
-    public function setUp()
+    protected function setUp()
     {
         parent::setUp();
-        $this->parser = new \Raml\Parser();
+        $this->parser = new Parser();
     }
 
     /**
-     * @return \Raml\Schema\Definition\XmlSchemaDefinition
+     * @return XmlSchemaDefinition
      */
     private function getSchema()
     {
@@ -56,18 +61,20 @@ RAML;
         return $body->getSchema();
     }
 
-    // ---
-
-    /** @test */
+    /**
+     * @test
+     */
     public function shouldReturnXmlSchemeDefinition()
     {
         $this->assertInstanceOf('Raml\Schema\Definition\XmlSchemaDefinition', $this->getSchema());
     }
 
-    /** @test */
+    /**
+     * @test
+     */
     public function shouldCorrectlyValidateCorrectXml()
     {
-        $xml = new DOMDocument();
+        $xml = new \DOMDocument();
         $xml->loadXML(
             <<<'XML'
 <?xml version="1.0"?>
@@ -82,10 +89,12 @@ XML
         $this->assertTrue($schema->isValid());
     }
 
-    /** @test */
+    /**
+     * @test
+     */
     public function shouldCorrectlyValidateIncorrectXml()
     {
-        $xml = new DOMDocument();
+        $xml = new \DOMDocument();
         $xml->loadXML(
             <<<'XML'
 <?xml version="1.0"?>
@@ -106,7 +115,6 @@ XML
     }
 
     /**
-     * Test __toString()
      * @test
      */
     public function shouldConvertXmlToString()
@@ -115,12 +123,11 @@ XML
     }
 
     /**
-     * Test validate()
      * @test
      */
     public function shouldThrowExceptionOnIncorrectXml()
     {
-        $badXml = new DOMDocument();
+        $badXml = new \DOMDocument();
         $badXml->loadXML('<api-request></api-request>');
 
         $schema = $this->loadXmlSchema();
@@ -129,8 +136,7 @@ XML
     }
 
     /**
-     * Common to all tests
-     * @return \Raml\Schema\Definition\XmlSchemaDefinition
+     * @return XmlSchemaDefinition
      */
     private function loadXmlSchema()
     {
@@ -144,19 +150,18 @@ XML
     }
 
     /**
-     * @param ValidatorInterface $validator
      * @param TypeValidationError[] $errors
      */
-    private function assertValidationFailedWithErrors(ValidatorInterface $validator, $errors)
+    private function assertValidationFailedWithErrors(ValidatorInterface $validator, array $errors)
     {
-        self::assertFalse($validator->isValid(), 'Validator expected to fail');
+        $this->assertFalse($validator->isValid(), 'Validator expected to fail');
         foreach ($errors as $error) {
-            self::assertContains(
+            $this->assertContains(
                 $error,
                 $validator->getErrors(),
                 $message = sprintf('Validator expected to contain error: %s', $error->__toString()),
                 $ignoreCase = false,
-                $checkObjectidentity = false
+                $checkObjectIdentity = false
             );
         }
     }

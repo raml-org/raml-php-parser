@@ -1,60 +1,78 @@
 <?php
 
-class MethodTest extends PHPUnit_Framework_TestCase
+namespace Raml\Tests;
+
+use PHPUnit\Framework\TestCase;
+use Raml\ApiDefinition;
+use Raml\Method;
+use Raml\Parser;
+use Raml\Response;
+
+class MethodTest extends TestCase
 {
-    /** @test */
+    /**
+     * @test
+     */
     public function shouldGetTheTypeInUpperCase()
     {
-        $apiDefinition = new \Raml\ApiDefinition('The title');
+        $apiDefinition = new ApiDefinition('The title');
 
-        $method = \Raml\Method::createFromArray('get', [], $apiDefinition);
+        $method = Method::createFromArray('get', [], $apiDefinition);
         $this->assertSame('GET', $method->getType());
 
-        $method = \Raml\Method::createFromArray('Post', [], $apiDefinition);
+        $method = Method::createFromArray('Post', [], $apiDefinition);
         $this->assertSame('POST', $method->getType());
 
-        $method = \Raml\Method::createFromArray('options', [], $apiDefinition);
+        $method = Method::createFromArray('options', [], $apiDefinition);
         $this->assertSame('OPTIONS', $method->getType());
     }
 
-    /** @test */
+    /**
+     * @test
+     */
     public function shouldGetTheDescriptionIfPassedInTheDataArray()
     {
-        $apiDefinition = new \Raml\ApiDefinition('The title');
+        $apiDefinition = new ApiDefinition('The title');
 
-        $method = \Raml\Method::createFromArray('get', ['description' => 'A dummy description'], $apiDefinition);
+        $method = Method::createFromArray('get', ['description' => 'A dummy description'], $apiDefinition);
         $this->assertSame('A dummy description', $method->getDescription());
 
-        $method = \Raml\Method::createFromArray('get', [], $apiDefinition);
+        $method = Method::createFromArray('get', [], $apiDefinition);
         $this->assertNull($method->getDescription());
     }
 
-    /** @test */
+    /**
+     * @test
+     */
     public function shouldGetNullForResponseIfNoneIsExists()
     {
-        $apiDefinition = new \Raml\ApiDefinition('The title');
+        $apiDefinition = new ApiDefinition('The title');
 
-        $method = \Raml\Method::createFromArray('get', [], $apiDefinition);
+        $method = Method::createFromArray('get', [], $apiDefinition);
         $this->assertSame([], $method->getResponses());
         $this->assertSame(null, $method->getResponse(200));
     }
 
-    /** @test */
+    /**
+     * @test
+     */
     public function shouldGetNullForResponseIfNotAnArrayIsPassed()
     {
-        $apiDefinition = new \Raml\ApiDefinition('The title');
+        $apiDefinition = new ApiDefinition('The title');
 
-        $method = \Raml\Method::createFromArray('get', ['responses' => 'invalid'], $apiDefinition);
+        $method = Method::createFromArray('get', ['responses' => 'invalid'], $apiDefinition);
         $this->assertSame([], $method->getResponses());
         $this->assertSame(null, $method->getResponse(200));
     }
 
-    /** @test */
+    /**
+     * @test
+     */
     public function shouldGetValidResponsesIfPassedExpectedValues()
     {
-        $apiDefinition = new \Raml\ApiDefinition('The title');
+        $apiDefinition = new ApiDefinition('The title');
 
-        $method = \Raml\Method::createFromArray(
+        $method = Method::createFromArray(
             'get',
             [
                 'description' => 'A dummy method',
@@ -76,29 +94,33 @@ class MethodTest extends PHPUnit_Framework_TestCase
         $this->assertCount(1, $method->getResponses());
 
         $responses = $method->getResponses();
-        $this->assertInstanceOf('\Raml\Response', array_values($responses)[0]);
-        $this->assertInstanceOf('\Raml\Response', $method->getResponse(200));
+        $this->assertInstanceOf(Response::class, array_values($responses)[0]);
+        $this->assertInstanceOf(Response::class, $method->getResponse(200));
         $this->assertSame(null, $method->getResponse(400));
 
         $this->assertSame('A dummy method', $method->getDescription());
         $this->assertSame('A dummy response', array_values($responses)[0]->getDescription());
     }
 
-    /** @test */
+    /**
+     * @test
+     */
     public function shouldGetEmptyArrayForQueryParametersIfNoneIsExists()
     {
-        $apiDefinition = new \Raml\ApiDefinition('The title');
-        $method = \Raml\Method::createFromArray('get', [], $apiDefinition);
+        $apiDefinition = new ApiDefinition('The title');
+        $method = Method::createFromArray('get', [], $apiDefinition);
         $this->assertEquals([], $method->getQueryParameters());
     }
 
-    /** @test */
+    /**
+     * @test
+     */
     public function shouldGetGlobalProtocols()
     {
-        $parser = new \Raml\Parser();
+        $parser = new Parser();
         $apiDefinition = $parser->parse(__DIR__ . '/fixture/protocols/noProtocolSpecified.raml');
 
-        $method = \Raml\Method::createFromArray(
+        $method = Method::createFromArray(
             'get',
             [
                 'description' => 'A dummy method',
@@ -111,13 +133,15 @@ class MethodTest extends PHPUnit_Framework_TestCase
         $this->assertSame(['HTTP'], $method->getProtocols());
     }
 
-    /** @test */
+    /**
+     * @test
+     */
     public function shouldGetOverrideProtocols()
     {
-        $parser = new \Raml\Parser();
+        $parser = new Parser();
         $apiDefinition = $parser->parse(__DIR__ . '/fixture/protocols/noProtocolSpecified.raml');
 
-        $method = \Raml\Method::createFromArray(
+        $method = Method::createFromArray(
             'get',
             [
                 'description' => 'A dummy method',

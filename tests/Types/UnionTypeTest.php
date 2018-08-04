@@ -1,19 +1,26 @@
 <?php
 
-class UnionTypeTest extends PHPUnit_Framework_TestCase
+namespace Raml\Tests\Types;
+
+use PHPUnit\Framework\TestCase;
+use Raml\Parser;
+
+class UnionTypeTest extends TestCase
 {
     /**
-     * @var \Raml\Parser
+     * @var Parser
      */
     private $parser;
 
-    public function setUp()
+    protected function setUp()
     {
         parent::setUp();
-        $this->parser = new \Raml\Parser();
+        $this->parser = new Parser();
     }
 
-    /** @test */
+    /**
+     * @test
+     */
     public function shouldCorrectlyValidateCorrectType()
     {
         $simpleRaml = $this->parser->parse(__DIR__ . '/../fixture/simple_types.raml');
@@ -24,10 +31,12 @@ class UnionTypeTest extends PHPUnit_Framework_TestCase
         $type = $body->getType();
 
         $type->validate(json_decode('{"id": 1, "name": "Sample name"}', true));
-        self::assertTrue($type->isValid());
+        $this->assertTrue($type->isValid());
     }
 
-    /** @test */
+    /**
+     * @test
+     */
     public function shouldCorrectlyValidateIncorrectType()
     {
         $simpleRaml = $this->parser->parse(__DIR__ . '/../fixture/simple_types.raml');
@@ -38,8 +47,8 @@ class UnionTypeTest extends PHPUnit_Framework_TestCase
         $type = $body->getType();
 
         $type->validate(json_decode('{"id": 1, "name": false}', true));
-        self::assertFalse($type->isValid());
-        self::assertEquals(
+        $this->assertFalse($type->isValid());
+        $this->assertEquals(
             'name (Value did not pass validation against any type: '
                 . 'integer (integer (Expected int, got (boolean) "")), '
                 . 'string (string (Expected string, got (boolean) "")))',
@@ -47,7 +56,9 @@ class UnionTypeTest extends PHPUnit_Framework_TestCase
         );
     }
 
-    /** @test */
+    /**
+     * @test
+     */
     public function shouldCorrectlyValidateNullableTypes()
     {
         $simpleRaml = $this->parser->parse(__DIR__ . '/../fixture/simple_types.raml');
@@ -58,12 +69,14 @@ class UnionTypeTest extends PHPUnit_Framework_TestCase
         $type = $body->getType();
 
         $type->validate(json_decode('{"var": 10}', true));
-        self::assertTrue($type->isValid());
+        $this->assertTrue($type->isValid());
         $type->validate(json_decode('{"var": null}', true));
-        self::assertTrue($type->isValid());
+        $this->assertTrue($type->isValid());
     }
 
-    /** @test */
+    /**
+     * @test
+     */
     public function shouldCorrectlyValidateNullableStringTypes()
     {
         $simpleRaml = $this->parser->parse(__DIR__ . '/../fixture/simple_types.raml');
@@ -74,15 +87,15 @@ class UnionTypeTest extends PHPUnit_Framework_TestCase
         $type = $body->getType();
 
         $type->validate(null);
-        self::assertTrue($type->isValid());
+        $this->assertTrue($type->isValid());
 
         $type->validate('');
-        self::assertTrue($type->isValid());
+        $this->assertTrue($type->isValid());
 
         $type->validate('string');
-        self::assertTrue($type->isValid());
+        $this->assertTrue($type->isValid());
 
         $type->validate(1);
-        self::assertFalse($type->isValid());
+        $this->assertFalse($type->isValid());
     }
 }

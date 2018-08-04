@@ -1,30 +1,38 @@
 <?php
 
-namespace Raml\Test\NamedParameters;
+namespace Raml\Tests\NamedParameters;
 
-class WebFormBodyTest extends \PHPUnit_Framework_TestCase
+use PHPUnit\Framework\TestCase;
+use Raml\Exception\InvalidKeyException;
+use Raml\NamedParameter;
+use Raml\Parser;
+use Raml\WebFormBody;
+
+class WebFormBodyTest extends TestCase
 {
     /**
-     * @var \Raml\Parser
+     * @var Parser
      */
     private $parser;
 
-    public function setUp()
+    protected function setUp()
     {
         parent::setUp();
-        $this->parser = new \Raml\Parser();
+        $this->parser = new Parser();
     }
 
-    // ---
-
-    /** @test */
+    /**
+     * @test
+     */
     public function shouldThrowExceptionOnInvalidType()
     {
-        $this->setExpectedException('Exception', 'Invalid type');
-        new \Raml\WebFormBody('test');
+        $this->expectException(\InvalidArgumentException::class);
+        new WebFormBody('test');
     }
 
-    /** @test */
+    /**
+     * @test
+     */
     public function shouldBeCreatedForValidMediaTypeUrlEncoded()
     {
         $raml = <<<RAML
@@ -45,10 +53,12 @@ RAML;
         $method = $resource->getMethod('post');
         $body = $method->getBodyByType('application/x-www-form-urlencoded');
 
-        $this->assertInstanceOf('\Raml\WebFormBody', $body);
+        $this->assertInstanceOf(WebFormBody::class, $body);
     }
 
-    /** @test */
+    /**
+     * @test
+     */
     public function shouldBeCreatedForValidMediaTypeFormData()
     {
         $raml = <<<RAML
@@ -69,10 +79,12 @@ RAML;
         $method = $resource->getMethod('post');
         $body = $method->getBodyByType('multipart/form-data');
 
-        $this->assertInstanceOf('\Raml\WebFormBody', $body);
+        $this->assertInstanceOf(WebFormBody::class, $body);
     }
 
-    /** @test */
+    /**
+     * @test
+     */
     public function shouldThrowErrorOnAttemptGetInvalidParameter()
     {
         $raml = <<<RAML
@@ -93,18 +105,20 @@ RAML;
         $method = $resource->getMethod('post');
         $body = $method->getBodyByType('multipart/form-data');
 
-        $this->setExpectedException('\Raml\Exception\InvalidKeyException', 'The key badKey does not exist.');
+        $this->expectException(InvalidKeyException::class);
 
         try {
             $body->getParameter('badKey');
-        } catch (\Raml\Exception\InvalidKeyException $e) {
+        } catch (InvalidKeyException $e) {
             $this->assertEquals('badKey', $e->getKey());
 
             throw $e;
         }
     }
 
-    /** @test */
+    /**
+     * @test
+     */
     public function shouldBeAbleToGetAllParameters()
     {
         $raml = <<<RAML
@@ -126,7 +140,7 @@ RAML;
         $body = $method->getBodyByType('multipart/form-data');
 
         $parameters = $body->getParameters();
-        $expectedParameter = new \Raml\NamedParameter('string');
+        $expectedParameter = new NamedParameter('string');
         $expectedParameter->setDefault('A string');
 
         $this->assertEquals([

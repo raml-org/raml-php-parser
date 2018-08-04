@@ -55,8 +55,6 @@ class Type implements ArrayInstantiationInterface, TypeInterface
     private $enum = [];
 
     /**
-     * Create new type
-     *
      * @param string $name
      */
     public function __construct($name)
@@ -67,12 +65,9 @@ class Type implements ArrayInstantiationInterface, TypeInterface
     /**
      * Create a new Type from an array of data
      *
-     * @param string            $name
-     * @param array             $data
-     *
-     * @return Type
-     *
-     * @throws \Exception       Thrown when input is incorrect.
+     * @param string $name
+     * @param array $data
+     * @return self
      */
     public static function createFromArray($name, array $data = [])
     {
@@ -229,7 +224,10 @@ class Type implements ArrayInstantiationInterface, TypeInterface
     public function getParent()
     {
         if (is_string($this->parent)) {
-            $this->parent = TypeCollection::getInstance()->getTypeByName($this->parent);
+            $parent = TypeCollection::getInstance()->getTypeByName($this->parent);
+            assert($parent instanceof ObjectType);
+
+            return $parent;
         }
 
         return $this->parent;
@@ -263,6 +261,7 @@ class Type implements ArrayInstantiationInterface, TypeInterface
      * Inherit properties from parent (recursively)
      *
      * @return self Returns the new object with inherited properties.
+     * @throws \LogicException
      */
     public function inheritFromParent()
     {
@@ -279,7 +278,7 @@ class Type implements ArrayInstantiationInterface, TypeInterface
             return $this->getParent();
         }
         if (!($this->getParent() instanceof $this)) {
-            throw new \Exception(sprintf(
+            throw new \LogicException(sprintf(
                 'Inheritance not possible because of incompatible Types, child is instance of %s and parent is instance of %s',
                 get_class($this),
                 get_class($this->getParent())

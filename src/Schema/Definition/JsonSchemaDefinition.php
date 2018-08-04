@@ -33,8 +33,6 @@ final class JsonSchemaDefinition implements SchemaDefinitionInterface
      * - Converts the string into a JSON object then uses the JsonSchema Validator to validate
      *
      * @param mixed $value
-     *
-     * @throws \Exception
      */
     public function validate($value)
     {

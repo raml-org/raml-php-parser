@@ -1,19 +1,27 @@
 <?php
 
-class JsonSchemaTest extends PHPUnit_Framework_TestCase
+namespace Raml\Tests;
+
+use PHPUnit\Framework\TestCase;
+use Raml\Parser;
+use Raml\Schema\Definition\JsonSchemaDefinition;
+
+class JsonSchemaTest extends TestCase
 {
     /**
-     * @var \Raml\Parser
+     * @var Parser
      */
     private $parser;
 
-    public function setUp()
+    protected function setUp()
     {
         parent::setUp();
-        $this->parser = new \Raml\Parser();
+        $this->parser = new Parser();
     }
 
-    /** @test */
+    /**
+     * @test
+     */
     public function shouldReturnJsonString()
     {
         $simpleRaml = $this->parser->parse(__DIR__ . '/fixture/simple.raml');
@@ -28,7 +36,9 @@ class JsonSchemaTest extends PHPUnit_Framework_TestCase
         $this->assertEquals('A list of songs', json_decode($schemaString)->description);
     }
 
-    /** @test */
+    /**
+     * @test
+     */
     public function shouldCorrectlyValidateCorrectJson()
     {
         $simpleRaml = $this->parser->parse(__DIR__ . '/fixture/simple.raml');
@@ -42,7 +52,9 @@ class JsonSchemaTest extends PHPUnit_Framework_TestCase
         $this->assertTrue($schema->isValid());
     }
 
-    /** @test */
+    /**
+     * @test
+     */
     public function shouldCorrectlyValidateIncorrectJson()
     {
         $simpleRaml = $this->parser->parse(__DIR__ . '/fixture/simple.raml');
@@ -56,7 +68,9 @@ class JsonSchemaTest extends PHPUnit_Framework_TestCase
         $this->assertFalse($schema->isValid());
     }
 
-    /** @test */
+    /**
+     * @test
+     */
     public function shouldCorrectlyValidateInvalidJson()
     {
         $simpleRaml = $this->parser->parse(__DIR__ . '/fixture/simple.raml');
@@ -70,14 +84,16 @@ class JsonSchemaTest extends PHPUnit_Framework_TestCase
         $this->assertFalse($schema->isValid());
     }
 
-    /** @test */
+    /**
+     * @test
+     */
     public function shouldCorrectlyValidateJsonAsArray()
     {
         $simpleRaml = $this->parser->parse(__DIR__ . '/fixture/simple.raml');
         $resource = $simpleRaml->getResourceByUri('/songs/{songId}');
         $method = $resource->getMethod('post');
         $request = $method->getBodyByType('application/json');
-        /** @var \Raml\Schema\Definition\JsonSchemaDefinition $schema */
+        /** @var JsonSchemaDefinition $schema */
         $schema = $request->getSchema();
 
         $schema->validate(json_decode('{"title":"Title", "artist": "Artist"}', true));

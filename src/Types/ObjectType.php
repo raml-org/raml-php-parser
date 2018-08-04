@@ -15,7 +15,7 @@ class ObjectType extends Type
     /**
      * The properties that instances of this type can or must have.
      *
-     * @var \Raml\Type[]
+     * @var Type[]
      */
     private $properties;
 
@@ -63,12 +63,9 @@ class ObjectType extends Type
     private $discriminatorValue;
 
     /**
-     * Create a new ObjectType from an array of data
-     *
-     * @param string                 $name Type name.
-     * @param array                  $data Type data.
-     *
-     * @return ObjectType
+     * @param string $name Type name.
+     * @param array $data Type data.
+     * @return self
      */
     public static function createFromArray($name, array $data = [])
     {
@@ -108,6 +105,10 @@ class ObjectType extends Type
         return $type;
     }
 
+    /**
+     * @param string $value
+     * @return bool
+     */
     public function discriminate($value)
     {
         if (isset($value[$this->getDiscriminator()])) {
@@ -139,13 +140,12 @@ class ObjectType extends Type
      * Set the value of Properties
      *
      * @param array $properties
-     *
      * @return self
      */
     public function setProperties(array $properties)
     {
         foreach ($properties as $name => $property) {
-            if ($property instanceof \Raml\TypeInterface === false) {
+            if ($property instanceof Type === false) {
                 $property = ApiDefinition::determineType($name, $property);
             }
             $this->properties[] = $property;
@@ -174,7 +174,7 @@ class ObjectType extends Type
     /**
      * Get the value of Min Properties
      *
-     * @return mixed
+     * @return int
      */
     public function getMinProperties()
     {
@@ -184,13 +184,12 @@ class ObjectType extends Type
     /**
      * Set the value of Min Properties
      *
-     * @param mixed $minProperties
-     *
+     * @param int $minProperties
      * @return self
      */
     public function setMinProperties($minProperties)
     {
-        $this->minProperties = $minProperties;
+        $this->minProperties = (int) $minProperties;
 
         return $this;
     }
@@ -198,7 +197,7 @@ class ObjectType extends Type
     /**
      * Get the value of Max Properties
      *
-     * @return mixed
+     * @return int
      */
     public function getMaxProperties()
     {
@@ -208,13 +207,12 @@ class ObjectType extends Type
     /**
      * Set the value of Max Properties
      *
-     * @param mixed $maxProperties
-     *
+     * @param int $maxProperties
      * @return self
      */
     public function setMaxProperties($maxProperties)
     {
-        $this->maxProperties = $maxProperties;
+        $this->maxProperties = (int) $maxProperties;
 
         return $this;
     }
@@ -246,7 +244,7 @@ class ObjectType extends Type
     /**
      * Get the value of Discriminator
      *
-     * @return mixed
+     * @return string
      */
     public function getDiscriminator()
     {
@@ -256,8 +254,7 @@ class ObjectType extends Type
     /**
      * Set the value of Discriminator
      *
-     * @param mixed $discriminator
-     *
+     * @param string $discriminator
      * @return self
      */
     public function setDiscriminator($discriminator)
@@ -270,7 +267,7 @@ class ObjectType extends Type
     /**
      * Get the value of Discriminator Value
      *
-     * @return mixed
+     * @return string
      */
     public function getDiscriminatorValue()
     {
@@ -280,8 +277,7 @@ class ObjectType extends Type
     /**
      * Set the value of Discriminator Value
      *
-     * @param mixed $discriminatorValue
-     *
+     * @param string $discriminatorValue
      * @return self
      */
     public function setDiscriminatorValue($discriminatorValue)

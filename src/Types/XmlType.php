@@ -15,16 +15,15 @@ class XmlType extends Type
     /**
      * XML schema
      *
-     * @var string
+     * @var array
      */
     private $xml;
 
     /**
     * Create a new JsonType from an array of data
     *
-    * @param string    $name
-    * @param array     $data
-    *
+    * @param string $name
+    * @param array $data
     * @return self
     */
     public static function createFromArray($name, array $data = [])

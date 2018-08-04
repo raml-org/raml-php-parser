@@ -64,8 +64,7 @@ class Response implements ArrayInstantiationInterface, MessageSchemaInterface
      * Create a new response object from an array
      *
      * @param string $statusCode
-     * @param array  $data
-     *
+     * @param array $data
      * @return Response
      */
     public static function createFromArray($statusCode, array $data = [])
@@ -109,10 +108,9 @@ class Response implements ArrayInstantiationInterface, MessageSchemaInterface
      * Get the body by type
      *
      * @param string $type
-     *
-     * @throws \Exception
-     *
      * @return BodyInterface
+     *
+     * @throws \InvalidArgumentException
      */
     public function getBodyByType($type)
     {
@@ -123,7 +121,7 @@ class Response implements ArrayInstantiationInterface, MessageSchemaInterface
             return $this->bodyList['*/*'];
         }
 
-        throw new \Exception('No body found for type "' . $type . '"');
+        throw new \InvalidArgumentException(sprintf('No body found for type "%s"', $type));
     }
 
     /**
@@ -139,7 +137,7 @@ class Response implements ArrayInstantiationInterface, MessageSchemaInterface
     /**
      * Returns all supported types in response
      *
-     * @return array
+     * @return string[]
      */
     public function getTypes()
     {

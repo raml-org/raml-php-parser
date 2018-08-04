@@ -15,16 +15,15 @@ class JsonType extends Type
     /**
      * Json schema
      *
-     * @var string
+     * @var array
      */
     private $json;
 
     /**
     * Create a new JsonType from an array of data
     *
-    * @param string    $name
-    * @param array     $data
-    *
+    * @param string $name
+    * @param array $data
     * @return self
     */
     public static function createFromArray($name, array $data = [])
@@ -42,8 +41,6 @@ class JsonType extends Type
      * - Converts the string into a JSON object then uses the JsonSchema Validator to validate
      *
      * @param mixed $value
-     *
-     * @return bool
      */
     public function validate($value)
     {

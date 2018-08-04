@@ -1,30 +1,37 @@
 <?php
 
+namespace Raml\Tests\Validator;
+
 use Negotiation\Negotiator;
+use PHPUnit\Framework\TestCase;
+use Psr\Http\Message\RequestInterface;
+use Psr\Http\Message\StreamInterface;
+use Psr\Http\Message\UriInterface;
 use Raml\Parser;
 use Raml\Validator\RequestValidator;
+use Raml\Validator\ValidatorRequestException;
 use Raml\Validator\ValidatorSchemaHelper;
 
-class RequestValidatorTest extends PHPUnit_Framework_TestCase
+class RequestValidatorTest extends TestCase
 {
     /**
-     * @var \Raml\Parser
+     * @var Parser
      */
     private $parser;
     /**
-     * @var \Psr\Http\Message\RequestInterface|PHPUnit_Framework_MockObject_MockObject
+     * @var RequestInterface|PHPUnit_Framework_MockObject_MockObject
      */
     private $request;
     /**
-     * @var \Psr\Http\Message\UriInterface|PHPUnit_Framework_MockObject_MockObject
+     * @var UriInterface|PHPUnit_Framework_MockObject_MockObject
      */
     private $uri;
 
-    public function setUp()
+    protected function setUp()
     {
         $this->parser = new Parser();
-        $this->uri = $this->getMock('\Psr\Http\Message\UriInterface');
-        $this->request = $this->getMock('\Psr\Http\Message\RequestInterface');
+        $this->uri = $this->createMock(UriInterface::class);
+        $this->request = $this->createMock(RequestInterface::class);
         $this->request->method('getUri')->willReturn($this->uri);
     }
 
@@ -33,15 +40,13 @@ class RequestValidatorTest extends PHPUnit_Framework_TestCase
      */
     public function shouldCatchWrongMediaType()
     {
+        $this->expectException(ValidatorRequestException::class);
+        $this->expectExceptionMessage('Invalid Media type');
+
         $this->request->method('getMethod')->willReturn('get');
         $this->uri->method('getPath')->willReturn('/songs');
         $this->uri->method('getQuery')->willReturn('');
         $this->request->method('getHeaderLine')->with('Accept')->willReturn('application/xml');
-
-        $this->setExpectedException(
-            '\Raml\Validator\ValidatorRequestException',
-            'Invalid Media type'
-        );
 
         $validator = $this->getValidatorForSchema(__DIR__ . '/../fixture/validator/requestAcceptHeader.raml');
         $validator->validateRequest($this->request);
@@ -66,7 +71,7 @@ class RequestValidatorTest extends PHPUnit_Framework_TestCase
      */
     public function shouldNotAssertBodyOnGetRequest()
     {
-        $body = $this->getMock('\Psr\Http\Message\StreamInterface');
+        $body = $this->createMock(StreamInterface::class);
         $body->method('getContents')->willReturn('');
         $this->request->method('getHeaderLine')->with('Accept')->willReturn('application/json');
 
@@ -89,10 +94,8 @@ class RequestValidatorTest extends PHPUnit_Framework_TestCase
         $this->uri->method('getQuery')->willReturn('');
         $this->request->method('getHeaderLine')->with('Accept')->willReturn('application/json');
 
-        $this->setExpectedException(
-            '\Raml\Validator\ValidatorRequestException',
-            'required_number'
-        );
+        $this->expectException(ValidatorRequestException::class);
+        $this->expectExceptionMessage('required_number');
 
         $validator = $this->getValidatorForSchema(__DIR__ . '/../fixture/validator/queryParameters.raml');
         $validator->validateRequest($this->request);
@@ -108,10 +111,8 @@ class RequestValidatorTest extends PHPUnit_Framework_TestCase
         $this->uri->method('getQuery')->willReturn('required_number=5&optional_long_string=ABC');
         $this->request->method('getHeaderLine')->with('Accept')->willReturn('application/json');
 
-        $this->setExpectedException(
-            '\Raml\Validator\ValidatorRequestException',
-            'optional_long_string'
-        );
+        $this->expectException(ValidatorRequestException::class);
+        $this->expectExceptionMessage('optional_long_string');
 
         $validator = $this->getValidatorForSchema(__DIR__ . '/../fixture/validator/queryParameters.raml');
         $validator->validateRequest($this->request);
@@ -122,7 +123,7 @@ class RequestValidatorTest extends PHPUnit_Framework_TestCase
      */
     public function shouldCatchInvalidBody()
     {
-        $body = $this->getMock('\Psr\Http\Message\StreamInterface');
+        $body = $this->createMock(StreamInterface::class);
         $body->method('getContents')->willReturn('{"title":"Aaa"}');
 
         $this->request->method('getMethod')->willReturn('post');
@@ -130,16 +131,18 @@ class RequestValidatorTest extends PHPUnit_Framework_TestCase
         $this->request->method('getHeaderLine')->willReturn('application/json');
         $this->request->method('getBody')->willReturn($body);
 
-        $this->setExpectedException('\Raml\Validator\ValidatorRequestException');
+        $this->expectException(ValidatorRequestException::class);
 
         $validator = $this->getValidatorForSchema(__DIR__ . '/../fixture/validator/requestBody.raml');
         $validator->validateRequest($this->request);
     }
 
-    /** @test */
+    /**
+     * @test
+     */
     public function shouldAllowEmptyRequestBody()
     {
-        $body = $this->getMock('\Psr\Http\Message\StreamInterface');
+        $body = $this->createMock(StreamInterface::class);
         $body->method('getContents')->willReturn('');
 
         $this->request->method('getMethod')->willReturn('get');
