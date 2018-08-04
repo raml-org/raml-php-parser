@@ -12,23 +12,20 @@ class JsonSchemaParser extends SchemaParserAbstract
     /**
      * List of known JSON content types
      *
-     * @var array
+     * @var string[]
      */
     protected $compatibleContentTypes = [
         'application/json',
-        'text/json'
+        'text/json',
     ];
-
-    // ---
 
     /**
      * Create a new JSON Schema definition from a string
      *
      * @param string $schemaString
+     * @return JsonSchemaDefinition
      *
      * @throws InvalidJsonException
-     *
-     * @return \Raml\Schema\Definition\JsonSchemaDefinition
      */
     public function createSchemaDefinition($schemaString)
     {
@@ -42,15 +39,14 @@ class JsonSchemaParser extends SchemaParserAbstract
     }
 
     /**
-     * @param \stdClass $data
+     * @param \stdClass|string $data
      * @param SchemaStorage $schemaStorage
      * @return mixed
      */
-    private function resolveRefSchemaRecursively($data, $schemaStorage)
+    private function resolveRefSchemaRecursively($data, SchemaStorage $schemaStorage)
     {
         $data = $schemaStorage->resolveRefSchema($data);
-
-        if (!is_object($data) && !is_array($data)) {
+        if (!is_object($data) || (is_object($data) && !$data instanceof \stdClass)) {
             return $data;
         }
 

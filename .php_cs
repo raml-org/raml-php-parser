@@ -3,9 +3,8 @@
 declare(strict_types=1);
 
 $finder = PhpCsFixer\Finder::create()
-    ->exclude(__DIR__.'/app/frontend')
     ->in(__DIR__.'/src')
-    ->in(__DIR__.'/test');
+    ->in(__DIR__.'/tests');
 
 return PhpCsFixer\Config::create()
     ->setRules(

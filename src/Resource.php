@@ -59,12 +59,10 @@ class Resource implements ArrayInstantiationInterface
      */
     private $securitySchemes = [];
 
-    // --
-
     /**
      * List of resources under this resource
      *
-     * @var Resource[]
+     * @var self[]
      */
     private $subResources = [];
 
@@ -85,20 +83,16 @@ class Resource implements ArrayInstantiationInterface
      */
     private $parentResource;
 
-    // ---
-
     /**
-     * Create a new Resource from an array
-     *
-     * @param string        $uri
+     * @param string $uri
      * @param ApiDefinition $apiDefinition
      *
-     * @throws \Exception
+     * @throws \InvalidArgumentException
      */
     public function __construct($uri, ApiDefinition $apiDefinition)
     {
-        if (strpos($uri, '/') !== 0) {
-            throw new \Exception('URI must begin with a /');
+        if (mb_strpos($uri, '/') !== 0) {
+            throw new \InvalidArgumentException('URI must begin with a /');
         }
 
         $this->uri = $uri;
@@ -111,16 +105,15 @@ class Resource implements ArrayInstantiationInterface
     /**
      * Create a Resource from an array
      *
-     * @param string        $uri
+     * @param string $uri
      * @param ApiDefinition $apiDefinition
-     * @param array         $data
+     * @param array $data
      * [
-     *  uri:               string
-     *  displayName:       ?string
-     *  description:       ?string
+     *  uri: string
+     *  displayName: ?string
+     *  description: ?string
      *  baseUriParameters: ?array
      * ]
-     *
      * @return self
      */
     public static function createFromArray($uri, array $data = [], ApiDefinition $apiDefinition = null)

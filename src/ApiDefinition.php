@@ -6,7 +6,6 @@ use Raml\RouteFormatter\RouteFormatterInterface;
 use Raml\RouteFormatter\NoRouteFormatter;
 use Raml\Schema\SchemaDefinitionInterface;
 use Raml\RouteFormatter\BasicRoute;
-use Raml\Exception\InvalidKeyException;
 use Raml\Exception\BadParameter\ResourceNotFoundException;
 use Raml\Exception\BadParameter\InvalidSchemaDefinitionException;
 use Raml\Exception\BadParameter\InvalidProtocolException;
@@ -159,8 +158,6 @@ class ApiDefinition implements ArrayInstantiationInterface
      */
     private $traits;
 
-    // ---
-
     /**
      * Create a new API Definition
      *
@@ -182,7 +179,7 @@ class ApiDefinition implements ArrayInstantiationInterface
      * Create a new API Definition from an array
      *
      * @param string $title
-     * @param array  $data
+     * @param array $data
      * [
      *  title:              string
      *  version:            ?string
@@ -313,10 +310,9 @@ class ApiDefinition implements ArrayInstantiationInterface
      * Get a resource by a uri
      *
      * @param string $uri
-     *
-     * @throws InvalidKeyException
-     *
      * @return Resource
+     *
+     * @throws ResourceNotFoundException
      */
     public function getResourceByUri($uri)
     {
@@ -325,11 +321,12 @@ class ApiDefinition implements ArrayInstantiationInterface
 
         $resources = $this->getResourcesAsArray($this->resources);
         foreach ($resources as $resource) {
+            assert($resource instanceof Resource);
             if ($resource->matchesUri($uri)) {
                 return $resource;
             }
         }
-        // we never returned so throw exception
+
         throw new ResourceNotFoundException($uri);
     }
 
@@ -337,10 +334,9 @@ class ApiDefinition implements ArrayInstantiationInterface
      * Get a resource by a path
      *
      * @param string $path
-     *
-     * @throws InvalidKeyException
-     *
      * @return Resource
+     *
+     * @throws ResourceNotFoundException
      */
     public function getResourceByPath($path)
     {
@@ -365,7 +361,6 @@ class ApiDefinition implements ArrayInstantiationInterface
      * GET /songs/{songId} => [/songs/{songId}, GET, Raml\Method]
      *
      * @param RouteFormatterInterface $formatter
-     *
      * @return RouteFormatterInterface
      */
     public function getResourcesAsUri(RouteFormatterInterface $formatter = null)
@@ -381,7 +376,6 @@ class ApiDefinition implements ArrayInstantiationInterface
 
     /**
      * @param Resource[] $resources
-     *
      * @return Resource[]
      */
     private function getResourcesAsArray($resources)
@@ -552,9 +546,9 @@ class ApiDefinition implements ArrayInstantiationInterface
     /**
      * Add a new schema to a collection
      *
-     * @param string                            $collectionName
-     * @param string                            $schemaName
-     * @param string|SchemaDefinitionInterface  $schema
+     * @param string $collectionName
+     * @param string $schemaName
+     * @param string|SchemaDefinitionInterface $schema
      *
      * @throws InvalidSchemaDefinitionException
      */
@@ -566,8 +560,6 @@ class ApiDefinition implements ArrayInstantiationInterface
 
         $this->schemaCollections[$collectionName][$schemaName] = $schema;
     }
-
-    // --
 
     /**
      * Get the documentation of the API
@@ -614,10 +606,9 @@ class ApiDefinition implements ArrayInstantiationInterface
      *
      * @param string $name Name of type.
      * @param array $definition Definition of type.
+     * @return Type Returns a (best) matched type object.
      *
-     * @return TypeInterface Returns a (best) matched type object.
-     *
-     * @throws \Exception
+     * @throws \InvalidArgumentException
      */
     public static function determineType($name, $definition)
     {
@@ -629,7 +620,7 @@ class ApiDefinition implements ArrayInstantiationInterface
                 $definition['type'] = isset($definition['properties']) ? 'object' : 'string';
             }
         } else {
-            throw new \Exception('Invalid datatype for $definition parameter.');
+            throw new \InvalidArgumentException('Invalid datatype for $definition parameter.');
         }
 
         $type = $definition['type'] ?: 'null';
@@ -640,6 +631,7 @@ class ApiDefinition implements ArrayInstantiationInterface
                     'Raml\Types\%sType',
                     StringTransformer::convertString($type, StringTransformer::UPPER_CAMEL_CASE)
                 );
+                assert(class_exists($className));
 
                 return forward_static_call_array([$className, 'createFromArray'], [$name, $definition]);
             }
@@ -661,6 +653,11 @@ class ApiDefinition implements ArrayInstantiationInterface
         return Type::createFromArray($name, $definition);
     }
 
+    /**
+     * @param string $name
+     * @param array $definition
+     * @return TraitDefinition
+     */
     public static function determineTrait($name, $definition)
     {
         return TraitDefinition::createFromArray($name, $definition);
@@ -706,8 +703,6 @@ class ApiDefinition implements ArrayInstantiationInterface
         return $this->traits;
     }
 
-    // --
-
     /**
      * Get the resources tree
      *
@@ -740,8 +735,6 @@ class ApiDefinition implements ArrayInstantiationInterface
         }
         unset($this->resources[$resource->getUri()]);
     }
-
-    // --
 
     /**
      * Get a security scheme by it's name
@@ -785,8 +778,6 @@ class ApiDefinition implements ArrayInstantiationInterface
         $this->securedBy[$securityScheme->getKey()] = $securityScheme;
     }
 
-    // ---
-
     /**
      * Recursive function that generates a flat array of the entire API Definition
      *
@@ -794,8 +785,7 @@ class ApiDefinition implements ArrayInstantiationInterface
      * GET /songs/{songId} => [api.example.org, /songs/{songId}, GET, [https], Raml\Method]
      *
      * @param Resource[] $resources
-     *
-     * @return array[BasicRoute]
+     * @return BasicRoute[]
      */
     private function getMethodsAsArray(array $resources)
     {

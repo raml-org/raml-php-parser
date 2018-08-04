@@ -5,7 +5,7 @@ namespace Raml;
 use Raml\Types\ObjectType;
 
 /**
- *  Singleton class used to register all types in one place
+ * Singleton class used to register all types in one place
  */
 class TypeCollection implements \Iterator
 {
@@ -14,12 +14,12 @@ class TypeCollection implements \Iterator
      *
      * @var self
      */
-    private static $instance = null;
+    private static $instance;
 
     /**
      * Collection
      *
-     * @var array
+     * @var TypeInterface[]
      */
     private $collection = [];
 
@@ -38,20 +38,14 @@ class TypeCollection implements \Iterator
     private $typesWithInheritance = [];
 
     /**
-    * prevent initiation from outside, there can be only one!
-    *
-    */
+     * Singleton, prevent initiation from outside, there can be only one!
+     */
     private function __construct()
     {
-        $this->collection = [];
-        $this->position = 0;
     }
 
     /**
-     *  The object is created from within the class itself
-     * only if the class has no instance.
-     *
-     * @return TypeCollection
+     * @return self
      */
     public static function getInstance()
     {
@@ -116,6 +110,7 @@ class TypeCollection implements \Iterator
      * Remove given Type from the collection
      *
      * @param TypeInterface $typeToRemove Type to remove.
+     * @throws \RuntimeException When no type is found.
      */
     public function remove(TypeInterface $typeToRemove)
     {
@@ -127,16 +122,16 @@ class TypeCollection implements \Iterator
             }
         }
 
-        throw new \Exception(sprintf('Cannot remove given type %s', var_export($typeToRemove, true)));
+        throw new \RuntimeException(sprintf('Cannot remove given type %s', var_export($typeToRemove, true)));
     }
 
     /**
      * Retrieves a type by name
      *
      * @param string $name Name of the Type to retrieve.
-     *
      * @return TypeInterface Returns Type matching given name if found.
-     * @throws \Exception When no type is found.
+     *
+     * @throws \RuntimeException When no type is found.
      */
     public function getTypeByName($name)
     {
@@ -147,7 +142,7 @@ class TypeCollection implements \Iterator
             }
         }
 
-        throw new \Exception(sprintf('No type found for name %s, list: %s', var_export($name, true), var_export($this->collection, true)));
+        throw new \RuntimeException(sprintf('No type found for name %s, list: %s', var_export($name, true), var_export($this->collection, true)));
     }
 
     /**
@@ -157,9 +152,9 @@ class TypeCollection implements \Iterator
     public function hasTypeByName($name)
     {
         try {
-            return $this->getTypeByName($name) !== null;
+            return $this->getTypeByName($name) instanceof TypeInterface;
         } catch (\Exception $exception) {
-            return null;
+            return false;
         }
     }
 
@@ -179,8 +174,7 @@ class TypeCollection implements \Iterator
      * Adds a Type to the list of typesWithInheritance
      *
      * @param ObjectType $type Type to add.
-     *
-     * @return self Returns self for chaining.
+     * @return self
      */
     public function addTypeWithInheritance(ObjectType $type)
     {

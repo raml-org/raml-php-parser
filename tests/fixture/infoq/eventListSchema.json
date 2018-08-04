@@ -1,0 +1,11 @@
+{
+  "$schema": "http://json-schema.org/draft-04/schema#",
+  "type": "array",
+  "required": false,
+  "items": {
+    "type": {
+      "$ref": "eventSchema.json"
+    },
+    "required": false
+  }
+}

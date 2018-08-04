@@ -15,17 +15,15 @@ class XmlSchemaParser extends SchemaParserAbstract
     protected $compatibleContentTypes = [
         'application/xml',
         'text/xml',
-        'application/soap+xml'
+        'application/soap+xml',
     ];
-
-    // ---
 
     /**
      * Create a new XML Schema definition from a string
      *
      * @param string $schemaString
      *
-     * @return \Raml\Schema\Definition\XmlSchemaDefinition
+     * @return XmlSchemaDefinition
      */
     public function createSchemaDefinition($schemaString)
     {

@@ -1,0 +1,16 @@
+#%RAML 0.8
+title: Example API
+version: v1
+
+resourceTypes:
+  - pagination:
+      get:
+        queryParameters:
+          page:
+            displayName: Current Page
+            type: invalid
+            required: false
+
+/books:
+  /{bookId}:
+    type: pagination

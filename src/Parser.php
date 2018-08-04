@@ -52,7 +52,7 @@ class Parser
     /**
      * List of types
      *
-     * @var string
+     * @var TypeInterface[]
      */
     private $types = [];
 
@@ -169,7 +169,7 @@ class Parser
     /**
      * Add a new type
      *
-     * @param TypeInterface $type Type to add.
+     * @param TypeInterface $type
      */
     public function addType(TypeInterface $type)
     {
@@ -206,11 +206,10 @@ class Parser
      * Parse a RAML spec from a file
      *
      * @param string $rawFileName
+     * @return ApiDefinition
      *
      * @throws FileNotFoundException
      * @throws RamlParserException
-     *
-     * @return \Raml\ApiDefinition
      */
     public function parse($rawFileName)
     {
@@ -233,10 +232,7 @@ class Parser
      *
      * @param string $ramlString
      * @param string $rootDir
-     *
-     * @throws RamlParserException
-     *
-     * @return \Raml\ApiDefinition
+     * @return ApiDefinition
      */
     public function parseFromString($ramlString, $rootDir)
     {
@@ -252,10 +248,9 @@ class Parser
      *
      * @param array $ramlData
      * @param string $rootDir
+     * @return ApiDefinition
      *
      * @throws RamlParserException
-     *
-     * @return \Raml\ApiDefinition
      */
     private function parseRamlData($ramlData, $rootDir)
     {
@@ -561,10 +556,9 @@ class Parser
      *
      * @param string $ramlString
      * @param string $rootDir
-     *
-     * @throws \Exception
-     *
      * @return array
+     *
+     * @throws \RuntimeException
      */
     private function parseRamlString($ramlString, $rootDir)
     {
@@ -573,8 +567,8 @@ class Parser
 
         $data = $this->parseYaml($ramlString);
 
-        if (!$data) {
-            throw new \Exception('RAML file appears to be empty');
+        if (empty($data)) {
+            throw new \RuntimeException('RAML file appears to be empty');
         }
 
         if (strpos($header, '#%RAML') === 0) {
@@ -589,13 +583,10 @@ class Parser
         return $data;
     }
 
-    // ---
-
     /**
      * Convert a yaml string into an array
      *
      * @param string $fileData
-     *
      * @return array
      */
     private function parseYaml($fileData)
@@ -611,10 +602,9 @@ class Parser
      *
      * @param string $fileName
      * @param string $rootDir
-     *
-     * @throws \Exception
-     *
      * @return array
+     *
+     * @throws FileNotFoundException
      */
     private function loadAndParseFile($fileName, $rootDir)
     {
@@ -681,8 +671,7 @@ class Parser
      *
      * @param array|string|TaggedValue $structure
      * @param string $rootDir
-     *
-     * @return array
+     * @return array|string|TaggedValue
      */
     private function includeAndParseFiles($structure, $rootDir)
     {
@@ -713,8 +702,7 @@ class Parser
      * @param array $traits
      * @param string $path
      * @param string $name
-     *
-     * @return array
+     * @return array|string
      */
     private function replaceTraits($raml, array $traits, $path, $name)
     {
@@ -768,7 +756,6 @@ class Parser
      * @param string $path
      * @param string $name
      * @param string|null $parentKey
-     *
      * @return array
      */
     private function replaceTypes($raml, $types, $path, $name, $parentKey = null)
@@ -817,7 +804,6 @@ class Parser
      *
      * @param array $values
      * @param array $trait
-     *
      * @return array
      */
     private function applyVariables(array $values, array $trait)

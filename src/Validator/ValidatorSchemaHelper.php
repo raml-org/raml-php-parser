@@ -210,7 +210,10 @@ class ValidatorSchemaHelper
     private function getMethod($method, $path)
     {
         try {
-            return $this->getResource($path)->getMethod($method);
+            $resource = $this->getResource($path);
+            assert($resource instanceof Resource);
+
+            return $resource->getMethod($method);
         } catch (\Exception $exception) {
             throw new ValidatorSchemaException(sprintf(
                 'Schema for %s %s was not found in API definition',

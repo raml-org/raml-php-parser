@@ -1,0 +1,30 @@
+#%RAML 0.8
+title: Example API
+version: v1
+
+resourceTypes:
+  - pagination:
+      get:
+        queryParameters:
+          page:
+            displayName: Current Page
+            type: integer
+            required: false
+
+/books:
+  /{bookId}:
+    type: pagination
+    get:
+     queryParameters:
+       author:
+         displayName: Author
+         type: string
+         description: An author's full name
+         example: Mary Roach
+         required: false
+       publicationYear:
+         displayName: Pub Year
+         type: number
+         description: The year released for the first time in the US
+         example: 1984
+         required: false
