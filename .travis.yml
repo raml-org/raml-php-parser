@@ -7,7 +7,6 @@ cache:
     - $HOME/.composer/cache
 
 php:
-  - 5.5
   - 5.6
   - 7.0
   - 7.1
@@ -18,14 +17,16 @@ env:
   global:
     - LATEST_PHP_VERSION="7.2"
   matrix:
-    - DEPENDENCIES="stable"
     - DEPENDENCIES="beta"
+    - DEPENDENCIES="low"
+    - DEPENDENCIES="stable"
 
 matrix:
   fast_finish: true
   allow_failures:
     - php: nightly
     - env: DEPENDENCIES="beta"
+    - env: DEPENDENCIES="low"
 
 before_install:
   - echo "memory_limit=-1" >> ~/.phpenv/versions/$(phpenv version-name)/etc/conf.d/travis.ini
@@ -35,14 +36,17 @@ before_install:
   - mkdir -p build/logs
 
 install:
+  - if [ "$(phpenv version-name)" != "$LATEST_PHP_VERSION" ]; then
+      composer remove friendsofphp/php-cs-fixer phpstan/phpstan --dev;
+    fi
   - if [ "$DEPENDENCIES" = "beta" ]; then
       composer config minimum-stability beta;
+      composer update -n --prefer-dist;
+    elif [ "$DEPENDENCIES" = "low" ]; then
+      composer update -n --prefer-dist --prefer-lowest;
+    else
+      composer update -n --prefer-dist;
     fi;
-  - if [ "$(phpenv version-name)" != "$LATEST_PHP_VERSION" ]; then
-      composer remove friendsofphp/php-cs-fixer --dev;
-      composer remove phpstan/phpstan --dev;
-    fi
-  - composer update -n --prefer-dist
 
 script:
   - if [ "$(phpenv version-name)" != "$LATEST_PHP_VERSION" ]; then
