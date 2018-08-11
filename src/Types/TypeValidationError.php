@@ -118,11 +118,13 @@ class TypeValidationError
      */
     public static function unexpectedValueType($property, $constraint, $actualValue)
     {
+        $value = is_array($actualValue) ? json_encode($actualValue) : (string)$actualValue;
+
         return new self($property, sprintf(
             'Expected %s, got (%s) "%s"',
             $constraint,
             gettype($actualValue),
-            $actualValue
+            $value
         ));
     }
 
