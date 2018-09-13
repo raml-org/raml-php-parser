@@ -642,9 +642,6 @@ RAML;
             $this->parser->parse(__DIR__ . '/fixture/invalid/queryParameters.raml');
         } catch (\Raml\Exception\InvalidQueryParameterTypeException $e) {
             $this->assertEquals('invalid', $e->getType());
-            $this->assertEquals([
-                'string', 'number', 'integer', 'date', 'boolean', 'file'
-            ], $e->getValidTypes());
             throw $e;
         }
     }
