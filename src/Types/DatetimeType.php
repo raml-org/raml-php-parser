@@ -8,8 +8,9 @@ use Raml\Type;
 /**
  * DateTimeType type class
  */
-class DateTimeType extends Type
+class DatetimeType extends Type
 {
+    const DEFAULT_FORMAT = DATE_RFC3339;
     /**
      * DateTime format to use
      *
@@ -20,10 +21,10 @@ class DateTimeType extends Type
     /**
      * Create a new DateTimeType from an array of data
      *
-     * @param string    $name
-     * @param array     $data
+     * @param string $name
+     * @param array $data
      *
-     * @return DateTimeType
+     * @return DatetimeType
      */
     public static function createFromArray($name, array $data = [])
     {
@@ -68,11 +69,15 @@ class DateTimeType extends Type
     {
         parent::validate($value);
 
-        $format = $this->format ?: DATE_RFC3339;
+        $format = $this->format ?: self::DEFAULT_FORMAT;
         $d = DateTime::createFromFormat($format, $value);
 
-        if ($d && $d->format($format) !== $value) {
-            $this->errors[] = TypeValidationError::unexpectedValueType($this->getName(), 'datetime', $value);
+        if (!$d || $d->format($format) !== $value) {
+            $this->errors[] = TypeValidationError::unexpectedValueType(
+                $this->getName(),
+                'datetime with format '.$this->format,
+                $value
+            );
         }
     }
 }

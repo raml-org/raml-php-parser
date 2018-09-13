@@ -1,8 +1,9 @@
 <?php
+
 namespace Raml;
 
-use \Raml\Exception\InvalidQueryParameterTypeException;
-use \Raml\Exception\ValidationException;
+use Raml\Exception\InvalidQueryParameterTypeException;
+use Raml\Exception\ValidationException;
 
 /**
  * Named Parameters
@@ -14,28 +15,32 @@ class NamedParameter implements ArrayInstantiationInterface
     // ---
     // Type constants
 
-    const TYPE_STRING   = 'string';
-    const TYPE_NUMBER   = 'number';
-    const TYPE_INTEGER  = 'integer';
-    const TYPE_DATE     = 'date';
-    const TYPE_BOOLEAN  = 'boolean';
-    const TYPE_FILE     = 'file';
-    
+    const TYPE_STRING = 'string';
+    const TYPE_NUMBER = 'number';
+    const TYPE_INTEGER = 'integer';
+    const TYPE_DATE = 'date';
+    const TYPE_BOOLEAN = 'boolean';
+    const TYPE_FILE = 'file';
+    const TYPE_DATE_ONLY = 'date-only';
+    const TYPE_TIME_ONLY = 'time-only';
+    const TYPE_DATETIME_ONLY = 'datetime-only';
+    const TYPE_DATETIME = 'datetime';
+
     // ---
     // Validation exception codes
-    
-    const VAL_NOTBOOLEAN   = 1;
-    const VAL_NOTDATE      = 2;
-    const VAL_NOTSTRING    = 3;
-    const VAL_NOTINT       = 4;
-    const VAL_NOTNUMBER    = 5;
-    const VAL_NOTFILE      = 6; // Unused
-    const VAL_ISREQUIRED   = 7;
-    const VAL_TOOSHORT     = 8;
-    const VAL_TOOLONG      = 9;
-    const VAL_NUMLESSTHAN  = 10;
-    const VAL_GREATERTHAN  = 11;
-    const VAL_PATTERNFAIL  = 12;
+
+    const VAL_NOTBOOLEAN = 1;
+    const VAL_NOTDATE = 2;
+    const VAL_NOTSTRING = 3;
+    const VAL_NOTINT = 4;
+    const VAL_NOTNUMBER = 5;
+    const VAL_NOTFILE = 6; // Unused
+    const VAL_ISREQUIRED = 7;
+    const VAL_TOOSHORT = 8;
+    const VAL_TOOLONG = 9;
+    const VAL_NUMLESSTHAN = 10;
+    const VAL_GREATERTHAN = 11;
+    const VAL_PATTERNFAIL = 12;
     const VAL_NOTENUMVALUE = 13;
 
     /**
@@ -49,7 +54,11 @@ class NamedParameter implements ArrayInstantiationInterface
         self::TYPE_INTEGER,
         self::TYPE_DATE,
         self::TYPE_BOOLEAN,
-        self::TYPE_FILE
+        self::TYPE_FILE,
+        self::TYPE_DATETIME_ONLY,
+        self::TYPE_DATE_ONLY,
+        self::TYPE_TIME_ONLY,
+        self::TYPE_DATETIME,
     ];
 
     // ---
@@ -180,12 +189,19 @@ class NamedParameter implements ArrayInstantiationInterface
      */
     private $default;
 
+    /**
+     * DateTime format (for datetime type only)
+     *
+     * @var string
+     */
+    private $format;
+
     // ---
 
     /**
      * Create a new Query Parameter
      *
-     * @param string  $key
+     * @param string $key
      */
     public function __construct($key)
     {
@@ -212,7 +228,7 @@ class NamedParameter implements ArrayInstantiationInterface
      * [
      *  displayName:        ?string
      *  description:        ?string
-     *  type:               ?["string","number","integer","date","boolean","file"]
+     *  type:               ?["string","number","integer","date","boolean","file", ...]
      *  enum:               ?array
      *  pattern:            ?string
      *  validationPattern:  ?string
@@ -225,6 +241,7 @@ class NamedParameter implements ArrayInstantiationInterface
      *  repeat:             ?boolean
      *  required:           ?boolean
      *  default:            ?string
+     *  format:             ?string
      * ]
      *
      * @throws \Exception
@@ -300,6 +317,10 @@ class NamedParameter implements ArrayInstantiationInterface
             } else {
                 $namedParameter->setDefault($data['default']);
             }
+        }
+
+        if (isset($data['format'])) {
+            $namedParameter->setFormat($data['format']);
         }
 
         return $namedParameter;
@@ -446,7 +467,7 @@ class NamedParameter implements ArrayInstantiationInterface
             throw new \Exception('minLength can only be set on type "string"');
         }
 
-        $this->minLength = (int) $minLength;
+        $this->minLength = (int)$minLength;
     }
 
     // --
@@ -474,7 +495,7 @@ class NamedParameter implements ArrayInstantiationInterface
             throw new \Exception('maxLength can only be set on type "string"');
         }
 
-        $this->maxLength = (int) $maxLength;
+        $this->maxLength = (int)$maxLength;
     }
 
     // --
@@ -502,7 +523,7 @@ class NamedParameter implements ArrayInstantiationInterface
             throw new \Exception('minimum can only be set on type "integer" or "number');
         }
 
-        $this->minimum = (int) $minimum;
+        $this->minimum = (int)$minimum;
     }
 
     // --
@@ -530,7 +551,7 @@ class NamedParameter implements ArrayInstantiationInterface
             throw new \Exception('maximum can only be set on type "integer" or "number');
         }
 
-        $this->maximum = (int) $maximum;
+        $this->maximum = (int)$maximum;
     }
 
     // --
@@ -584,7 +605,7 @@ class NamedParameter implements ArrayInstantiationInterface
      */
     public function setRepeat($repeated)
     {
-        $this->repeated = (bool) $repeated;
+        $this->repeated = (bool)$repeated;
     }
 
     // --
@@ -606,7 +627,7 @@ class NamedParameter implements ArrayInstantiationInterface
      */
     public function setRequired($required)
     {
-        $this->required = (bool) $required;
+        $this->required = (bool)$required;
     }
 
     // --
@@ -619,6 +640,22 @@ class NamedParameter implements ArrayInstantiationInterface
     public function getDefault()
     {
         return $this->default;
+    }
+
+    /**
+     * @return string
+     */
+    public function getFormat()
+    {
+        return $this->format;
+    }
+
+    /**
+     * @param string $format
+     */
+    public function setFormat($format)
+    {
+        $this->format = $format;
     }
 
     /**
@@ -663,7 +700,7 @@ class NamedParameter implements ArrayInstantiationInterface
 
         $this->default = $default;
     }
-    
+
     /**
      * Validate a paramater via RAML specifications
      *
@@ -681,21 +718,21 @@ class NamedParameter implements ArrayInstantiationInterface
             if ($this->isRequired()) {
                 throw new ValidationException($this->getKey().' is required', static::VAL_ISREQUIRED);
             }
-                
+
             return;
-                
+
         }
-        
+
         switch ($this->getType()) {
             case static::TYPE_BOOLEAN:
-                
+
                 // Must be boolean
                 if (!is_bool($param)) {
                     throw new ValidationException($this->getKey().' is not boolean', static::VAL_NOTBOOLEAN);
                 }
-                
+
                 break;
-                
+
             case static::TYPE_DATE:
 
                 // Must be a valid date
@@ -703,14 +740,14 @@ class NamedParameter implements ArrayInstantiationInterface
                     throw new ValidationException($this->getKey().' is not a valid date', static::VAL_NOTDATE);
                 }
 
-                // DATES are also strings
+            // DATES are also strings
             case static::TYPE_STRING:
-    
+
                 // Must be a string
                 if (!is_string($param)) {
                     throw new ValidationException($this->getKey().' is not a string', static::VAL_NOTSTRING);
                 }
-    
+
                 /**
                  * Check the length of a string.
                  *
@@ -723,7 +760,7 @@ class NamedParameter implements ArrayInstantiationInterface
                         static::VAL_TOOSHORT
                     );
                 }
-                
+
                 /**
                  * Check the length of a string.
                  *
@@ -736,13 +773,12 @@ class NamedParameter implements ArrayInstantiationInterface
                         static::VAL_TOOLONG
                     );
                 }
-    
+
                 break;
-                
 
 
             case static::TYPE_INTEGER:
-                
+
                 /**
                  * Integers must be of type integer.
                  *
@@ -751,10 +787,10 @@ class NamedParameter implements ArrayInstantiationInterface
                 if (!is_int($param)) {
                     throw new ValidationException($this->getKey().' is not an integer', static::VAL_NOTINT);
                 }
-                // No break
-                
+            // No break
+
             case static::TYPE_NUMBER:
-    
+
                 /**
                  * Number types must be numeric. ;)
                  *
@@ -763,7 +799,7 @@ class NamedParameter implements ArrayInstantiationInterface
                 if (!is_numeric($param)) {
                     throw new ValidationException($this->getKey().' is not a number', static::VAL_NOTNUMBER);
                 }
-    
+
                 /**
                  * Check the value constraints if specified.
                  *
@@ -776,7 +812,7 @@ class NamedParameter implements ArrayInstantiationInterface
                         static::VAL_NUMLESSTHAN
                     );
                 }
-                
+
                 /**
                  * Check the value constraints if specified.
                  *
@@ -789,17 +825,32 @@ class NamedParameter implements ArrayInstantiationInterface
                         static::VAL_GREATERTHAN
                     );
                 }
-    
+
                 break;
-                
+
             case static::TYPE_FILE:
-                
+
                 // File type cannot be reliably validated based on its type alone.
-                
+
                 break;
-                
+
+            case static::TYPE_TIME_ONLY:
+            case static::TYPE_DATE_ONLY:
+            case static::TYPE_DATETIME_ONLY:
+            case static::TYPE_DATETIME:
+                $typeObject = ApiDefinition::determineType($this->key, [
+                    'type' => $this->getType(),
+                    'format' => $this->getFormat(),
+                ]);
+                $typeObject->validate($param);
+                if (!$typeObject->isValid()) {
+                    throw new ValidationException($typeObject->getErrors()[0]);
+                }
+                break;
+
         }
-    
+
+
         /**
          * Validate against the RAML specified pattern if it exists.
          *
@@ -814,7 +865,7 @@ class NamedParameter implements ArrayInstantiationInterface
                 static::VAL_PATTERNFAIL
             );
         }
-    
+
         /**
          * If we have an enum (array), then it must be a specified value.
          *
@@ -844,7 +895,7 @@ class NamedParameter implements ArrayInstantiationInterface
         if ($this->validationPattern) {
             $pattern = $this->validationPattern;
         } elseif ($enum = $this->getEnum()) {
-            $pattern = '^(' . implode('|', array_map('preg_quote', $enum)) . ')$';
+            $pattern = '^('.implode('|', array_map('preg_quote', $enum)).')$';
         } else {
             switch ($this->getType()) {
                 case self::TYPE_NUMBER:
@@ -874,7 +925,7 @@ class NamedParameter implements ArrayInstantiationInterface
                     break;
                 case self::TYPE_STRING:
                     if ($this->getMinLength() || $this->getMaxLength()) {
-                        $pattern = '((?!\/).){' . $this->getMinLength() . ',' . $this->getMaxLength() . '}';
+                        $pattern = '((?!\/).){'.$this->getMinLength().','.$this->getMaxLength().'}';
                     } else {
                         $pattern = '([^/]+)';
                     }
