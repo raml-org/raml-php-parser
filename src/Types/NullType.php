@@ -6,7 +6,7 @@ use Raml\Type;
 
 /**
  * NullType class
- * 
+ *
  * @author Melvin Loos <m.loos@infopact.nl>
  */
 class NullType extends Type
@@ -22,13 +22,14 @@ class NullType extends Type
     public static function createFromArray($name, array $data = [])
     {
         $type = parent::createFromArray($name, $data);
+        assert($type instanceof self);
 
         return $type;
     }
 
     public function validate($value)
     {
-        if (!is_null($value)) {
+        if (null !== $value) {
             $this->errors[] = TypeValidationError::unexpectedValueType($this->getName(), 'null', $value);
         }
     }

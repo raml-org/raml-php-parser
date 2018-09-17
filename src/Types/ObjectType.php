@@ -15,30 +15,30 @@ class ObjectType extends Type
     /**
      * The properties that instances of this type can or must have.
      *
-     * @var \Raml\Type[]
-     **/
-    private $properties = null;
+     * @var Type[]
+     */
+    private $properties;
 
     /**
      * The minimum number of properties allowed for instances of this type.
      *
      * @var int
-     **/
-    private $minProperties = null;
+     */
+    private $minProperties;
 
     /**
      * The maximum number of properties allowed for instances of this type.
      *
      * @var int
-     **/
-    private $maxProperties = null;
+     */
+    private $maxProperties;
 
     /**
      * A Boolean that indicates if an object instance has additional properties.
      * Default: true
      *
      * @var bool
-     **/
+     */
     private $additionalProperties = true;
 
     /**
@@ -48,8 +48,8 @@ class ObjectType extends Type
      * Unsupported practices are inline type declarations and using discriminator with non-scalar properties.
      *
      * @var string
-     **/
-    protected $discriminator = null;
+     */
+    protected $discriminator;
 
     /**
      * Identifies the declaring type.
@@ -59,41 +59,45 @@ class ObjectType extends Type
      * Default: The name of the type
      *
      * @var string
-     **/
-    private $discriminatorValue = null;
+     */
+    private $discriminatorValue;
 
     /**
-     * Create a new ObjectType from an array of data
-     *
-     * @param string                 $name Type name.
-     * @param array                  $data Type data.
-     *
-     * @return ObjectType
+     * @param string $name Type name.
+     * @param array $data Type data.
+     * @return self
      */
     public static function createFromArray($name, array $data = [])
     {
         $type = parent::createFromArray($name, $data);
+        assert($type instanceof self);
         $type->setType('object');
 
         foreach ($data as $key => $value) {
             switch ($key) {
                 case 'properties':
                     $type->setProperties($value);
+
                     break;
                 case 'minProperties':
                     $type->setMinProperties($value);
+
                     break;
                 case 'maxProperties':
                     $type->setMinProperties($value);
+
                     break;
                 case 'additionalProperties':
                     $type->setAdditionalProperties($value);
+
                     break;
                 case 'discriminator':
                     $type->setDiscriminator($value);
+
                     break;
                 case 'discriminatorValue':
                     $type->setDiscriminatorValue($value);
+
                     break;
             }
         }
@@ -101,6 +105,10 @@ class ObjectType extends Type
         return $type;
     }
 
+    /**
+     * @param string $value
+     * @return bool
+     */
     public function discriminate($value)
     {
         if (isset($value[$this->getDiscriminator()])) {
@@ -132,13 +140,12 @@ class ObjectType extends Type
      * Set the value of Properties
      *
      * @param array $properties
-     *
      * @return self
      */
     public function setProperties(array $properties)
     {
         foreach ($properties as $name => $property) {
-            if ($property instanceof \Raml\TypeInterface === false) {
+            if ($property instanceof Type === false) {
                 $property = ApiDefinition::determineType($name, $property);
             }
             $this->properties[] = $property;
@@ -164,12 +171,10 @@ class ObjectType extends Type
         return null;
     }
 
-
-
     /**
      * Get the value of Min Properties
      *
-     * @return mixed
+     * @return int
      */
     public function getMinProperties()
     {
@@ -179,13 +184,12 @@ class ObjectType extends Type
     /**
      * Set the value of Min Properties
      *
-     * @param mixed $minProperties
-     *
+     * @param int $minProperties
      * @return self
      */
     public function setMinProperties($minProperties)
     {
-        $this->minProperties = $minProperties;
+        $this->minProperties = (int) $minProperties;
 
         return $this;
     }
@@ -193,7 +197,7 @@ class ObjectType extends Type
     /**
      * Get the value of Max Properties
      *
-     * @return mixed
+     * @return int
      */
     public function getMaxProperties()
     {
@@ -203,13 +207,12 @@ class ObjectType extends Type
     /**
      * Set the value of Max Properties
      *
-     * @param mixed $maxProperties
-     *
+     * @param int $maxProperties
      * @return self
      */
     public function setMaxProperties($maxProperties)
     {
-        $this->maxProperties = $maxProperties;
+        $this->maxProperties = (int) $maxProperties;
 
         return $this;
     }
@@ -241,7 +244,7 @@ class ObjectType extends Type
     /**
      * Get the value of Discriminator
      *
-     * @return mixed
+     * @return string
      */
     public function getDiscriminator()
     {
@@ -251,8 +254,7 @@ class ObjectType extends Type
     /**
      * Set the value of Discriminator
      *
-     * @param mixed $discriminator
-     *
+     * @param string $discriminator
      * @return self
      */
     public function setDiscriminator($discriminator)
@@ -265,7 +267,7 @@ class ObjectType extends Type
     /**
      * Get the value of Discriminator Value
      *
-     * @return mixed
+     * @return string
      */
     public function getDiscriminatorValue()
     {
@@ -275,8 +277,7 @@ class ObjectType extends Type
     /**
      * Set the value of Discriminator Value
      *
-     * @param mixed $discriminatorValue
-     *
+     * @param string $discriminatorValue
      * @return self
      */
     public function setDiscriminatorValue($discriminatorValue)
@@ -294,13 +295,14 @@ class ObjectType extends Type
         if (!is_array($value)) {
             if (!is_object($value)) {
                 $this->errors[] = TypeValidationError::unexpectedValueType($this->getName(), 'object', $value);
+
                 return;
             }
             // in case of stdClass - convert it to array for convenience
             $value = get_object_vars($value);
         }
         foreach ($this->getProperties() as $property) {
-            if ($property->getRequired()&& !array_key_exists($property->getName(), $value)) {
+            if ($property->getRequired() && !array_key_exists($property->getName(), $value)) {
                 $this->errors[] = TypeValidationError::missingRequiredProperty($property->getName());
             }
         }
@@ -310,11 +312,16 @@ class ObjectType extends Type
                 if ($this->additionalProperties === false) {
                     $this->errors[] = TypeValidationError::unexpectedProperty($name);
                 }
+
                 continue;
             }
+
             $property->validate($propertyValue);
-            if (!$property->isValid()) {
-                $this->errors = array_merge($this->errors, $property->getErrors());
+            if ($property->isValid()) {
+                continue;
+            }
+            foreach ($property->getErrors() as $error) {
+                $this->errors[] = $error;
             }
         }
     }

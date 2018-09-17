@@ -2,7 +2,7 @@
   "name": "elama/php-raml-parser",
   "type": "library",
   "description": "A RAML parser built in php",
-  "homepage": "https://github.com/alecsammon/php-raml-parser",
+  "homepage": "https://github.com/eLama/php-raml-parser",
   "license": "MIT",
 
   "authors": [
@@ -24,12 +24,12 @@
 
   "require-dev": {
     "satooshi/php-coveralls": "~0.6",
-    "phpunit/phpunit": "4.*",
-    "squizlabs/php_codesniffer": "@dev"
+    "phpunit/phpunit": "5.7.*",
+    "squizlabs/php_codesniffer": "3.3.*"
   },
 
   "require": {
-    "php": ">=5.5.9",
+    "php": ">=5.6",
     "justinrainbow/json-schema": "5.1.*",
     "symfony/yaml": "^3.0|^4.0",
     "symfony/routing": "^3.0|^4.0",

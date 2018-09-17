@@ -15,29 +15,29 @@ class NumberType extends Type
      * The minimum value of the parameter. Applicable only to parameters of type number or integer.
      *
      * @var int
-     **/
-    private $minimum = null;
+     */
+    private $minimum;
 
     /**
      * The maximum value of the parameter. Applicable only to parameters of type number or integer.
      *
      * @var int
-     **/
-    private $maximum = null;
+     */
+    private $maximum;
 
     /**
      * The format of the value. The value MUST be one of the following: int32, int64, int, long, float, double, int16, int8
      *
      * @var string
-     **/
-    private $format = null;
+     */
+    private $format;
 
     /**
      * A numeric instance is valid against "multipleOf" if the result of dividing the instance by this keyword's value is an integer.
      *
      * @var int
-     **/
-    private $multipleOf = null;
+     */
+    private $multipleOf;
 
     /**
     * Create a new NumberType from an array of data
@@ -50,20 +50,25 @@ class NumberType extends Type
     public static function createFromArray($name, array $data = [])
     {
         $type = parent::createFromArray($name, $data);
+        assert($type instanceof self);
 
         foreach ($data as $key => $value) {
             switch ($key) {
                 case 'minimum':
                     $type->setMinimum($value);
+
                     break;
                 case 'maximum':
                     $type->setMaximum($value);
+
                     break;
                 case 'format':
                     $type->setFormat($value);
+
                     break;
                 case 'multipleOf':
                     $type->setMultipleOf($value);
+
                     break;
             }
         }
@@ -135,12 +140,12 @@ class NumberType extends Type
      * @param string $format
      *
      * @return self
-     * @throws Exception Thrown when given format is not any of allowed types.
+     * @throws \Exception Thrown when given format is not any of allowed types.
      */
     public function setFormat($format)
     {
-        if (!in_array($format, ['int32', 'int64', 'int', 'long', 'float', 'double', 'int16', 'int8'])) {
-            throw new \Exception(sprinf('Incorrect format given: "%s"', $format));
+        if (!in_array($format, ['int32', 'int64', 'int', 'long', 'float', 'double', 'int16', 'int8'], true)) {
+            throw new \Exception(sprintf('Incorrect format given: "%s"', $format));
         }
         $this->format = $format;
 
@@ -175,12 +180,12 @@ class NumberType extends Type
     {
         parent::validate($value);
 
-        if (!is_null($this->maximum)) {
+        if (null !== $this->maximum) {
             if ($value > $this->maximum) {
                 $this->errors[] = TypeValidationError::valueExceedsMaximum($this->getName(), $this->maximum, $value);
             }
         }
-        if (!is_null($this->minimum)) {
+        if (null !== $this->minimum) {
             if ($value < $this->minimum) {
                 $this->errors[] = TypeValidationError::valueExceedsMinimum($this->getName(), $this->minimum, $value);
             }
@@ -190,31 +195,37 @@ class NumberType extends Type
                 if (filter_var($value, FILTER_VALIDATE_INT, ['options' => ['min_range' => -128, 'max_range' => 127]]) === false) {
                     $this->errors[] = TypeValidationError::unexpectedValueType($this->getName(), 'int8', $value);
                 }
+
                 break;
             case 'int16':
                 if (filter_var($value, FILTER_VALIDATE_INT, ['options' => ['min_range' => -32768, 'max_range' => 32767]]) === false) {
                     $this->errors[] = TypeValidationError::unexpectedValueType($this->getName(), 'int16', $value);
                 }
+
                 break;
             case 'int32':
                 if (filter_var($value, FILTER_VALIDATE_INT, ['options' => ['min_range' => -2147483648, 'max_range' => 2147483647]]) === false) {
                     $this->errors[] = TypeValidationError::unexpectedValueType($this->getName(), 'int32', $value);
                 }
+
                 break;
             case 'int64':
                 if (filter_var($value, FILTER_VALIDATE_INT, ['options' => ['min_range' => -9223372036854775808, 'max_range' => 9223372036854775807]]) === false) {
                     $this->errors[] = TypeValidationError::unexpectedValueType($this->getName(), 'int64', $value);
                 }
+
                 break;
             case 'int':
                 if (!is_int($value)) {
                     $this->errors[] = TypeValidationError::unexpectedValueType($this->getName(), 'int', $value);
                 }
+
                 break;
             case 'long':
                 if (!is_int($value)) {
                     $this->errors[] = TypeValidationError::unexpectedValueType($this->getName(), 'int or long', $value);
                 }
+
                 break;
             case 'float':
                 // float === double
@@ -222,15 +233,17 @@ class NumberType extends Type
                 if (!is_float($value)) {
                     $this->errors[] = TypeValidationError::unexpectedValueType($this->getName(), 'double or float', $value);
                 }
+
                 break;
             // if no format is given we check only if it is a number
             default:
                 if (!is_float($value) && !is_int($value)) {
                     $this->errors[] = TypeValidationError::unexpectedValueType($this->getName(), 'number', $value);
                 }
+
                 break;
         }
-        if (!is_null($this->multipleOf)) {
+        if (null !== $this->multipleOf) {
             if ($value % $this->multipleOf != 0) {
                 $this->errors[] = TypeValidationError::isNotMultipleOf($this->getName(), $this->multipleOf, $value);
             }

@@ -2,7 +2,6 @@
 
 namespace Raml;
 
-use Raml\Types;
 use Raml\Types\ObjectType;
 use Raml\Types\TypeValidationError;
 
@@ -19,38 +18,35 @@ class Type implements ArrayInstantiationInterface, TypeInterface
     protected $errors = [];
 
     /**
-     * Parent object
-     *
      * @var ObjectType|string
-     **/
-    private $parent = null;
+     */
+    private $parent;
 
     /**
      * Key used for type
      *
      * @var string
-     **/
+     */
     private $name;
 
     /**
-     * Type
      *
      * @var string
-     **/
-    private $type;
+     */
+    protected $type;
 
     /**
      * Required
      *
      * @var bool
-     **/
+     */
     private $required = true;
 
     /**
      * Raml definition
      *
      * @var array
-     **/
+     */
     private $definition;
 
     /**
@@ -59,9 +55,7 @@ class Type implements ArrayInstantiationInterface, TypeInterface
     private $enum = [];
 
     /**
-     *  Create new type
-     *
-     *  @param string   $name
+     * @param string $name
      */
     public function __construct($name)
     {
@@ -71,12 +65,9 @@ class Type implements ArrayInstantiationInterface, TypeInterface
     /**
      * Create a new Type from an array of data
      *
-     * @param string            $name
-     * @param array             $data
-     *
-     * @return Type
-     *
-     * @throws \Exception       Thrown when input is incorrect.
+     * @param string $name
+     * @param array $data
+     * @return self
      */
     public static function createFromArray($name, array $data = [])
     {
@@ -84,6 +75,7 @@ class Type implements ArrayInstantiationInterface, TypeInterface
 
         $class->setType($data['type']);
         if (isset($data['usage'])) {
+            assert($class instanceof TraitDefinition);
             $class->setUsage($data['usage']);
         }
         if (isset($data['required'])) {
@@ -168,7 +160,7 @@ class Type implements ArrayInstantiationInterface, TypeInterface
      * Set definition
      *
      * @param array $data Definition data of type.
-     **/
+     */
     public function setDefinition(array $data = [])
     {
         $this->definition = $data;
@@ -177,7 +169,7 @@ class Type implements ArrayInstantiationInterface, TypeInterface
     /**
      * Get definition
      *
-     * @return string Returns definition property.
+     * @return array Returns definition property.
      */
     public function getDefinition()
     {
@@ -232,8 +224,12 @@ class Type implements ArrayInstantiationInterface, TypeInterface
     public function getParent()
     {
         if (is_string($this->parent)) {
-            $this->parent = TypeCollection::getInstance()->getTypeByName($this->parent);
+            $parent = TypeCollection::getInstance()->getTypeByName($this->parent);
+            assert($parent instanceof ObjectType);
+
+            return $parent;
         }
+
         return $this->parent;
     }
 
@@ -244,7 +240,7 @@ class Type implements ArrayInstantiationInterface, TypeInterface
      */
     public function hasParent()
     {
-        return ($this->parent !== null);
+        return $this->parent !== null;
     }
 
     /**
@@ -265,14 +261,15 @@ class Type implements ArrayInstantiationInterface, TypeInterface
      * Inherit properties from parent (recursively)
      *
      * @return self Returns the new object with inherited properties.
-     **/
+     * @throws \LogicException
+     */
     public function inheritFromParent()
     {
         if (!$this->hasParent()) {
             return $this;
         }
         $parent = $this->getParent();
-        // recurse if 
+        // recurse if
         if ($parent instanceof $this && $parent->hasParent()) {
             $this->parent = $parent->inheritFromParent();
             unset($parent);
@@ -281,7 +278,7 @@ class Type implements ArrayInstantiationInterface, TypeInterface
             return $this->getParent();
         }
         if (!($this->getParent() instanceof $this)) {
-            throw new \Exception(sprintf(
+            throw new \LogicException(sprintf(
                 'Inheritance not possible because of incompatible Types, child is instance of %s and parent is instance of %s',
                 get_class($this),
                 get_class($this->getParent())
@@ -303,10 +300,9 @@ class Type implements ArrayInstantiationInterface, TypeInterface
             }
         }
         $properties = array_keys(array_merge($getters, $setters));
-        
+
         foreach ($properties as $prop) {
-            if (!isset($getters[$prop]) || !isset($setters[$prop]))
-            {
+            if (!isset($getters[$prop]) || !isset($setters[$prop])) {
                 continue;
             }
             $getter = $getters[$prop];
@@ -320,9 +316,11 @@ class Type implements ArrayInstantiationInterface, TypeInterface
             if (is_array($currentValue)) {
                 $newValue = array_merge($this->getParent()->$getter(), $currentValue);
                 $this->$setter($newValue);
+
                 continue;
             }
         }
+
         return $this;
     }
 
@@ -350,7 +348,7 @@ class Type implements ArrayInstantiationInterface, TypeInterface
     }
 
     /**
-     * @return boolean
+     * @return bool
      */
     public function isValid()
     {

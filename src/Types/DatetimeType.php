@@ -6,7 +6,7 @@ use DateTime;
 use Raml\Type;
 
 /**
- * DateTimeType type class
+ * DatetimeType type class
  */
 class DatetimeType extends Type
 {
@@ -15,11 +15,11 @@ class DatetimeType extends Type
      * DateTime format to use
      *
      * @var string
-     **/
+     */
     private $format;
 
     /**
-     * Create a new DateTimeType from an array of data
+     * Create a new DatetimeType from an array of data
      *
      * @param string $name
      * @param array $data
@@ -29,11 +29,13 @@ class DatetimeType extends Type
     public static function createFromArray($name, array $data = [])
     {
         $type = parent::createFromArray($name, $data);
+        assert($type instanceof self);
 
         foreach ($data as $key => $value) {
             switch ($key) {
                 case 'format':
                     $type->setFormat($value);
+
                     break;
             }
         }

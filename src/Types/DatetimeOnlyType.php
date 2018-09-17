@@ -6,8 +6,6 @@ use DateTime;
 use Raml\Type;
 
 /**
- * DateTimeOnlyType class
- *
  * @author Melvin Loos <m.loos@infopact.nl>
  */
 class DatetimeOnlyType extends Type
@@ -20,11 +18,12 @@ class DatetimeOnlyType extends Type
     * @param string    $name
     * @param array     $data
     *
-    * @return DateTimeOnlyType
+    * @return self
     */
     public static function createFromArray($name, array $data = [])
     {
         $type = parent::createFromArray($name, $data);
+        assert($type instanceof self);
 
         return $type;
     }

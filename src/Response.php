@@ -1,4 +1,5 @@
 <?php
+
 namespace Raml;
 
 /**
@@ -13,7 +14,7 @@ class Response implements ArrayInstantiationInterface, MessageSchemaInterface
      *
      * @see http://raml.org/spec.html#responses
      *
-     * @var integer
+     * @var int
      */
     private $statusCode;
 
@@ -50,7 +51,7 @@ class Response implements ArrayInstantiationInterface, MessageSchemaInterface
     /**
      * Create a new Response
      *
-     * @param integer $statusCode
+     * @param int $statusCode
      */
     public function __construct($statusCode)
     {
@@ -63,8 +64,7 @@ class Response implements ArrayInstantiationInterface, MessageSchemaInterface
      * Create a new response object from an array
      *
      * @param string $statusCode
-     * @param array  $data
-     *
+     * @param array $data
      * @return Response
      */
     public static function createFromArray($statusCode, array $data = [])
@@ -95,7 +95,7 @@ class Response implements ArrayInstantiationInterface, MessageSchemaInterface
     /**
      * Returns the status code
      *
-     * @return integer
+     * @return int
      */
     public function getStatusCode()
     {
@@ -108,20 +108,20 @@ class Response implements ArrayInstantiationInterface, MessageSchemaInterface
      * Get the body by type
      *
      * @param string $type
-     *
-     * @throws \Exception
-     *
      * @return BodyInterface
+     *
+     * @throws \InvalidArgumentException
      */
     public function getBodyByType($type)
     {
         if (isset($this->bodyList[$type])) {
             return $this->bodyList[$type];
-        } elseif (isset($this->bodyList['*/*'])) {
+        }
+        if (isset($this->bodyList['*/*'])) {
             return $this->bodyList['*/*'];
         }
 
-        throw new \Exception('No body found for type "'.$type.'"');
+        throw new \InvalidArgumentException(sprintf('No body found for type "%s"', $type));
     }
 
     /**
@@ -137,7 +137,7 @@ class Response implements ArrayInstantiationInterface, MessageSchemaInterface
     /**
      * Returns all supported types in response
      *
-     * @return array
+     * @return string[]
      */
     public function getTypes()
     {

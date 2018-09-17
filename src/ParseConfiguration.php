@@ -8,7 +8,7 @@ class ParseConfiguration
      * If directory tree traversal is allowed
      * Enabling this may be a security risk!
      *
-     * @var boolean
+     * @var bool
      */
     private $allowDirectoryTraversal = false;
 
@@ -16,16 +16,23 @@ class ParseConfiguration
      * Should schemas be parsed
      * This is most likely wanted, but does increase time
      *
-     * @var boolean
+     * @var bool
      */
     private $parseSchemas = true;
 
     /**
      * Should security schemes be merged
      *
-     * @var boolean
+     * @var bool
      */
     private $parseSecuritySchemes = true;
+
+    /**
+     * Enable inclusion of Remote resources, i.e. RAML files from web
+     *
+     * @var bool
+     */
+    private $remoteFileInclusionEnabled = false;
 
     // ----
 
@@ -48,7 +55,7 @@ class ParseConfiguration
     /**
      * If directory tree traversal is allowed
      *
-     * @return boolean
+     * @return bool
      */
     public function isDirectoryTraversalAllowed()
     {
@@ -76,7 +83,7 @@ class ParseConfiguration
     /**
      * Is schema parsing enabled
      *
-     * @return boolean
+     * @return bool
      */
     public function isSchemaParsingEnabled()
     {
@@ -104,10 +111,28 @@ class ParseConfiguration
     /**
      * Is security scheme parsing enabled
      *
-     * @return boolean
+     * @return bool
      */
     public function isSchemaSecuritySchemeParsingEnabled()
     {
         return $this->parseSecuritySchemes;
+    }
+
+    /**
+     * @return bool
+     */
+    public function isRemoteFileInclusionEnabled()
+    {
+        return $this->remoteFileInclusionEnabled;
+    }
+
+    public function allowRemoteFileInclusion()
+    {
+        $this->remoteFileInclusionEnabled = true;
+    }
+
+    public function forbidRemoteFileInclusion()
+    {
+        $this->remoteFileInclusionEnabled = false;
     }
 }

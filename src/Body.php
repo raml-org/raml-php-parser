@@ -68,12 +68,12 @@ class Body implements BodyInterface, ArrayInstantiationInterface
      *
      * @param string $mediaType
      *
-     * @throws InvalidSchemaDefinitionException
+     * @throws \InvalidArgumentException
      */
     public function __construct($mediaType)
     {
-        if (in_array($mediaType, WebFormBody::$validMediaTypes)) {
-            throw new \Exception('Invalid media type');
+        if (in_array($mediaType, WebFormBody::$validMediaTypes, true)) {
+            throw new \InvalidArgumentException('Invalid media type');
         }
 
         $this->mediaType = $mediaType;
@@ -90,10 +90,7 @@ class Body implements BodyInterface, ArrayInstantiationInterface
      *  example:    ?string
      *  examples:   ?array
      * ]
-     *
-     * @throws \Exception
-     *
-     * @return Body
+     * @return self
      */
     public static function createFromArray($mediaType, array $data = [])
     {
@@ -215,7 +212,7 @@ class Body implements BodyInterface, ArrayInstantiationInterface
     /**
      * Set the type
      *
-     * @param \Raml\TypeInterface $type
+     * @param TypeInterface $type
      *
      * @throws \Exception Throws exception when type does not parse
      */

@@ -7,7 +7,6 @@ use Raml\SecurityScheme\SecuritySettingsParserInterface;
 
 class OAuth2SecuritySettingsParser implements SecuritySettingsParserInterface
 {
-
     // ---
     // SecuritySettingsParserInterface
 

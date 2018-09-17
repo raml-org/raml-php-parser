@@ -11,17 +11,12 @@ class DefaultSecuritySettings implements SecuritySettingsInterface, \ArrayAccess
      */
     const TYPE = '*';
 
-    // --
-
     /**
      * The security settings
      *
      * @var array
      */
     private $settings = [];
-
-    // ---
-    // SecuritySettingsInterface
 
     /**
      * Flesh out the settings
@@ -35,31 +30,26 @@ class DefaultSecuritySettings implements SecuritySettingsInterface, \ArrayAccess
      */
     public static function createFromArray(array $data, SecuritySettingsInterface $sourceSettings = null)
     {
-        if ($sourceSettings && !$sourceSettings instanceof DefaultSecuritySettings) {
-            throw new \Exception();
+        if ($sourceSettings && !$sourceSettings instanceof self) {
+            throw new \InvalidArgumentException('Provide an instance of DefaultSecuritySettings for $sourceSettings');
         }
 
         $settings = $sourceSettings ? clone $sourceSettings : new static();
-
+        assert($settings instanceof self);
         $settings->mergeSettings($data);
 
         return $settings;
     }
 
-    // ---
-    // \ArrayAccess
-
     /**
      * Merge new settings into the current settings
      *
-     * @param $newSettings
+     * @param array $newSettings
      */
-    public function mergeSettings($newSettings)
+    public function mergeSettings(array $newSettings)
     {
         $this->settings = array_replace($this->settings, $newSettings);
     }
-
-    // ---
 
     /**
      * Sets a settings value
@@ -70,7 +60,7 @@ class DefaultSecuritySettings implements SecuritySettingsInterface, \ArrayAccess
      */
     public function offsetSet($offset, $value)
     {
-        if (is_null($offset)) {
+        if (null === $offset) {
             $this->settings[] = $value;
         } else {
             $this->settings[$offset] = $value;
@@ -113,7 +103,7 @@ class DefaultSecuritySettings implements SecuritySettingsInterface, \ArrayAccess
     {
         return isset($this->settings[$offset]) ? $this->settings[$offset] : null;
     }
-    
+
     /**
      * Get the array of settings data
      *

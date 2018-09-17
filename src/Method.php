@@ -1,5 +1,8 @@
 <?php
+
 namespace Raml;
+
+use Raml\Exception\EmptyBodyException;
 
 /**
  * Method
@@ -9,13 +12,9 @@ namespace Raml;
 class Method implements ArrayInstantiationInterface, MessageSchemaInterface
 {
     /**
-     * Valid METHODS
-     * - Currently missing OPTIONS as this is unlikely to be specified in RAML
-     * @var array
+     * @var string[]
      */
-    public static $validMethods = ['GET', 'HEAD', 'POST', 'PUT', 'DELETE', 'PATCH'];
-
-    // ---
+    public static $validMethods = ['GET', 'HEAD', 'POST', 'PUT', 'DELETE', 'PATCH', 'OPTIONS'];
 
     /**
      * The method type (required)
@@ -26,8 +25,6 @@ class Method implements ArrayInstantiationInterface, MessageSchemaInterface
      * @var string
      */
     private $type;
-
-    // --
 
     /**
      * The description of the method (optional)
@@ -95,12 +92,17 @@ class Method implements ArrayInstantiationInterface, MessageSchemaInterface
      */
     private $securitySchemes = [];
 
+    /**
+     * @var TraitDefinition[]
+     */
+    private $traits = [];
+
     // ---
 
     /**
      * Create a new Method from an array
      *
-     * @param string        $type
+     * @param string $type
      * @param ApiDefinition $apiDefinition
      */
     public function __construct($type, ApiDefinition $apiDefinition)
@@ -126,9 +128,6 @@ class Method implements ArrayInstantiationInterface, MessageSchemaInterface
      *  queryParameters:    ?array
      * ]
      * @param ApiDefinition $apiDefinition
-     *
-     * @throws \Exception
-     *
      * @return Method
      */
     public static function createFromArray($method, array $data = [], ApiDefinition $apiDefinition = null)
@@ -138,7 +137,7 @@ class Method implements ArrayInstantiationInterface, MessageSchemaInterface
         if (isset($data['body'])) {
             foreach ($data['body'] as $key => $bodyData) {
                 if (is_array($bodyData)) {
-                    if (in_array($key, WebFormBody::$validMediaTypes)) {
+                    if (in_array($key, WebFormBody::$validMediaTypes, true)) {
                         $body = WebFormBody::createFromArray($key, $bodyData);
                     } else {
                         $body = Body::createFromArray($key, $bodyData);
@@ -201,8 +200,14 @@ class Method implements ArrayInstantiationInterface, MessageSchemaInterface
                         $method->addSecurityScheme($apiDefinition->getSecurityScheme($securedBy));
                     }
                 } else {
-                    $method->addSecurityScheme(SecurityScheme::createFromArray('null', array(), $apiDefinition));
+                    $method->addSecurityScheme(SecurityScheme::createFromArray('null', [], $apiDefinition));
                 }
+            }
+        }
+
+        if (isset($data['is'])) {
+            foreach ((array) $data['is'] as $traitName) {
+                $method->addTrait(TraitCollection::getInstance()->getTraitByName($traitName));
             }
         }
 
@@ -290,21 +295,21 @@ class Method implements ArrayInstantiationInterface, MessageSchemaInterface
     /**
      * Does the API support HTTP (non SSL) requests?
      *
-     * @return boolean
+     * @return bool
      */
     public function supportsHttp()
     {
-        return in_array(ApiDefinition::PROTOCOL_HTTP, $this->protocols);
+        return in_array(ApiDefinition::PROTOCOL_HTTP, $this->protocols, true);
     }
 
     /**
      * Does the API support HTTPS (SSL enabled) requests?
      *
-     * @return boolean
+     * @return bool
      */
     public function supportsHttps()
     {
-        return in_array(ApiDefinition::PROTOCOL_HTTPS, $this->protocols);
+        return in_array(ApiDefinition::PROTOCOL_HTTPS, $this->protocols, true);
     }
 
     /**
@@ -321,7 +326,7 @@ class Method implements ArrayInstantiationInterface, MessageSchemaInterface
      * Get example by type (application/json, text/plain, ...)
      *
      * @param string $type
-     * @return array
+     * @return string[]
      */
     public function getExampleByType($type)
     {
@@ -337,11 +342,11 @@ class Method implements ArrayInstantiationInterface, MessageSchemaInterface
      */
     public function addProtocol($protocol)
     {
-        if (!in_array($protocol, [ApiDefinition::PROTOCOL_HTTP, ApiDefinition::PROTOCOL_HTTPS])) {
+        if (!in_array($protocol, [ApiDefinition::PROTOCOL_HTTP, ApiDefinition::PROTOCOL_HTTPS], true)) {
             throw new \InvalidArgumentException(sprintf('"%s" is not a valid protocol', $protocol));
         }
 
-        if (in_array($protocol, $this->protocols)) {
+        if (in_array($protocol, $this->protocols, true) === false) {
             $this->protocols[] = $protocol;
         }
     }
@@ -374,13 +379,17 @@ class Method implements ArrayInstantiationInterface, MessageSchemaInterface
      * Get the body by type
      *
      * @param string $type
-     *
-     * @throws \Exception
-     *
      * @return BodyInterface
+     *
+     * @throws EmptyBodyException
+     * @throws \InvalidArgumentException
      */
     public function getBodyByType($type)
     {
+        if (empty($this->getBodies())) {
+            throw new EmptyBodyException();
+        }
+
         if (isset($this->bodyList[$type])) {
             return $this->bodyList[$type];
         }
@@ -392,13 +401,13 @@ class Method implements ArrayInstantiationInterface, MessageSchemaInterface
             }
         }
 
-        throw new \Exception('No body of type "' . $type . '"');
+        throw new \InvalidArgumentException(sprintf('No body of type "%s"', $type));
     }
 
     /**
      * Get an array of all bodies
      *
-     * @return array The array of bodies
+     * @return BodyInterface[]
      */
     public function getBodies()
     {
@@ -430,7 +439,7 @@ class Method implements ArrayInstantiationInterface, MessageSchemaInterface
     /**
      * Get a response by the response code (200, 404,....)
      *
-     * @param integer $responseCode
+     * @param int $responseCode
      *
      * @return Response
      */
@@ -462,7 +471,6 @@ class Method implements ArrayInstantiationInterface, MessageSchemaInterface
     }
 
     /**
-     * @param SecurityScheme $securityScheme
      * @param bool $merge Set to true to merge the security scheme data with the method, or false to not merge it.
      */
     public function addSecurityScheme(SecurityScheme $securityScheme, $merge = true)
@@ -475,31 +483,50 @@ class Method implements ArrayInstantiationInterface, MessageSchemaInterface
                 foreach ($describedBy->getHeaders() as $header) {
                     $this->addHeader($header);
                 }
-            
+
                 foreach ($describedBy->getResponses() as $response) {
                     $this->addResponse($response);
                 }
-            
+
                 foreach ($describedBy->getQueryParameters() as $queryParameter) {
                     $this->addQueryParameter($queryParameter);
                 }
-            
+
                 foreach ($this->getBodies() as $bodyType => $body) {
-                    if (in_array($bodyType, array_keys($describedBy->getBodies())) &&
-                        in_array($bodyType, WebFormBody::$validMediaTypes)
+                    if (in_array($bodyType, array_keys($describedBy->getBodies(), true)) &&
+                        in_array($bodyType, WebFormBody::$validMediaTypes, true)
                     ) {
-                        $params = $describedBy->getBodyByType($bodyType)->getParameters();
-            
+                        $body = $describedBy->getBodyByType($bodyType);
+                        assert($body instanceof WebFormBody);
+                        $params = $body->getParameters();
+
                         foreach ($params as $parameterName => $namedParameter) {
                             $body->addParameter($namedParameter);
                         }
                     }
-            
+
                     $this->addBody($body);
                 }
-            
             }
-            
         }
+    }
+
+    /**
+     * @return TraitDefinition[]
+     */
+    public function getTraits()
+    {
+        return $this->traits;
+    }
+
+    /**
+     * @param TraitDefinition $trait
+     * @return self
+     */
+    public function addTrait($trait)
+    {
+        $this->traits[] = $trait;
+
+        return $this;
     }
 }
