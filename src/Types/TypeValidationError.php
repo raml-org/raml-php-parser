@@ -28,6 +28,12 @@ class TypeValidationError
         return sprintf('%s (%s)', $this->property, $this->constraint);
     }
 
+    /**
+     * @param string $property
+     * @param string $pattern
+     * @param string $value
+     * @return self
+     */
     public static function stringPatternMismatch($property, $pattern, $value)
     {
         return new self($property, sprintf(
@@ -37,40 +43,62 @@ class TypeValidationError
         ));
     }
 
+    /**
+     * @param string $message
+     * @return self
+     */
     public static function xmlValidationFailed($message)
     {
         return new self($message, 'xml validation');
     }
 
+    /**
+     * @param string $message
+     * @return self
+     */
     public static function jsonValidationFailed($message)
     {
         return new self($message, 'json validation');
     }
 
+    /**
+     * @param string $property
+     * @return self
+     */
     public static function missingRequiredProperty($property)
     {
         return new self($property, sprintf('Missing required property'));
     }
 
+    /**
+     * @param string $property
+     * @return self
+     */
     public static function unexpectedProperty($property)
     {
         return new self($property, sprintf('Unexpected property'));
     }
 
-    public static function isNotMultipleOf($property, $multiplicator, $actualValue)
+    /**
+     * @param string $property
+     * @param int|float $multiplier
+     * @param int|float $actualValue
+     * @return self
+     */
+    public static function isNotMultipleOf($property, $multiplier, $actualValue)
     {
         return new self($property, sprintf(
-            'Minimum allowed value: %s, got %s',
-            $multiplicator,
-            $actualValue
+            '%s is not multiple of %ss',
+            $actualValue,
+            $multiplier
         ));
     }
 
     /**
-     * @param $property
-     * @param $possibleValues
-     * @param $actualValue
-     * @return TypeValidationError
+     * @param string $property
+     * @param string[] $possibleValues
+     * @param mixed $actualValue
+     * @return self
      */
     public static function unexpectedValue($property, $possibleValues, $actualValue)
     {
@@ -83,13 +111,14 @@ class TypeValidationError
     }
 
     /**
-     * @param $constraint
-     * @param $actualValue
-     * @return TypeValidationError
+     * @param string $property
+     * @param mixed $constraint
+     * @param mixed $actualValue
+     * @return self
      */
     public static function unexpectedValueType($property, $constraint, $actualValue)
     {
-        $value = is_array($actualValue) ? json_encode($actualValue) : (string)$actualValue;
+        $value = is_array($actualValue) ? json_encode($actualValue) : (string) $actualValue;
 
         return new self($property, sprintf(
             'Expected %s, got (%s) "%s"',
@@ -100,9 +129,10 @@ class TypeValidationError
     }
 
     /**
-     * @param $constraint
-     * @param $actualValue
-     * @return TypeValidationError
+     * @param string $property
+     * @param mixed $constraint
+     * @param mixed $actualValue
+     * @return self
      */
     public static function unexpectedArrayValueType($property, $constraint, $actualValue)
     {
@@ -115,40 +145,40 @@ class TypeValidationError
     }
 
     /**
-     * @param $property
-     * @param $minLength
-     * @param $actualValue
-     * @return TypeValidationError
+     * @param string $property
+     * @param int $minLength
+     * @param string $actualValue
+     * @return self
      */
     public static function stringLengthExceedsMinimum($property, $minLength, $actualValue)
     {
         return new self($property, sprintf(
             'Minimum allowed length: %d, got %d',
             $minLength,
-            strlen($actualValue)
+            mb_strlen($actualValue)
         ));
     }
 
     /**
-     * @param $property
-     * @param $maxLength
-     * @param $actualValue
-     * @return TypeValidationError
+     * @param string $property
+     * @param int $maxLength
+     * @param string $actualValue
+     * @return self
      */
     public static function stringLengthExceedsMaximum($property, $maxLength, $actualValue)
     {
         return new self($property, sprintf(
             'Maximum allowed length: %d, got %d',
             $maxLength,
-            strlen($actualValue)
+            mb_strlen($actualValue)
         ));
     }
 
     /**
-     * @param $property
-     * @param $minValue
-     * @param $actualValue
-     * @return TypeValidationError
+     * @param string $property
+     * @param mixed $minValue
+     * @param mixed $actualValue
+     * @return self
      */
     public static function valueExceedsMinimum($property, $minValue, $actualValue)
     {
@@ -160,10 +190,10 @@ class TypeValidationError
     }
 
     /**
-     * @param $property
-     * @param $maxValue
-     * @param $actualValue
-     * @return TypeValidationError
+     * @param string $property
+     * @param mixed $maxValue
+     * @param mixed $actualValue
+     * @return self
      */
     public static function valueExceedsMaximum($property, $maxValue, $actualValue)
     {
@@ -176,20 +206,20 @@ class TypeValidationError
 
     /**
      * @param string $property
-     * @param $min $expected
-     * @param $max $expected
-     * @param integer $actual
-     * @return TypeValidationError
+     * @param int $min
+     * @param int $max
+     * @param int $actualSize
+     * @return self
      */
-    public static function arraySizeValidationFailed($property, $min, $max, $actual)
+    public static function arraySizeValidationFailed($property, $min, $max, $actualSize)
     {
-        return new self($property, sprintf('Allowed array size: between %s and %s, got %s', $min, $max, $actual));
+        return new self($property, sprintf('Allowed array size: between %s and %s, got %s', $min, $max, $actualSize));
     }
 
     /**
      * @param string $property
      * @param array $errorsGroupedByTypes
-     * @return TypeValidationError
+     * @return self
      */
     public static function unionTypeValidationFailed($property, array $errorsGroupedByTypes)
     {

@@ -2,7 +2,6 @@
 
 namespace Raml;
 
-use Inflect\Inflect;
 use Raml\Exception\BadParameter\FileNotFoundException;
 use Raml\Exception\InvalidSchemaFormatException;
 use Raml\Exception\RamlParserException;
@@ -16,6 +15,7 @@ use Raml\SecurityScheme\SecuritySettingsParser\DefaultSecuritySettingsParser;
 use Raml\SecurityScheme\SecuritySettingsParser\OAuth1SecuritySettingsParser;
 use Raml\SecurityScheme\SecuritySettingsParser\OAuth2SecuritySettingsParser;
 use Raml\SecurityScheme\SecuritySettingsParserInterface;
+use Raml\Utility\TraitParserHelper;
 use Symfony\Component\Yaml\Tag\TaggedValue;
 use Symfony\Component\Yaml\Yaml;
 
@@ -24,7 +24,6 @@ use Symfony\Component\Yaml\Yaml;
  */
 class Parser
 {
-
     /**
      * Array of cached files
      * No point in fetching them twice
@@ -53,8 +52,8 @@ class Parser
     /**
      * List of types
      *
-     * @var string
-     **/
+     * @var TypeInterface[]
+     */
     private $types = [];
 
     /**
@@ -72,6 +71,11 @@ class Parser
     private $fileLoaders = [];
 
     /**
+     * @var ParseConfiguration
+     */
+    private $configuration;
+
+    /**
      * Create a new parser object
      * - Optionally pass a list of parsers to use
      * - If null is passed then the default schemaParsers are used
@@ -79,17 +83,17 @@ class Parser
      * @param SchemaParserInterface[] $schemaParsers
      * @param SecuritySettingsParserInterface[] $securitySettingsParsers
      * @param FileLoaderInterface[] $fileLoaders
-     * @param ParseConfiguration $config
+     * @param ParseConfiguration $configuration
      */
     public function __construct(
         array $schemaParsers = null,
         array $securitySettingsParsers = null,
         array $fileLoaders = null,
-        ParseConfiguration $config = null
+        ParseConfiguration $configuration = null
     ) {
         // ---
         // parse settings
-        $this->configuration = $config ?: new ParseConfiguration();
+        $this->configuration = $configuration ?: new ParseConfiguration();
 
         // ---
         // add schema parsers
@@ -165,8 +169,8 @@ class Parser
     /**
      * Add a new type
      *
-     * @param TypeInterface $type Type to add.
-     **/
+     * @param TypeInterface $type
+     */
     public function addType(TypeInterface $type)
     {
         $this->types[$type->getName()] = $type;
@@ -202,11 +206,10 @@ class Parser
      * Parse a RAML spec from a file
      *
      * @param string $rawFileName
+     * @return ApiDefinition
      *
      * @throws FileNotFoundException
      * @throws RamlParserException
-     *
-     * @return \Raml\ApiDefinition
      */
     public function parse($rawFileName)
     {
@@ -229,10 +232,7 @@ class Parser
      *
      * @param string $ramlString
      * @param string $rootDir
-     *
-     * @throws RamlParserException
-     *
-     * @return \Raml\ApiDefinition
+     * @return ApiDefinition
      */
     public function parseFromString($ramlString, $rootDir)
     {
@@ -246,18 +246,19 @@ class Parser
     /**
      * Parse RAML data
      *
-     * @param string $ramlData
+     * @param array $ramlData
      * @param string $rootDir
+     * @return ApiDefinition
      *
      * @throws RamlParserException
-     *
-     * @return \Raml\ApiDefinition
      */
     private function parseRamlData($ramlData, $rootDir)
     {
         if (!isset($ramlData['title'])) {
             throw new RamlParserException();
         }
+
+        $ramlData = $this->parseLibraries($ramlData, $rootDir);
 
         $ramlData = $this->parseTraits($ramlData);
 
@@ -338,7 +339,7 @@ class Parser
                     foreach ($this->schemaParsers as $schemaParser) {
                         try {
                             $schemaParser->setSourceUri(
-                                'file://'.($fileDir ? $fileDir : $rootDir.DIRECTORY_SEPARATOR)
+                                'file://' . ($fileDir ? $fileDir : $rootDir . DIRECTORY_SEPARATOR)
                             );
                             $schema = $schemaParser->createSchemaDefinition($value['schema']);
 
@@ -383,33 +384,29 @@ class Parser
     {
         $securitySchemes = [];
 
-        foreach ($schemesArray as $securitySchemeData) {
+        foreach ($schemesArray as $key => $securitySchemeData) {
             // Create the default parser.
             if (isset($this->securitySettingsParsers['*'])) {
                 $parser = $this->securitySettingsParsers['*'];
             } else {
                 $parser = false;
             }
-            // RAML spec defines a list of one security type per scheme
-            if (count($securitySchemeData) == 1) {
-                $key = key($securitySchemeData);
-                $securitySchemes[$key] = $securitySchemeData[$key];
-                $securityScheme = $securitySchemes[$key];
 
-                // If we're using protocol specific parsers, see if we have one to use.
-                if ($this->configuration->isSchemaSecuritySchemeParsingEnabled()) {
-                    if (isset($securityScheme['type']) &&
-                        isset($this->securitySettingsParsers[$securityScheme['type']])
+            $securitySchemes[$key] = $securitySchemeData;
+            $securityScheme = $securitySchemes[$key];
+
+            // If we're using protocol specific parsers, see if we have one to use.
+            if ($this->configuration->isSchemaSecuritySchemeParsingEnabled()) {
+                if (isset($securityScheme['type'], $this->securitySettingsParsers[$securityScheme['type']])
                     ) {
-                        $parser = $this->securitySettingsParsers[$securityScheme['type']];
-                    }
+                    $parser = $this->securitySettingsParsers[$securityScheme['type']];
                 }
+            }
 
-                // If we found a parser, create it's settings object.
-                if ($parser) {
-                    $settings = isset($securityScheme['settings']) ? $securityScheme['settings'] : [];
-                    $securitySchemes[$key]['settings'] = $parser->createSecuritySettings($settings);
-                }
+            // If we found a parser, create it's settings object.
+            if ($parser) {
+                $settings = isset($securityScheme['settings']) ? $securityScheme['settings'] : [];
+                $securitySchemes[$key]['settings'] = $parser->createSecuritySettings($settings);
             }
         }
 
@@ -442,6 +439,80 @@ class Parser
         }
 
         return $ramlData;
+    }
+
+    /**
+     * @param array $ramlData
+     * @param string $rootDir
+     * @return array
+     */
+    private function parseLibraries(array $ramlData, $rootDir)
+    {
+        if (!isset($ramlData['uses'])) {
+            return $ramlData;
+        }
+
+        foreach ($ramlData['uses'] as $nameSpace => $import) {
+            $fileName = $import;
+            $dir = $rootDir;
+
+            if (filter_var($import, FILTER_VALIDATE_URL) !== false) {
+                $fileName = basename($import);
+                $dir = dirname($import);
+            }
+            $library = $this->loadAndParseFile($fileName, $dir);
+            $library = $this->parseLibraries($library, $dir . '/' . dirname($fileName));
+            foreach ($library as $key => $item) {
+                if (
+                    in_array(
+                        $key,
+                        [
+                            'types',
+                            'traits',
+                            'annotationTypes',
+                            'securitySchemes',
+                            'resourceTypes',
+                            'schemas',
+                        ],
+                        true
+                    )) {
+                    foreach ($item as $itemName => $itemData) {
+                        $itemData = $this->addNamespacePrefix($nameSpace, $itemData);
+                        $ramlData[$key][$nameSpace . '.' . $itemName] = $itemData;
+                    }
+                }
+            }
+        }
+
+        return $ramlData;
+    }
+
+    /**
+     * @param string $nameSpace
+     * @param array $definition
+     * @return array
+     */
+    private function addNamespacePrefix($nameSpace, array $definition)
+    {
+        foreach ($definition as $key => $item) {
+            if (in_array($key, ['type', 'is'], true)) {
+                if (is_array($item)) {
+                    foreach ($item as $itemKey => $itemValue) {
+                        if (!in_array($itemValue, ApiDefinition::getStraightForwardTypes(), true)) {
+                            $definition[$key][$itemKey] = $nameSpace . '.' . $itemValue;
+                        }
+                    }
+                } else {
+                    if (!in_array($item, ApiDefinition::getStraightForwardTypes(), true)) {
+                        $definition[$key] = $nameSpace . '.' . $item;
+                    }
+                }
+            } elseif (is_array($definition[$key])) {
+                $definition[$key] = $this->addNamespacePrefix($nameSpace, $definition[$key]);
+            }
+        }
+
+        return $definition;
     }
 
     /**
@@ -485,10 +556,9 @@ class Parser
      *
      * @param string $ramlString
      * @param string $rootDir
-     *
-     * @throws \Exception
-     *
      * @return array
+     *
+     * @throws \RuntimeException
      */
     private function parseRamlString($ramlString, $rootDir)
     {
@@ -497,12 +567,12 @@ class Parser
 
         $data = $this->parseYaml($ramlString);
 
-        if (!$data) {
-            throw new \Exception('RAML file appears to be empty');
+        if (empty($data)) {
+            throw new \RuntimeException('RAML file appears to be empty');
         }
 
         if (strpos($header, '#%RAML') === 0) {
-            // @todo extract the vesion of the raml and do something with it
+            // @todo extract the raml version and do something with it
 
             $data = $this->includeAndParseFiles(
                 $data,
@@ -513,13 +583,10 @@ class Parser
         return $data;
     }
 
-    // ---
-
     /**
      * Convert a yaml string into an array
      *
      * @param string $fileData
-     *
      * @return array
      */
     private function parseYaml($fileData)
@@ -535,18 +602,24 @@ class Parser
      *
      * @param string $fileName
      * @param string $rootDir
-     *
-     * @throws \Exception
-     *
      * @return array
+     *
+     * @throws FileNotFoundException
      */
     private function loadAndParseFile($fileName, $rootDir)
     {
-        $rootDir = realpath($rootDir);
-        $fullPath = realpath($rootDir.'/'.$fileName);
+        if (!$this->configuration->isRemoteFileInclusionEnabled()) {
+            $rootDir = realpath($rootDir);
+            $fullPath = realpath($rootDir . '/' . $fileName);
 
-        if (is_readable($fullPath) === false) {
-            throw new FileNotFoundException($fileName);
+            if (is_readable($fullPath) === false) {
+                throw new FileNotFoundException($fileName);
+            }
+        } else {
+            $fullPath = $rootDir . '/' . $fileName;
+            if (filter_var($fullPath, FILTER_VALIDATE_URL) === false && is_readable($fullPath) === false) {
+                throw new FileNotFoundException($fileName);
+            }
         }
 
         // Prevent LFI directory traversal attacks
@@ -565,8 +638,8 @@ class Parser
 
         $fileExtension = (pathinfo($fileName, PATHINFO_EXTENSION));
 
-        if (in_array($fileExtension, ['yaml', 'yml', 'raml'])) {
-            $rootDir = dirname($rootDir.'/'.$fileName);
+        if (in_array($fileExtension, ['yaml', 'yml', 'raml'], true)) {
+            $rootDir = dirname($rootDir . '/' . $fileName);
 
             // RAML and YAML files are always parsed
             $fileData = $this->parseRamlString(
@@ -575,7 +648,7 @@ class Parser
             );
             $fileData = $this->includeAndParseFiles($fileData, $rootDir);
         } else {
-            if (in_array($fileExtension, array_keys($this->fileLoaders))) {
+            if (in_array($fileExtension, array_keys($this->fileLoaders), true)) {
                 $loader = $this->fileLoaders[$fileExtension];
             } else {
                 $loader = $this->fileLoaders['*'];
@@ -596,15 +669,14 @@ class Parser
     /**
      * Recurse through the structure and load includes
      *
-     * @param array|string $structure
+     * @param array|string|TaggedValue $structure
      * @param string $rootDir
-     *
-     * @return array
+     * @return array|string|TaggedValue
      */
     private function includeAndParseFiles($structure, $rootDir)
     {
         if (is_array($structure)) {
-            $result = array();
+            $result = [];
             foreach ($structure as $key => $structureElement) {
                 $result[$key] = $this->includeAndParseFiles($structureElement, $rootDir);
             }
@@ -612,7 +684,7 @@ class Parser
             return $result;
         }
 
-        if ($structure instanceof TaggedValue && $structure->getTag() == 'include') {
+        if ($structure instanceof TaggedValue && $structure->getTag() === 'include') {
             return $this->loadAndParseFile($structure->getValue(), $rootDir);
         }
 
@@ -630,8 +702,7 @@ class Parser
      * @param array $traits
      * @param string $path
      * @param string $name
-     *
-     * @return array
+     * @return array|string
      */
     private function replaceTraits($raml, array $traits, $path, $name)
     {
@@ -656,18 +727,22 @@ class Parser
                     } elseif (isset($traits[$traitName])) {
                         $trait = $traits[$traitName];
                     }
+                    // @todo Refactor as can be resource greedy
+                    // @see https://github.com/kalessil/phpinspectionsea/blob/master/docs/performance.md#slow-array-function-used-in-loop
                     $newArray = array_replace_recursive($newArray, $this->replaceTraits($trait, $traits, $path, $name));
                 }
+                $newArray['is'] = $value;
             } else {
                 $newValue = $this->replaceTraits($value, $traits, $path, $name);
 
                 if (isset($newArray[$key]) && is_array($newArray[$key])) {
+                    // @todo Refactor as can be resource greedy
+                    // @see https://github.com/kalessil/phpinspectionsea/blob/master/docs/performance.md#slow-array-function-used-in-loop
                     $newArray[$key] = array_replace_recursive($newArray[$key], $newValue);
                 } else {
                     $newArray[$key] = $newValue;
                 }
             }
-
         }
 
         return $newArray;
@@ -676,12 +751,11 @@ class Parser
     /**
      * Insert the types into the RAML file
      *
-     * @param array $raml
+     * @param string|array $raml
      * @param array $types
      * @param string $path
      * @param string $name
-     * @param string $parentKey
-     *
+     * @param string|null $parentKey
      * @return array
      */
     private function replaceTypes($raml, $types, $path, $name, $parentKey = null)
@@ -720,7 +794,6 @@ class Parser
                     $newArray[$key] = $newValue;
                 }
             }
-
         }
 
         return $newArray;
@@ -731,104 +804,11 @@ class Parser
      *
      * @param array $values
      * @param array $trait
-     *
-     * @return mixed
+     * @return array
      */
     private function applyVariables(array $values, array $trait)
     {
-        $newTrait = [];
-
-        foreach ($trait as $key => &$value) {
-            $newKey = $this->applyFunctions($key, $values);
-
-            if (is_array($value)) {
-                $value = $this->applyVariables($values, $value);
-            } else {
-                $value = $this->applyFunctions($value, $values);
-            }
-            $newTrait[$newKey] = $value;
-        }
-
-        return $newTrait;
-    }
-
-    /**
-     * Applies functions on variable if they are defined
-     *
-     * @param mixed $trait
-     * @param array $values
-     *
-     * @return mixed    Return input $trait after applying functions (if any)
-     */
-    private function applyFunctions($trait, array $values)
-    {
-        $variables = implode('|', array_keys($values));
-
-        return preg_replace_callback(
-            '/<<('.$variables.')'.
-            '('.
-            '[\s]*\|[\s]*!'.
-            '('.
-            'singularize|pluralize|uppercase|lowercase|lowercamelcase|uppercamelcase|lowerunderscorecase|upperunderscorecase|lowerhyphencase|upperhyphencase'.
-            ')'.
-            ')?>>/',
-            function ($matches) use ($values) {
-                $transformer = isset($matches[3]) ? $matches[3] : '';
-                switch ($transformer) {
-                    case 'singularize':
-                        return Inflect::singularize($values[$matches[1]]);
-                        break;
-                    case 'pluralize':
-                        return Inflect::pluralize($values[$matches[1]]);
-                        break;
-                    case 'uppercase':
-                        return strtoupper($values[$matches[1]]);
-                        break;
-                    case 'lowercase':
-                        return strtolower($values[$matches[1]]);
-                        break;
-                    case 'lowercamelcase':
-                        return StringTransformer::convertString(
-                            $values[$matches[1]],
-                            StringTransformer::LOWER_CAMEL_CASE
-                        );
-                        break;
-                    case 'uppercamelcase':
-                        return StringTransformer::convertString(
-                            $values[$matches[1]],
-                            StringTransformer::UPPER_CAMEL_CASE
-                        );
-                        break;
-                    case 'lowerunderscorecase':
-                        return StringTransformer::convertString(
-                            $values[$matches[1]],
-                            StringTransformer::LOWER_UNDERSCORE_CASE
-                        );
-                        break;
-                    case 'upperunderscorecase':
-                        return StringTransformer::convertString(
-                            $values[$matches[1]],
-                            StringTransformer::UPPER_UNDERSCORE_CASE
-                        );
-                        break;
-                    case 'lowerhyphencase':
-                        return StringTransformer::convertString(
-                            $values[$matches[1]],
-                            StringTransformer::LOWER_HYPHEN_CASE
-                        );
-                        break;
-                    case 'upperhyphencase':
-                        return StringTransformer::convertString(
-                            $values[$matches[1]],
-                            StringTransformer::UPPER_HYPHEN_CASE
-                        );
-                        break;
-                    default:
-                        return $values[$matches[1]];
-                }
-            },
-            $trait
-        );
+        return TraitParserHelper::applyVariables($values, $trait);
     }
 
     public function getIncludedFiles()

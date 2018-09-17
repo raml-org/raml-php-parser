@@ -7,21 +7,21 @@ use Raml\Exception\InvalidKeyException;
 /**
  * @see http://raml.org/spec.html#web-forms
  */
-class WebFormBody extends NamedParameter implements BodyInterface, ArrayInstantiationInterface
+class WebFormBody extends NamedParameter implements BodyInterface
 {
     /**
-     * var array $namedParameters An array of \NamedParameter objects
+     * @var NamedParameter[]
      */
-    private $namedParameters = array();
+    private $namedParameters = [];
 
     /**
      * List of valid media types
      *
-     * @var array
+     * @var string[]
      */
     public static $validMediaTypes = [
         'application/x-www-form-urlencoded',
-        'multipart/form-data'
+        'multipart/form-data',
     ];
 
     /**
@@ -29,12 +29,12 @@ class WebFormBody extends NamedParameter implements BodyInterface, ArrayInstanti
      *
      * @param string $mediaType
      *
-     * @throws \Exception
+     * @throws \InvalidArgumentException
      */
     public function __construct($mediaType)
     {
-        if (!in_array($mediaType, self::$validMediaTypes)) {
-            throw new \Exception('Invalid type');
+        if (!in_array($mediaType, self::$validMediaTypes, true)) {
+            throw new \InvalidArgumentException(sprintf('%s is invalid type', $mediaType));
         }
 
         parent::__construct($mediaType);
@@ -54,9 +54,8 @@ class WebFormBody extends NamedParameter implements BodyInterface, ArrayInstanti
      * Create a new WebFormObject from an array
      *
      * @param string $key The valid media type to use as the key
-     * @param array $data The array of data to create \NamedParameter objects from
-     *
-     * @return \Raml\WebFormBody
+     * @param array $data The array of data to create NamedParameter objects from
+     * @return WebFormBody
      */
     public static function createFromArray($key, array $data = [])
     {
@@ -76,9 +75,9 @@ class WebFormBody extends NamedParameter implements BodyInterface, ArrayInstanti
     /**
      * Add a NamedParameter object to the list
      *
-     * @param namedParameter $namedParameter
+     * @param NamedParameter $namedParameter
      */
-    public function addParameter(namedParameter $namedParameter)
+    public function addParameter(NamedParameter $namedParameter)
     {
         $this->namedParameters[$namedParameter->getKey()] = $namedParameter;
     }
@@ -87,9 +86,9 @@ class WebFormBody extends NamedParameter implements BodyInterface, ArrayInstanti
      * Get a named parameter object by key name
      *
      * @param string $key The name of the key for the named parameter
+     * @return NamedParameter
      *
      * @throws InvalidKeyException
-     * @return NamedParameter
      */
     public function getParameter($key)
     {
@@ -103,7 +102,7 @@ class WebFormBody extends NamedParameter implements BodyInterface, ArrayInstanti
     /**
      * Get all NamedParameter objects
      *
-     * @return NamedParameter[] An array of NamedParameter objects
+     * @return NamedParameter[]
      */
     public function getParameters()
     {

@@ -4,7 +4,6 @@ namespace Raml\Schema;
 
 /**
  * Adapter between third party parser and RAML parser
- *
  */
 abstract class SchemaParserAbstract implements SchemaParserInterface
 {
@@ -13,23 +12,20 @@ abstract class SchemaParserAbstract implements SchemaParserInterface
      *
      * @var string
      */
-    private $sourceUri = null;
+    private $sourceUri;
 
     /**
      * List of compatible content types for this parser
      * - Should be populated with any content types that this parser will support
      *
-     * @var array
+     * @var string[]
      */
     protected $compatibleContentTypes = [];
-
-    // ---
-    // SchemaParserInterface
 
     /**
      * Set the sourceUri for the RAML file in order to fetch relative paths
      *
-     * @param $sourceUri
+     * @param string $sourceUri
      */
     public function setSourceUri($sourceUri)
     {
@@ -40,8 +36,7 @@ abstract class SchemaParserAbstract implements SchemaParserInterface
      * Create a new schema definition from a string
      *
      * @param string $schema
-     *
-     * @return \Raml\Schema\SchemaDefinitionInterface
+     * @return SchemaDefinitionInterface
      */
     abstract public function createSchemaDefinition($schema);
 
@@ -55,8 +50,6 @@ abstract class SchemaParserAbstract implements SchemaParserInterface
         return $this->compatibleContentTypes;
     }
 
-    // --
-
     /**
      * Get the source uri;
      *
@@ -68,13 +61,13 @@ abstract class SchemaParserAbstract implements SchemaParserInterface
     }
 
     /**
-     * Add an aditional supported content type
+     * Add an additional supported content type
      *
-     * @param $contentType
+     * @param string $contentType
      */
     public function addCompatibleContentType($contentType)
     {
-        if (!in_array($contentType, $this->compatibleContentTypes)) {
+        if (!in_array($contentType, $this->compatibleContentTypes, true)) {
             $this->compatibleContentTypes[] = $contentType;
         }
     }

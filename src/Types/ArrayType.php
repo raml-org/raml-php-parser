@@ -13,7 +13,6 @@ use Raml\TypeInterface;
  */
 class ArrayType extends Type
 {
-
     /**
      * Scalar types which we can validate
      */
@@ -28,14 +27,14 @@ class ArrayType extends Type
      * Boolean value that indicates if items in the array MUST be unique.
      *
      * @var bool
-     **/
+     */
     private $uniqueItems;
 
     /**
      * Indicates the type all items in the array are inherited from. Can be a reference to an existing type or an inline type declaration.
      *
      * @var string|TypeInterface
-     **/
+     */
     private $items;
 
     /**
@@ -43,7 +42,7 @@ class ArrayType extends Type
      * Default: 0.
      *
      * @var int
-     **/
+     */
     private $minItems = 0;
 
     /**
@@ -51,7 +50,7 @@ class ArrayType extends Type
      * Default: 2147483647.
      *
      * @var int
-     **/
+     */
     private $maxItems = 2147483647;
 
     /**
@@ -64,8 +63,8 @@ class ArrayType extends Type
      */
     public static function createFromArray($name, array $data = [])
     {
-        /** @var ArrayType $type */
         $type = parent::createFromArray($name, $data);
+        assert($type instanceof self);
         $pos = strpos($type->getType(), '[]');
         if ($pos !== false) {
             $type->setItems(substr($type->getType(), 0, $pos));
@@ -76,15 +75,24 @@ class ArrayType extends Type
             switch ($key) {
                 case 'uniqueItems':
                     $type->setUniqueItems($value);
+
                     break;
                 case 'items':
+                    if (is_array($value) && isset($value['type'])) {
+                        $type->setItems($value['type']);
+
+                        break;
+                    }
                     $type->setItems($value);
+
                     break;
                 case 'minItems':
                     $type->setMinItems($value);
+
                     break;
                 case 'maxItems':
                     $type->setMaxItems($value);
+
                     break;
             }
         }
@@ -158,7 +166,7 @@ class ArrayType extends Type
             );
         }
 
-        if (in_array($this->items, self::$SCALAR_TYPES)) {
+        if (in_array($this->items, self::$SCALAR_TYPES, true)) {
             $this->validateScalars($value);
         } else {
             $this->validateObjects($value);
@@ -177,6 +185,7 @@ class ArrayType extends Type
                             $valueItem
                         );
                     }
+
                     break;
                 case 'string':
                     if (!is_string($valueItem)) {
@@ -186,6 +195,7 @@ class ArrayType extends Type
                             $valueItem
                         );
                     }
+
                     break;
                 case 'boolean':
                     if (!is_bool($valueItem)) {
@@ -195,6 +205,7 @@ class ArrayType extends Type
                             $valueItem
                         );
                     }
+
                     break;
                 case 'number':
                     if (!is_float($valueItem) && !is_int($valueItem)) {
@@ -204,6 +215,7 @@ class ArrayType extends Type
                             $valueItem
                         );
                     }
+
                     break;
             }
         }

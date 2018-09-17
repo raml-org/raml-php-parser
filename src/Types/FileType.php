@@ -15,7 +15,7 @@ class FileType extends Type
      * A list of valid content-type strings for the file. The file type * / * MUST be a valid value.
      *
      * @var array
-     **/
+     */
     private $fileTypes;
 
     /**
@@ -23,7 +23,7 @@ class FileType extends Type
      * Default: 0
      *
      * @var int
-     **/
+     */
     private $minLength;
 
     /**
@@ -31,7 +31,7 @@ class FileType extends Type
      * Default: 2147483647
      *
      * @var int
-     **/
+     */
     private $maxLength;
 
     /**
@@ -45,17 +45,21 @@ class FileType extends Type
     public static function createFromArray($name, array $data = [])
     {
         $type = parent::createFromArray($name, $data);
+        assert($type instanceof self);
 
         foreach ($data as $key => $value) {
             switch ($key) {
                 case 'fileTypes':
                     $type->setFileTypes($value);
+
                     break;
                 case 'minLength':
                     $type->setMinLength($value);
+
                     break;
                 case 'maxLength':
                     $type->setMaxLength($value);
+
                     break;
             }
         }

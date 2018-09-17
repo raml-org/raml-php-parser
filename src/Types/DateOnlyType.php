@@ -7,12 +7,13 @@ use Raml\Type;
 
 /**
  * DateOnlyType class
- * 
+ *
  * @author Melvin Loos <m.loos@infopact.nl>
  */
 class DateOnlyType extends Type
 {
-    const FORMAT = "Y-m-d";
+    const FORMAT = 'Y-m-d';
+
     /**
     * Create a new DateOnlyType from an array of data
     *
@@ -24,6 +25,7 @@ class DateOnlyType extends Type
     public static function createFromArray($name, array $data = [])
     {
         $type = parent::createFromArray($name, $data);
+        assert($type instanceof self);
 
         return $type;
     }

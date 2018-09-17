@@ -1,0 +1,69 @@
+#%RAML 1.0
+title: My API with Types
+mediaType: application/json
+types:
+  Person:
+    type: object
+    properties:
+      firstname:
+        type: string
+        minLength: 2
+        maxLength: 50
+      lastname:
+        type: string
+        minLength: 2
+        maxLength: 50
+      age:
+        type: integer
+        minimum: 18
+        maximum: 70
+      title?: string
+  Manager:
+    type: Person
+    properties:
+      reports: Person[]
+      clearanceLevel:
+        type: ClearanceLevels
+        required: false
+  Admin:
+    type: Person
+    properties:
+      clearanceLevel:
+        type: ClearanceLevels
+        required: true
+  ClearanceLevels:
+    type: object
+    properties:
+      level:
+        type: string
+        enum:
+          - low
+          - high
+/orgs/{orgId}:
+  get:
+    responses:
+      200:
+        body:
+          application/json:
+            type: Org # reference to global type definition
+            example:
+              onCall:
+                firstname: John
+                lastname: Flare
+                kind: AlertableAdmin
+                age: 35
+                clearanceLevel: low
+                phone: "12321"
+              Head:
+                firstname: Nico
+                lastname: Ark
+                age: 41
+                kind: Manager
+                reports:
+                  -
+                    firstname: Archie
+                    lastname: Ark
+                    age: 40
+                    kind: Admin
+                    clearanceLevel: low
+                phone: "123-23"

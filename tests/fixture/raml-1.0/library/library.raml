@@ -1,0 +1,31 @@
+#%RAML 1.0 Library
+uses:
+  Sub: sub_library.raml
+
+types:
+  File:
+    properties:
+      name:
+        type: string
+      category:
+        type: Sub.Category
+  Folder:
+    properties:
+      items_count:
+        type: integer
+      name:
+        type: string
+      files:
+        type: array
+        items:
+          type: File
+traits:
+  Iterable:
+    queryParameters:
+      next:
+        type: integer
+  Paged:
+    is:  [Iterable, Sub.Book]
+    queryParameters:
+      page:
+        type: string

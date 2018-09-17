@@ -1,13 +1,17 @@
 <?php
+
 namespace Raml\Validator;
 
 use Exception;
 use Raml\ApiDefinition;
 use Raml\Body;
 use Raml\Exception\BadParameter\ResourceNotFoundException;
+use Raml\Exception\EmptyBodyException;
 use Raml\MessageSchemaInterface;
 use Raml\Method;
 use Raml\NamedParameter;
+use Raml\Resource;
+use Raml\Response;
 
 class ValidatorSchemaHelper
 {
@@ -24,6 +28,9 @@ class ValidatorSchemaHelper
         $this->apiDefinition = $api;
     }
 
+    /**
+     * @return string[]
+     */
     public function getDefaultMediaTypes()
     {
         return $this->apiDefinition->getDefaultMediaTypes();
@@ -66,9 +73,9 @@ class ValidatorSchemaHelper
     }
 
     /**
-     * @param $method
-     * @param $path
-     * @return \Raml\Response[]
+     * @param string $method
+     * @param string $path
+     * @return Response[]
      */
     public function getResponses($method, $path)
     {
@@ -79,7 +86,7 @@ class ValidatorSchemaHelper
      * @param string $method
      * @param string $path
      * @param int $statusCode
-     * @return \Raml\Response
+     * @return Response
      * @throws ValidatorSchemaException
      */
     public function getResponse($method, $path, $statusCode)
@@ -142,12 +149,15 @@ class ValidatorSchemaHelper
      * @param string $path
      * @param string $contentType
      * @return Body
+     * @throws EmptyBodyException
      * @throws ValidatorSchemaException
      */
     private function getBody(MessageSchemaInterface $schema, $method, $path, $contentType)
     {
         try {
             $body = $schema->getBodyByType($contentType);
+        } catch (EmptyBodyException $e) {
+            throw new EmptyBodyException($e->getMessage());
         } catch (Exception $exception) {
             $message = sprintf(
                 'Schema for %s %s with content type %s was not found in API definition',
@@ -155,7 +165,7 @@ class ValidatorSchemaHelper
                 $path,
                 $contentType
             );
-            
+
             throw new ValidatorSchemaException($message, 0, $exception);
         }
 
@@ -174,7 +184,7 @@ class ValidatorSchemaHelper
 
     /**
      * @param string $path
-     * @return \Raml\Resource
+     * @return Resource
      * @throws ValidatorSchemaException
      */
     private function getResource($path)
@@ -195,15 +205,16 @@ class ValidatorSchemaHelper
      * @param string $method
      * @param string $path
      * @return Method
-     * @throws Exception
+     * @throws ValidatorSchemaException
      */
     private function getMethod($method, $path)
     {
-        $resource = $this->getResource($path);
-
         try {
+            $resource = $this->getResource($path);
+            assert($resource instanceof Resource);
+
             return $resource->getMethod($method);
-        } catch (Exception $exception) {
+        } catch (\Exception $exception) {
             throw new ValidatorSchemaException(sprintf(
                 'Schema for %s %s was not found in API definition',
                 strtoupper($method),

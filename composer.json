@@ -1,40 +1,95 @@
 {
-  "name": "elama/php-raml-parser",
+  "name": "raml-org/raml-php-parser",
   "type": "library",
   "description": "A RAML parser built in php",
-  "homepage": "https://github.com/alecsammon/php-raml-parser",
+  "homepage": "https://github.com/raml-org/raml-php-parser",
   "license": "MIT",
 
   "authors": [
     {
-      "name": "eLama Team",
-      "email": "dev@elama.ru"
+      "name": "Alec Sammon",
+      "email": "alec.sammon@googlemail.com",
+      "role": "Original Author"
     },
     {
-      "name": "Alec Sammon",
-      "email": "alec.sammon@googlemail.com"
+      "name": "eLama Team",
+      "email": "dev@elama.ru",
+      "role": "Main Contributor"
+    },
+    {
+      "name": "Martin Georgiev",
+      "email": "martin.georgiev@gmail.com",
+      "role": "Maintainer"
     }
   ],
+  
+  "replace": {
+    "alecsammon/php-raml-parser": "*"
+  },
 
   "autoload": {
     "psr-4": {
       "Raml\\": "src/"
     }
   },
-
-  "require-dev": {
-    "satooshi/php-coveralls": "~0.6",
-    "phpunit/phpunit": "4.*",
-    "squizlabs/php_codesniffer": "@dev"
+  "autoload-dev": {
+    "psr-4": {
+      "Raml\\Tests\\": "tests/"
+    }
   },
 
   "require": {
-    "php": ">=5.5.9",
-    "justinrainbow/json-schema": "5.1.*",
+    "php": "^5.6|^7.0",
+    "ext-dom": "*",
+    "ext-json": "*",
+    "ext-pcre": "*",
+    "justinrainbow/json-schema": "^5.0",
     "symfony/yaml": "^3.0|^4.0",
     "symfony/routing": "^3.0|^4.0",
-    "oodle/inflect": "~0.2",
+    "oodle/inflect": "^0.2",
     "psr/http-message": "^1.0",
-    "willdurand/negotiation": "^2.2"
-  }
+    "willdurand/negotiation": "^2.2.1"
+  },
+  "require-dev": {
+    "friendsofphp/php-cs-fixer": "*",
+    "jakub-onderka/php-parallel-lint": "^1.0",
+    "php-coveralls/php-coveralls": "^2.1",
+    "phpstan/phpstan": "^0.10.2",
+    "phpunit/phpunit": "^5.7",
+    "sensiolabs/security-checker": "^4.1"
+  },
+
+  "scripts": {
+    "check-code-style": [
+      "bin/php-cs-fixer fix --config='./.php_cs' --show-progress=none --dry-run --no-interaction --diff -v"
+    ],
+    "check-security": [
+      "bin/security-checker security:check"
+    ],
+    "fix-code-style": [
+      "bin/php-cs-fixer fix --config='./.php_cs' --show-progress=none --no-interaction --diff -v"
+    ],
+    "run-static-analysis": [
+      "bin/phpstan analyse --level=1 src/"
+    ],
+    "run-static-analysis-including-tests": [
+      "@run-static-analysis",
+      "bin/phpstan analyse --level=1 tests/"
+    ],
+    "run-tests": [
+      "bin/phpunit"
+    ],
+    "run-tests-with-clover": [
+      "bin/phpunit --coverage-clover build/logs/clover.xml"
+    ],
+    "validate-files": [
+      "bin/parallel-lint --exclude vendor --exclude bin ."
+    ]
+  },
+
+  "config": {
+    "bin-dir": "bin",
+    "sort-packages": true
+  },
+  "prefer-stable": true
 }

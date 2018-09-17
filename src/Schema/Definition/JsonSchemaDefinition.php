@@ -3,8 +3,8 @@
 namespace Raml\Schema\Definition;
 
 use JsonSchema\Constraints\Constraint;
-use \Raml\Schema\SchemaDefinitionInterface;
-use \JsonSchema\Validator;
+use Raml\Schema\SchemaDefinitionInterface;
+use JsonSchema\Validator;
 use Raml\Types\TypeValidationError;
 
 final class JsonSchemaDefinition implements SchemaDefinitionInterface
@@ -32,9 +32,7 @@ final class JsonSchemaDefinition implements SchemaDefinitionInterface
      * Validate a JSON string against the schema
      * - Converts the string into a JSON object then uses the JsonSchema Validator to validate
      *
-     * @param $value
-     *
-     * @throws \Exception
+     * @param mixed $value
      */
     public function validate($value)
     {
@@ -91,7 +89,7 @@ final class JsonSchemaDefinition implements SchemaDefinitionInterface
     }
 
     /**
-     * @return boolean
+     * @return bool
      */
     public function isValid()
     {

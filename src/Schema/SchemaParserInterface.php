@@ -4,14 +4,13 @@ namespace Raml\Schema;
 
 /**
  * Adapter between third party parser and RAML parser
- *
  */
 interface SchemaParserInterface
 {
     /**
      * Set the sourceUri for the RAML file in order to fetch relative paths
      *
-     * @param $sourceUri
+     * @param string $sourceUri
      */
     public function setSourceUri($sourceUri);
 
@@ -20,11 +19,9 @@ interface SchemaParserInterface
      *
      * @param string $schema
      *
-     * @return \Raml\Schema\SchemaDefinitionInterface
+     * @return SchemaDefinitionInterface
      */
     public function createSchemaDefinition($schema);
-
-    // --
 
     /**
      * Returns a list of the compatible content types

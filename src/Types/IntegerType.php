@@ -4,7 +4,7 @@ namespace Raml\Types;
 
 /**
  * IntegerType class
- * 
+ *
  * @author Melvin Loos <m.loos@infopact.nl>
  */
 class IntegerType extends NumberType
@@ -20,6 +20,7 @@ class IntegerType extends NumberType
     public static function createFromArray($name, array $data = [])
     {
         $type = parent::createFromArray($name, $data);
+        assert($type instanceof self);
         if (!$type->getFormat()) {
             $type->setFormat('int');
         }

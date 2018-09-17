@@ -1,4 +1,5 @@
 <?php
+
 namespace Raml\Validator;
 
 use Raml\Exception\ValidationException;
