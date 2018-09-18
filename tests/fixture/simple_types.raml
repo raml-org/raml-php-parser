@@ -49,6 +49,15 @@ mediaType: application/json
             type: array
             items:
               type: Sample
+      209:
+        body:
+          application/json:
+            type: UnionInherited
+
+      210:
+        body:
+          application/json:
+            type: UnionInherited2
 
 types:
   Song:
@@ -92,4 +101,16 @@ types:
         type: boolean[]
       numberArray?:
         type: number[]
+  UnionInherited:
+    type: Song | Sample
+    properties:
+      prop1: integer
+      prop2:
+        type: integer
+        required: false
+
+  UnionInherited2:
+    type: UnionInherited
+    properties:
+      prop3: integer
 
