@@ -55,13 +55,13 @@ Additional parsers and schema definitions can be created and passed into the `Ra
 
 ### Exporting routes
 It is also possible to export the entire RAML file to an array of the full endpoints. For example, considering
-a [basic RAML](https://github.com/raml-org/raml-php-parser/blob/master/test/fixture/simple.raml), this can be
+a [basic RAML](https://github.com/raml-org/raml-php-parser/blob/master/tests/fixture/simple.raml), this can be
 returned using:
 
 
 ```php
 $parser = new Raml\Parser();
-$api = $parser->parse('test/fixture/simple.raml');
+$api = $parser->parse('tests/fixture/simple.raml');
 
 $routes = $api->getResourcesAsUri();
 ```
