@@ -225,7 +225,7 @@ class TypeValidationError
     {
         $errors = [];
         foreach ($errorsGroupedByTypes as $type => $typeErrors) {
-            $message = array_reduce($typeErrors, function ($acc, TypeValidationError $error) {
+            $message = array_reduce($typeErrors, function ($acc, self $error) {
                 $acc .= (string) $error . ', ';
 
                 return $acc;
