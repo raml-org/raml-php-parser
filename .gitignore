@@ -3,4 +3,3 @@ build
 vendor
 .php_cs.cache
 composer.lock
-composer.phar

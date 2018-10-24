@@ -305,10 +305,13 @@ RAML;
 
         $schema = $body->getExample();
 
-        $this->assertEquals([
-          'title' => 'Wish You Were Here',
-          'artist' => 'Pink Floyd'
-        ], json_decode($schema, true));
+        $this->assertEquals(
+            [
+                'title' => 'Wish You Were Here',
+                'artist' => 'Pink Floyd',
+            ],
+            json_decode($schema, true)
+        );
     }
 
     /**
@@ -552,8 +555,14 @@ RAML;
         $this->assertArrayHasKey('access_token', $queryParameters);
         $this->assertArrayHasKey('numPages', $queryParameters);
 
-        $this->assertEquals('Return books that have their title matching the given value for path /books', $queryParameters['title']->getDescription());
-        $this->assertEquals('If no values match the value given for title, use digest_all_fields instead', $queryParameters['digest_all_fields']->getDescription());
+        $this->assertEquals(
+            'Return books that have their title matching the given value for path /books',
+            $queryParameters['title']->getDescription()
+        );
+        $this->assertEquals(
+            'If no values match the value given for title, use digest_all_fields instead',
+            $queryParameters['digest_all_fields']->getDescription()
+        );
         $this->assertEquals('A valid access_token is required', $queryParameters['access_token']->getDescription());
         $this->assertEquals('The number of pages to return', $queryParameters['numPages']->getDescription());
 
@@ -561,7 +570,10 @@ RAML;
         $method = $resource->getMethod('get');
         $queryParameters = $method->getQueryParameters();
 
-        $this->assertEquals('Return DVD that have their title matching the given value for path /dvds', $queryParameters['title']->getDescription());
+        $this->assertEquals(
+            'Return DVD that have their title matching the given value for path /dvds',
+            $queryParameters['title']->getDescription()
+        );
     }
 
     /**
@@ -637,7 +649,10 @@ RAML;
     public function shouldParseMethodDescription()
     {
         $methodDescriptionRaml = $this->parser->parse(__DIR__ . '/fixture/methodDescription.raml');
-        $this->assertEquals('Get a list of available songs', $methodDescriptionRaml->getResourceByUri('/songs')->getMethod('get')->getDescription());
+        $this->assertEquals(
+            'Get a list of available songs',
+            $methodDescriptionRaml->getResourceByUri('/songs')->getMethod('get')->getDescription()
+        );
     }
 
     /**
@@ -646,7 +661,10 @@ RAML;
     public function shouldParseResourceDescription()
     {
         $resourceDescriptionRaml = $this->parser->parse(__DIR__ . '/fixture/resourceDescription.raml');
-        $this->assertEquals('Collection of available songs resource', $resourceDescriptionRaml->getResourceByUri('/songs')->getDescription());
+        $this->assertEquals(
+            'Collection of available songs resource',
+            $resourceDescriptionRaml->getResourceByUri('/songs')->getDescription()
+        );
     }
 
     /**
@@ -668,8 +686,15 @@ RAML;
         $headersRaml = $this->parser->parse(__DIR__ . '/fixture/headers.raml');
         $resource = $headersRaml->getResourceByUri('/jobs');
 
-        $this->assertEquals(['Zencoder-Api-Key' => NamedParameter::createFromArray('Zencoder-Api-Key', ['displayName' => 'ZEncoder API Key'])
-        ], $resource->getMethod('post')->getHeaders());
+        $this->assertEquals(
+            [
+                'Zencoder-Api-Key' => NamedParameter::createFromArray(
+                    'Zencoder-Api-Key',
+                    ['displayName' => 'ZEncoder API Key']
+                ),
+            ],
+            $resource->getMethod('post')->getHeaders()
+        );
     }
 
     /**
@@ -680,14 +705,22 @@ RAML;
         $headersRaml = $this->parser->parse(__DIR__ . '/fixture/headers.raml');
         $resource = $headersRaml->getResourceByUri('/jobs');
 
-        $this->assertEquals(['X-waiting-period' => NamedParameter::createFromArray('X-waiting-period', [
-            'description' => 'The number of seconds to wait before you can attempt to make a request again.' . "\n",
-            'type' => 'integer',
-            'required' => 'yes',
-            'minimum' => 1,
-            'maximum' => 3600,
-            'example' => 34
-        ])], $resource->getMethod('post')->getResponse(503)->getHeaders());
+        $this->assertEquals(
+            [
+                'X-waiting-period' => NamedParameter::createFromArray(
+                    'X-waiting-period',
+                    [
+                        'description' => 'The number of seconds to wait before you can attempt to make a request again.' . "\n",
+                        'type' => 'integer',
+                        'required' => 'yes',
+                        'minimum' => 1,
+                        'maximum' => 3600,
+                        'example' => 34,
+                    ]
+                ),
+            ],
+            $resource->getMethod('post')->getResponse(503)->getHeaders()
+        );
     }
 
     /**
@@ -696,7 +729,10 @@ RAML;
     public function shouldReplaceReservedParameter()
     {
         $def = $this->parser->parse(__DIR__ . '/fixture/reservedParameter.raml');
-        $this->assertEquals('Get list of songs at /songs', $def->getResourceByUri('/songs')->getMethod('get')->getDescription());
+        $this->assertEquals(
+            'Get list of songs at /songs',
+            $def->getResourceByUri('/songs')->getMethod('get')->getDescription()
+        );
     }
 
     /**
@@ -705,8 +741,14 @@ RAML;
     public function shouldParameterTransformerWorks()
     {
         $def = $this->parser->parse(__DIR__ . '/fixture/parameterTransformer.raml');
-        $this->assertEquals('songs /songs song /song', $def->getResourceByUri('/songs')->getMethod('post')->getDescription());
-        $this->assertEquals('song /song songs /songs', $def->getResourceByUri('/song')->getMethod('get')->getDescription());
+        $this->assertEquals(
+            'songs /songs song /song',
+            $def->getResourceByUri('/songs')->getMethod('post')->getDescription()
+        );
+        $this->assertEquals(
+            'song /song songs /songs',
+            $def->getResourceByUri('/song')->getMethod('get')->getDescription()
+        );
     }
 
     /**
@@ -750,9 +792,22 @@ RAML;
             $this->parser->parse(__DIR__ . '/fixture/invalid/queryParameters.raml');
         } catch (InvalidQueryParameterTypeException $e) {
             $this->assertEquals('invalid', $e->getType());
-            $this->assertEquals([
-                'string', 'number', 'integer', 'date', 'boolean', 'file', 'array'
-            ], $e->getValidTypes());
+            $this->assertEquals(
+                [
+                    'string',
+                    'number',
+                    'integer',
+                    'date',
+                    'boolean',
+                    'file',
+                    'datetime-only',
+                    'date-only',
+                    'time-only',
+                    'datetime',
+                    'array',
+                ],
+                $e->getValidTypes()
+            );
 
             throw $e;
         }
@@ -768,12 +823,17 @@ RAML;
         $body = $def->getResourceByUri('/songs')->getMethod('get')->getResponse(200)->getBodyByType('application/json');
         $example = $body->getExample();
 
-        $this->assertEquals([
-            'items' => [[
-                'id' => 2,
-                'title' => 'test'
-            ]]
-        ], json_decode($example, true));
+        $this->assertEquals(
+            [
+                'items' => [
+                    [
+                        'id' => 2,
+                        'title' => 'test',
+                    ],
+                ],
+            ],
+            json_decode($example, true)
+        );
     }
 
     // ---

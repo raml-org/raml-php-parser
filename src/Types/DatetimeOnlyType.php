@@ -15,8 +15,8 @@ class DatetimeOnlyType extends Type
     /**
     * Create a new DateTimeOnlyType from an array of data
     *
-    * @param string    $name
-    * @param array     $data
+    * @param string $name
+    * @param array $data
     *
     * @return self
     */
