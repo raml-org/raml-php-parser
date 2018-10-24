@@ -2,6 +2,7 @@
 
 namespace Raml\Types;
 
+use Raml\ApiDefinition;
 use Raml\Type;
 use Raml\TypeCollection;
 use Raml\TypeInterface;
@@ -21,6 +22,9 @@ class ArrayType extends Type
         'string',
         'boolean',
         'number',
+        'datetime-only',
+        'date-only',
+        'time-only',
     ];
 
     /**
@@ -175,48 +179,16 @@ class ArrayType extends Type
 
     private function validateScalars($value)
     {
+        $typeObject = ApiDefinition::determineType('item', ['type' => $this->items]);
+
         foreach ($value as $valueItem) {
-            switch ($this->items) {
-                case 'integer':
-                    if (!is_int($valueItem)) {
-                        $this->errors[] = TypeValidationError::unexpectedArrayValueType(
-                            $this->getName(),
-                            'integer',
-                            $valueItem
-                        );
-                    }
-
-                    break;
-                case 'string':
-                    if (!is_string($valueItem)) {
-                        $this->errors[] = TypeValidationError::unexpectedArrayValueType(
-                            $this->getName(),
-                            'string',
-                            $valueItem
-                        );
-                    }
-
-                    break;
-                case 'boolean':
-                    if (!is_bool($valueItem)) {
-                        $this->errors[] = TypeValidationError::unexpectedArrayValueType(
-                            $this->getName(),
-                            'boolean',
-                            $valueItem
-                        );
-                    }
-
-                    break;
-                case 'number':
-                    if (!is_float($valueItem) && !is_int($valueItem)) {
-                        $this->errors[] = TypeValidationError::unexpectedArrayValueType(
-                            $this->getName(),
-                            'number',
-                            $valueItem
-                        );
-                    }
-
-                    break;
+            $typeObject->validate($valueItem);
+            if (!$typeObject->isValid()) {
+                $this->errors[] = TypeValidationError::unexpectedArrayValueType(
+                    $this->getName(),
+                    $this->items,
+                    $valueItem
+                );
             }
         }
     }

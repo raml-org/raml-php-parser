@@ -50,8 +50,8 @@ class UnionTypeTest extends TestCase
         $this->assertFalse($type->isValid());
         $this->assertEquals(
             'name (Value did not pass validation against any type: '
-                . 'integer (integer (Expected int, got (boolean) "")), '
-                . 'string (string (Expected string, got (boolean) "")))',
+            . 'integer (integer (Expected int, got (boolean) "")), '
+            . 'string (string (Expected string, got (boolean) "")))',
             (string) $type->getErrors()[0]
         );
     }
@@ -96,6 +96,50 @@ class UnionTypeTest extends TestCase
         $this->assertTrue($type->isValid());
 
         $type->validate(1);
+        $this->assertFalse($type->isValid());
+    }
+
+    /**
+     * @test
+     */
+    public function shouldCorrectlyValidateUnionInheritedTypes1()
+    {
+        $simpleRaml = $this->parser->parse(__DIR__ . '/../fixture/simple_types.raml');
+        $resource = $simpleRaml->getResourceByUri('/songs');
+        $method = $resource->getMethod('get');
+        $response = $method->getResponse(209);
+        $body = $response->getBodyByType('application/json');
+        $type = $body->getType();
+
+        $type->validate(json_decode('{"title": "abc", "prop1": 1}', true));
+        $this->assertTrue($type->isValid());
+
+        $type->validate(json_decode('{"id": "abc", "name": 2, "prop1": 1}', true));
+        $this->assertTrue($type->isValid());
+
+        $type->validate(json_decode('{"title": "abc", "prop1": "qwe"}', true));
+        $this->assertFalse($type->isValid());
+    }
+
+    /**
+     * @test
+     */
+    public function shouldCorrectlyValidateUnionInheritedTypes2()
+    {
+        $simpleRaml = $this->parser->parse(__DIR__ . '/../fixture/simple_types.raml');
+        $resource = $simpleRaml->getResourceByUri('/songs');
+        $method = $resource->getMethod('get');
+        $response = $method->getResponse(210);
+        $body = $response->getBodyByType('application/json');
+        $type = $body->getType();
+
+        $type->validate(json_decode('{"title": "abc", "prop1": 1, "prop3": 2}', true));
+        $this->assertTrue($type->isValid());
+
+        $type->validate(json_decode('{"id": "abc", "name": 2, "prop1": 1, "prop3": 2}', true));
+        $this->assertTrue($type->isValid());
+
+        $type->validate(json_decode('{"title": "abc", "prop1": 1, "prop3": "qwe"}', true));
         $this->assertFalse($type->isValid());
     }
 }

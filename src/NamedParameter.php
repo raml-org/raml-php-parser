@@ -17,6 +17,10 @@ class NamedParameter implements ArrayInstantiationInterface
     const TYPE_DATE = 'date';
     const TYPE_BOOLEAN = 'boolean';
     const TYPE_FILE = 'file';
+    const TYPE_DATE_ONLY = 'date-only';
+    const TYPE_TIME_ONLY = 'time-only';
+    const TYPE_DATETIME_ONLY = 'datetime-only';
+    const TYPE_DATETIME = 'datetime';
     const TYPE_ARRAY = 'array';
 
     // Validation exception codes
@@ -46,6 +50,10 @@ class NamedParameter implements ArrayInstantiationInterface
         self::TYPE_DATE,
         self::TYPE_BOOLEAN,
         self::TYPE_FILE,
+        self::TYPE_DATETIME_ONLY,
+        self::TYPE_DATE_ONLY,
+        self::TYPE_TIME_ONLY,
+        self::TYPE_DATETIME,
         self::TYPE_ARRAY,
     ];
 
@@ -175,12 +183,19 @@ class NamedParameter implements ArrayInstantiationInterface
      */
     private $default;
 
+    /**
+     * DateTime format (for datetime type only)
+     *
+     * @var string
+     */
+    private $format;
+
     // ---
 
     /**
      * Create a new Query Parameter
      *
-     * @param string  $key
+     * @param string $key
      */
     public function __construct($key)
     {
@@ -207,7 +222,7 @@ class NamedParameter implements ArrayInstantiationInterface
      * [
      *  displayName:        ?string
      *  description:        ?string
-     *  type:               ?["string","number","integer","date","boolean","file"]
+     *  type:               ?["string","number","integer","date","boolean","file", ...]
      *  enum:               ?array
      *  pattern:            ?string
      *  validationPattern:  ?string
@@ -220,6 +235,7 @@ class NamedParameter implements ArrayInstantiationInterface
      *  repeat:             ?boolean
      *  required:           ?boolean
      *  default:            ?string
+     *  format:             ?string
      * ]
      *
      * @throws \Exception
@@ -295,6 +311,10 @@ class NamedParameter implements ArrayInstantiationInterface
             } else {
                 $namedParameter->setDefault($data['default']);
             }
+        }
+
+        if (isset($data['format'])) {
+            $namedParameter->setFormat($data['format']);
         }
 
         return $namedParameter;
@@ -619,6 +639,22 @@ class NamedParameter implements ArrayInstantiationInterface
     }
 
     /**
+     * @return string
+     */
+    public function getFormat()
+    {
+        return $this->format;
+    }
+
+    /**
+     * @param string $format
+     */
+    public function setFormat($format)
+    {
+        $this->format = $format;
+    }
+
+    /**
      * Set the default
      *
      * @param mixed $default
@@ -705,6 +741,7 @@ class NamedParameter implements ArrayInstantiationInterface
                 }
 
                 // no break
+
             case static::TYPE_STRING:
 
                 // Must be a string
@@ -793,6 +830,24 @@ class NamedParameter implements ArrayInstantiationInterface
 
             case static::TYPE_FILE:
                 // File type cannot be reliably validated based on its type alone.
+
+                break;
+
+            case static::TYPE_TIME_ONLY:
+            case static::TYPE_DATE_ONLY:
+            case static::TYPE_DATETIME_ONLY:
+            case static::TYPE_DATETIME:
+                $typeObject = ApiDefinition::determineType(
+                    $this->key,
+                    [
+                        'type' => $this->getType(),
+                        'format' => $this->getFormat(),
+                    ]
+                );
+                $typeObject->validate($param);
+                if (!$typeObject->isValid()) {
+                    throw new ValidationException($typeObject->getErrors()[0]);
+                }
 
                 break;
         }

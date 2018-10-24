@@ -504,7 +504,19 @@ class Parser
                     }
                 } else {
                     if (!in_array($item, ApiDefinition::getStraightForwardTypes(), true)) {
-                        $definition[$key] = $nameSpace . '.' . $item;
+                        if (mb_strpos($item, '|') !== false) {
+                            $definition[$key] = implode(
+                                '|',
+                                array_map(
+                                    function ($v) use ($nameSpace) {
+                                        return $nameSpace . '.' . trim($v);
+                                    },
+                                    explode('|', $item)
+                                )
+                            );
+                        } else {
+                            $definition[$key] = $nameSpace . '.' . $item;
+                        }
                     }
                 }
             } elseif (is_array($definition[$key])) {
@@ -518,7 +530,7 @@ class Parser
     /**
      * Parse the traits
      *
-     * @param mixed $ramlData
+     * @param array $ramlData
      *
      * @return array
      */
