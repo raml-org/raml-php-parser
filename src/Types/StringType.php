@@ -145,6 +145,7 @@ class StringType extends Type
 
         if (!is_string($value)) {
             $this->errors[] = TypeValidationError::unexpectedValueType($this->getName(), 'string', $value);
+            return;
         }
         if (null !== $this->pattern) {
             $pregMatchResult = preg_match('/' . $this->pattern . '/', $value);
