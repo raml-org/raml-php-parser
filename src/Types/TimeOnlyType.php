@@ -10,6 +10,9 @@ use Raml\Type;
  */
 class TimeOnlyType extends Type
 {
+    /**
+     * @var string
+     */
     const FORMAT = 'H:i:s';
 
     /**

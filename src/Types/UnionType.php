@@ -91,7 +91,7 @@ class UnionType extends Type
     public function setProperties(array $properties)
     {
         foreach ($properties as $name => $property) {
-            if ($property instanceof Type === false) {
+            if (!$property instanceof Type) {
                 $property = ApiDefinition::determineType($name, $property);
             }
             $this->properties[] = $property;
@@ -177,8 +177,8 @@ class UnionType extends Type
             if (is_array($selfValue)) {
                 foreach ($selfValue as $name => $propertyValue) {
                     $property = $this->getPropertyByName($name);
-                    if (!$property) {
-                        if ($this->additionalProperties === false) {
+                    if ($property === null) {
+                        if (!$this->additionalProperties) {
                             $errors[] = TypeValidationError::unexpectedProperty($name);
                         }
 

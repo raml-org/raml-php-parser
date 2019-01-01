@@ -6,6 +6,9 @@ use Raml\SecurityScheme\SecuritySettingsInterface;
 
 class OAuth1SecuritySettings implements SecuritySettingsInterface
 {
+    /**
+     * @var string
+     */
     const TYPE = 'OAuth 1.0';
 
     /**

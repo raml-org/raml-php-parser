@@ -15,13 +15,6 @@ use Raml\Response;
 class SecuritySchemeDescribedBy implements ArrayInstantiationInterface
 {
     /**
-     * The key of the security scheme
-     *
-     * @var string
-     */
-    private $key;
-
-    /**
      * A list of non default headers (optional)
      *
      * @see http://raml.org/spec.html#headers
@@ -29,7 +22,6 @@ class SecuritySchemeDescribedBy implements ArrayInstantiationInterface
      * @var NamedParameter[]
      */
     private $headers = [];
-
     /**
      * List of query parameters supported by this method
      *
@@ -38,30 +30,18 @@ class SecuritySchemeDescribedBy implements ArrayInstantiationInterface
      * @var NamedParameter[]
      */
     private $queryParameters = [];
-
     /**
      * A  list of possible responses from this method
      *
      * @var Response[]
      */
     private $responses = [];
-
     /**
      * A list of the bodies of this method
      *
      * @var BodyInterface[]
      */
     private $bodyList = [];
-
-    /**
-     * Create a new security scheme description
-     *
-     * @param string $key
-     */
-    public function __construct($key)
-    {
-        $this->key = $key;
-    }
 
     /**
      * Create a new SecuritySchemeDescribedBy from an array of data
@@ -82,11 +62,7 @@ class SecuritySchemeDescribedBy implements ArrayInstantiationInterface
 
         if (isset($data['body'])) {
             foreach ($data['body'] as $key => $bodyData) {
-                if (in_array($key, \Raml\WebFormBody::$validMediaTypes, true)) {
-                    $body = \Raml\WebFormBody::createFromArray($key, $bodyData);
-                } else {
-                    $body = \Raml\Body::createFromArray($key, $bodyData);
-                }
+                $body = in_array($key, \Raml\WebFormBody::$validMediaTypes, true) ? \Raml\WebFormBody::createFromArray($key, $bodyData) : \Raml\Body::createFromArray($key, $bodyData);
 
                 $describedBy->addBody($body);
             }

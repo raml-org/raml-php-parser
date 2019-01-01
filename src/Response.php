@@ -55,7 +55,7 @@ class Response implements ArrayInstantiationInterface, MessageSchemaInterface
      */
     public function __construct($statusCode)
     {
-        $this->statusCode = (int) $statusCode;
+        $this->statusCode = $statusCode;
         $this->bodyList = [];
         $this->headers = [];
     }

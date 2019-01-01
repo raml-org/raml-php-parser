@@ -18,11 +18,7 @@ class TraitParserHelper
         foreach ($traitDefinition as $key => &$value) {
             $newKey = static::applyFunctions($key, $values);
 
-            if (is_array($value)) {
-                $value = static::applyVariables($values, $value);
-            } else {
-                $value = static::applyFunctions($value, $values);
-            }
+            $value = is_array($value) ? static::applyVariables($values, $value) : static::applyFunctions($value, $values);
             $newTrait[$newKey] = $value;
         }
 

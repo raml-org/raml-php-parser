@@ -192,25 +192,25 @@ class NumberType extends Type
         }
         switch ($this->format) {
             case 'int8':
-                if (filter_var($value, FILTER_VALIDATE_INT, ['options' => ['min_range' => -128, 'max_range' => 127]]) === false) {
+                if (!filter_var($value, FILTER_VALIDATE_INT, ['options' => ['min_range' => -128, 'max_range' => 127]])) {
                     $this->errors[] = TypeValidationError::unexpectedValueType($this->getName(), 'int8', $value);
                 }
 
                 break;
             case 'int16':
-                if (filter_var($value, FILTER_VALIDATE_INT, ['options' => ['min_range' => -32768, 'max_range' => 32767]]) === false) {
+                if (!filter_var($value, FILTER_VALIDATE_INT, ['options' => ['min_range' => -32768, 'max_range' => 32767]])) {
                     $this->errors[] = TypeValidationError::unexpectedValueType($this->getName(), 'int16', $value);
                 }
 
                 break;
             case 'int32':
-                if (filter_var($value, FILTER_VALIDATE_INT, ['options' => ['min_range' => -2147483648, 'max_range' => 2147483647]]) === false) {
+                if (!filter_var($value, FILTER_VALIDATE_INT, ['options' => ['min_range' => -2147483648, 'max_range' => 2147483647]])) {
                     $this->errors[] = TypeValidationError::unexpectedValueType($this->getName(), 'int32', $value);
                 }
 
                 break;
             case 'int64':
-                if (filter_var($value, FILTER_VALIDATE_INT, ['options' => ['min_range' => -9223372036854775808, 'max_range' => 9223372036854775807]]) === false) {
+                if (!filter_var($value, FILTER_VALIDATE_INT, ['options' => ['min_range' => -9223372036854775808, 'max_range' => 9223372036854775807]])) {
                     $this->errors[] = TypeValidationError::unexpectedValueType($this->getName(), 'int64', $value);
                 }
 

@@ -137,11 +137,7 @@ class Method implements ArrayInstantiationInterface, MessageSchemaInterface
         if (isset($data['body'])) {
             foreach ($data['body'] as $key => $bodyData) {
                 if (is_array($bodyData)) {
-                    if (in_array($key, WebFormBody::$validMediaTypes, true)) {
-                        $body = WebFormBody::createFromArray($key, $bodyData);
-                    } else {
-                        $body = Body::createFromArray($key, $bodyData);
-                    }
+                    $body = in_array($key, WebFormBody::$validMediaTypes, true) ? WebFormBody::createFromArray($key, $bodyData) : Body::createFromArray($key, $bodyData);
 
                     $method->addBody($body);
                 }
@@ -346,7 +342,7 @@ class Method implements ArrayInstantiationInterface, MessageSchemaInterface
             throw new \InvalidArgumentException(sprintf('"%s" is not a valid protocol', $protocol));
         }
 
-        if (in_array($protocol, $this->protocols, true) === false) {
+        if (!in_array($protocol, $this->protocols, true)) {
             $this->protocols[] = $protocol;
         }
     }
@@ -500,7 +496,7 @@ class Method implements ArrayInstantiationInterface, MessageSchemaInterface
                         assert($body instanceof WebFormBody);
                         $params = $body->getParameters();
 
-                        foreach ($params as $parameterName => $namedParameter) {
+                        foreach ($params as $namedParameter) {
                             $body->addParameter($namedParameter);
                         }
                     }

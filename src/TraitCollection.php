@@ -15,7 +15,7 @@ class TraitCollection implements \Iterator
      *
      * @var self
      */
-    private static $instance = null;
+    private static $instance;
 
     /**
      * Collection
@@ -23,7 +23,6 @@ class TraitCollection implements \Iterator
      * @var TraitDefinition[]
      */
     private $collection = [];
-
     /**
      * Current position
      *
@@ -32,9 +31,9 @@ class TraitCollection implements \Iterator
     private $position = 0;
 
     /**
-    * prevent initiation from outside, there can be only one!
-    *
-    */
+     * prevent initiation from outside, there can be only one!
+     *
+     */
     private function __construct()
     {
         $this->collection = [];
@@ -101,7 +100,7 @@ class TraitCollection implements \Iterator
      */
     public function add(TraitDefinition $traitToAdd)
     {
-        foreach ($this->collection as $key => $trait) {
+        foreach ($this->collection as $trait) {
             if ($trait === $traitToAdd) {
                 throw new Exception(sprintf('Trait already exists %s', var_export($traitToAdd, true)));
             }

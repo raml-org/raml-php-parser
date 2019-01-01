@@ -8,6 +8,8 @@ class DefaultSecuritySettings implements SecuritySettingsInterface, \ArrayAccess
 {
     /**
      * Supports all types
+     *
+     * @var string
      */
     const TYPE = '*';
 
@@ -21,7 +23,7 @@ class DefaultSecuritySettings implements SecuritySettingsInterface, \ArrayAccess
     /**
      * Flesh out the settings
      *
-     * @param array                     $data
+     * @param array $data
      * @param SecuritySettingsInterface $sourceSettings
      *
      * @throws \Exception

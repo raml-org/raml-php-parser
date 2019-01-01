@@ -22,8 +22,15 @@ use Raml\Types\LazyProxyType;
  */
 class ApiDefinition implements ArrayInstantiationInterface
 {
-    /* public */ const PROTOCOL_HTTP = 'HTTP';
-    /* public */ const PROTOCOL_HTTPS = 'HTTPS';
+    /**
+     * @var string
+     */
+    const PROTOCOL_HTTP = 'HTTP';
+
+    /**
+     * @var string
+     */
+    const PROTOCOL_HTTPS = 'HTTPS';
 
     /**
      * The API Title (required)
@@ -365,7 +372,7 @@ class ApiDefinition implements ArrayInstantiationInterface
      */
     public function getResourcesAsUri(RouteFormatterInterface $formatter = null)
     {
-        if (!$formatter) {
+        if ($formatter === null) {
             $formatter = new NoRouteFormatter();
         }
 
@@ -818,10 +825,6 @@ class ApiDefinition implements ArrayInstantiationInterface
     {
         $schema = strtoupper(parse_url($this->baseUri, PHP_URL_SCHEME));
 
-        if (empty($schema)) {
-            $this->protocols = [self::PROTOCOL_HTTPS, self::PROTOCOL_HTTP];
-        } else {
-            $this->protocols = [$schema];
-        }
+        $this->protocols = empty($schema) ? [self::PROTOCOL_HTTPS, self::PROTOCOL_HTTP] : [$schema];
     }
 }

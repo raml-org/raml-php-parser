@@ -150,7 +150,7 @@ class StringType extends Type
         }
         if (null !== $this->pattern) {
             $pregMatchResult = preg_match('/' . $this->pattern . '/', $value);
-            $failed = $pregMatchResult === false;
+            $failed = !$pregMatchResult;
             if ($failed) {
                 throw new \RuntimeException(sprintf('Failed to look up for "%s" with regex "%s"', var_export($value, true), $this->pattern));
             }

@@ -113,11 +113,7 @@ class ObjectType extends Type
     {
         if (isset($value[$this->getDiscriminator()])) {
             if ($this->getDiscriminatorValue() !== null) {
-                if ($this->getDiscriminatorValue() === $value[$this->getDiscriminator()]) {
-                    return true;
-                }
-
-                return false;
+                return $this->getDiscriminatorValue() === $value[$this->getDiscriminator()];
             }
 
             return $value[$this->getDiscriminator()] === $this->getName();
@@ -145,7 +141,7 @@ class ObjectType extends Type
     public function setProperties(array $properties)
     {
         foreach ($properties as $name => $property) {
-            if ($property instanceof Type === false) {
+            if (!$property instanceof Type) {
                 $property = ApiDefinition::determineType($name, $property);
             }
             $this->properties[] = $property;
@@ -189,7 +185,7 @@ class ObjectType extends Type
      */
     public function setMinProperties($minProperties)
     {
-        $this->minProperties = (int) $minProperties;
+        $this->minProperties = $minProperties;
 
         return $this;
     }
@@ -212,7 +208,7 @@ class ObjectType extends Type
      */
     public function setMaxProperties($maxProperties)
     {
-        $this->maxProperties = (int) $maxProperties;
+        $this->maxProperties = $maxProperties;
 
         return $this;
     }
@@ -308,8 +304,8 @@ class ObjectType extends Type
         }
         foreach ($value as $name => $propertyValue) {
             $property = $this->getPropertyByName($name);
-            if (!$property) {
-                if ($this->additionalProperties === false) {
+            if ($property === null) {
+                if (!$this->additionalProperties) {
                     $this->errors[] = TypeValidationError::unexpectedProperty($name);
                 }
 
