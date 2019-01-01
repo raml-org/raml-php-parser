@@ -413,8 +413,8 @@ RAML;
         $response = $method->getResponse(200);
         /** @var Body $body */
         $body = $response->getBodyByType('application/json');
-        $schema = $body->getSchema();
         /** @var JsonSchemaDefinition $schema */
+        $schema = $body->getSchema();
         $schemaArray = $schema->getJsonArray();
 
         $this->assertEquals('A canonical song', $schemaArray['items']['description']);

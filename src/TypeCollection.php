@@ -22,27 +22,18 @@ class TypeCollection implements \Iterator
      * @var TypeInterface[]
      */
     private $collection = [];
-
     /**
      * Current position
      *
      * @var string
      */
     private $position = 0;
-
     /**
      * Types which need to inherit properties from their parent
      *
      * @var ObjectType[]
      */
     private $typesWithInheritance = [];
-
-    /**
-     * Singleton, prevent initiation from outside, there can be only one!
-     */
-    private function __construct()
-    {
-    }
 
     /**
      * @return self
@@ -163,7 +154,7 @@ class TypeCollection implements \Iterator
      */
     public function applyInheritance()
     {
-        foreach ($this->typesWithInheritance as $key => $type) {
+        foreach ($this->typesWithInheritance as $type) {
             $type->inheritFromParent();
         }
         // now clear list to prevent applying multiple times on the same objects

@@ -60,7 +60,7 @@ class ApiDefinitionTest extends TestCase
         $api = $this->buildParser()->parse(__DIR__ . '/fixture/includeSchema.raml');
 
         $noFormatter = new NoRouteFormatter();
-        $routes = $api->getResourcesAsUri($noFormatter, $api->getResources());
+        $routes = $api->getResourcesAsUri($noFormatter);
 
         $this->assertCount(4, $routes->getRoutes());
         $this->assertEquals([
@@ -80,7 +80,7 @@ class ApiDefinitionTest extends TestCase
 
         $routeCollection = new RouteCollection();
         $routeFormatter = new SymfonyRouteFormatter($routeCollection);
-        $routes = $api->getResourcesAsUri($routeFormatter, $api->getResources());
+        $routes = $api->getResourcesAsUri($routeFormatter);
 
         $this->assertEquals($routeFormatter, $routes);
 
@@ -217,10 +217,10 @@ class ApiDefinitionTest extends TestCase
     public function shouldPassValidResponse()
     {
         $api = $this->buildParser()->parse(__DIR__ . '/fixture/raml-1.0/complexTypes.raml');
+        /** @var Body $body */
         $body = $api->getResourceByPath('/orgs/{orgId}')->getMethod('get')->getResponse(200)->getBodyByType(
             'application/json'
         );
-        /** @var Body $body */
         $validResponse = '{
             "onCall": {
                 "firstname": "John",
@@ -257,8 +257,8 @@ class ApiDefinitionTest extends TestCase
     public function shouldRejectMissingParameterResponse()
     {
         $api = $this->buildParser()->parse(__DIR__ . '/fixture/raml-1.0/complexTypes.raml');
-        $body = $api->getResourceByPath('/orgs/{orgId}')->getMethod('get')->getResponse(200)->getBodyByType('application/json');
         /** @var Body $body */
+        $body = $api->getResourceByPath('/orgs/{orgId}')->getMethod('get')->getResponse(200)->getBodyByType('application/json');
         $type = $body->getType();
 
         $invalidResponse = [
@@ -287,8 +287,8 @@ class ApiDefinitionTest extends TestCase
     public function shouldRejectInvalidIntegerParameterResponse()
     {
         $api = $this->buildParser()->parse(__DIR__ . '/fixture/raml-1.0/complexTypes.raml');
-        $body = $api->getResourceByPath('/orgs/{orgId}')->getMethod('get')->getResponse(200)->getBodyByType('application/json');
         /** @var Body $body */
+        $body = $api->getResourceByPath('/orgs/{orgId}')->getMethod('get')->getResponse(200)->getBodyByType('application/json');
         $type = $body->getType();
 
         $invalidResponse = [
@@ -339,8 +339,8 @@ class ApiDefinitionTest extends TestCase
     public function shouldRejectInvalidStringParameterResponse()
     {
         $api = $this->buildParser()->parse(__DIR__ . '/fixture/raml-1.0/complexTypes.raml');
+        /** @var Body $body */
         $body = $api->getResourceByPath('/orgs/{orgId}')->getMethod('get')->getResponse(200)->getBodyByType('application/json');
-        /* @var $body Body */
         $type = $body->getType();
 
         $invalidResponse = [
@@ -391,8 +391,8 @@ class ApiDefinitionTest extends TestCase
     public function shouldRejectInvalidEnumParameterResponse()
     {
         $api = $this->buildParser()->parse(__DIR__ . '/fixture/raml-1.0/complexTypes.raml');
-        $body = $api->getResourceByPath('/orgs/{orgId}')->getMethod('get')->getResponse(200)->getBodyByType('application/json');
         /** @var Body $body */
+        $body = $api->getResourceByPath('/orgs/{orgId}')->getMethod('get')->getResponse(200)->getBodyByType('application/json');
         $type = $body->getType();
 
         $invalidResponse = [

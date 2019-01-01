@@ -331,7 +331,7 @@ class Parser
      */
     private function recurseAndParseSchemas(array $array, $rootDir)
     {
-        foreach ($array as $key => &$value) {
+        foreach ($array as &$value) {
             if (is_array($value)) {
                 if (isset($value['schema'])) {
                     $fileDir = $this->getCachedFilePath($value['schema']);
@@ -385,12 +385,7 @@ class Parser
         $securitySchemes = [];
 
         foreach ($schemesArray as $key => $securitySchemeData) {
-            // Create the default parser.
-            if (isset($this->securitySettingsParsers['*'])) {
-                $parser = $this->securitySettingsParsers['*'];
-            } else {
-                $parser = false;
-            }
+            $parser = isset($this->securitySettingsParsers['*']) ? $this->securitySettingsParsers['*'] : false;
 
             $securitySchemes[$key] = $securitySchemeData;
             $securityScheme = $securitySchemes[$key];
@@ -431,8 +426,8 @@ class Parser
             }
 
             foreach ($ramlData as $key => $value) {
-                if (strpos($key, '/') === 0) {
-                    $name = (isset($value['displayName'])) ? $value['displayName'] : substr($key, 1);
+                if (mb_strpos($key, '/') === 0) {
+                    $name = (isset($value['displayName'])) ? $value['displayName'] : mb_substr($key, 1);
                     $ramlData[$key] = $this->replaceTypes($value, $keyedResourceTypes, $key, $name, $key);
                 }
             }
@@ -504,19 +499,15 @@ class Parser
                     }
                 } else {
                     if (!in_array($item, ApiDefinition::getStraightForwardTypes(), true)) {
-                        if (mb_strpos($item, '|') !== false) {
-                            $definition[$key] = implode(
-                                '|',
-                                array_map(
-                                    function ($v) use ($nameSpace) {
-                                        return $nameSpace . '.' . trim($v);
-                                    },
-                                    explode('|', $item)
-                                )
-                            );
-                        } else {
-                            $definition[$key] = $nameSpace . '.' . $item;
-                        }
+                        $definition[$key] = mb_strpos($item, '|') !== false ? implode(
+                            '|',
+                            array_map(
+                                function ($v) use ($nameSpace) {
+                                    return $nameSpace . '.' . trim($v);
+                                },
+                                explode('|', $item)
+                            )
+                        ) : $nameSpace . '.' . $item;
                     }
                 }
             } elseif (is_array($definition[$key])) {
@@ -624,12 +615,12 @@ class Parser
             $rootDir = realpath($rootDir);
             $fullPath = realpath($rootDir . '/' . $fileName);
 
-            if (is_readable($fullPath) === false) {
+            if (!is_readable($fullPath)) {
                 throw new FileNotFoundException($fileName);
             }
         } else {
             $fullPath = $rootDir . '/' . $fileName;
-            if (filter_var($fullPath, FILTER_VALIDATE_URL) === false && is_readable($fullPath) === false) {
+            if (!filter_var($fullPath, FILTER_VALIDATE_URL) && !is_readable($fullPath)) {
                 throw new FileNotFoundException($fileName);
             }
         }
@@ -660,11 +651,7 @@ class Parser
             );
             $fileData = $this->includeAndParseFiles($fileData, $rootDir);
         } else {
-            if (in_array($fileExtension, array_keys($this->fileLoaders), true)) {
-                $loader = $this->fileLoaders[$fileExtension];
-            } else {
-                $loader = $this->fileLoaders['*'];
-            }
+            $loader = array_key_exists($fileExtension, $this->fileLoaders) ? $this->fileLoaders[$fileExtension] : $this->fileLoaders['*'];
 
             $fileData = $loader->loadFile($fullPath);
             $this->cachedFilesPaths[md5($fileData)] = $fullPath;
@@ -800,11 +787,7 @@ class Parser
                 }
                 $newValue = $this->replaceTypes($value, $types, $path, $newName, $key);
 
-                if (isset($newArray[$key]) && is_array($newArray[$key])) {
-                    $newArray[$key] = array_replace_recursive($newArray[$key], $newValue);
-                } else {
-                    $newArray[$key] = $newValue;
-                }
+                $newArray[$key] = isset($newArray[$key]) && is_array($newArray[$key]) ? array_replace_recursive($newArray[$key], $newValue) : $newValue;
             }
         }
 

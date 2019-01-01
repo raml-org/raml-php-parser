@@ -12,6 +12,9 @@ use Raml\Type;
  */
 class DateOnlyType extends Type
 {
+    /**
+     * @var string
+     */
     const FORMAT = 'Y-m-d';
 
     /**

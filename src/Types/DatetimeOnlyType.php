@@ -10,6 +10,9 @@ use Raml\Type;
  */
 class DatetimeOnlyType extends Type
 {
+    /**
+     * @var string
+     */
     const FORMAT = "Y-m-d\TH:i:s";
 
     /**

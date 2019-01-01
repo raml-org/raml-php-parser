@@ -11,31 +11,103 @@ use Raml\Exception\ValidationException;
 class NamedParameter implements ArrayInstantiationInterface
 {
     // Type constants
+    /**
+     * @var string
+     */
     const TYPE_STRING = 'string';
+    /**
+     * @var string
+     */
     const TYPE_NUMBER = 'number';
+    /**
+     * @var string
+     */
     const TYPE_INTEGER = 'integer';
+    /**
+     * @var string
+     */
     const TYPE_DATE = 'date';
+    /**
+     * @var string
+     */
     const TYPE_BOOLEAN = 'boolean';
+    /**
+     * @var string
+     */
     const TYPE_FILE = 'file';
+    /**
+     * @var string
+     */
     const TYPE_DATE_ONLY = 'date-only';
+    /**
+     * @var string
+     */
     const TYPE_TIME_ONLY = 'time-only';
+    /**
+     * @var string
+     */
     const TYPE_DATETIME_ONLY = 'datetime-only';
+    /**
+     * @var string
+     */
     const TYPE_DATETIME = 'datetime';
+    /**
+     * @var string
+     */
     const TYPE_ARRAY = 'array';
 
     // Validation exception codes
+    /**
+     * @var int
+     */
     const VAL_NOTBOOLEAN = 1;
+    /**
+     * @var int
+     */
     const VAL_NOTDATE = 2;
+    /**
+     * @var int
+     */
     const VAL_NOTSTRING = 3;
+    /**
+     * @var int
+     */
     const VAL_NOTINT = 4;
+    /**
+     * @var int
+     */
     const VAL_NOTNUMBER = 5;
+    /**
+     * @var int
+     */
     const VAL_NOTFILE = 6; // Unused
+    /**
+     * @var int
+     */
     const VAL_ISREQUIRED = 7;
+    /**
+     * @var int
+     */
     const VAL_TOOSHORT = 8;
+    /**
+     * @var int
+     */
     const VAL_TOOLONG = 9;
+    /**
+     * @var int
+     */
     const VAL_NUMLESSTHAN = 10;
+    /**
+     * @var int
+     */
     const VAL_GREATERTHAN = 11;
+    /**
+     * @var int
+     */
     const VAL_PATTERNFAIL = 12;
+    /**
+     * @var int
+     */
     const VAL_NOTENUMVALUE = 13;
 
     /**
@@ -736,7 +808,7 @@ class NamedParameter implements ArrayInstantiationInterface
             case static::TYPE_DATE:
 
                 // Must be a valid date
-                if (\DateTime::createFromFormat('D, d M Y H:i:s T', $param) === false) {
+                if (!\DateTime::createFromFormat('D, d M Y H:i:s T', $param)) {
                     throw new ValidationException($this->getKey() . ' is not a valid date', static::VAL_NOTDATE);
                 }
 
@@ -927,11 +999,7 @@ class NamedParameter implements ArrayInstantiationInterface
 
                     break;
                 case self::TYPE_STRING:
-                    if ($this->getMinLength() || $this->getMaxLength()) {
-                        $pattern = '((?!\/).){' . $this->getMinLength() . ',' . $this->getMaxLength() . '}';
-                    } else {
-                        $pattern = '([^/]+)';
-                    }
+                    $pattern = $this->getMinLength() || $this->getMaxLength() ? '((?!\/).){' . $this->getMinLength() . ',' . $this->getMaxLength() . '}' : '([^/]+)';
 
                     break;
                 default:

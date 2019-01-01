@@ -50,7 +50,7 @@ class ContentConverter
     {
         $parts = explode(';', $mediaRange);
         $params = [];
-        foreach ($parts as $i => $param) {
+        foreach ($parts as $param) {
             if (strpos($param, '=') !== false) {
                 list($k, $v) = explode('=', trim($param));
                 $params[$k] = $v;
@@ -65,11 +65,7 @@ class ContentConverter
             throw new \UnexpectedValueException('Malformed media-range: ' . $mediaRange);
         }
         $plusPos = strpos($subtype, '+');
-        if (false !== $plusPos) {
-            $genericSubtype = substr($subtype, $plusPos + 1);
-        } else {
-            $genericSubtype = $subtype;
-        }
+        $genericSubtype = false !== $plusPos ? substr($subtype, $plusPos + 1) : $subtype;
 
         return sprintf('%s/%s', trim($type), trim($genericSubtype));
     }
