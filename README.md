@@ -3,7 +3,7 @@
 [![Latest Stable Version](https://poser.pugx.org/raml-org/raml-php-parser/version)](https://packagist.org/packages/raml-org/raml-php-parser)
 [![Total Downloads](https://poser.pugx.org/raml-org/raml-php-parser/downloads)](https://packagist.org/packages/raml-org/raml-php-parser)
 
-See the RAML spec here: https://github.com/raml-org/raml-spec
+See the [RAML specification](https://github.com/raml-org/raml-spec).
 
 ## RAML 0.8 Support
 For RAML 0.8 support follow version 2.

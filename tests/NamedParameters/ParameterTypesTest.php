@@ -248,7 +248,9 @@ RAML;
         $namedParameter->validate('Sun, 06 Nov 1994 08:49:37 BUNS');
     }
 
-    /** @test */
+    /**
+     * @test
+     */
     public function shouldValidateDateOnly()
     {
         $this->expectException('\Raml\Exception\ValidationException', 'Expected date-only');
@@ -256,7 +258,9 @@ RAML;
         $namedParameter->validate('2018-08-05T13:24:55');
     }
 
-    /** @test */
+    /**
+     * @test
+     */
     public function shouldValidateDateTimeOnly()
     {
         $this->expectException('\Raml\Exception\ValidationException', 'Expected datetime-only');
@@ -264,7 +268,9 @@ RAML;
         $namedParameter->validate('2018-08-05T13:24:55+12:00');
     }
 
-    /** @test */
+    /**
+     * @test
+     */
     public function shouldValidateTimeOnly()
     {
         $this->expectException('\Raml\Exception\ValidationException', 'Expected time-only');
@@ -272,7 +278,9 @@ RAML;
         $namedParameter->validate('2018-08-05T13:24:55');
     }
 
-    /** @test */
+    /**
+     * @test
+     */
     public function shouldValidateDateTime()
     {
         $this->expectException('\Raml\Exception\ValidationException', 'Expected datetime');
@@ -280,7 +288,9 @@ RAML;
         $namedParameter->validate('2018-08-05 13:24:55');
     }
 
-    /** @test */
+    /**
+     * @test
+     */
     public function shouldValidateDateTimeFormat()
     {
         $this->expectException('\Raml\Exception\ValidationException', 'Expected datetime with format Y-m-d H:i:s');
@@ -289,8 +299,6 @@ RAML;
     }
 
     // ---
-
-    /** @test */
 
     /**
      * @test
