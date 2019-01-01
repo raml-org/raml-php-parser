@@ -1,13 +1,19 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <phpunit
+    backupGlobals="false"
+    backupStaticAttributes="false"
     colors="true"
     convertErrorsToExceptions="true"
-    convertNoticesToExceptions="false"
+    convertNoticesToExceptions="true"
     convertWarningsToExceptions="true"
+    processIsolation="false"
     stopOnFailure="false"
+    failOnWarning="true"
+    failOnRisky="true"
+    beStrictAboutTestsThatDoNotTestAnything="true"
+    beStrictAboutOutputDuringTests="true"
     bootstrap="vendor/autoload.php"
-    verbose="true"
-    syntaxCheck="true">
+ >
 
     <testsuites>
         <testsuite name="PHP Raml Parser">
