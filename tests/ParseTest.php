@@ -479,6 +479,7 @@ RAML;
 
     /**
      * @test
+     * @doesNotPerformAssertions
      */
     public function shouldSetCorrectSourceUriOnSchemaParsers()
     {

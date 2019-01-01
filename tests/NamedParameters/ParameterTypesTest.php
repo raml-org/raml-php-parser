@@ -74,6 +74,7 @@ RAML;
 
     /**
      * @test
+     * @doesNotPerformAssertions
      */
     public function shouldValidateWithoutExceptions()
     {

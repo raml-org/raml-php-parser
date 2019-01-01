@@ -54,6 +54,7 @@ class RequestValidatorTest extends TestCase
 
     /**
      * @test
+     * @doesNotPerformAssertions
      */
     public function shouldSuccessfullyAssertWildcardAcceptHeader()
     {
@@ -68,6 +69,7 @@ class RequestValidatorTest extends TestCase
 
     /**
      * @test
+     * @doesNotPerformAssertions
      */
     public function shouldNotAssertBodyOnGetRequest()
     {
@@ -139,6 +141,7 @@ class RequestValidatorTest extends TestCase
 
     /**
      * @test
+     * @doesNotPerformAssertions
      */
     public function shouldAllowEmptyRequestBody()
     {
