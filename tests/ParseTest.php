@@ -773,7 +773,7 @@ RAML;
         $method = $resource->getMethod('get');
         $queryParameters = $method->getQueryParameters();
 
-        $this->assertEquals(3, count($queryParameters));
+        $this->assertCount(3, $queryParameters);
 
         $this->assertEquals('integer', $queryParameters['page']->getType());
         $this->assertEquals('Current Page', $queryParameters['page']->getDisplayName());
@@ -851,7 +851,7 @@ RAML;
 
         $securitySchemes = $method->getSecuritySchemes();
 
-        $this->assertEquals(2, count($securitySchemes));
+        $this->assertCount(2, $securitySchemes);
         $this->assertInstanceOf(SecurityScheme::class, $securitySchemes['oauth_1_0']);
         $this->assertInstanceOf(SecurityScheme::class, $securitySchemes['oauth_2_0']);
 
@@ -887,7 +887,7 @@ RAML;
         $method = $resource->getMethod('get');
         $headers = $method->getHeaders();
 
-        $this->assertEquals(1, count($headers));
+        $this->assertCount(1, $headers);
         $this->assertInstanceOf(NamedParameter::class, $headers['Authorization']);
     }
 
@@ -1033,7 +1033,7 @@ RAML;
         $resource = $apiDefinition->getResourceByUri('/users');
         $method = $resource->getMethod('get');
         $headers = $method->getHeaders();
-        $this->assertFalse(empty($headers['Authorization']));
+        $this->assertNotEmpty($headers['Authorization']);
     }
 
     /**

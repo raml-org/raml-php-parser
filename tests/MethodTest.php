@@ -50,7 +50,7 @@ class MethodTest extends TestCase
 
         $method = Method::createFromArray('get', [], $apiDefinition);
         $this->assertSame([], $method->getResponses());
-        $this->assertSame(null, $method->getResponse(200));
+        $this->assertNull($method->getResponse(200));
     }
 
     /**
@@ -62,7 +62,7 @@ class MethodTest extends TestCase
 
         $method = Method::createFromArray('get', ['responses' => 'invalid'], $apiDefinition);
         $this->assertSame([], $method->getResponses());
-        $this->assertSame(null, $method->getResponse(200));
+        $this->assertNull($method->getResponse(200));
     }
 
     /**
@@ -96,7 +96,7 @@ class MethodTest extends TestCase
         $responses = $method->getResponses();
         $this->assertInstanceOf(Response::class, array_values($responses)[0]);
         $this->assertInstanceOf(Response::class, $method->getResponse(200));
-        $this->assertSame(null, $method->getResponse(400));
+        $this->assertNull($method->getResponse(400));
 
         $this->assertSame('A dummy method', $method->getDescription());
         $this->assertSame('A dummy response', array_values($responses)[0]->getDescription());
