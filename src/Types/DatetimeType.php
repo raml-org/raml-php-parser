@@ -11,6 +11,7 @@ use Raml\Type;
 class DatetimeType extends Type
 {
     const DEFAULT_FORMAT = DATE_RFC3339;
+
     /**
      * DateTime format to use
      *
@@ -23,7 +24,6 @@ class DatetimeType extends Type
      *
      * @param string $name
      * @param array $data
-     *
      * @return DatetimeType
      */
     public static function createFromArray($name, array $data = [])

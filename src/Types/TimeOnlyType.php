@@ -15,9 +15,8 @@ class TimeOnlyType extends Type
     /**
      * Create a new TimeOnlyType from an array of data
      *
-     * @param string    $name
-     * @param array     $data
-     *
+     * @param string $name
+     * @param array $data
      * @return TimeOnlyType
      */
     public static function createFromArray($name, array $data = [])

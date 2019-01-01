@@ -907,8 +907,7 @@ class NamedParameter implements ArrayInstantiationInterface
 
                     break;
                 case self::TYPE_DATE:
-                    // @see https://snipt.net/DamienGarrido/
-                    //          http-date-regular-expression-validation-rfc-1123rfc-850asctime-f64e6aa3/
+                    // @see https://snipt.net/DamienGarrido/http-date-regular-expression-validation-rfc-1123rfc-850asctime-f64e6aa3/
                     $pattern = '^(?:(?:Mon|Tue|Wed|Thu|Fri|Sat|Sun), (?:[0-2][0-9]|3[01]) ' .
                         '(?:Jan|Feb|Mar|Apr|May|Jun|Jul|Aug|Sep|Oct|Nov|Dec) \d{4} ' .
                         '(?:[01][0-9]|2[0-3]):[012345][0-9]:[012345][0-9] ' .
