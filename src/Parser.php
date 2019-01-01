@@ -426,8 +426,8 @@ class Parser
             }
 
             foreach ($ramlData as $key => $value) {
-                if (strpos($key, '/') === 0) {
-                    $name = (isset($value['displayName'])) ? $value['displayName'] : substr($key, 1);
+                if (mb_strpos($key, '/') === 0) {
+                    $name = (isset($value['displayName'])) ? $value['displayName'] : mb_substr($key, 1);
                     $ramlData[$key] = $this->replaceTypes($value, $keyedResourceTypes, $key, $name, $key);
                 }
             }

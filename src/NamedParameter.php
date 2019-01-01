@@ -533,7 +533,7 @@ class NamedParameter implements ArrayInstantiationInterface
             throw new \Exception('minLength can only be set on type "string"');
         }
 
-        $this->minLength = $minLength;
+        $this->minLength = (int) $minLength;
     }
 
     // --
@@ -561,7 +561,7 @@ class NamedParameter implements ArrayInstantiationInterface
             throw new \Exception('maxLength can only be set on type "string"');
         }
 
-        $this->maxLength = $maxLength;
+        $this->maxLength = (int) $maxLength;
     }
 
     // --
@@ -589,7 +589,7 @@ class NamedParameter implements ArrayInstantiationInterface
             throw new \Exception('minimum can only be set on type "integer" or "number');
         }
 
-        $this->minimum = $minimum;
+        $this->minimum = (int) $minimum;
     }
 
     // --
@@ -617,7 +617,7 @@ class NamedParameter implements ArrayInstantiationInterface
             throw new \Exception('maximum can only be set on type "integer" or "number');
         }
 
-        $this->maximum = $maximum;
+        $this->maximum = (int) $maximum;
     }
 
     // --
@@ -673,7 +673,7 @@ class NamedParameter implements ArrayInstantiationInterface
      */
     public function setRepeat($repeat)
     {
-        $this->repeat = $repeat;
+        $this->repeat = (bool) $repeat;
     }
 
     // --
@@ -695,7 +695,7 @@ class NamedParameter implements ArrayInstantiationInterface
      */
     public function setRequired($required)
     {
-        $this->required = $required;
+        $this->required = (bool) $required;
     }
 
     // --
