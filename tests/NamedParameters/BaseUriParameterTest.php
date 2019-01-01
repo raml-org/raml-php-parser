@@ -71,7 +71,7 @@ RAML;
         $resource = $apiDef->getResourceByUri('/users');
         $baseUriParameters = $resource->getBaseUriParameters();
 
-        $this->assertEquals(1, count($baseUriParameters));
+        $this->assertCount(1, $baseUriParameters);
         $this->assertEquals('apiDomain', array_keys($baseUriParameters)[0]);
         $this->assertEquals('string', $baseUriParameters['apiDomain']->getType());
         $this->assertEquals(['api'], $baseUriParameters['apiDomain']->getEnum());
