@@ -310,7 +310,7 @@ RAML;
                 'title' => 'Wish You Were Here',
                 'artist' => 'Pink Floyd',
             ],
-            json_decode($schema, true)
+            \json_decode($schema, true)
         );
     }
 
@@ -624,7 +624,7 @@ RAML;
         $fileName = __DIR__ . '/fixture/gone.raml';
 
         $this->expectException(FileNotFoundException::class);
-        $this->expectExceptionMessage(sprintf('The file %s does not exist or is unreadable.', $fileName));
+        $this->expectExceptionMessage(\sprintf('The file %s does not exist or is unreadable.', $fileName));
 
         try {
             $this->parser->parse($fileName);
@@ -773,7 +773,7 @@ RAML;
         $method = $resource->getMethod('get');
         $queryParameters = $method->getQueryParameters();
 
-        $this->assertEquals(3, count($queryParameters));
+        $this->assertEquals(3, \count($queryParameters));
 
         $this->assertEquals('integer', $queryParameters['page']->getType());
         $this->assertEquals('Current Page', $queryParameters['page']->getDisplayName());
@@ -833,7 +833,7 @@ RAML;
                     ],
                 ],
             ],
-            json_decode($example, true)
+            \json_decode($example, true)
         );
     }
 
@@ -851,13 +851,13 @@ RAML;
 
         $securitySchemes = $method->getSecuritySchemes();
 
-        $this->assertEquals(2, count($securitySchemes));
+        $this->assertEquals(2, \count($securitySchemes));
         $this->assertInstanceOf(SecurityScheme::class, $securitySchemes['oauth_1_0']);
         $this->assertInstanceOf(SecurityScheme::class, $securitySchemes['oauth_2_0']);
 
         $this->assertEquals(
             'OAuth 1.0 continues to be supported for all API requests, but OAuth 2.0 is now preferred.',
-            trim($securitySchemes['oauth_1_0']->getDescription())
+            \trim($securitySchemes['oauth_1_0']->getDescription())
         );
 
         $this->assertEquals(
@@ -887,7 +887,7 @@ RAML;
         $method = $resource->getMethod('get');
         $headers = $method->getHeaders();
 
-        $this->assertEquals(1, count($headers));
+        $this->assertEquals(1, \count($headers));
         $this->assertInstanceOf(NamedParameter::class, $headers['Authorization']);
     }
 
@@ -1090,7 +1090,7 @@ RAML;
         $queryParams = $method->getQueryParameters();
 
         $this->assertCount(3, $queryParams);
-        $this->assertSame(['id', 'parent_id', 'title'], array_keys($queryParams));
+        $this->assertSame(['id', 'parent_id', 'title'], \array_keys($queryParams));
     }
 
     /**
@@ -1101,9 +1101,9 @@ RAML;
         $apiDefinition = $this->parser->parse(__DIR__ . '/fixture/resourcePathName.raml');
 
         $foo = $apiDefinition->getResources()['/foo'];
-        /** @var Resource $fooId */
+        /** @var resource $fooId */
         $fooId = $foo->getResources()['/foo/{fooId}'];
-        /** @var Resource $bar */
+        /** @var resource $bar */
         $bar = $fooId->getResources()['/foo/{fooId}/bar'];
 
         $this->assertEquals('Get a list of foo', $foo->getDescription());
@@ -1111,7 +1111,7 @@ RAML;
         $this->assertEquals('Get a list of bar', $bar->getDescription());
 
         $baz = $apiDefinition->getResources()['/baz'];
-        /** @var Resource $bazId */
+        /** @var resource $bazId */
         $bazId = $baz->getResources()['/baz/{bazId}'];
         /** @var Response $qux */
         $qux = $bazId->getResources()['/baz/{bazId}/qux'];
@@ -1129,9 +1129,9 @@ RAML;
         $apiDefinition = $this->parser->parse(__DIR__ . '/fixture/resourcePathName.raml');
 
         $foo = $apiDefinition->getResources()['/foo'];
-        /** @var Resource $fooId */
+        /** @var resource $fooId */
         $fooId = $foo->getResources()['/foo/{fooId}'];
-        /** @var Resource $bar */
+        /** @var resource $bar */
         $bar = $fooId->getResources()['/foo/{fooId}/bar'];
 
         $this->assertEquals($fooId, $bar->getParentResource());

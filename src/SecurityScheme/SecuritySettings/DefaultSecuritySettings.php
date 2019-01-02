@@ -21,7 +21,6 @@ class DefaultSecuritySettings implements SecuritySettingsInterface, \ArrayAccess
     /**
      * Flesh out the settings
      *
-     * @param array                     $data
      * @param SecuritySettingsInterface $sourceSettings
      *
      * @throws \Exception
@@ -35,7 +34,7 @@ class DefaultSecuritySettings implements SecuritySettingsInterface, \ArrayAccess
         }
 
         $settings = $sourceSettings ? clone $sourceSettings : new static();
-        assert($settings instanceof self);
+        \assert($settings instanceof self);
         $settings->mergeSettings($data);
 
         return $settings;
@@ -44,19 +43,16 @@ class DefaultSecuritySettings implements SecuritySettingsInterface, \ArrayAccess
     /**
      * Merge new settings into the current settings
      *
-     * @param array $newSettings
      */
     public function mergeSettings(array $newSettings)
     {
-        $this->settings = array_replace($this->settings, $newSettings);
+        $this->settings = \array_replace($this->settings, $newSettings);
     }
 
     /**
      * Sets a settings value
      * @link http://php.net/manual/en/arrayaccess.offsetset.php
      *
-     * @param mixed $offset
-     * @param mixed $value
      */
     public function offsetSet($offset, $value)
     {
@@ -71,7 +67,6 @@ class DefaultSecuritySettings implements SecuritySettingsInterface, \ArrayAccess
      * Check if a settings value exists
      * @link http://php.net/manual/en/arrayaccess.offsetexists.php
      *
-     * @param mixed $offset
      *
      * @return bool
      */
@@ -84,7 +79,6 @@ class DefaultSecuritySettings implements SecuritySettingsInterface, \ArrayAccess
      * Delete a settings value
      * @link http://php.net/manual/en/arrayaccess.offsetunset.php
      *
-     * @param mixed $offset
      */
     public function offsetUnset($offset)
     {
@@ -95,9 +89,7 @@ class DefaultSecuritySettings implements SecuritySettingsInterface, \ArrayAccess
      * Get a single settings value
      * @link http://php.net/manual/en/arrayaccess.offsetget.php
      *
-     * @param mixed $offset
      *
-     * @return mixed
      */
     public function offsetGet($offset)
     {

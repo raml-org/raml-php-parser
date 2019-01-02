@@ -21,7 +21,6 @@ final class JsonSchemaDefinition implements SchemaDefinitionInterface
     /**
      * Create a JSON Schema definition
      *
-     * @param \stdClass $json
      */
     public function __construct(\stdClass $json)
     {
@@ -32,7 +31,6 @@ final class JsonSchemaDefinition implements SchemaDefinitionInterface
      * Validate a JSON string against the schema
      * - Converts the string into a JSON object then uses the JsonSchema Validator to validate
      *
-     * @param mixed $value
      */
     public function validate($value)
     {
@@ -55,7 +53,7 @@ final class JsonSchemaDefinition implements SchemaDefinitionInterface
      */
     public function __toString()
     {
-        return json_encode($this->json);
+        return \json_encode($this->json);
     }
 
     /**
@@ -77,7 +75,7 @@ final class JsonSchemaDefinition implements SchemaDefinitionInterface
     {
         $jsonSchema = $this->json;
 
-        return json_decode(json_encode($jsonSchema), true);
+        return \json_decode(\json_encode($jsonSchema), true);
     }
 
     /**

@@ -43,14 +43,13 @@ class NumberType extends Type
     * Create a new NumberType from an array of data
     *
     * @param string    $name
-    * @param array     $data
     *
     * @return NumberType
     */
     public static function createFromArray($name, array $data = [])
     {
         $type = parent::createFromArray($name, $data);
-        assert($type instanceof self);
+        \assert($type instanceof self);
 
         foreach ($data as $key => $value) {
             switch ($key) {
@@ -144,8 +143,8 @@ class NumberType extends Type
      */
     public function setFormat($format)
     {
-        if (!in_array($format, ['int32', 'int64', 'int', 'long', 'float', 'double', 'int16', 'int8'], true)) {
-            throw new \Exception(sprintf('Incorrect format given: "%s"', $format));
+        if (!\in_array($format, ['int32', 'int64', 'int', 'long', 'float', 'double', 'int16', 'int8'], true)) {
+            throw new \Exception(\sprintf('Incorrect format given: "%s"', $format));
         }
         $this->format = $format;
 
@@ -192,37 +191,37 @@ class NumberType extends Type
         }
         switch ($this->format) {
             case 'int8':
-                if (filter_var($value, FILTER_VALIDATE_INT, ['options' => ['min_range' => -128, 'max_range' => 127]]) === false) {
+                if (\filter_var($value, FILTER_VALIDATE_INT, ['options' => ['min_range' => -128, 'max_range' => 127]]) === false) {
                     $this->errors[] = TypeValidationError::unexpectedValueType($this->getName(), 'int8', $value);
                 }
 
                 break;
             case 'int16':
-                if (filter_var($value, FILTER_VALIDATE_INT, ['options' => ['min_range' => -32768, 'max_range' => 32767]]) === false) {
+                if (\filter_var($value, FILTER_VALIDATE_INT, ['options' => ['min_range' => -32768, 'max_range' => 32767]]) === false) {
                     $this->errors[] = TypeValidationError::unexpectedValueType($this->getName(), 'int16', $value);
                 }
 
                 break;
             case 'int32':
-                if (filter_var($value, FILTER_VALIDATE_INT, ['options' => ['min_range' => -2147483648, 'max_range' => 2147483647]]) === false) {
+                if (\filter_var($value, FILTER_VALIDATE_INT, ['options' => ['min_range' => -2147483648, 'max_range' => 2147483647]]) === false) {
                     $this->errors[] = TypeValidationError::unexpectedValueType($this->getName(), 'int32', $value);
                 }
 
                 break;
             case 'int64':
-                if (filter_var($value, FILTER_VALIDATE_INT, ['options' => ['min_range' => -9223372036854775808, 'max_range' => 9223372036854775807]]) === false) {
+                if (\filter_var($value, FILTER_VALIDATE_INT, ['options' => ['min_range' => -9223372036854775808, 'max_range' => 9223372036854775807]]) === false) {
                     $this->errors[] = TypeValidationError::unexpectedValueType($this->getName(), 'int64', $value);
                 }
 
                 break;
             case 'int':
-                if (!is_int($value)) {
+                if (!\is_int($value)) {
                     $this->errors[] = TypeValidationError::unexpectedValueType($this->getName(), 'int', $value);
                 }
 
                 break;
             case 'long':
-                if (!is_int($value)) {
+                if (!\is_int($value)) {
                     $this->errors[] = TypeValidationError::unexpectedValueType($this->getName(), 'int or long', $value);
                 }
 
@@ -230,14 +229,14 @@ class NumberType extends Type
             case 'float':
                 // float === double
             case 'double':
-                if (!is_float($value)) {
+                if (!\is_float($value)) {
                     $this->errors[] = TypeValidationError::unexpectedValueType($this->getName(), 'double or float', $value);
                 }
 
                 break;
             // if no format is given we check only if it is a number
             default:
-                if (!is_float($value) && !is_int($value)) {
+                if (!\is_float($value) && !\is_int($value)) {
                     $this->errors[] = TypeValidationError::unexpectedValueType($this->getName(), 'number', $value);
                 }
 

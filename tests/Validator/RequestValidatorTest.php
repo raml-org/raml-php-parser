@@ -18,10 +18,12 @@ class RequestValidatorTest extends TestCase
      * @var Parser
      */
     private $parser;
+
     /**
      * @var RequestInterface|PHPUnit_Framework_MockObject_MockObject
      */
     private $request;
+
     /**
      * @var UriInterface|PHPUnit_Framework_MockObject_MockObject
      */

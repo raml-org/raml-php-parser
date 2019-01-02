@@ -59,7 +59,6 @@ class BasicRoute
      * @param array $protocols
      * @param string $type
      * @param array $uriParameters
-     * @param Method $method
      */
     public function __construct($baseUrl, $uri, $protocols, $type, $uriParameters, Method $method)
     {

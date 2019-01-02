@@ -12,30 +12,52 @@ class NamedParameter implements ArrayInstantiationInterface
 {
     // Type constants
     const TYPE_STRING = 'string';
+
     const TYPE_NUMBER = 'number';
+
     const TYPE_INTEGER = 'integer';
+
     const TYPE_DATE = 'date';
+
     const TYPE_BOOLEAN = 'boolean';
+
     const TYPE_FILE = 'file';
+
     const TYPE_DATE_ONLY = 'date-only';
+
     const TYPE_TIME_ONLY = 'time-only';
+
     const TYPE_DATETIME_ONLY = 'datetime-only';
+
     const TYPE_DATETIME = 'datetime';
+
     const TYPE_ARRAY = 'array';
 
     // Validation exception codes
     const VAL_NOTBOOLEAN = 1;
+
     const VAL_NOTDATE = 2;
+
     const VAL_NOTSTRING = 3;
+
     const VAL_NOTINT = 4;
+
     const VAL_NOTNUMBER = 5;
+
     const VAL_NOTFILE = 6; // Unused
+
     const VAL_ISREQUIRED = 7;
+
     const VAL_TOOSHORT = 8;
+
     const VAL_TOOLONG = 9;
+
     const VAL_NUMLESSTHAN = 10;
+
     const VAL_GREATERTHAN = 11;
+
     const VAL_PATTERNFAIL = 12;
+
     const VAL_NOTENUMVALUE = 13;
 
     /**
@@ -90,7 +112,6 @@ class NamedParameter implements ArrayInstantiationInterface
      * @var string
      */
     private $type = self::TYPE_STRING;
-
 
     /**
      * List of valid values for the parameter (optional)
@@ -154,7 +175,6 @@ class NamedParameter implements ArrayInstantiationInterface
      * @var array
      */
     private $examples;
-
 
     /**
      * Whether the parameter can be used multiple times (default: false)
@@ -385,7 +405,7 @@ class NamedParameter implements ArrayInstantiationInterface
      */
     public function setType($type = 'string')
     {
-        if (!in_array($type, $this->validTypes, true)) {
+        if (!\in_array($type, $this->validTypes, true)) {
             throw new InvalidQueryParameterTypeException($type, $this->validTypes);
         }
 
@@ -407,7 +427,6 @@ class NamedParameter implements ArrayInstantiationInterface
     /**
      * Set the allowed values
      *
-     * @param array $enum
      */
     public function setEnum(array $enum)
     {
@@ -513,7 +532,7 @@ class NamedParameter implements ArrayInstantiationInterface
      */
     public function setMinimum($minimum)
     {
-        if (!in_array($this->type, [self::TYPE_INTEGER, self::TYPE_NUMBER], true)) {
+        if (!\in_array($this->type, [self::TYPE_INTEGER, self::TYPE_NUMBER], true)) {
             throw new \Exception('minimum can only be set on type "integer" or "number');
         }
 
@@ -541,7 +560,7 @@ class NamedParameter implements ArrayInstantiationInterface
      */
     public function setMaximum($maximum)
     {
-        if (!in_array($this->type, [self::TYPE_INTEGER, self::TYPE_NUMBER], true)) {
+        if (!\in_array($this->type, [self::TYPE_INTEGER, self::TYPE_NUMBER], true)) {
             throw new \Exception('maximum can only be set on type "integer" or "number');
         }
 
@@ -631,7 +650,6 @@ class NamedParameter implements ArrayInstantiationInterface
     /**
      * Return the default
      *
-     * @return mixed
      */
     public function getDefault()
     {
@@ -657,7 +675,6 @@ class NamedParameter implements ArrayInstantiationInterface
     /**
      * Set the default
      *
-     * @param mixed $default
      *
      * @throws \InvalidArgumentException
      */
@@ -665,19 +682,19 @@ class NamedParameter implements ArrayInstantiationInterface
     {
         switch ($this->type) {
             case self::TYPE_STRING:
-                if (!is_string($default)) {
+                if (!\is_string($default)) {
                     throw new \InvalidArgumentException('Default parameter is not a string');
                 }
 
                 break;
             case self::TYPE_NUMBER:
-                if (!is_numeric($default)) {
+                if (!\is_numeric($default)) {
                     throw new \InvalidArgumentException('Default parameter is not a number');
                 }
 
                 break;
             case self::TYPE_INTEGER:
-                if (!is_numeric($default) || (int) $default != $default) {
+                if (!\is_numeric($default) || (int) $default != $default) {
                     throw new \InvalidArgumentException('Default parameter is not an integer');
                 }
 
@@ -689,7 +706,7 @@ class NamedParameter implements ArrayInstantiationInterface
 
                 break;
             case self::TYPE_BOOLEAN:
-                if (!is_bool($default)) {
+                if (!\is_bool($default)) {
                     throw new \InvalidArgumentException('Default parameter is not a boolean');
                 }
 
@@ -715,7 +732,7 @@ class NamedParameter implements ArrayInstantiationInterface
          * If we don't have a value to validate, check if it's required.
          * @link http://raml.org/spec.html#required
          */
-        if (in_array($param, [null, ''], true)) {
+        if (\in_array($param, [null, ''], true)) {
             if ($this->isRequired()) {
                 throw new ValidationException($this->getKey() . ' is required', static::VAL_ISREQUIRED);
             }
@@ -727,7 +744,7 @@ class NamedParameter implements ArrayInstantiationInterface
             case static::TYPE_BOOLEAN:
 
                 // Must be boolean
-                if (!is_bool($param)) {
+                if (!\is_bool($param)) {
                     throw new ValidationException($this->getKey() . ' is not boolean', static::VAL_NOTBOOLEAN);
                 }
 
@@ -745,7 +762,7 @@ class NamedParameter implements ArrayInstantiationInterface
             case static::TYPE_STRING:
 
                 // Must be a string
-                if (!is_string($param)) {
+                if (!\is_string($param)) {
                     throw new ValidationException($this->getKey() . ' is not a string', static::VAL_NOTSTRING);
                 }
 
@@ -755,7 +772,7 @@ class NamedParameter implements ArrayInstantiationInterface
                  * @link http://raml.org/spec.html#minlength
                  */
                 $minLength = $this->getMinLength();
-                if (!empty($minLength) && strlen($param) < $minLength) {
+                if (!empty($minLength) && \strlen($param) < $minLength) {
                     throw new ValidationException(
                         $this->getKey() . ' must be at least ' . $minLength . ' characters long',
                         static::VAL_TOOSHORT
@@ -768,7 +785,7 @@ class NamedParameter implements ArrayInstantiationInterface
                  * @link http://raml.org/spec.html#maxlength
                  */
                 $maxLength = $this->getMaxLength();
-                if (!empty($maxLength) && strlen($param) > $maxLength) {
+                if (!empty($maxLength) && \strlen($param) > $maxLength) {
                     throw new ValidationException(
                         $this->getKey() . ' must be no more than ' . $maxLength . ' characters long',
                         static::VAL_TOOLONG
@@ -784,7 +801,7 @@ class NamedParameter implements ArrayInstantiationInterface
                  *
                  * @link http://raml.org/spec.html#type
                  */
-                if (!is_int($param)) {
+                if (!\is_int($param)) {
                     throw new ValidationException($this->getKey() . ' is not an integer', static::VAL_NOTINT);
                 }
                 // no break
@@ -796,7 +813,7 @@ class NamedParameter implements ArrayInstantiationInterface
                  *
                  * @link http://raml.org/spec.html#type
                  */
-                if (!is_numeric($param)) {
+                if (!\is_numeric($param)) {
                     throw new ValidationException($this->getKey() . ' is not a number', static::VAL_NOTNUMBER);
                 }
 
@@ -859,7 +876,7 @@ class NamedParameter implements ArrayInstantiationInterface
          */
         $validationPattern = $this->getValidationPattern();
         if (!empty($validationPattern) &&
-            preg_match('|' . $validationPattern . '|', $param) !== 1
+            \preg_match('|' . $validationPattern . '|', $param) !== 1
         ) {
             throw new ValidationException(
                 $this->getKey() . ' does not match the specified pattern',
@@ -876,9 +893,9 @@ class NamedParameter implements ArrayInstantiationInterface
          *
          * @link http://raml.org/spec.html#enum
          */
-        if (is_array($enum = $this->getEnum()) && !in_array($param, $enum, true)) {
+        if (\is_array($enum = $this->getEnum()) && !\in_array($param, $enum, true)) {
             throw new ValidationException(
-                $this->getKey() . ' must be one of the following: ' . implode(', ', $enum),
+                $this->getKey() . ' must be one of the following: ' . \implode(', ', $enum),
                 static::VAL_NOTENUMVALUE
             );
         }
@@ -894,7 +911,7 @@ class NamedParameter implements ArrayInstantiationInterface
         if ($this->validationPattern) {
             $pattern = $this->validationPattern;
         } elseif ($enum = $this->getEnum()) {
-            $pattern = '^(' . implode('|', array_map('preg_quote', $enum)) . ')$';
+            $pattern = '^(' . \implode('|', \array_map('preg_quote', $enum)) . ')$';
         } else {
             switch ($this->getType()) {
                 case self::TYPE_NUMBER:

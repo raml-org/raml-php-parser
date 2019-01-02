@@ -119,7 +119,7 @@ class LazyProxyType extends Type
     {
         $original = $this->getResolvedObject();
 
-        return call_user_func_array([$original, $name], $params);
+        return \call_user_func_array([$original, $name], $params);
     }
 
     /**
@@ -139,9 +139,7 @@ class LazyProxyType extends Type
         return $this->getResolvedObject()->getRequired();
     }
 
-    /**
-     * @param mixed $value
-     */
+
     public function validate($value)
     {
         $this->errors = [];
@@ -150,7 +148,7 @@ class LazyProxyType extends Type
         if ($this->discriminate($value)) {
             $original->validate($value);
             if (!$original->isValid()) {
-                $this->errors = array_merge($this->errors, $original->getErrors());
+                $this->errors = \array_merge($this->errors, $original->getErrors());
             }
         }
     }
@@ -206,7 +204,7 @@ class LazyProxyType extends Type
     {
         $type = $this->getWrappedObject();
         $typeDefinition = ($type instanceof self) ? $type->getDefinitionRecursive() : $type->getDefinition();
-        $recursiveDefinition = array_replace_recursive($typeDefinition, $this->getDefinition());
+        $recursiveDefinition = \array_replace_recursive($typeDefinition, $this->getDefinition());
         $recursiveDefinition['type'] = $typeDefinition['type'];
 
         return $recursiveDefinition;

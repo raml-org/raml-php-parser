@@ -82,7 +82,7 @@ class SecuritySchemeDescribedBy implements ArrayInstantiationInterface
 
         if (isset($data['body'])) {
             foreach ($data['body'] as $key => $bodyData) {
-                if (in_array($key, \Raml\WebFormBody::$validMediaTypes, true)) {
+                if (\in_array($key, \Raml\WebFormBody::$validMediaTypes, true)) {
                     $body = \Raml\WebFormBody::createFromArray($key, $bodyData);
                 } else {
                     $body = \Raml\Body::createFromArray($key, $bodyData);
@@ -106,7 +106,7 @@ class SecuritySchemeDescribedBy implements ArrayInstantiationInterface
             }
         }
 
-        if (isset($data['responses']) && is_array($data['responses'])) {
+        if (isset($data['responses']) && \is_array($data['responses'])) {
             foreach ($data['responses'] as $responseCode => $response) {
                 $describedBy->addResponse(
                     Response::createFromArray($responseCode, $response ?: [])
@@ -150,7 +150,6 @@ class SecuritySchemeDescribedBy implements ArrayInstantiationInterface
     /**
      * Add a body
      *
-     * @param BodyInterface $body
      */
     public function addBody(BodyInterface $body)
     {
@@ -170,7 +169,6 @@ class SecuritySchemeDescribedBy implements ArrayInstantiationInterface
     /**
      * Add a new header
      *
-     * @param NamedParameter $header
      */
     public function addHeader(NamedParameter $header)
     {
@@ -192,7 +190,6 @@ class SecuritySchemeDescribedBy implements ArrayInstantiationInterface
     /**
      * Add a query parameter
      *
-     * @param NamedParameter $queryParameter
      */
     public function addQueryParameter(NamedParameter $queryParameter)
     {
@@ -226,7 +223,6 @@ class SecuritySchemeDescribedBy implements ArrayInstantiationInterface
     /**
      * Add a response
      *
-     * @param Response $response
      */
     public function addResponse(Response $response)
     {

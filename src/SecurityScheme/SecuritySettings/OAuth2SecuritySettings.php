@@ -45,7 +45,6 @@ class OAuth2SecuritySettings implements SecuritySettingsInterface
     /**
      * Flesh out the settings
      *
-     * @param array                     $data
      * @param SecuritySettingsInterface $sourceSettings
      *
      * @throws \Exception
@@ -59,7 +58,7 @@ class OAuth2SecuritySettings implements SecuritySettingsInterface
         }
 
         $settings = $sourceSettings ? clone $sourceSettings : new static();
-        assert($settings instanceof self);
+        \assert($settings instanceof self);
 
         if (isset($data['authorizationUri'])) {
             $settings->setAuthorizationUri($data['authorizationUri']);

@@ -70,7 +70,7 @@ class ObjectType extends Type
     public static function createFromArray($name, array $data = [])
     {
         $type = parent::createFromArray($name, $data);
-        assert($type instanceof self);
+        \assert($type instanceof self);
         $type->setType('object');
 
         foreach ($data as $key => $value) {
@@ -139,7 +139,6 @@ class ObjectType extends Type
     /**
      * Set the value of Properties
      *
-     * @param array $properties
      * @return self
      */
     public function setProperties(array $properties)
@@ -220,7 +219,6 @@ class ObjectType extends Type
     /**
      * Get the value of Additional Properties
      *
-     * @return mixed
      */
     public function getAdditionalProperties()
     {
@@ -230,7 +228,6 @@ class ObjectType extends Type
     /**
      * Set the value of Additional Properties
      *
-     * @param mixed $additionalProperties
      *
      * @return self
      */
@@ -292,17 +289,17 @@ class ObjectType extends Type
         parent::validate($value);
 
         // an object is in essence just a group (array) of datatypes
-        if (!is_array($value)) {
-            if (!is_object($value)) {
+        if (!\is_array($value)) {
+            if (!\is_object($value)) {
                 $this->errors[] = TypeValidationError::unexpectedValueType($this->getName(), 'object', $value);
 
                 return;
             }
             // in case of stdClass - convert it to array for convenience
-            $value = get_object_vars($value);
+            $value = \get_object_vars($value);
         }
         foreach ($this->getProperties() as $property) {
-            if ($property->getRequired() && !array_key_exists($property->getName(), $value)) {
+            if ($property->getRequired() && !\array_key_exists($property->getName(), $value)) {
                 $this->errors[] = TypeValidationError::missingRequiredProperty($property->getName());
             }
         }

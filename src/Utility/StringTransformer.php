@@ -5,10 +5,15 @@ namespace Raml\Utility;
 class StringTransformer
 {
     const LOWER_CAMEL_CASE = 1;
+
     const LOWER_HYPHEN_CASE = 2;
+
     const LOWER_UNDERSCORE_CASE = 4;
+
     const UPPER_CAMEL_CASE = 8;
+
     const UPPER_HYPHEN_CASE = 16;
+
     const UPPER_UNDERSCORE_CASE = 32;
 
     private static $possibleTransformations = [
@@ -30,16 +35,16 @@ class StringTransformer
      */
     public static function convertString($string, $convertTo)
     {
-        if (!in_array($convertTo, self::$possibleTransformations, true)) {
+        if (!\in_array($convertTo, self::$possibleTransformations, true)) {
             throw new \Exception('Invalid parameter "' . $convertTo . '" given for ' . __CLASS__ . __METHOD__);
         }
 
         // make a best possible guess about input type and split string into parts
-        preg_match_all('/((?:^|[A-Z])[A-Z]|[a-z]+|(?:_)[A-Z]|[a-z]+|(?:-)[A-Z]|[a-z]+)/', $string, $matches);
+        \preg_match_all('/((?:^|[A-Z])[A-Z]|[a-z]+|(?:_)[A-Z]|[a-z]+|(?:-)[A-Z]|[a-z]+)/', $string, $matches);
         $split = $matches[0];
         $newString = '';
         $delimiter = '';
-        for ($i = 0, $size = count($split); $i < $size; $i++) {
+        for ($i = 0, $size = \count($split); $i < $size; $i++) {
             if ($i > 0) {
                 if ($convertTo === self::LOWER_HYPHEN_CASE || $convertTo === self::UPPER_HYPHEN_CASE) {
                     $delimiter = '-';
@@ -51,26 +56,26 @@ class StringTransformer
             switch ($convertTo) {
                 case self::LOWER_CAMEL_CASE:
                     if ($i === 0) {
-                        $newString .= lcfirst($split[$i]);
+                        $newString .= \lcfirst($split[$i]);
 
                         break;
                     }
                     // LOWER_CAMEL_CASE only applies to first part, rest follows same logic as UPPER_CAMEL_CASE
                     // no break
                 case self::UPPER_CAMEL_CASE:
-                    $newString .= ucfirst($split[$i]);
+                    $newString .= \ucfirst($split[$i]);
 
                     break;
                 // lowercase functions
                 case self::LOWER_HYPHEN_CASE:
                 case self::LOWER_UNDERSCORE_CASE:
-                    $newString .= $delimiter . strtolower($split[$i]);
+                    $newString .= $delimiter . \strtolower($split[$i]);
 
                     break;
                 // uppercase functions
                 case self::UPPER_UNDERSCORE_CASE:
                 case self::UPPER_HYPHEN_CASE:
-                    $newString .= $delimiter . strtoupper($split[$i]);
+                    $newString .= $delimiter . \strtoupper($split[$i]);
 
                     break;
             }

@@ -94,12 +94,12 @@ class MethodTest extends TestCase
         $this->assertCount(1, $method->getResponses());
 
         $responses = $method->getResponses();
-        $this->assertInstanceOf(Response::class, array_values($responses)[0]);
+        $this->assertInstanceOf(Response::class, \array_values($responses)[0]);
         $this->assertInstanceOf(Response::class, $method->getResponse(200));
         $this->assertSame(null, $method->getResponse(400));
 
         $this->assertSame('A dummy method', $method->getDescription());
-        $this->assertSame('A dummy response', array_values($responses)[0]->getDescription());
+        $this->assertSame('A dummy response', \array_values($responses)[0]->getDescription());
     }
 
     /**

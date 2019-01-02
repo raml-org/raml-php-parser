@@ -16,14 +16,13 @@ class DatetimeOnlyType extends Type
     * Create a new DateTimeOnlyType from an array of data
     *
     * @param string $name
-    * @param array $data
     *
     * @return self
     */
     public static function createFromArray($name, array $data = [])
     {
         $type = parent::createFromArray($name, $data);
-        assert($type instanceof self);
+        \assert($type instanceof self);
 
         return $type;
     }

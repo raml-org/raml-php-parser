@@ -23,13 +23,12 @@ class JsonType extends Type
     * Create a new JsonType from an array of data
     *
     * @param string $name
-    * @param array $data
     * @return self
     */
     public static function createFromArray($name, array $data = [])
     {
         $type = parent::createFromArray($name, $data);
-        assert($type instanceof self);
+        \assert($type instanceof self);
 
         $type->json = $data;
 
@@ -40,7 +39,6 @@ class JsonType extends Type
      * Validate a JSON string against the schema
      * - Converts the string into a JSON object then uses the JsonSchema Validator to validate
      *
-     * @param mixed $value
      */
     public function validate($value)
     {

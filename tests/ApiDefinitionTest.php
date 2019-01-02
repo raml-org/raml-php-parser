@@ -24,7 +24,7 @@ class ApiDefinitionTest extends TestCase
     protected function setUp()
     {
         parent::setUp();
-        setlocale(LC_NUMERIC, 'C');
+        \setlocale(LC_NUMERIC, 'C');
     }
 
     /**
@@ -49,7 +49,7 @@ class ApiDefinitionTest extends TestCase
             'POST /songs/{songId}',
             'GET /songs/{songId}',
             'DELETE /songs/{songId}',
-        ], array_keys($routes->getRoutes()));
+        ], \array_keys($routes->getRoutes()));
     }
 
     /**
@@ -68,7 +68,7 @@ class ApiDefinitionTest extends TestCase
             'POST /songs/{songId}',
             'GET /songs/{songId}',
             'DELETE /songs/{songId}',
-        ], array_keys($routes->getRoutes()));
+        ], \array_keys($routes->getRoutes()));
     }
 
     /**
@@ -247,8 +247,8 @@ class ApiDefinitionTest extends TestCase
             }
         }';
         $type = $body->getType();
-        $type->validate(json_decode($validResponse, true));
-        $this->assertTrue($type->isValid(), sprintf('Validation failed with following errors: %s', implode(', ', array_map('strval', $type->getErrors()))));
+        $type->validate(\json_decode($validResponse, true));
+        $this->assertTrue($type->isValid(), \sprintf('Validation failed with following errors: %s', \implode(', ', \array_map('strval', $type->getErrors()))));
     }
 
     /**
@@ -467,7 +467,7 @@ class ApiDefinitionTest extends TestCase
             $this->assertContains(
                 $error,
                 $validator->getErrors(),
-                $message = sprintf('Validator expected to contain error: %s', $error->__toString()),
+                $message = \sprintf('Validator expected to contain error: %s', $error->__toString()),
                 $ignoreCase = false,
                 $checkForObjectIdentity = false
             );
@@ -482,6 +482,6 @@ class ApiDefinitionTest extends TestCase
         $api = $this->buildParser()->parse(__DIR__ . '/fixture/includeUrlPrefix.raml');
         $this->assertEquals([
             '/prefix/songs',
-        ], array_keys($api->getResources()));
+        ], \array_keys($api->getResources()));
     }
 }

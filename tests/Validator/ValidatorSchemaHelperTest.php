@@ -115,8 +115,8 @@ class ValidatorSchemaHelperTest extends TestCase
         $this->assertInternalType('array', $allParameters);
         $this->assertInternalType('array', $requiredParameters);
 
-        $this->assertSame(['required_number', 'optional_long_string'], array_keys($allParameters));
-        $this->assertSame(['required_number'], array_keys($requiredParameters));
+        $this->assertSame(['required_number', 'optional_long_string'], \array_keys($allParameters));
+        $this->assertSame(['required_number'], \array_keys($requiredParameters));
     }
 
     /**
@@ -168,7 +168,7 @@ class ValidatorSchemaHelperTest extends TestCase
         $this->assertInternalType('array', $allHeaders);
         $this->assertInternalType('array', $requiredHeaders);
 
-        $this->assertSame(['X-Required-Header', 'X-Long-Optional-Header'], array_keys($allHeaders));
-        $this->assertSame(['X-Required-Header'], array_keys($requiredHeaders));
+        $this->assertSame(['X-Required-Header', 'X-Long-Optional-Header'], \array_keys($allHeaders));
+        $this->assertSame(['X-Required-Header'], \array_keys($requiredHeaders));
     }
 }
