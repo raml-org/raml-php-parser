@@ -38,14 +38,13 @@ class StringType extends Type
     * Create a new StringType from an array of data
     *
     * @param string    $name
-    * @param array     $data
     *
     * @return StringType
     */
     public static function createFromArray($name, array $data = [])
     {
         $type = parent::createFromArray($name, $data);
-        assert($type instanceof self);
+        \assert($type instanceof self);
 
         foreach ($data as $key => $value) {
             switch ($key) {
@@ -70,7 +69,6 @@ class StringType extends Type
     /**
      * Get the value of Pattern
      *
-     * @return mixed
      */
     public function getPattern()
     {
@@ -80,7 +78,6 @@ class StringType extends Type
     /**
      * Set the value of Pattern
      *
-     * @param mixed $pattern
      *
      * @return self
      */
@@ -94,7 +91,6 @@ class StringType extends Type
     /**
      * Get the value of Min Length
      *
-     * @return mixed
      */
     public function getMinLength()
     {
@@ -104,7 +100,6 @@ class StringType extends Type
     /**
      * Set the value of Min Length
      *
-     * @param mixed $minLength
      *
      * @return self
      */
@@ -118,7 +113,6 @@ class StringType extends Type
     /**
      * Get the value of Max Length
      *
-     * @return mixed
      */
     public function getMaxLength()
     {
@@ -128,7 +122,6 @@ class StringType extends Type
     /**
      * Set the value of Max Length
      *
-     * @param mixed $maxLength
      *
      * @return self
      */
@@ -143,16 +136,16 @@ class StringType extends Type
     {
         parent::validate($value);
 
-        if (!is_string($value)) {
+        if (!\is_string($value)) {
             $this->errors[] = TypeValidationError::unexpectedValueType($this->getName(), 'string', $value);
 
             return;
         }
         if (null !== $this->pattern) {
-            $pregMatchResult = preg_match('/' . $this->pattern . '/', $value);
+            $pregMatchResult = \preg_match('/' . $this->pattern . '/', $value);
             $failed = $pregMatchResult === false;
             if ($failed) {
-                throw new \RuntimeException(sprintf('Failed to look up for "%s" with regex "%s"', var_export($value, true), $this->pattern));
+                throw new \RuntimeException(\sprintf('Failed to look up for "%s" with regex "%s"', \var_export($value, true), $this->pattern));
             }
             $foundNothing = $pregMatchResult === 0;
             if ($foundNothing) {
@@ -160,12 +153,12 @@ class StringType extends Type
             }
         }
         if (null !== $this->minLength) {
-            if (strlen($value) < $this->minLength) {
+            if (\strlen($value) < $this->minLength) {
                 $this->errors[] = TypeValidationError::stringLengthExceedsMinimum($this->getName(), $this->minLength, $value);
             }
         }
         if (null !== $this->maxLength) {
-            if (strlen($value) > $this->maxLength) {
+            if (\strlen($value) > $this->maxLength) {
                 $this->errors[] = TypeValidationError::stringLengthExceedsMaximum($this->getName(), $this->maxLength, $value);
             }
         }

@@ -30,7 +30,7 @@ class TypeTest extends TestCase
         $body = $response->getBodyByType('application/json');
         $type = $body->getType();
 
-        $type->validate(json_decode('{"title":"Good Song","artist":"An artist"}', true));
+        $type->validate(\json_decode('{"title":"Good Song","artist":"An artist"}', true));
         $this->assertTrue($type->isValid());
     }
 
@@ -46,7 +46,7 @@ class TypeTest extends TestCase
         $body = $response->getBodyByType('application/json');
         $type = $body->getType();
 
-        $type->validate(json_decode('{"title":"Good Song"}', true));
+        $type->validate(\json_decode('{"title":"Good Song"}', true));
         $this->assertTrue($type->isValid());
     }
 
@@ -62,7 +62,7 @@ class TypeTest extends TestCase
         $body = $response->getBodyByType('application/json');
         $type = $body->getType();
 
-        $type->validate(json_decode('{"artist":"An artist"}', true));
+        $type->validate(\json_decode('{"artist":"An artist"}', true));
         $this->assertFalse($type->isValid());
     }
 
@@ -94,7 +94,7 @@ class TypeTest extends TestCase
         $body = $response->getBodyByType('application/json');
         $type = $body->getType();
 
-        $type->validate(json_decode('{"title": "Good Song", "duration":"3:09"}', true));
+        $type->validate(\json_decode('{"title": "Good Song", "duration":"3:09"}', true));
         $this->assertFalse($type->isValid());
     }
 
@@ -110,10 +110,10 @@ class TypeTest extends TestCase
         $body = $response->getBodyByType('application/json');
         $type = $body->getType();
 
-        $type->validate(json_decode('{"var": null}', true));
+        $type->validate(\json_decode('{"var": null}', true));
         $this->assertTrue($type->isValid());
 
-        $type->validate(json_decode('{"var": 10}', true));
+        $type->validate(\json_decode('{"var": 10}', true));
         $this->assertFalse($type->isValid());
     }
 
@@ -129,7 +129,7 @@ class TypeTest extends TestCase
         $body = $response->getBodyByType('application/json');
         $type = $body->getType();
 
-        $type->validate(json_decode('{"datetimeOnly": "2017-12-07T15:50:48"}', true));
+        $type->validate(\json_decode('{"datetimeOnly": "2017-12-07T15:50:48"}', true));
         $this->assertTrue($type->isValid());
     }
 
@@ -145,7 +145,7 @@ class TypeTest extends TestCase
         $body = $response->getBodyByType('application/json');
         $type = $body->getType();
 
-        $type->validate(json_decode('{"datetimeOnly": "2017-12 15:50:48"}', true));
+        $type->validate(\json_decode('{"datetimeOnly": "2017-12 15:50:48"}', true));
         $this->assertFalse($type->isValid());
     }
 
@@ -161,7 +161,7 @@ class TypeTest extends TestCase
         $body = $response->getBodyByType('application/json');
         $type = $body->getType();
 
-        $type->validate(json_decode('{"dateOnly": "2016-02-28"}', true));
+        $type->validate(\json_decode('{"dateOnly": "2016-02-28"}', true));
         $this->assertTrue($type->isValid());
     }
 
@@ -177,7 +177,7 @@ class TypeTest extends TestCase
         $body = $response->getBodyByType('application/json');
         $type = $body->getType();
 
-        $type->validate(json_decode('{"dateOnly": "2017-12-07T15:50:48"}', true));
+        $type->validate(\json_decode('{"dateOnly": "2017-12-07T15:50:48"}', true));
         $this->assertFalse($type->isValid());
     }
 
@@ -194,45 +194,45 @@ class TypeTest extends TestCase
         $type = $body->getType();
 
         // integer
-        $type->validate(json_decode('{"intArray": [1,2,3]}', true));
+        $type->validate(\json_decode('{"intArray": [1,2,3]}', true));
         $this->assertTrue($type->isValid());
-        $type->validate(json_decode('{"intArray": [1,2,"str"]}', true));
+        $type->validate(\json_decode('{"intArray": [1,2,"str"]}', true));
         $this->assertFalse($type->isValid());
 
         // string
-        $type->validate(json_decode('{"strArray": ["one", "two"]}', true));
+        $type->validate(\json_decode('{"strArray": ["one", "two"]}', true));
         $this->assertTrue($type->isValid());
-        $type->validate(json_decode('{"strArray": [1, "two"]}', true));
+        $type->validate(\json_decode('{"strArray": [1, "two"]}', true));
         $this->assertFalse($type->isValid());
 
         // boolean
-        $type->validate(json_decode('{"boolArray": [true, false]}', true));
+        $type->validate(\json_decode('{"boolArray": [true, false]}', true));
         $this->assertTrue($type->isValid());
-        $type->validate(json_decode('{"boolArray": [true, 0]}', true));
+        $type->validate(\json_decode('{"boolArray": [true, 0]}', true));
         $this->assertFalse($type->isValid());
 
         // number
-        $type->validate(json_decode('{"numberArray": [12, 13.5, 0]}', true));
+        $type->validate(\json_decode('{"numberArray": [12, 13.5, 0]}', true));
         $this->assertTrue($type->isValid());
-        $type->validate(json_decode('{"numberArray": ["12", 0]}', true));
+        $type->validate(\json_decode('{"numberArray": ["12", 0]}', true));
         $this->assertFalse($type->isValid());
 
         // datetime-only
-        $type->validate(json_decode('{"datetime-onlyArray": ["2018-08-08T12:54:34", "2018-08-08T00:00:00"]}', true));
+        $type->validate(\json_decode('{"datetime-onlyArray": ["2018-08-08T12:54:34", "2018-08-08T00:00:00"]}', true));
         $this->assertTrue($type->isValid());
-        $type->validate(json_decode('{"datetime-onlyArray": ["2018-08-08T12:54:34", "not_date"]}', true));
+        $type->validate(\json_decode('{"datetime-onlyArray": ["2018-08-08T12:54:34", "not_date"]}', true));
         $this->assertFalse($type->isValid());
 
         // date-only
-        $type->validate(json_decode('{"date-onlyArray": ["2018-08-08", "2018-01-01"]}', true));
+        $type->validate(\json_decode('{"date-onlyArray": ["2018-08-08", "2018-01-01"]}', true));
         $this->assertTrue($type->isValid());
-        $type->validate(json_decode('{"date-onlyArray": ["2018-08-08", "not_date"]}', true));
+        $type->validate(\json_decode('{"date-onlyArray": ["2018-08-08", "not_date"]}', true));
         $this->assertFalse($type->isValid());
 
         // time-only
-        $type->validate(json_decode('{"time-onlyArray": ["12:54:34", "00:00:00"]}', true));
+        $type->validate(\json_decode('{"time-onlyArray": ["12:54:34", "00:00:00"]}', true));
         $this->assertTrue($type->isValid());
-        $type->validate(json_decode('{"time-onlyArray": ["2018-08-08T12:54:34", "not_date"]}', true));
+        $type->validate(\json_decode('{"time-onlyArray": ["2018-08-08T12:54:34", "not_date"]}', true));
         $this->assertFalse($type->isValid());
     }
 }

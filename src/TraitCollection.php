@@ -23,6 +23,7 @@ class TraitCollection implements \Iterator
      * @var TraitDefinition[]
      */
     private $collection = [];
+
     /**
      * Current position
      *
@@ -102,7 +103,7 @@ class TraitCollection implements \Iterator
     {
         foreach ($this->collection as $trait) {
             if ($trait === $traitToAdd) {
-                throw new Exception(sprintf('Trait already exists %s', var_export($traitToAdd, true)));
+                throw new Exception(\sprintf('Trait already exists %s', \var_export($traitToAdd, true)));
             }
         }
         $this->collection[] = $traitToAdd;
@@ -125,7 +126,7 @@ class TraitCollection implements \Iterator
             }
         }
 
-        throw new Exception(sprintf('Cannot remove given trait %s', var_export($traitToRemove, true)));
+        throw new Exception(\sprintf('Cannot remove given trait %s', \var_export($traitToRemove, true)));
     }
 
     /**
@@ -140,9 +141,9 @@ class TraitCollection implements \Iterator
     {
         $variables = [];
         foreach ($this->collection as $trait) {
-            if (is_array($name)) {
-                $variables = reset($name);
-                $name = key($name);
+            if (\is_array($name)) {
+                $variables = \reset($name);
+                $name = \key($name);
             }
             /** @var $trait TraitDefinition */
             if ($trait->getName() === $name) {
@@ -150,7 +151,7 @@ class TraitCollection implements \Iterator
             }
         }
 
-        throw new Exception(sprintf('No trait found for name %s, list: %s', var_export($name, true), var_export($this->collection, true)));
+        throw new Exception(\sprintf('No trait found for name %s, list: %s', \var_export($name, true), \var_export($this->collection, true)));
     }
 
     /**

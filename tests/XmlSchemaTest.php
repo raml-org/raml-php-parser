@@ -159,7 +159,7 @@ XML
             $this->assertContains(
                 $error,
                 $validator->getErrors(),
-                $message = sprintf('Validator expected to contain error: %s', $error->__toString()),
+                $message = \sprintf('Validator expected to contain error: %s', $error->__toString()),
                 $ignoreCase = false,
                 $checkObjectIdentity = false
             );

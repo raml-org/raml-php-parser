@@ -66,7 +66,6 @@ class Type implements ArrayInstantiationInterface, TypeInterface
      * Create a new Type from an array of data
      *
      * @param string $name
-     * @param array $data
      * @return self
      */
     public static function createFromArray($name, array $data = [])
@@ -75,7 +74,7 @@ class Type implements ArrayInstantiationInterface, TypeInterface
 
         $class->setType($data['type']);
         if (isset($data['usage'])) {
-            assert($class instanceof TraitDefinition);
+            \assert($class instanceof TraitDefinition);
             $class->setUsage($data['usage']);
         }
         if (isset($data['required'])) {
@@ -84,9 +83,9 @@ class Type implements ArrayInstantiationInterface, TypeInterface
         if (isset($data['enum'])) {
             $class->setEnum($data['enum']);
         }
-        if (substr($name, -1) === '?') {
+        if (\substr($name, -1) === '?') {
             $class->setRequired(false);
-            $class->setName(substr($name, 0, -1));
+            $class->setName(\substr($name, 0, -1));
         }
         $class->setDefinition($data);
 
@@ -208,9 +207,6 @@ class Type implements ArrayInstantiationInterface, TypeInterface
         return $this->enum;
     }
 
-    /**
-     * @param array $enum
-     */
     public function setEnum(array $enum)
     {
         $this->enum = $enum;
@@ -223,9 +219,9 @@ class Type implements ArrayInstantiationInterface, TypeInterface
      */
     public function getParent()
     {
-        if (is_string($this->parent)) {
+        if (\is_string($this->parent)) {
             $parent = TypeCollection::getInstance()->getTypeByName($this->parent);
-            assert($parent instanceof ObjectType);
+            \assert($parent instanceof ObjectType);
 
             return $parent;
         }
@@ -278,28 +274,28 @@ class Type implements ArrayInstantiationInterface, TypeInterface
             return $this->getParent();
         }
         if (!($this->getParent() instanceof $this)) {
-            throw new \LogicException(sprintf(
+            throw new \LogicException(\sprintf(
                 'Inheritance not possible because of incompatible Types, child is instance of %s and parent is instance of %s',
-                get_class($this),
-                get_class($this->getParent())
+                \get_class($this),
+                \get_class($this->getParent())
             ));
         }
 
         // retrieve all getter/setters so we can check all properties for possible inheritance
         $getters = [];
         $setters = [];
-        foreach (get_class_methods($this) as $method) {
-            $result = preg_split('/^(get|set)(.*)$/', $method, null, PREG_SPLIT_NO_EMPTY);
-            if (count($result) === 2) {
+        foreach (\get_class_methods($this) as $method) {
+            $result = \preg_split('/^(get|set)(.*)$/', $method, null, PREG_SPLIT_NO_EMPTY);
+            if (\count($result) === 2) {
                 if ($result[0] === 'get') {
-                    $getters[lcfirst($result[1])] = $method;
+                    $getters[\lcfirst($result[1])] = $method;
                 }
                 if ($result[0] === 'set') {
-                    $setters[lcfirst($result[1])] = $method;
+                    $setters[\lcfirst($result[1])] = $method;
                 }
             }
         }
-        $properties = array_keys(array_merge($getters, $setters));
+        $properties = \array_keys(\array_merge($getters, $setters));
 
         foreach ($properties as $prop) {
             if (!isset($getters[$prop]) || !isset($setters[$prop])) {
@@ -313,8 +309,8 @@ class Type implements ArrayInstantiationInterface, TypeInterface
                 $this->$setter($this->getParent()->$getter());
             }
             // if it is an array, add parent values
-            if (is_array($currentValue)) {
-                $newValue = array_merge($this->getParent()->$getter(), $currentValue);
+            if (\is_array($currentValue)) {
+                $newValue = \array_merge($this->getParent()->$getter(), $currentValue);
                 $this->$setter($newValue);
 
                 continue;
@@ -334,7 +330,7 @@ class Type implements ArrayInstantiationInterface, TypeInterface
             $this->errors[] = new TypeValidationError($this->getName(), 'required');
         }
 
-        if ($this->getEnum() && !in_array($value, $this->getEnum(), true)) {
+        if ($this->getEnum() && !\in_array($value, $this->getEnum(), true)) {
             $this->errors[] = TypeValidationError::unexpectedValue($this->getName(), $this->getEnum(), $value);
         }
     }

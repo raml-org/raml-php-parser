@@ -38,14 +38,13 @@ class FileType extends Type
     * Create a new FileType from an array of data
     *
     * @param string    $name
-    * @param array     $data
     *
     * @return FileType
     */
     public static function createFromArray($name, array $data = [])
     {
         $type = parent::createFromArray($name, $data);
-        assert($type instanceof self);
+        \assert($type instanceof self);
 
         foreach ($data as $key => $value) {
             switch ($key) {
@@ -70,7 +69,6 @@ class FileType extends Type
     /**
      * Get the value of File Types
      *
-     * @return mixed
      */
     public function getFileTypes()
     {
@@ -80,7 +78,6 @@ class FileType extends Type
     /**
      * Set the value of File Types
      *
-     * @param mixed $fileTypes
      *
      * @return self
      */
@@ -94,7 +91,6 @@ class FileType extends Type
     /**
      * Get the value of Min Length
      *
-     * @return mixed
      */
     public function getMinLength()
     {
@@ -104,7 +100,6 @@ class FileType extends Type
     /**
      * Set the value of Min Length
      *
-     * @param mixed $minLength
      *
      * @return self
      */
@@ -118,7 +113,6 @@ class FileType extends Type
     /**
      * Get the value of Max Length
      *
-     * @return mixed
      */
     public function getMaxLength()
     {
@@ -128,7 +122,6 @@ class FileType extends Type
     /**
      * Set the value of Max Length
      *
-     * @param mixed $maxLength
      *
      * @return self
      */
@@ -143,7 +136,7 @@ class FileType extends Type
     {
         parent::validate($value);
 
-        if (!preg_match('/^[a-zA-Z0-9\/\r\n+]*={0,2}$/', $value)) {
+        if (!\preg_match('/^[a-zA-Z0-9\/\r\n+]*={0,2}$/', $value)) {
             $this->errors[] = TypeValidationError::unexpectedValueType($this->getName(), 'file', $value);
         }
     }

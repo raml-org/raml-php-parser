@@ -12,6 +12,6 @@ class InvalidProtocolException extends \RuntimeException implements ExceptionInt
      */
     public function __construct($protocol)
     {
-        parent::__construct(sprintf('"%s" is not a valid protocol.', $protocol));
+        parent::__construct(\sprintf('"%s" is not a valid protocol.', $protocol));
     }
 }

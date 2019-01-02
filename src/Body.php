@@ -72,7 +72,7 @@ class Body implements BodyInterface, ArrayInstantiationInterface
      */
     public function __construct($mediaType)
     {
-        if (in_array($mediaType, WebFormBody::$validMediaTypes, true)) {
+        if (\in_array($mediaType, WebFormBody::$validMediaTypes, true)) {
             throw new \InvalidArgumentException('Invalid media type');
         }
 
@@ -190,7 +190,7 @@ class Body implements BodyInterface, ArrayInstantiationInterface
      */
     public function setSchema($schema)
     {
-        if (!is_string($schema) && !$schema instanceof SchemaDefinitionInterface) {
+        if (!\is_string($schema) && !$schema instanceof SchemaDefinitionInterface) {
             throw new InvalidSchemaDefinitionException();
         }
 
@@ -212,7 +212,6 @@ class Body implements BodyInterface, ArrayInstantiationInterface
     /**
      * Set the type
      *
-     * @param TypeInterface $type
      *
      * @throws \Exception Throws exception when type does not parse
      */

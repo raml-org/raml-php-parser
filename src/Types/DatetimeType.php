@@ -26,13 +26,12 @@ class DatetimeType extends Type
      * Create a new DatetimeType from an array of data
      *
      * @param string $name
-     * @param array $data
      * @return DatetimeType
      */
     public static function createFromArray($name, array $data = [])
     {
         $type = parent::createFromArray($name, $data);
-        assert($type instanceof self);
+        \assert($type instanceof self);
 
         foreach ($data as $key => $value) {
             if ($key === 'format') {

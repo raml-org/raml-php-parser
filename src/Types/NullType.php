@@ -15,14 +15,13 @@ class NullType extends Type
     * Create a new NullType from an array of data
     *
     * @param string    $name
-    * @param array     $data
     *
     * @return NullType
     */
     public static function createFromArray($name, array $data = [])
     {
         $type = parent::createFromArray($name, $data);
-        assert($type instanceof self);
+        \assert($type instanceof self);
 
         return $type;
     }

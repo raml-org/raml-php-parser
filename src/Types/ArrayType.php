@@ -61,17 +61,16 @@ class ArrayType extends Type
      * Create a new ArrayType from an array of data
      *
      * @param string $name
-     * @param array $data
      *
      * @return ArrayType
      */
     public static function createFromArray($name, array $data = [])
     {
         $type = parent::createFromArray($name, $data);
-        assert($type instanceof self);
-        $pos = strpos($type->getType(), '[]');
+        \assert($type instanceof self);
+        $pos = \strpos($type->getType(), '[]');
         if ($pos !== false) {
-            $type->setItems(substr($type->getType(), 0, $pos));
+            $type->setItems(\substr($type->getType(), 0, $pos));
         }
         $type->setType('array');
 
@@ -82,7 +81,7 @@ class ArrayType extends Type
 
                     break;
                 case 'items':
-                    if (is_array($value) && isset($value['type'])) {
+                    if (\is_array($value) && isset($value['type'])) {
                         $type->setItems($value['type']);
 
                         break;
@@ -154,13 +153,13 @@ class ArrayType extends Type
     {
         parent::validate($value);
 
-        if (!is_array($value)) {
+        if (!\is_array($value)) {
             $this->errors[] = TypeValidationError::unexpectedValueType($this->getName(), 'is array', $value);
 
             return;
         }
 
-        $actualArraySize = count($value);
+        $actualArraySize = \count($value);
         if (!($actualArraySize >= $this->minItems && $actualArraySize <= $this->maxItems)) {
             $this->errors[] = TypeValidationError::arraySizeValidationFailed(
                 $this->getName(),
@@ -170,7 +169,7 @@ class ArrayType extends Type
             );
         }
 
-        if (in_array($this->items, self::$SCALAR_TYPES, true)) {
+        if (\in_array($this->items, self::$SCALAR_TYPES, true)) {
             $this->validateScalars($value);
         } else {
             $this->validateObjects($value);
@@ -198,7 +197,7 @@ class ArrayType extends Type
         foreach ($value as $valueItem) {
             $this->getItems()->validate($valueItem);
             if (!$this->getItems()->isValid()) {
-                $this->errors = array_merge($this->errors, $this->getItems()->getErrors());
+                $this->errors = \array_merge($this->errors, $this->getItems()->getErrors());
             }
         }
     }
