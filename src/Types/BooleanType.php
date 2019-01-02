@@ -15,14 +15,13 @@ class BooleanType extends Type
     * Create a new BooleanType from an array of data
     *
     * @param string    $name
-    * @param array     $data
     *
     * @return BooleanType
     */
     public static function createFromArray($name, array $data = [])
     {
         $type = parent::createFromArray($name, $data);
-        assert($type instanceof self);
+        \assert($type instanceof self);
 
         return $type;
     }
@@ -31,7 +30,7 @@ class BooleanType extends Type
     {
         parent::validate($value);
 
-        if (!is_bool($value)) {
+        if (!\is_bool($value)) {
             $this->errors[] = TypeValidationError::unexpectedValueType($this->getName(), 'is boolean', $value);
         }
     }

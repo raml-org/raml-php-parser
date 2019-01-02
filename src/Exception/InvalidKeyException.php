@@ -10,7 +10,7 @@ class InvalidKeyException extends RamlParserException
     {
         $this->key = $key;
 
-        parent::__construct(sprintf('The key %s does not exist.', $this->key));
+        parent::__construct(\sprintf('The key %s does not exist.', $this->key));
     }
 
     public function getKey()

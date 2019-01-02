@@ -12,20 +12,22 @@ use Raml\Type;
  */
 class DateOnlyType extends Type
 {
+    /**
+     * @var string
+     */
     const FORMAT = 'Y-m-d';
 
     /**
     * Create a new DateOnlyType from an array of data
     *
     * @param string    $name
-    * @param array     $data
     *
     * @return DateOnlyType
     */
     public static function createFromArray($name, array $data = [])
     {
         $type = parent::createFromArray($name, $data);
-        assert($type instanceof self);
+        \assert($type instanceof self);
 
         return $type;
     }

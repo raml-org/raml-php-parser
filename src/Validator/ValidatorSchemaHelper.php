@@ -20,9 +20,6 @@ class ValidatorSchemaHelper
      */
     private $apiDefinition;
 
-    /**
-     * @param ApiDefinition $api
-     */
     public function __construct(ApiDefinition $api)
     {
         $this->apiDefinition = $api;
@@ -94,9 +91,9 @@ class ValidatorSchemaHelper
         $responseSchema = $this->getMethod($method, $path)->getResponse($statusCode);
 
         if (null === $responseSchema) {
-            throw new ValidatorSchemaException(sprintf(
+            throw new ValidatorSchemaException(\sprintf(
                 'Schema for %s %s with status code %d was not found in API definition',
-                strtoupper($method),
+                \strtoupper($method),
                 $path,
                 $statusCode
             ));
@@ -144,7 +141,6 @@ class ValidatorSchemaHelper
     }
 
     /**
-     * @param MessageSchemaInterface $schema
      * @param string $method
      * @param string $path
      * @param string $contentType
@@ -159,9 +155,9 @@ class ValidatorSchemaHelper
         } catch (EmptyBodyException $e) {
             throw new EmptyBodyException($e->getMessage());
         } catch (Exception $exception) {
-            $message = sprintf(
+            $message = \sprintf(
                 'Schema for %s %s with content type %s was not found in API definition',
-                strtoupper($method),
+                \strtoupper($method),
                 $path,
                 $contentType
             );
@@ -171,9 +167,9 @@ class ValidatorSchemaHelper
 
         // BodyInterface does not contain anything of use for validation, so we need to return an actual Body.
         if (!($body instanceof Body)) {
-            throw new ValidatorSchemaException(sprintf(
+            throw new ValidatorSchemaException(\sprintf(
                 'Schema for %s %s with content type %s is BodyInterface but not a Body object, so we can\'t use it',
-                strtoupper($method),
+                \strtoupper($method),
                 $path,
                 $contentType
             ));
@@ -184,7 +180,7 @@ class ValidatorSchemaHelper
 
     /**
      * @param string $path
-     * @return Resource
+     * @return resource
      * @throws ValidatorSchemaException
      */
     private function getResource($path)
@@ -192,7 +188,7 @@ class ValidatorSchemaHelper
         try {
             return $this->apiDefinition->getResourceByUri($path);
         } catch (ResourceNotFoundException $exception) {
-            $message = sprintf(
+            $message = \sprintf(
                 'Schema for URI %s was not found in API definition',
                 $path
             );
@@ -211,13 +207,13 @@ class ValidatorSchemaHelper
     {
         try {
             $resource = $this->getResource($path);
-            assert($resource instanceof Resource);
+            \assert($resource instanceof Resource);
 
             return $resource->getMethod($method);
         } catch (\Exception $exception) {
-            throw new ValidatorSchemaException(sprintf(
+            throw new ValidatorSchemaException(\sprintf(
                 'Schema for %s %s was not found in API definition',
-                strtoupper($method),
+                \strtoupper($method),
                 $path
             ));
         }

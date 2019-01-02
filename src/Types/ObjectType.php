@@ -70,7 +70,7 @@ class ObjectType extends Type
     public static function createFromArray($name, array $data = [])
     {
         $type = parent::createFromArray($name, $data);
-        assert($type instanceof self);
+        \assert($type instanceof self);
         $type->setType('object');
 
         foreach ($data as $key => $value) {
@@ -113,11 +113,7 @@ class ObjectType extends Type
     {
         if (isset($value[$this->getDiscriminator()])) {
             if ($this->getDiscriminatorValue() !== null) {
-                if ($this->getDiscriminatorValue() === $value[$this->getDiscriminator()]) {
-                    return true;
-                }
-
-                return false;
+                return $this->getDiscriminatorValue() === $value[$this->getDiscriminator()];
             }
 
             return $value[$this->getDiscriminator()] === $this->getName();
@@ -139,13 +135,12 @@ class ObjectType extends Type
     /**
      * Set the value of Properties
      *
-     * @param array $properties
      * @return self
      */
     public function setProperties(array $properties)
     {
         foreach ($properties as $name => $property) {
-            if ($property instanceof Type === false) {
+            if (!$property instanceof Type) {
                 $property = ApiDefinition::determineType($name, $property);
             }
             $this->properties[] = $property;
@@ -189,7 +184,7 @@ class ObjectType extends Type
      */
     public function setMinProperties($minProperties)
     {
-        $this->minProperties = (int) $minProperties;
+        $this->minProperties = $minProperties;
 
         return $this;
     }
@@ -212,7 +207,7 @@ class ObjectType extends Type
      */
     public function setMaxProperties($maxProperties)
     {
-        $this->maxProperties = (int) $maxProperties;
+        $this->maxProperties = $maxProperties;
 
         return $this;
     }
@@ -220,7 +215,6 @@ class ObjectType extends Type
     /**
      * Get the value of Additional Properties
      *
-     * @return mixed
      */
     public function getAdditionalProperties()
     {
@@ -230,7 +224,6 @@ class ObjectType extends Type
     /**
      * Set the value of Additional Properties
      *
-     * @param mixed $additionalProperties
      *
      * @return self
      */
@@ -292,24 +285,24 @@ class ObjectType extends Type
         parent::validate($value);
 
         // an object is in essence just a group (array) of datatypes
-        if (!is_array($value)) {
-            if (!is_object($value)) {
+        if (!\is_array($value)) {
+            if (!\is_object($value)) {
                 $this->errors[] = TypeValidationError::unexpectedValueType($this->getName(), 'object', $value);
 
                 return;
             }
             // in case of stdClass - convert it to array for convenience
-            $value = get_object_vars($value);
+            $value = \get_object_vars($value);
         }
         foreach ($this->getProperties() as $property) {
-            if ($property->getRequired() && !array_key_exists($property->getName(), $value)) {
+            if ($property->getRequired() && !\array_key_exists($property->getName(), $value)) {
                 $this->errors[] = TypeValidationError::missingRequiredProperty($property->getName());
             }
         }
         foreach ($value as $name => $propertyValue) {
             $property = $this->getPropertyByName($name);
-            if (!$property) {
-                if ($this->additionalProperties === false) {
+            if ($property === null) {
+                if (!$this->additionalProperties) {
                     $this->errors[] = TypeValidationError::unexpectedProperty($name);
                 }
 

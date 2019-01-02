@@ -10,6 +10,9 @@ use Raml\Type;
  */
 class DatetimeType extends Type
 {
+    /**
+     * @var string
+     */
     const DEFAULT_FORMAT = DATE_RFC3339;
 
     /**
@@ -23,20 +26,16 @@ class DatetimeType extends Type
      * Create a new DatetimeType from an array of data
      *
      * @param string $name
-     * @param array $data
      * @return DatetimeType
      */
     public static function createFromArray($name, array $data = [])
     {
         $type = parent::createFromArray($name, $data);
-        assert($type instanceof self);
+        \assert($type instanceof self);
 
         foreach ($data as $key => $value) {
-            switch ($key) {
-                case 'format':
-                    $type->setFormat($value);
-
-                    break;
+            if ($key === 'format') {
+                $type->setFormat($value);
             }
         }
 
@@ -46,7 +45,7 @@ class DatetimeType extends Type
     /**
      * Get the value of Format
      *
-     * @return mixed
+     * @return string
      */
     public function getFormat()
     {
@@ -56,7 +55,7 @@ class DatetimeType extends Type
     /**
      * Set the value of Format
      *
-     * @param mixed $format
+     * @param string $format
      *
      * @return self
      */

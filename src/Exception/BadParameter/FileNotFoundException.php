@@ -14,7 +14,7 @@ class FileNotFoundException extends RuntimeException implements ExceptionInterfa
     {
         $this->fileName = $fileName;
 
-        parent::__construct(sprintf('The file %s does not exist or is unreadable.', $this->fileName));
+        parent::__construct(\sprintf('The file %s does not exist or is unreadable.', $this->fileName));
     }
 
     public function getFileName()

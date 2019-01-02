@@ -23,7 +23,6 @@ class SymfonyRouteFormatter implements RouteFormatterInterface
      * The constructor accepts a RouteCollection, and a boolean flag to
      * append a trailing slash to the final routes or not.
      *
-     * @param RouteCollection $routes
      * @param bool $addTrailingSlash
      *  By default this is true
      */
@@ -59,8 +58,8 @@ class SymfonyRouteFormatter implements RouteFormatterInterface
             // Now remove the host away, so we have the FULL path to the resource.
             // baseUri may also contain path that has been omitted for brevity in the
             // RAML creation.
-            $host = parse_url($url, PHP_URL_HOST);
-            $fullPath = substr($url, strpos($url, $host) + strlen($host));
+            $host = \parse_url($url, PHP_URL_HOST);
+            $fullPath = \substr($url, \strpos($url, $host) + \strlen($host));
 
             // Now build our Route class.
             $route = new Route($fullPath);

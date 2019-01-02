@@ -33,8 +33,8 @@ class WebFormBody extends NamedParameter implements BodyInterface
      */
     public function __construct($mediaType)
     {
-        if (!in_array($mediaType, self::$validMediaTypes, true)) {
-            throw new \InvalidArgumentException(sprintf('%s is invalid type', $mediaType));
+        if (!\in_array($mediaType, self::$validMediaTypes, true)) {
+            throw new \InvalidArgumentException(\sprintf('%s is invalid type', $mediaType));
         }
 
         parent::__construct($mediaType);
@@ -63,7 +63,7 @@ class WebFormBody extends NamedParameter implements BodyInterface
 
         if (isset($data['formParameters'])) {
             foreach ($data['formParameters'] as $namedParam => $namedParamData) {
-                if (is_array($namedParamData)) {
+                if (\is_array($namedParamData)) {
                     $webFormBody->addParameter(NamedParameter::createFromArray($namedParam, $namedParamData));
                 }
             }
@@ -75,7 +75,6 @@ class WebFormBody extends NamedParameter implements BodyInterface
     /**
      * Add a NamedParameter object to the list
      *
-     * @param NamedParameter $namedParameter
      */
     public function addParameter(NamedParameter $namedParameter)
     {

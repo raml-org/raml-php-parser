@@ -38,13 +38,6 @@ class TypeCollection implements \Iterator
     private $typesWithInheritance = [];
 
     /**
-     * Singleton, prevent initiation from outside, there can be only one!
-     */
-    private function __construct()
-    {
-    }
-
-    /**
      * @return self
      */
     public static function getInstance()
@@ -122,7 +115,7 @@ class TypeCollection implements \Iterator
             }
         }
 
-        throw new \RuntimeException(sprintf('Cannot remove given type %s', var_export($typeToRemove, true)));
+        throw new \RuntimeException(\sprintf('Cannot remove given type %s', \var_export($typeToRemove, true)));
     }
 
     /**
@@ -142,7 +135,7 @@ class TypeCollection implements \Iterator
             }
         }
 
-        throw new \RuntimeException(sprintf('No type found for name %s, list: %s', var_export($name, true), var_export($this->collection, true)));
+        throw new \RuntimeException(\sprintf('No type found for name %s, list: %s', \var_export($name, true), \var_export($this->collection, true)));
     }
 
     /**
@@ -163,7 +156,7 @@ class TypeCollection implements \Iterator
      */
     public function applyInheritance()
     {
-        foreach ($this->typesWithInheritance as $key => $type) {
+        foreach ($this->typesWithInheritance as $type) {
             $type->inheritFromParent();
         }
         // now clear list to prevent applying multiple times on the same objects

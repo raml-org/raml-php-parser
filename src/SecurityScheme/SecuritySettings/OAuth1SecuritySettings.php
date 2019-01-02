@@ -6,6 +6,9 @@ use Raml\SecurityScheme\SecuritySettingsInterface;
 
 class OAuth1SecuritySettings implements SecuritySettingsInterface
 {
+    /**
+     * @var string
+     */
     const TYPE = 'OAuth 1.0';
 
     /**
@@ -32,7 +35,6 @@ class OAuth1SecuritySettings implements SecuritySettingsInterface
     /**
      * Flesh out the settings
      *
-     * @param array                     $data
      * @param SecuritySettingsInterface $sourceSettings
      *
      * @throws \Exception
@@ -46,7 +48,7 @@ class OAuth1SecuritySettings implements SecuritySettingsInterface
         }
 
         $settings = $sourceSettings ? clone $sourceSettings : new static();
-        assert($settings instanceof self);
+        \assert($settings instanceof self);
 
         if (isset($data['tokenCredentialsUri'])) {
             $settings->setTokenCredentialsUri($data['tokenCredentialsUri']);

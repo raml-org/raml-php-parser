@@ -34,15 +34,14 @@ class UnionType extends Type
      * Create a new UnionType from an array of data
      *
      * @param string $name
-     * @param array $data
      *
      * @return UnionType
      */
     public static function createFromArray($name, array $data = [])
     {
         $type = parent::createFromArray($name, $data);
-        assert($type instanceof self);
-        $type->setPossibleTypes(explode('|', $type->getType()));
+        \assert($type instanceof self);
+        $type->setPossibleTypes(\explode('|', $type->getType()));
         $type->setType('union');
 
         if (isset($data['properties'])) {
@@ -69,14 +68,13 @@ class UnionType extends Type
     /**
      * Set the value of Possible Types
      *
-     * @param array $possibleTypes
      *
      * @return self
      */
     public function setPossibleTypes(array $possibleTypes)
     {
         foreach ($possibleTypes as $type) {
-            $this->possibleTypes[] = ApiDefinition::determineType(trim($type), ['type' => trim($type)]);
+            $this->possibleTypes[] = ApiDefinition::determineType(\trim($type), ['type' => \trim($type)]);
         }
 
         return $this;
@@ -85,13 +83,12 @@ class UnionType extends Type
     /**
      * Set the value of Properties
      *
-     * @param array $properties
      * @return self
      */
     public function setProperties(array $properties)
     {
         foreach ($properties as $name => $property) {
-            if ($property instanceof Type === false) {
+            if (!$property instanceof Type) {
                 $property = ApiDefinition::determineType($name, $property);
             }
             $this->properties[] = $property;
@@ -135,7 +132,6 @@ class UnionType extends Type
     /**
      * Set the value of Additional Properties
      *
-     * @param mixed $additionalProperties
      *
      * @return self
      */
@@ -169,16 +165,16 @@ class UnionType extends Type
             $errors = [];
 
             foreach ($this->getProperties() as $property) {
-                if ($property->getRequired() && !array_key_exists($property->getName(), $selfValue)) {
+                if ($property->getRequired() && !\array_key_exists($property->getName(), $selfValue)) {
                     $errors[] = TypeValidationError::missingRequiredProperty($property->getName());
                 }
             }
 
-            if (is_array($selfValue)) {
+            if (\is_array($selfValue)) {
                 foreach ($selfValue as $name => $propertyValue) {
                     $property = $this->getPropertyByName($name);
-                    if (!$property) {
-                        if ($this->additionalProperties === false) {
+                    if ($property === null) {
+                        if (!$this->additionalProperties) {
                             $errors[] = TypeValidationError::unexpectedProperty($name);
                         }
 
@@ -187,14 +183,14 @@ class UnionType extends Type
 
                     $property->validate($propertyValue);
                     if (!$property->isValid()) {
-                        $errors = array_merge($errors, $property->getErrors());
+                        $errors = \array_merge($errors, $property->getErrors());
                     }
                 }
             }
 
             $type->validate($unionValue);
             if (!$type->isValid()) {
-                $errors = array_merge($errors, $type->getErrors());
+                $errors = \array_merge($errors, $type->getErrors());
             }
 
             if (!$errors) {

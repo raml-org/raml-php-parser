@@ -33,7 +33,7 @@ class JsonSchemaTest extends TestCase
 
         $schemaString = (string) $schema;
         $this->assertInternalType('string', $schemaString);
-        $this->assertEquals('A list of songs', json_decode($schemaString)->description);
+        $this->assertEquals('A list of songs', \json_decode($schemaString)->description);
     }
 
     /**
@@ -48,7 +48,7 @@ class JsonSchemaTest extends TestCase
         $body = $response->getBodyByType('application/json');
         $schema = $body->getSchema();
 
-        $schema->validate(json_decode('[{"title":"Good Song","artist":"An artist"}]'));
+        $schema->validate(\json_decode('[{"title":"Good Song","artist":"An artist"}]'));
         $this->assertTrue($schema->isValid());
     }
 
@@ -96,7 +96,7 @@ class JsonSchemaTest extends TestCase
         /** @var JsonSchemaDefinition $schema */
         $schema = $request->getSchema();
 
-        $schema->validate(json_decode('{"title":"Title", "artist": "Artist"}', true));
+        $schema->validate(\json_decode('{"title":"Title", "artist": "Artist"}', true));
         $this->assertTrue($schema->isValid());
     }
 }

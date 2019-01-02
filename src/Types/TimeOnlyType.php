@@ -10,19 +10,21 @@ use Raml\Type;
  */
 class TimeOnlyType extends Type
 {
+    /**
+     * @var string
+     */
     const FORMAT = 'H:i:s';
 
     /**
      * Create a new TimeOnlyType from an array of data
      *
      * @param string $name
-     * @param array $data
      * @return TimeOnlyType
      */
     public static function createFromArray($name, array $data = [])
     {
         $type = parent::createFromArray($name, $data);
-        assert($type instanceof self);
+        \assert($type instanceof self);
 
         return $type;
     }
