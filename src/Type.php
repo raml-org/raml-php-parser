@@ -207,7 +207,6 @@ class Type implements ArrayInstantiationInterface, TypeInterface
         return $this->enum;
     }
 
-
     public function setEnum(array $enum)
     {
         $this->enum = $enum;

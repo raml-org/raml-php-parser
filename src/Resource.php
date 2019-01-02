@@ -421,7 +421,6 @@ class Resource implements ArrayInstantiationInterface
         return $this->securitySchemes;
     }
 
-
     public function addSecurityScheme(SecurityScheme $securityScheme)
     {
         $this->securitySchemes[$securityScheme->getKey()] = $securityScheme;

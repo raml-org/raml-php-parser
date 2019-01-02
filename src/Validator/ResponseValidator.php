@@ -15,12 +15,10 @@ class ResponseValidator
      */
     private $schemaHelper;
 
-
     public function __construct(ValidatorSchemaHelper $schema)
     {
         $this->schemaHelper = $schema;
     }
-
 
     public function validateResponse(RequestInterface $request, ResponseInterface $response)
     {

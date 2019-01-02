@@ -21,7 +21,6 @@ class RequestValidator
      */
     private $negotiator;
 
-
     public function __construct(ValidatorSchemaHelper $schema, Negotiator $negotiator)
     {
         $this->schemaHelper = $schema;
@@ -99,7 +98,6 @@ class RequestValidator
             }
         }
     }
-
 
     private function assertValidBody(RequestInterface $request)
     {

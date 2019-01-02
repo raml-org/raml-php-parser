@@ -20,7 +20,6 @@ class ValidatorSchemaHelper
      */
     private $apiDefinition;
 
-
     public function __construct(ApiDefinition $api)
     {
         $this->apiDefinition = $api;
