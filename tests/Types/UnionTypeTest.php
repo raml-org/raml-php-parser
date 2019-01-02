@@ -30,7 +30,7 @@ class UnionTypeTest extends TestCase
         $body = $response->getBodyByType('application/json');
         $type = $body->getType();
 
-        $type->validate(json_decode('{"id": 1, "name": "Sample name"}', true));
+        $type->validate(\json_decode('{"id": 1, "name": "Sample name"}', true));
         $this->assertTrue($type->isValid());
     }
 
@@ -46,7 +46,7 @@ class UnionTypeTest extends TestCase
         $body = $response->getBodyByType('application/json');
         $type = $body->getType();
 
-        $type->validate(json_decode('{"id": 1, "name": false}', true));
+        $type->validate(\json_decode('{"id": 1, "name": false}', true));
         $this->assertFalse($type->isValid());
         $this->assertEquals(
             'name (Value did not pass validation against any type: '
@@ -68,9 +68,9 @@ class UnionTypeTest extends TestCase
         $body = $response->getBodyByType('application/json');
         $type = $body->getType();
 
-        $type->validate(json_decode('{"var": 10}', true));
+        $type->validate(\json_decode('{"var": 10}', true));
         $this->assertTrue($type->isValid());
-        $type->validate(json_decode('{"var": null}', true));
+        $type->validate(\json_decode('{"var": null}', true));
         $this->assertTrue($type->isValid());
     }
 
@@ -111,13 +111,13 @@ class UnionTypeTest extends TestCase
         $body = $response->getBodyByType('application/json');
         $type = $body->getType();
 
-        $type->validate(json_decode('{"title": "abc", "prop1": 1}', true));
+        $type->validate(\json_decode('{"title": "abc", "prop1": 1}', true));
         $this->assertTrue($type->isValid());
 
-        $type->validate(json_decode('{"id": "abc", "name": 2, "prop1": 1}', true));
+        $type->validate(\json_decode('{"id": "abc", "name": 2, "prop1": 1}', true));
         $this->assertTrue($type->isValid());
 
-        $type->validate(json_decode('{"title": "abc", "prop1": "qwe"}', true));
+        $type->validate(\json_decode('{"title": "abc", "prop1": "qwe"}', true));
         $this->assertFalse($type->isValid());
     }
 
@@ -133,13 +133,13 @@ class UnionTypeTest extends TestCase
         $body = $response->getBodyByType('application/json');
         $type = $body->getType();
 
-        $type->validate(json_decode('{"title": "abc", "prop1": 1, "prop3": 2}', true));
+        $type->validate(\json_decode('{"title": "abc", "prop1": 1, "prop3": 2}', true));
         $this->assertTrue($type->isValid());
 
-        $type->validate(json_decode('{"id": "abc", "name": 2, "prop1": 1, "prop3": 2}', true));
+        $type->validate(\json_decode('{"id": "abc", "name": 2, "prop1": 1, "prop3": 2}', true));
         $this->assertTrue($type->isValid());
 
-        $type->validate(json_decode('{"title": "abc", "prop1": 1, "prop3": "qwe"}', true));
+        $type->validate(\json_decode('{"title": "abc", "prop1": 1, "prop3": "qwe"}', true));
         $this->assertFalse($type->isValid());
     }
 }

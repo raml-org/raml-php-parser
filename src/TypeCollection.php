@@ -22,12 +22,14 @@ class TypeCollection implements \Iterator
      * @var TypeInterface[]
      */
     private $collection = [];
+
     /**
      * Current position
      *
      * @var string
      */
     private $position = 0;
+
     /**
      * Types which need to inherit properties from their parent
      *
@@ -113,7 +115,7 @@ class TypeCollection implements \Iterator
             }
         }
 
-        throw new \RuntimeException(sprintf('Cannot remove given type %s', var_export($typeToRemove, true)));
+        throw new \RuntimeException(\sprintf('Cannot remove given type %s', \var_export($typeToRemove, true)));
     }
 
     /**
@@ -133,7 +135,7 @@ class TypeCollection implements \Iterator
             }
         }
 
-        throw new \RuntimeException(sprintf('No type found for name %s, list: %s', var_export($name, true), var_export($this->collection, true)));
+        throw new \RuntimeException(\sprintf('No type found for name %s, list: %s', \var_export($name, true), \var_export($this->collection, true)));
     }
 
     /**

@@ -18,7 +18,7 @@ class DefaultFileLoader implements FileLoaderInterface
      */
     public function loadFile($filePath)
     {
-        return file_get_contents($filePath);
+        return \file_get_contents($filePath);
     }
 
     /**

@@ -21,10 +21,7 @@ class RequestValidator
      */
     private $negotiator;
 
-    /**
-     * @param ValidatorSchemaHelper $schema
-     * @param Negotiator $negotiator
-     */
+
     public function __construct(ValidatorSchemaHelper $schema, Negotiator $negotiator)
     {
         $this->schemaHelper = $schema;
@@ -32,7 +29,6 @@ class RequestValidator
     }
 
     /**
-     * @param RequestInterface $request
      * @throws Exception
      */
     public function validateRequest(RequestInterface $request)
@@ -41,13 +37,12 @@ class RequestValidator
         $this->assertNoMissingParameters($request);
         $this->assertValidParameters($request);
 
-        if (!in_array(strtolower($request->getMethod()), ['get', 'delete'], true)) {
+        if (!\in_array(\strtolower($request->getMethod()), ['get', 'delete'], true)) {
             $this->assertValidBody($request);
         }
     }
 
     /**
-     * @param RequestInterface $request
      * @throws ValidatorRequestException
      */
     private function assertNoMissingParameters(RequestInterface $request)
@@ -58,21 +53,20 @@ class RequestValidator
         $schemaParameters = $this->schemaHelper->getQueryParameters($method, $path, true);
         $requestParameters = $this->getRequestParameters($request);
 
-        $missingParameters = array_diff_key($schemaParameters, $requestParameters);
-        if (count($missingParameters) === 0) {
+        $missingParameters = \array_diff_key($schemaParameters, $requestParameters);
+        if (\count($missingParameters) === 0) {
             return;
         }
 
-        throw new ValidatorRequestException(sprintf(
+        throw new ValidatorRequestException(\sprintf(
             'Missing request parameters required by the schema for `%s %s`: %s',
-            strtoupper($method),
+            \strtoupper($method),
             $path,
-            implode(', ', array_keys($missingParameters))
+            \implode(', ', \array_keys($missingParameters))
         ));
     }
 
     /**
-     * @param RequestInterface $request
      * @throws ValidatorRequestException
      */
     private function assertValidParameters(RequestInterface $request)
@@ -87,16 +81,16 @@ class RequestValidator
         foreach ($schemaParameters as $schemaParameter) {
             $key = $schemaParameter->getKey();
 
-            if (!array_key_exists($key, $requestParameters)) {
+            if (!\array_key_exists($key, $requestParameters)) {
                 continue;
             }
 
             try {
                 $schemaParameter->validate($requestParameters[$key]);
             } catch (ValidationException $exception) {
-                $message = sprintf(
+                $message = \sprintf(
                     'Request parameter does not match schema for `%s %s`: %s',
-                    strtoupper($method),
+                    \strtoupper($method),
                     $path,
                     $exception->getMessage()
                 );
@@ -106,9 +100,7 @@ class RequestValidator
         }
     }
 
-    /**
-     * @param RequestInterface $request
-     */
+
     private function assertValidBody(RequestInterface $request)
     {
         $method = $request->getMethod();
@@ -121,9 +113,9 @@ class RequestValidator
 
         $schemaBody->getValidator()->validate($body);
         if ($schemaBody->getValidator()->getErrors()) {
-            $message = sprintf(
+            $message = \sprintf(
                 'Request body for %s %s with content type %s does not match schema: %s',
-                strtoupper($method),
+                \strtoupper($method),
                 $path,
                 $contentType,
                 $this->getTypeValidationErrorsAsString($schemaBody->getValidator()->getErrors())
@@ -134,24 +126,22 @@ class RequestValidator
     }
 
     /**
-     * @param RequestInterface $request
      * @return array
      */
     private function getRequestParameters(RequestInterface $request)
     {
-        parse_str($request->getUri()->getQuery(), $requestParameters);
+        \parse_str($request->getUri()->getQuery(), $requestParameters);
 
         return $requestParameters;
     }
 
     /**
-     * @param array $errors
      * @return string
      */
     private function getSchemaErrorsAsString(array $errors)
     {
-        return implode(', ', array_map(function (array $error) {
-            return sprintf('%s (%s)', $error['property'], $error['constraint']);
+        return \implode(', ', \array_map(static function (array $error) {
+            return \sprintf('%s (%s)', $error['property'], $error['constraint']);
         }, $errors));
     }
 
@@ -167,7 +157,7 @@ class RequestValidator
 
         $priorities = [];
         foreach ($responseSchemas as $responseSchema) {
-            $priorities = array_merge($priorities, $responseSchema->getTypes());
+            $priorities = \array_merge($priorities, $responseSchema->getTypes());
         }
 
         if (!$priorities) {
@@ -188,7 +178,7 @@ class RequestValidator
 
     private function getTypeValidationErrorsAsString(array $errors)
     {
-        return implode(', ', array_map(function (TypeValidationError $error) {
+        return \implode(', ', \array_map(static function (TypeValidationError $error) {
             return $error->__toString();
         }, $errors));
     }

@@ -31,7 +31,7 @@ class JsonSchemaParser extends SchemaParserAbstract
     {
         $schemaStorage = new SchemaStorage();
 
-        $schemaStorage->addSchema($this->getSourceUri(), json_decode($schemaString));
+        $schemaStorage->addSchema($this->getSourceUri(), \json_decode($schemaString));
         $data = $schemaStorage->getSchema($this->getSourceUri());
         $data = $this->resolveRefSchemaRecursively($data, $schemaStorage);
 
@@ -40,23 +40,21 @@ class JsonSchemaParser extends SchemaParserAbstract
 
     /**
      * @param \stdClass|string $data
-     * @param SchemaStorage $schemaStorage
-     * @return mixed
      */
     private function resolveRefSchemaRecursively($data, SchemaStorage $schemaStorage)
     {
         $data = $schemaStorage->resolveRefSchema($data);
-        if (!is_object($data) || (is_object($data) && !$data instanceof \stdClass)) {
+        if (!\is_object($data) || (\is_object($data) && !$data instanceof \stdClass)) {
             return $data;
         }
 
         foreach ($data as $key => $value) {
-            if (is_object($value)) {
+            if (\is_object($value)) {
                 $data->{$key} = $this->resolveRefSchemaRecursively($value, $schemaStorage);
             }
 
-            if (is_array($value)) {
-                $data->{$key} = array_map(function ($val) use ($schemaStorage) {
+            if (\is_array($value)) {
+                $data->{$key} = \array_map(function ($val) use ($schemaStorage) {
                     return $this->resolveRefSchemaRecursively($val, $schemaStorage);
                 }, $value);
             }

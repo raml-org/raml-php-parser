@@ -13,7 +13,6 @@ class DefaultSecuritySettingsParser implements SecuritySettingsParserInterface
     /**
      * Create a new Default Security Settings Object from array data
      *
-     * @param array $data
      *
      * @return DefaultSecuritySettings
      */

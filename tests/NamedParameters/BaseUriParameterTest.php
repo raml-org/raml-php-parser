@@ -16,7 +16,7 @@ class BaseUriParameterTest extends TestCase
     protected function setUp()
     {
         $this->parser = new Parser();
-        setlocale(LC_NUMERIC, 'C');
+        \setlocale(LC_NUMERIC, 'C');
     }
 
     /**
@@ -72,7 +72,7 @@ RAML;
         $baseUriParameters = $resource->getBaseUriParameters();
 
         $this->assertCount(1, $baseUriParameters);
-        $this->assertEquals('apiDomain', array_keys($baseUriParameters)[0]);
+        $this->assertEquals('apiDomain', \array_keys($baseUriParameters)[0]);
         $this->assertEquals('string', $baseUriParameters['apiDomain']->getType());
         $this->assertEquals(['api'], $baseUriParameters['apiDomain']->getEnum());
         $this->assertTrue($baseUriParameters['apiDomain']->isRequired());

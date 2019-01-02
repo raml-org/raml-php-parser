@@ -54,7 +54,6 @@ class TraitDefinition implements ArrayInstantiationInterface
 
     /**
      * @param string $name
-     * @param array $data
      * @return TraitDefinition
      */
     public static function createFromArray($name, array $data = [])
@@ -99,7 +98,6 @@ class TraitDefinition implements ArrayInstantiationInterface
     }
 
     /**
-     * @param array $variables
      * @return TraitDefinition
      */
     public function parseVariables(array $variables)

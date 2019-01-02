@@ -7,8 +7,6 @@ use Inflect\Inflect;
 class TraitParserHelper
 {
     /**
-     * @param array $values
-     * @param array $traitDefinition
      * @return array
      */
     public static function applyVariables(array $values, array $traitDefinition)
@@ -18,7 +16,7 @@ class TraitParserHelper
         foreach ($traitDefinition as $key => &$value) {
             $newKey = static::applyFunctions($key, $values);
 
-            $value = is_array($value) ? static::applyVariables($values, $value) : static::applyFunctions($value, $values);
+            $value = \is_array($value) ? static::applyVariables($values, $value) : static::applyFunctions($value, $values);
             $newTrait[$newKey] = $value;
         }
 
@@ -27,14 +25,13 @@ class TraitParserHelper
 
     /**
      * @param string $trait
-     * @param array $values
      * @return string
      */
     private static function applyFunctions($trait, array $values)
     {
-        $variables = implode('|', array_keys($values));
+        $variables = \implode('|', \array_keys($values));
 
-        return preg_replace_callback(
+        return \preg_replace_callback(
             '/<<(' . $variables . ')' .
             '(' .
             '[\s]*\|[\s]*!' .
@@ -42,7 +39,7 @@ class TraitParserHelper
             'singularize|pluralize|uppercase|lowercase|lowercamelcase|uppercamelcase|lowerunderscorecase|upperunderscorecase|lowerhyphencase|upperhyphencase' .
             ')' .
             ')?>>/',
-            function ($matches) use ($values) {
+            static function ($matches) use ($values) {
                 $transformer = isset($matches[3]) ? $matches[3] : '';
                 switch ($transformer) {
                     case 'singularize':
@@ -54,11 +51,11 @@ class TraitParserHelper
 
                         break;
                     case 'uppercase':
-                        return strtoupper($values[$matches[1]]);
+                        return \strtoupper($values[$matches[1]]);
 
                         break;
                     case 'lowercase':
-                        return strtolower($values[$matches[1]]);
+                        return \strtolower($values[$matches[1]]);
 
                         break;
                     case 'lowercamelcase':

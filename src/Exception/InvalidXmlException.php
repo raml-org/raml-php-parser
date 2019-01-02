@@ -26,9 +26,9 @@ class InvalidXmlException extends RuntimeException implements ExceptionInterface
     {
         $errors = [];
         foreach ($this->errors as $error) {
-            $errors .= sprintf('%s (%s)', $error->message, $error->code);
+            $errors .= \sprintf('%s (%s)', $error->message, $error->code);
         }
 
-        return implode('; ', $errors);
+        return \implode('; ', $errors);
     }
 }

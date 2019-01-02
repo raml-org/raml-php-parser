@@ -38,7 +38,7 @@ class JsonSchemaFileLoader implements FileLoaderInterface
         $retriever = new UriRetriever();
 
         try {
-            $json = json_encode($retriever->retrieve('file://' . $filePath));
+            $json = \json_encode($retriever->retrieve('file://' . $filePath));
         } catch (JsonDecodingException $exception) {
             throw new InvalidJsonException($exception->getCode());
         }

@@ -64,14 +64,13 @@ class Response implements ArrayInstantiationInterface, MessageSchemaInterface
      * Create a new response object from an array
      *
      * @param string $statusCode
-     * @param array $data
      * @return Response
      */
     public static function createFromArray($statusCode, array $data = [])
     {
         $response = new static($statusCode);
 
-        if (isset($data['body']) && is_array($data['body'])) {
+        if (isset($data['body']) && \is_array($data['body'])) {
             foreach ($data['body'] as $key => $bodyData) {
                 $response->addBody(Body::createFromArray($key, $bodyData ?: []));
             }
@@ -121,7 +120,7 @@ class Response implements ArrayInstantiationInterface, MessageSchemaInterface
             return $this->bodyList['*/*'];
         }
 
-        throw new \InvalidArgumentException(sprintf('No body found for type "%s"', $type));
+        throw new \InvalidArgumentException(\sprintf('No body found for type "%s"', $type));
     }
 
     /**
@@ -141,13 +140,12 @@ class Response implements ArrayInstantiationInterface, MessageSchemaInterface
      */
     public function getTypes()
     {
-        return array_keys($this->bodyList);
+        return \array_keys($this->bodyList);
     }
 
     /**
      * Add a new body
      *
-     * @param BodyInterface $body
      */
     public function addBody(BodyInterface $body)
     {
@@ -169,7 +167,6 @@ class Response implements ArrayInstantiationInterface, MessageSchemaInterface
     /**
      * Add a new header
      *
-     * @param NamedParameter $header
      */
     public function addHeader(NamedParameter $header)
     {

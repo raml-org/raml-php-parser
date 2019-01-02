@@ -15,18 +15,13 @@ class ResponseValidator
      */
     private $schemaHelper;
 
-    /**
-     * @param ValidatorSchemaHelper $schema
-     */
+
     public function __construct(ValidatorSchemaHelper $schema)
     {
         $this->schemaHelper = $schema;
     }
 
-    /**
-     * @param RequestInterface $request
-     * @param ResponseInterface $response
-     */
+
     public function validateResponse(RequestInterface $request, ResponseInterface $response)
     {
         $this->assertNoMissingHeaders($request, $response);
@@ -35,8 +30,6 @@ class ResponseValidator
     }
 
     /**
-     * @param RequestInterface $request
-     * @param ResponseInterface $response
      * @throws ValidatorResponseException
      */
     private function assertNoMissingHeaders(RequestInterface $request, ResponseInterface $response)
@@ -47,14 +40,14 @@ class ResponseValidator
 
         $schemaHeaders = $this->schemaHelper->getResponseHeaders($method, $path, $statusCode, true);
 
-        $missingHeaders = array_diff_key($schemaHeaders, $response->getHeaders());
-        if (count($missingHeaders) === 0) {
+        $missingHeaders = \array_diff_key($schemaHeaders, $response->getHeaders());
+        if (\count($missingHeaders) === 0) {
             return;
         }
 
-        throw new ValidatorResponseException(sprintf(
+        throw new ValidatorResponseException(\sprintf(
             'Missing response headers required by the schema for %s %s with status code %s: %s',
-            strtoupper($method),
+            \strtoupper($method),
             $path,
             $statusCode,
             $this->getNamedParametersAsString($missingHeaders)
@@ -62,8 +55,6 @@ class ResponseValidator
     }
 
     /**
-     * @param RequestInterface $request
-     * @param ResponseInterface $response
      * @throws ValidatorResponseException
      */
     private function assertValidHeaders(RequestInterface $request, ResponseInterface $response)
@@ -84,12 +75,12 @@ class ResponseValidator
                     try {
                         $schemaHeader->validate($headerValue);
                     } catch (ValidationException $exception) {
-                        $message = sprintf(
+                        $message = \sprintf(
                             'Response header %s with value "%s" for %s %s ' .
                                 'with status code %s does not match schema: %s',
                             $key,
                             $headerValue,
-                            strtoupper($method),
+                            \strtoupper($method),
                             $path,
                             $statusCode,
                             $exception->getMessage()
@@ -103,8 +94,6 @@ class ResponseValidator
     }
 
     /**
-     * @param RequestInterface $request
-     * @param ResponseInterface $response
      * @throws ValidatorResponseException
      */
     private function assertValidBody(RequestInterface $request, ResponseInterface $response)
@@ -120,9 +109,9 @@ class ResponseValidator
 
         $schemaBody->getValidator()->validate($body);
         if ($schemaBody->getValidator()->getErrors()) {
-            $message = sprintf(
+            $message = \sprintf(
                 'Response body for %s %s with content type %s and status code %s does not match schema: %s',
-                strtoupper($method),
+                \strtoupper($method),
                 $path,
                 $contentType,
                 $statusCode,
@@ -134,19 +123,18 @@ class ResponseValidator
     }
 
     /**
-     * @param array $errors
      * @return string
      */
     private function getNamedParametersAsString(array $errors)
     {
-        return implode(', ', array_map(function (NamedParameter $parameter) {
+        return \implode(', ', \array_map(static function (NamedParameter $parameter) {
             return $parameter->getDisplayName();
         }, $errors));
     }
 
     private function getTypeValidationErrorsAsString(array $errors)
     {
-        return implode(', ', array_map(function (TypeValidationError $error) {
+        return \implode(', ', \array_map(static function (TypeValidationError $error) {
             return $error->__toString();
         }, $errors));
     }

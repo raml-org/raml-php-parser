@@ -21,7 +21,7 @@ class InvalidQueryParameterTypeException extends RuntimeException implements Exc
         $this->type = $type;
         $this->validTypes = $validTypes;
 
-        parent::__construct(sprintf('The type %s is not a valid query parameter type.', $this->type));
+        parent::__construct(\sprintf('The type %s is not a valid query parameter type.', $this->type));
     }
 
     public function getType()

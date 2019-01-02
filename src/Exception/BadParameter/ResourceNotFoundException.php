@@ -13,7 +13,7 @@ class ResourceNotFoundException extends RamlParserException implements BadParame
     {
         $this->uri = $uri;
 
-        parent::__construct(sprintf('The URI %s does not exist.', $this->uri));
+        parent::__construct(\sprintf('The URI %s does not exist.', $this->uri));
     }
 
     public function getUri()
