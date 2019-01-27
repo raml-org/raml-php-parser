@@ -144,7 +144,7 @@ RAML;
         $expectedParameter->setDefault('A string');
 
         $this->assertEquals([
-            'string' => $expectedParameter
+            'string' => $expectedParameter,
         ], $parameters);
     }
 }

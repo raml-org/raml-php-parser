@@ -17,7 +17,7 @@ class BaseUriParameter extends NamedParameter
     protected $validTypes = [
         self::TYPE_STRING,
         self::TYPE_NUMBER,
-        self::TYPE_INTEGER
+        self::TYPE_INTEGER,
     ];
 
     // ---

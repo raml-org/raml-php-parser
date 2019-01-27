@@ -2,13 +2,10 @@
 
 namespace Raml\Exception\BadParameter;
 
-use RuntimeException;
-use Raml\Exception\ExceptionInterface;
 use Raml\Exception\BadParameterExceptionInterface;
+use Raml\Exception\ExceptionInterface;
 
-class InvalidSchemaDefinitionException extends RuntimeException implements
-    ExceptionInterface,
-    BadParameterExceptionInterface
+class InvalidSchemaDefinitionException extends \RuntimeException implements ExceptionInterface, BadParameterExceptionInterface
 {
     public function __construct()
     {

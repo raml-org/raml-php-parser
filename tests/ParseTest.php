@@ -493,7 +493,7 @@ RAML;
         );
 
         $parser = new \Raml\Parser([
-            $schemaParser
+            $schemaParser,
         ]);
 
         $parser->parse(__DIR__ . '/fixture/includeSchema.raml');
@@ -535,7 +535,6 @@ RAML;
         /** @var Body $body */
         $body = $response->getBodyByType('application/vnd.api-v1+json');
         $schema = $body->getSchema();
-
 
         $this->assertInstanceOf(JsonSchemaDefinition::class, $schema);
     }
@@ -982,7 +981,6 @@ title: Test body
               }
 RAML;
 
-
         $apiDefinition = $this->parser->parseFromString($raml, '');
         $resource = $apiDefinition->getResourceByUri('/');
         $method = $resource->getMethod('get');
@@ -1013,7 +1011,6 @@ title: Test body
           "*/*":
             description: A generic description
 RAML;
-
 
         $apiDefinition = $this->parser->parseFromString($raml, '');
         $resource = $apiDefinition->getResourceByUri('/');

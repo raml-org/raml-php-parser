@@ -2,9 +2,8 @@
 
 namespace Raml;
 
-use Raml\Schema\SchemaDefinitionInterface;
-
 use Raml\Exception\BadParameter\InvalidSchemaDefinitionException;
+use Raml\Schema\SchemaDefinitionInterface;
 use Raml\Types\ObjectType;
 
 /**

@@ -2,18 +2,18 @@
 
 namespace Raml;
 
-use Raml\RouteFormatter\RouteFormatterInterface;
-use Raml\RouteFormatter\NoRouteFormatter;
-use Raml\Schema\SchemaDefinitionInterface;
-use Raml\RouteFormatter\BasicRoute;
-use Raml\Exception\BadParameter\ResourceNotFoundException;
-use Raml\Exception\BadParameter\InvalidSchemaDefinitionException;
 use Raml\Exception\BadParameter\InvalidProtocolException;
+use Raml\Exception\BadParameter\InvalidSchemaDefinitionException;
+use Raml\Exception\BadParameter\ResourceNotFoundException;
 use Raml\Exception\MutuallyExclusiveElementsException;
-use Raml\Utility\StringTransformer;
-use Raml\Types\UnionType;
+use Raml\RouteFormatter\BasicRoute;
+use Raml\RouteFormatter\NoRouteFormatter;
+use Raml\RouteFormatter\RouteFormatterInterface;
+use Raml\Schema\SchemaDefinitionInterface;
 use Raml\Types\ArrayType;
 use Raml\Types\LazyProxyType;
+use Raml\Types\UnionType;
+use Raml\Utility\StringTransformer;
 
 /**
  * The API Definition

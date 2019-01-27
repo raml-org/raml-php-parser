@@ -303,15 +303,15 @@ class Type implements ArrayInstantiationInterface, TypeInterface
             }
             $getter = $getters[$prop];
             $setter = $setters[$prop];
-            $currentValue = $this->$getter();
+            $currentValue = $this->{$getter}();
             // if it is unset, make sure it is equal to parent
             if ($currentValue === null) {
-                $this->$setter($this->getParent()->$getter());
+                $this->{$setter}($this->getParent()->{$getter}());
             }
             // if it is an array, add parent values
             if (\is_array($currentValue)) {
-                $newValue = \array_merge($this->getParent()->$getter(), $currentValue);
-                $this->$setter($newValue);
+                $newValue = \array_merge($this->getParent()->{$getter}(), $currentValue);
+                $this->{$setter}($newValue);
 
                 continue;
             }

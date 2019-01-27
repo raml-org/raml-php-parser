@@ -84,8 +84,8 @@ class MethodTest extends TestCase
                         ],
                         'description' => 'A dummy response',
                         'headers' => [],
-                    ]
-                ]
+                    ],
+                ],
             ],
             $apiDefinition
         );

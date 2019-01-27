@@ -217,8 +217,7 @@ class TypeValidationError
         foreach ($errorsGroupedByTypes as $type => $typeErrors) {
             $message = \array_reduce($typeErrors, static function ($acc, self $error) {
                 return $acc . ((string) $error . ', ');
-            }, "$type (");
-
+            }, "${type} (");
 
             $errors[] = \substr($message, 0, \strlen($message) - 2) . ')';
         }

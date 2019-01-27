@@ -2,8 +2,8 @@
 
 namespace Raml\Types;
 
-use Raml\Type;
 use Raml\ApiDefinition;
+use Raml\Type;
 
 /**
  * ObjectType class
@@ -162,8 +162,6 @@ class ObjectType extends Type
                 return $property;
             }
         }
-
-        return null;
     }
 
     /**

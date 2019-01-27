@@ -33,7 +33,7 @@ class ArrayTest extends TestCase
         $type = $body->getType();
 
         $type->validate([
-            ['id' => 1, 'name' => 'Sample 1']
+            ['id' => 1, 'name' => 'Sample 1'],
         ]);
 
         $this->assertTrue($type->isValid());
@@ -89,7 +89,7 @@ class ArrayTest extends TestCase
         $type->validate([
             ['id' => 1, 'name' => 'Sample 1'],
             ['id' => 2, 'name' => 'Sample 2'],
-            ['id' => 3, 'name' => 'Sample 3']
+            ['id' => 3, 'name' => 'Sample 3'],
         ]);
 
         $this->assertFalse($type->isValid());

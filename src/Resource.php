@@ -236,7 +236,6 @@ class Resource implements ArrayInstantiationInterface
             );
         }
 
-
         $regexUri = \preg_replace('/\/{.*}/U', '\/([^/]+)', $regexUri);
         $regexUri = \preg_replace('/\/~{.*}/U', '\/([^/]*)', $regexUri);
         // начало и конец регулярки - символ, который гарантированно не встретится

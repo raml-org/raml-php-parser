@@ -2,8 +2,8 @@
 
 namespace Raml\Exception\BadParameter;
 
-use Raml\Exception\RamlParserException;
 use Raml\Exception\BadParameterExceptionInterface;
+use Raml\Exception\RamlParserException;
 
 class ResourceNotFoundException extends RamlParserException implements BadParameterExceptionInterface
 {
