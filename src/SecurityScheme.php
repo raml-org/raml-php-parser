@@ -105,7 +105,6 @@ class SecurityScheme implements ArrayInstantiationInterface
             $securityScheme->setSettings($data['settings']);
         }
 
-
         return $securityScheme;
     }
 

@@ -263,7 +263,7 @@ class ApiDefinitionTest extends TestCase
 
         $invalidResponse = [
             'onCall' => 'this is not an object',
-            'Head' => 'this is not a Head object'
+            'Head' => 'this is not a Head object',
         ];
 
         $type->validate($invalidResponse);

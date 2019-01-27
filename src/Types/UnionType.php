@@ -120,8 +120,6 @@ class UnionType extends Type
                 return $property;
             }
         }
-
-        return null;
     }
 
     public function getAdditionalProperties()

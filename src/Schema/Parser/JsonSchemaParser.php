@@ -4,8 +4,8 @@ namespace Raml\Schema\Parser;
 
 use JsonSchema\SchemaStorage;
 use Raml\Exception\InvalidJsonException;
-use Raml\Schema\SchemaParserAbstract;
 use Raml\Schema\Definition\JsonSchemaDefinition;
+use Raml\Schema\SchemaParserAbstract;
 
 class JsonSchemaParser extends SchemaParserAbstract
 {

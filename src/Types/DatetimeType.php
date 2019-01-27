@@ -71,7 +71,7 @@ class DatetimeType extends Type
         parent::validate($value);
 
         $format = $this->format ?: self::DEFAULT_FORMAT;
-        $d = DateTime::createFromFormat($format, $value);
+        $d = \DateTimeImmutable::createFromFormat($format, $value);
 
         if (!$d || $d->format($format) !== $value) {
             $this->errors[] = TypeValidationError::unexpectedValueType(

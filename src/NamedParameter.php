@@ -401,7 +401,7 @@ class NamedParameter implements ArrayInstantiationInterface
 
         if (isset($data['default'])) {
             if ($namedParameter->getType() === self::TYPE_DATE) {
-                $namedParameter->setDefault(\DateTime::createFromFormat('D, d M Y H:i:s T', $data['default']));
+                $namedParameter->setDefault(\DateTimeImmutable::createFromFormat('D, d M Y H:i:s T', $data['default']));
             } else {
                 $namedParameter->setDefault($data['default']);
             }
@@ -774,7 +774,7 @@ class NamedParameter implements ArrayInstantiationInterface
 
                 break;
             case self::TYPE_DATE:
-                if (!$default instanceof \DateTime) {
+                if (!$default instanceof \DateTimeImmutable) {
                     throw new \InvalidArgumentException('Default parameter is not a dateTime object');
                 }
 
@@ -823,11 +823,10 @@ class NamedParameter implements ArrayInstantiationInterface
                 }
 
                 break;
-
             case static::TYPE_DATE:
 
                 // Must be a valid date
-                if (!\DateTime::createFromFormat('D, d M Y H:i:s T', $param)) {
+                if (!\DateTimeImmutable::createFromFormat('D, d M Y H:i:s T', $param)) {
                     throw new ValidationException($this->getKey() . ' is not a valid date', static::VAL_NOTDATE);
                 }
 
@@ -867,7 +866,6 @@ class NamedParameter implements ArrayInstantiationInterface
                 }
 
                 break;
-
             case static::TYPE_INTEGER:
 
                 /*
@@ -918,12 +916,10 @@ class NamedParameter implements ArrayInstantiationInterface
                 }
 
                 break;
-
             case static::TYPE_FILE:
                 // File type cannot be reliably validated based on its type alone.
 
                 break;
-
             case static::TYPE_TIME_ONLY:
             case static::TYPE_DATE_ONLY:
             case static::TYPE_DATETIME_ONLY:

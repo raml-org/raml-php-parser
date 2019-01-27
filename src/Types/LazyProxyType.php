@@ -2,9 +2,9 @@
 
 namespace Raml\Types;
 
+use Raml\ApiDefinition;
 use Raml\Type;
 use Raml\TypeCollection;
-use Raml\ApiDefinition;
 
 /**
  * LazyProxyType class for lazy loading datatype objects
@@ -29,6 +29,19 @@ class LazyProxyType extends Type
         parent::__construct($name);
 
         $this->properties = [];
+    }
+
+    /**
+     * Magic method to proxy all method calls to original object
+     * @param string $name Name of called method.
+     * @param array $params Parameters of called method.
+     * @return mixed Returns whatever the actual method returns.
+     */
+    public function __call($name, $params)
+    {
+        $original = $this->getResolvedObject();
+
+        return \call_user_func_array([$original, $name], $params);
     }
 
     /**
@@ -107,19 +120,6 @@ class LazyProxyType extends Type
         }
 
         return $this->properties;
-    }
-
-    /**
-     * Magic method to proxy all method calls to original object
-     * @param string $name Name of called method.
-     * @param array $params Parameters of called method.
-     * @return mixed Returns whatever the actual method returns.
-     */
-    public function __call($name, $params)
-    {
-        $original = $this->getResolvedObject();
-
-        return \call_user_func_array([$original, $name], $params);
     }
 
     /**

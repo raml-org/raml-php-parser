@@ -2,8 +2,8 @@
 
 namespace Raml\Types;
 
-use Raml\Type;
 use JsonSchema\Validator;
+use Raml\Type;
 
 /**
  * JsonType class
