@@ -27,7 +27,7 @@ class NoRouteFormatter implements RouteFormatterInterface
             $this->routes[$resource->getType() . ' ' . $resource->getUri()] = [
                 'path' => $resource->getUri(),
                 'type' => $resource->getType(),
-                'method' => $resource->getMethod()
+                'method' => $resource->getMethod(),
             ];
         }
 

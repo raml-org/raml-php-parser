@@ -29,6 +29,16 @@ class XmlSchemaDefinition implements SchemaDefinitionInterface
         $this->xml = $xml;
     }
 
+    /**
+     * Returns the XML schema as a string
+     *
+     * @return string
+     */
+    public function __toString()
+    {
+        return $this->xml;
+    }
+
     // ---
     // SchemaDefinitionInterface
 
@@ -59,16 +69,6 @@ class XmlSchemaDefinition implements SchemaDefinitionInterface
         }
 
         \libxml_use_internal_errors($originalErrorLevel);
-    }
-
-    /**
-     * Returns the XML schema as a string
-     *
-     * @return string
-     */
-    public function __toString()
-    {
-        return $this->xml;
     }
 
     /**

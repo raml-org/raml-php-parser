@@ -2,8 +2,8 @@
 
 namespace Raml\Exception\BadParameter;
 
-use Raml\Exception\ExceptionInterface;
 use Raml\Exception\BadParameterExceptionInterface;
+use Raml\Exception\ExceptionInterface;
 
 class InvalidProtocolException extends \RuntimeException implements ExceptionInterface, BadParameterExceptionInterface
 {

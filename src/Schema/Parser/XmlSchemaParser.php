@@ -2,8 +2,8 @@
 
 namespace Raml\Schema\Parser;
 
-use Raml\Schema\SchemaParserAbstract;
 use Raml\Schema\Definition\XmlSchemaDefinition;
+use Raml\Schema\SchemaParserAbstract;
 
 class XmlSchemaParser extends SchemaParserAbstract
 {
