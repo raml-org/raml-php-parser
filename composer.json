@@ -61,13 +61,13 @@
 
   "scripts": {
     "check-code-style": [
-      "php-cs-fixer fix --config='./.php_cs' --show-progress=none --dry-run --no-interaction --diff -v"
+      "php-cs-fixer fix --config='.php_cs' --no-interaction --diff -v --dry-run"
     ],
     "check-security": [
       "security-checker security:check"
     ],
     "fix-code-style": [
-      "php-cs-fixer fix --config='./.php_cs' --show-progress=none --no-interaction --diff -v"
+      "php-cs-fixer fix --config='.php_cs' --no-interaction --diff -v"
     ],
     "run-static-analysis": [
       "phpstan analyse --level=1 src/"
