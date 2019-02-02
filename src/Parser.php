@@ -493,7 +493,7 @@ class Parser
                         $definition[$key] = \mb_strpos($item, '|') !== false ? \implode(
                             '|',
                             \array_map(
-                                static function ($v) use ($nameSpace): string {
+                                static function ($v) use ($nameSpace) {
                                     $v = \trim($v);
                                     if (\in_array($v, ApiDefinition::getStraightForwardTypes(), true)) {
                                         return $v;
