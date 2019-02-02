@@ -494,7 +494,12 @@ class Parser
                             '|',
                             \array_map(
                                 static function ($v) use ($nameSpace) {
-                                    return $nameSpace . '.' . \trim($v);
+                                    $v = \trim($v);
+                                    if (\in_array($v, ApiDefinition::getStraightForwardTypes(), true)) {
+                                        return $v;
+                                    }
+
+                                    return $nameSpace . '.' . $v;
                                 },
                                 \explode('|', $item)
                             )
