@@ -200,11 +200,11 @@ class Resource implements ArrayInstantiationInterface
             if ('^' === $matchPattern[0]) {
                 $matchPattern = substr($matchPattern, 1);
             }
-            
+
             if ('$' === substr($matchPattern, -1)) {
                 $matchPattern = substr($matchPattern, 0, -1);
             }
-            
+
             $regexUri = str_replace(
                 '/{'.$uriParameter->getKey().'}',
                 '/'.$matchPattern,
@@ -221,7 +221,7 @@ class Resource implements ArrayInstantiationInterface
 
         $regexUri = preg_replace('/\/{.*}/U', '\/([^/]+)', $regexUri);
         $regexUri = preg_replace('/\/~{.*}/U', '\/([^/]*)', $regexUri);
-        $regexUri =  '|^' . $regexUri . '$|';
+        $regexUri = chr(128).'^'.$regexUri.'$'.chr(128);
 
         return (bool) preg_match($regexUri, $uri);
     }
