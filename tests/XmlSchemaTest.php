@@ -66,7 +66,7 @@ RAML;
      */
     public function shouldReturnXmlSchemeDefinition()
     {
-        $this->assertInstanceOf('Raml\Schema\Definition\XmlSchemaDefinition', $this->getSchema());
+        $this->assertInstanceOf(XmlSchemaDefinition::class, $this->getSchema());
     }
 
     /**
