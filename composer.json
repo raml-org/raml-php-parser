@@ -54,9 +54,9 @@
     "friendsofphp/php-cs-fixer": "*",
     "jakub-onderka/php-parallel-lint": "^1.0",
     "php-coveralls/php-coveralls": "^2.1",
-    "phpstan/phpstan": "^0.10.2",
+    "phpstan/phpstan": "^0.11",
     "phpunit/phpunit": "^5.7",
-    "sensiolabs/security-checker": "^4.1"
+    "sensiolabs/security-checker": "^5.0"
   },
 
   "scripts": {
