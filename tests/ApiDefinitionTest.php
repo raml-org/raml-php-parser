@@ -17,6 +17,7 @@ use Raml\Types\StringType;
 use Raml\Types\TypeValidationError;
 use Raml\Types\UnionType;
 use Raml\ValidatorInterface;
+use Symfony\Component\Routing\Route;
 use Symfony\Component\Routing\RouteCollection;
 
 class ApiDefinitionTest extends TestCase
@@ -85,8 +86,8 @@ class ApiDefinitionTest extends TestCase
         $this->assertEquals($routeFormatter, $routes);
 
         $this->assertCount(4, $routeFormatter->getRoutes());
-        $this->assertInstanceOf('\Symfony\Component\Routing\RouteCollection', $routeFormatter->getRoutes());
-        $this->assertInstanceOf('\Symfony\Component\Routing\Route', $routeFormatter->getRoutes()->get('GET /songs/'));
+        $this->assertInstanceOf(RouteCollection::class, $routeFormatter->getRoutes());
+        $this->assertInstanceOf(Route::class, $routeFormatter->getRoutes()->get('GET /songs/'));
         $this->assertEquals(['http'], $routeFormatter->getRoutes()->get('GET /songs/')->getSchemes());
     }
 
