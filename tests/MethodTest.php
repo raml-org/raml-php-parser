@@ -44,6 +44,20 @@ class MethodTest extends TestCase
     /**
      * @test
      */
+    public function shouldGetTheDisplayNameIfPassedInTheDataArray()
+    {
+        $apiDefinition = new ApiDefinition('The title');
+
+        $method = Method::createFromArray('get', ['displayName' => 'A dummy name'], $apiDefinition);
+        $this->assertSame('A dummy name', $method->getDisplayName());
+
+        $method = Method::createFromArray('get', [], $apiDefinition);
+        $this->assertNull($method->getDisplayName());
+    }
+
+    /**
+     * @test
+     */
     public function shouldGetNullForResponseIfNoneIsExists()
     {
         $apiDefinition = new ApiDefinition('The title');
