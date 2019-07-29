@@ -27,6 +27,15 @@ class Method implements ArrayInstantiationInterface, MessageSchemaInterface
     private $type;
 
     /**
+     * The display name (optional)
+     *
+     * @see http://raml.org/spec.html#displayname
+     *
+     * @var string|null
+     */
+    private $displayName;
+
+    /**
      * The description of the method (optional)
      *
      * @see http://raml.org/spec.html#description
@@ -149,6 +158,10 @@ class Method implements ArrayInstantiationInterface, MessageSchemaInterface
             }
         }
 
+        if (isset($data['displayName'])) {
+            $method->setDisplayName($data['displayName']);
+        }
+
         if (isset($data['description'])) {
             $method->setDescription($data['description']);
         }
@@ -239,6 +252,28 @@ class Method implements ArrayInstantiationInterface, MessageSchemaInterface
     public function setDescription($description)
     {
         $this->description = $description;
+    }
+
+    // --
+
+    /**
+     * Get the display name
+     *
+     * @return string|null
+     */
+    public function getDisplayName()
+    {
+        return $this->displayName;
+    }
+
+    /**
+     * Set the display name
+     *
+     * @param string|null $displayName
+     */
+    public function setDisplayName($displayName)
+    {
+        $this->displayName = $displayName;
     }
 
     // --
