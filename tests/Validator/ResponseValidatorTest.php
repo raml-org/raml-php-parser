@@ -7,10 +7,12 @@ use Psr\Http\Message\RequestInterface;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\StreamInterface;
 use Psr\Http\Message\UriInterface;
+use Raml\Body;
 use Raml\Parser;
 use Raml\Validator\ResponseValidator;
 use Raml\Validator\ValidatorResponseException;
 use Raml\Validator\ValidatorSchemaHelper;
+use Raml\ValidatorInterface;
 
 class ResponseValidatorTest extends TestCase
 {
@@ -167,6 +169,56 @@ class ResponseValidatorTest extends TestCase
         $this->expectException(ValidatorResponseException::class);
 
         $validator = $this->getValidatorForSchema(__DIR__ . '/../fixture/validator/responseBody.raml');
+        $validator->validateResponse($this->request, $this->response);
+    }
+
+    /**
+     * @test
+     * @doesNotPerformAssertions
+     */
+    public function shouldParseContentTypeHeader()
+    {
+        $json = '{}';
+
+        $headers = [
+            'X-Required-Header' => ['123456'],
+            'X-Long-Optional-Header' => ['Abcdefghijkl'],
+        ];
+
+        $map = [
+            ['X-Required-Header', [['123456']]],
+            ['X-Long-Optional-Header', [['Abcdefg', 'Abc']]],
+        ];
+
+        $body = $this->createMock(StreamInterface::class);
+        $body->method('getContents')->willReturn($json);
+
+        $this->request->method('getMethod')->willReturn('post');
+        $this->uri->method('getPath')->willReturn('/songs');
+        $this->response->method('getStatusCode')->willReturn(200);
+        $this->response->method('getHeader')->willReturnMap($map);
+        $this->response->method('getHeaders')->willReturn($headers);
+        $this->response->method('getHeaderLine')->with('Content-Type')->willReturn('application/json; charset=us-ascii');
+        $this->response->method('getBody')->willReturn($body);
+
+        $schemaBody = $this->createMock(Body::class);
+        $schemaBody
+            ->expects($this->atLeastOnce())
+            ->method('getValidator')
+            ->willReturn($this->createMock(ValidatorInterface::class));
+
+        $apiDefinition = $this->parser->parse(__DIR__ . '/../fixture/validator/responseBody.raml');
+        $schemaHelper = $this->getMockBuilder(ValidatorSchemaHelper::class)
+            ->setConstructorArgs([$apiDefinition])
+            ->setMethods(['getResponseBody'])
+            ->getMock();
+        $schemaHelper
+            ->expects($this->once())
+            ->method('getResponseBody')
+            ->with('post', '/songs', 200, 'application/json')
+            ->willReturn($schemaBody);
+
+        $validator = new ResponseValidator($schemaHelper);
         $validator->validateResponse($this->request, $this->response);
     }
 }

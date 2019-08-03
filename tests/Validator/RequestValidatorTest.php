@@ -7,10 +7,12 @@ use PHPUnit\Framework\TestCase;
 use Psr\Http\Message\RequestInterface;
 use Psr\Http\Message\StreamInterface;
 use Psr\Http\Message\UriInterface;
+use Raml\Body;
 use Raml\Parser;
 use Raml\Validator\RequestValidator;
 use Raml\Validator\ValidatorRequestException;
 use Raml\Validator\ValidatorSchemaHelper;
+use Raml\ValidatorInterface;
 
 class RequestValidatorTest extends TestCase
 {
@@ -156,6 +158,41 @@ class RequestValidatorTest extends TestCase
         $this->request->method('getBody')->willReturn($body);
 
         $validator = $this->getValidatorForSchema(__DIR__ . '/../fixture/validator/requestBody.raml');
+        $validator->validateRequest($this->request);
+    }
+
+    /**
+     * @test
+     * @doesNotPerformAssertions
+     */
+    public function shouldParseContentTypeHeader()
+    {
+        $body = $this->createMock(StreamInterface::class);
+        $body->method('getContents')->willReturn('{"title":"Aaa"}');
+
+        $this->request->method('getMethod')->willReturn('post');
+        $this->uri->method('getPath')->willReturn('/songs');
+        $this->request->method('getHeaderLine')->with('Content-Type')->willReturn('application/json; charset=us-ascii');
+        $this->request->method('getBody')->willReturn($body);
+
+        $schemaBody = $this->createMock(Body::class);
+        $schemaBody
+            ->expects($this->atLeastOnce())
+            ->method('getValidator')
+            ->willReturn($this->createMock(ValidatorInterface::class));
+
+        $apiDefinition = $this->parser->parse(__DIR__ . '/../fixture/validator/requestBody.raml');
+        $schemaHelper = $this->getMockBuilder(ValidatorSchemaHelper::class)
+            ->setConstructorArgs([$apiDefinition])
+            ->setMethods(['getRequestBody'])
+            ->getMock();
+        $schemaHelper
+            ->expects($this->once())
+            ->method('getRequestBody')
+            ->with('post', '/songs', 'application/json')
+            ->willReturn($schemaBody);
+
+        $validator = new RequestValidator($schemaHelper, new Negotiator());
         $validator->validateRequest($this->request);
     }
 
