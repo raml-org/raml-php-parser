@@ -15,6 +15,11 @@ class NamedParameter implements ArrayInstantiationInterface
     /**
      * @var string
      */
+    const TYPE_ANY = 'any';
+
+    /**
+     * @var string
+     */
     const TYPE_STRING = 'string';
 
     /**
@@ -140,6 +145,7 @@ class NamedParameter implements ArrayInstantiationInterface
      * @var string[]
      */
     protected $validTypes = [
+        self::TYPE_ANY,
         self::TYPE_STRING,
         self::TYPE_NUMBER,
         self::TYPE_INTEGER,
@@ -602,12 +608,12 @@ class NamedParameter implements ArrayInstantiationInterface
      *
      * @param int $minimum
      *
-     * @throws \Exception
+     * @throws \InvalidArgumentException
      */
     public function setMinimum($minimum)
     {
         if (!\in_array($this->type, [self::TYPE_INTEGER, self::TYPE_NUMBER], true)) {
-            throw new \Exception('minimum can only be set on type "integer" or "number');
+            throw new \InvalidArgumentException('minimum can only be set on type "integer" or "number');
         }
 
         $this->minimum = (int) $minimum;
@@ -630,12 +636,12 @@ class NamedParameter implements ArrayInstantiationInterface
      *
      * @param int $maximum
      *
-     * @throws \Exception
+     * @throws \InvalidArgumentException
      */
     public function setMaximum($maximum)
     {
         if (!\in_array($this->type, [self::TYPE_INTEGER, self::TYPE_NUMBER], true)) {
-            throw new \Exception('maximum can only be set on type "integer" or "number');
+            throw new \InvalidArgumentException('maximum can only be set on type "integer" or "number');
         }
 
         $this->maximum = (int) $maximum;

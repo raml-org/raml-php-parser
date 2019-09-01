@@ -106,7 +106,7 @@ class ObjectType extends Type
     }
 
     /**
-     * @param string $value
+     * @param array $value
      * @return bool
      */
     public function discriminate($value)
@@ -153,7 +153,7 @@ class ObjectType extends Type
      * Returns a property by name
      *
      * @param string $name
-     * @return null|Type
+     * @return void|Type
      */
     public function getPropertyByName($name)
     {

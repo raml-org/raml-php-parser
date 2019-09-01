@@ -794,6 +794,7 @@ RAML;
             $this->assertEquals('invalid', $e->getType());
             $this->assertEquals(
                 [
+                    'any',
                     'string',
                     'number',
                     'integer',
