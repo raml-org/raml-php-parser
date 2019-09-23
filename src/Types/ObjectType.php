@@ -111,7 +111,7 @@ class ObjectType extends Type
      */
     public function discriminate($value)
     {
-        if (isset($value[$this->getDiscriminator()])) {
+        if (\is_array($value) && isset($value[$this->getDiscriminator()])) {
             if ($this->getDiscriminatorValue() !== null) {
                 return $this->getDiscriminatorValue() === $value[$this->getDiscriminator()];
             }

@@ -1,0 +1,23 @@
+#%RAML 1.0
+
+title: List of actors API
+baseUri: http://example.api.com/{version}
+version: v1
+mediaType: application/json
+
+/actors/{id}:
+  get:
+    responses:
+      200:
+        body:
+          application/json:
+            type: Actor
+types:
+  Actor:
+    properties:
+      fistName:
+        type: string
+        required: true
+      lastName:
+        type: string
+        required: true
