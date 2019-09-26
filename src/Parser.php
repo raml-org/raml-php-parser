@@ -412,6 +412,19 @@ class Parser
     {
         if (isset($ramlData['resourceTypes'])) {
             $keyedResourceTypes = [];
+
+            foreach ($ramlData['resourceTypes'] as $i => $resourceType) {
+                if (\is_int($i)) {
+                    // In RAML 0.8 is an array of maps; in each map, the keys are resourceType names
+                    foreach ($resourceType as $k => $t) {
+                        $keyedResourceTypes[$k] = $t;
+                    }
+                } else {
+                    // In RAML 1.0 is a map where keys names become names of resource types
+                    $keyedResourceTypes[$i] = $resourceType;
+                }
+            }
+
             foreach ($ramlData['resourceTypes'] as $resourceType) {
                 foreach ($resourceType as $k => $t) {
                     $keyedResourceTypes[$k] = $t;

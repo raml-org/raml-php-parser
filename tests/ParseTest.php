@@ -1187,4 +1187,43 @@ RAML;
         $this->assertCount(1, $simpleRaml->getResourceByPath('/users')->getTraits());
         $this->assertCount(2, $simpleRaml->getResourceByPath('/users')->getMethod('get')->getTraits());
     }
+
+    /**
+     * @test
+     */
+    public function shouldParseResourceTypesAndTraits()
+    {
+        $traitsAndTypes = $this->parser->parse(__DIR__ . '/fixture/raml-1.0/traitsAndTypes.raml');
+
+        $resource = $traitsAndTypes->getResourceByUri('/test');
+        $method = $resource->getMethod('get');
+        $queryParameters = $method->getQueryParameters();
+        $headers = $method->getHeaders();
+
+        $this->assertArrayHasKey('title', $queryParameters);
+        $this->assertArrayHasKey('numPages', $queryParameters);
+        $this->assertArrayHasKey('access_token', $headers);
+
+        $this->assertEquals(
+            'Return values that have their title matching the given value',
+            $queryParameters['title']->getDescription()
+        );
+        $this->assertEquals('The number of pages to return', $queryParameters['numPages']->getDescription());
+        $this->assertEquals(
+            [
+                'access_token' => NamedParameter::createFromArray(
+                    'access_token',
+                    [
+                        'displayName' => null,
+                        'description' => 'A valid access_token is required',
+                        'examples' => [
+                            '5757gh76',
+                        ],
+                        'required' => 'true',
+                    ]
+                ),
+            ],
+            $headers
+        );
+    }
 }
