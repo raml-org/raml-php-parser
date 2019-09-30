@@ -425,12 +425,6 @@ class Parser
                 }
             }
 
-            foreach ($ramlData['resourceTypes'] as $resourceType) {
-                foreach ($resourceType as $k => $t) {
-                    $keyedResourceTypes[$k] = $t;
-                }
-            }
-
             foreach ($ramlData as $key => $value) {
                 if (\mb_strpos($key, '/') === 0) {
                     $name = (isset($value['displayName'])) ? $value['displayName'] : \mb_substr($key, 1);
