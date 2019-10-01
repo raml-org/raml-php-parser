@@ -412,10 +412,16 @@ class Parser
     {
         if (isset($ramlData['resourceTypes'])) {
             $keyedResourceTypes = [];
-            foreach ($ramlData['resourceTypes'] as $resourceType) {
-                foreach ($resourceType as $k => $t) {
-                    $keyedResourceTypes[$k] = $t;
+
+            foreach ($ramlData['resourceTypes'] as $key => $value) {
+                if ($this->isRaml08($key)) {
+                    foreach ($value as $k => $t) {
+                        $keyedResourceTypes[$k] = $t;
+                    }
+
+                    continue;
                 }
+                $keyedResourceTypes[$key] = $value;
             }
 
             foreach ($ramlData as $key => $value) {
@@ -427,6 +433,15 @@ class Parser
         }
 
         return $ramlData;
+    }
+
+    /**
+     * @param string|int $key
+     * @return bool
+     */
+    private function isRaml08($key)
+    {
+        return \is_int($key);
     }
 
     /**
