@@ -186,7 +186,7 @@ class Resource implements ArrayInstantiationInterface
                 $resource->addMethod(
                     Method::createFromArray(
                         $key,
-                        $value,
+                        \is_array($value) ? $value : [],
                         $apiDefinition
                     )
                 );

@@ -1226,4 +1226,32 @@ RAML;
             $headers
         );
     }
+
+    /**
+     * @test
+     */
+    public function shouldParseOptionalMethods()
+    {
+        $apiDefinition = $this->parser->parse(__DIR__ . '/fixture/raml-1.0/optionalResourceTypeMethods.raml');
+
+        $resource = $apiDefinition->getResourceByUri('/servers');
+        $method = $resource->getMethod('post');
+        $headers = $method->getHeaders();
+
+        $this->assertSame('Some info about post method.', $method->getDescription());
+        $this->assertArrayHasKey('X-Chargeback', $headers);
+    }
+
+    /**
+     * @test
+     */
+    public function shouldNotHaveOptionalMethod()
+    {
+        $this->expectException(\Exception::class);
+        $this->expectExceptionMessage('Method not found');
+
+        $apiDefinition = $this->parser->parse(__DIR__ . '/fixture/raml-1.0/optionalResourceTypeMethods.raml');
+        $resource = $apiDefinition->getResourceByUri('/queues');
+        $resource->getMethod('post');
+    }
 }
