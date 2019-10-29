@@ -796,6 +796,7 @@ class Parser
                     $newName = (isset($value['displayName'])) ? $value['displayName'] : \substr($key, 1);
                 }
                 $newValue = $this->replaceTypes($value, $types, $path, $newName, $key);
+                $newValue = $this->applyOptionalResourceTypeMethod($key, $newArray, $newValue, $parentKey);
 
                 $newArray[$key] = isset($newArray[$key]) && \is_array($newArray[$key]) ? \array_replace_recursive($newArray[$key], $newValue) : $newValue;
             }
@@ -812,6 +813,29 @@ class Parser
     private function applyVariables(array $values, array $trait)
     {
         return TraitParserHelper::applyVariables($values, $trait);
+    }
+
+    /**
+     * Apply optional HTTP method from resource type
+     *
+     * @param string|mixed $key
+     * @param array $source
+     * @param string|array $value
+     * @param string|null $parentKey
+     * @return string|array
+     */
+    private function applyOptionalResourceTypeMethod($key, $source, $value, $parentKey = null)
+    {
+        $optionalKey = $key . '?';
+        if (
+            \strpos($parentKey, '/') === 0
+            && \in_array(\strtoupper($key), Method::$validMethods, true)
+            && isset($source[$optionalKey])
+        ) {
+            $value = \is_array($value) ? \array_replace_recursive($source[$optionalKey], $value) : $source[$optionalKey];
+        }
+
+        return $value;
     }
 
     public function getIncludedFiles()
