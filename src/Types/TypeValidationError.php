@@ -103,7 +103,7 @@ class TypeValidationError
     {
         return new self($property, \sprintf(
             'Expected any of [%s], got (%s) "%s"',
-            \implode($possibleValues, ', '),
+            \implode(', ', $possibleValues),
             \gettype($actualValue),
             $actualValue
         ));
