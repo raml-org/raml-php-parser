@@ -278,8 +278,6 @@ class NamedParameter implements ArrayInstantiationInterface
      * A default value used by the server if not provided
      *
      * @see http://raml.org/spec.html#default
-     *
-     * @var mixed
      */
     private $default;
 
@@ -654,11 +652,11 @@ class NamedParameter implements ArrayInstantiationInterface
      *
      * @param int $position
      *
-     * @return string
+     * @return string|null
      */
     public function getExample($position = 0)
     {
-        return $this->examples[$position];
+        return isset($this->examples[$position]) ? $this->examples[$position] : null;
     }
 
     /**

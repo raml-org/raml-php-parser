@@ -104,7 +104,7 @@ class MethodTest extends TestCase
             $apiDefinition
         );
 
-        $this->assertInternalType('array', $method->getResponses());
+        $this->assertIsArray($method->getResponses());
         $this->assertCount(1, $method->getResponses());
 
         $responses = $method->getResponses();
@@ -142,7 +142,7 @@ class MethodTest extends TestCase
             $apiDefinition
         );
 
-        $this->assertInternalType('array', $method->getProtocols());
+        $this->assertIsArray($method->getProtocols());
         $this->assertCount(1, $method->getProtocols());
         $this->assertSame(['HTTP'], $method->getProtocols());
     }
@@ -164,7 +164,7 @@ class MethodTest extends TestCase
             $apiDefinition
         );
 
-        $this->assertInternalType('array', $method->getProtocols());
+        $this->assertIsArray($method->getProtocols());
         $this->assertCount(2, $method->getProtocols());
         $this->assertSame([
             'HTTP',

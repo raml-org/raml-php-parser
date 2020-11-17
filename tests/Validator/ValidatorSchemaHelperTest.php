@@ -15,7 +15,7 @@ class ValidatorSchemaHelperTest extends TestCase
      */
     private $parser;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         parent::setUp();
         $this->parser = new Parser();
@@ -112,8 +112,8 @@ class ValidatorSchemaHelperTest extends TestCase
         $allParameters = $helper->getQueryParameters('get', '/songs');
         $requiredParameters = $helper->getQueryParameters('get', '/songs', true);
 
-        $this->assertInternalType('array', $allParameters);
-        $this->assertInternalType('array', $requiredParameters);
+        $this->assertIsArray($allParameters);
+        $this->assertIsArray($requiredParameters);
 
         $this->assertSame(['required_number', 'optional_long_string'], \array_keys($allParameters));
         $this->assertSame(['required_number'], \array_keys($requiredParameters));
@@ -165,8 +165,8 @@ class ValidatorSchemaHelperTest extends TestCase
         $allHeaders = $helper->getResponseHeaders('get', '/songs', 200);
         $requiredHeaders = $helper->getResponseHeaders('get', '/songs', 200, true);
 
-        $this->assertInternalType('array', $allHeaders);
-        $this->assertInternalType('array', $requiredHeaders);
+        $this->assertIsArray($allHeaders);
+        $this->assertIsArray($requiredHeaders);
 
         $this->assertSame(['X-Required-Header', 'X-Long-Optional-Header'], \array_keys($allHeaders));
         $this->assertSame(['X-Required-Header'], \array_keys($requiredHeaders));

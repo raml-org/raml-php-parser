@@ -87,7 +87,6 @@ There are two Route Formatters included in the package:
 
 ### Contributing
 ```bash
-composer validate-files
 composer run-static-analysis
 composer check-code-style
 composer run-tests

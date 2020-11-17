@@ -3,6 +3,7 @@
 namespace Raml\Tests\Validator;
 
 use Negotiation\Negotiator;
+use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 use Psr\Http\Message\RequestInterface;
 use Psr\Http\Message\StreamInterface;
@@ -22,17 +23,18 @@ class RequestValidatorTest extends TestCase
     private $parser;
 
     /**
-     * @var RequestInterface|PHPUnit_Framework_MockObject_MockObject
+     * @var RequestInterface&MockObject
      */
     private $request;
 
     /**
-     * @var UriInterface|PHPUnit_Framework_MockObject_MockObject
+     * @var UriInterface&MockObject
      */
     private $uri;
 
-    protected function setUp()
+    protected function setUp(): void
     {
+        parent::setUp();
         $this->parser = new Parser();
         $this->uri = $this->createMock(UriInterface::class);
         $this->request = $this->createMock(RequestInterface::class);
@@ -163,7 +165,6 @@ class RequestValidatorTest extends TestCase
 
     /**
      * @test
-     * @doesNotPerformAssertions
      */
     public function shouldParseContentTypeHeader()
     {

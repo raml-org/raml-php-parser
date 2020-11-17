@@ -1,0 +1,1157 @@
+parameters:
+	ignoreErrors:
+		-
+			message: "#^Method Raml\\\\Tests\\\\ApiDefinitionTest\\:\\:shouldReturnFullResourcesForRamlFileWithDefaultFormatter\\(\\) has no return typehint specified\\.$#"
+			count: 1
+			path: ../../../tests/ApiDefinitionTest.php
+
+		-
+			message: "#^Method Raml\\\\Tests\\\\ApiDefinitionTest\\:\\:shouldReturnFullResourcesForRamlFileWithNoFormatter\\(\\) has no return typehint specified\\.$#"
+			count: 1
+			path: ../../../tests/ApiDefinitionTest.php
+
+		-
+			message: "#^Method Raml\\\\Tests\\\\ApiDefinitionTest\\:\\:shouldReturnFullResourcesForRamlFileWithSymfonyFormatter\\(\\) has no return typehint specified\\.$#"
+			count: 1
+			path: ../../../tests/ApiDefinitionTest.php
+
+		-
+			message: "#^Method Raml\\\\Tests\\\\ApiDefinitionTest\\:\\:shouldReturnURIProtocol\\(\\) has no return typehint specified\\.$#"
+			count: 1
+			path: ../../../tests/ApiDefinitionTest.php
+
+		-
+			message: "#^Method Raml\\\\Tests\\\\ApiDefinitionTest\\:\\:shouldProcessTypes\\(\\) has no return typehint specified\\.$#"
+			count: 1
+			path: ../../../tests/ApiDefinitionTest.php
+
+		-
+			message: "#^Method Raml\\\\Tests\\\\ApiDefinitionTest\\:\\:shouldBeAbleToAccessOriginalInheritanceTypes\\(\\) has no return typehint specified\\.$#"
+			count: 1
+			path: ../../../tests/ApiDefinitionTest.php
+
+		-
+			message: "#^Method Raml\\\\Tests\\\\ApiDefinitionTest\\:\\:shouldParseLibraries\\(\\) has no return typehint specified\\.$#"
+			count: 1
+			path: ../../../tests/ApiDefinitionTest.php
+
+		-
+			message: "#^Method Raml\\\\Tests\\\\ApiDefinitionTest\\:\\:shouldParseTypesToSubTypes\\(\\) has no return typehint specified\\.$#"
+			count: 1
+			path: ../../../tests/ApiDefinitionTest.php
+
+		-
+			message: "#^Method Raml\\\\Tests\\\\ApiDefinitionTest\\:\\:shouldParseComplexTypes\\(\\) has no return typehint specified\\.$#"
+			count: 1
+			path: ../../../tests/ApiDefinitionTest.php
+
+		-
+			message: "#^Cannot call method getResolvedObject\\(\\) on Raml\\\\Type\\|void\\.$#"
+			count: 2
+			path: ../../../tests/ApiDefinitionTest.php
+
+		-
+			message: "#^Cannot call method getPropertyByName\\(\\) on Raml\\\\Type\\|void\\.$#"
+			count: 6
+			path: ../../../tests/ApiDefinitionTest.php
+
+		-
+			message: "#^Cannot call method getMethod\\(\\) on resource\\.$#"
+			count: 6
+			path: ../../../tests/ApiDefinitionTest.php
+
+		-
+			message: "#^Method Raml\\\\Tests\\\\ApiDefinitionTest\\:\\:shouldPassValidResponse\\(\\) has no return typehint specified\\.$#"
+			count: 1
+			path: ../../../tests/ApiDefinitionTest.php
+
+		-
+			message: "#^Method Raml\\\\Tests\\\\ApiDefinitionTest\\:\\:shouldRejectMissingParameterResponse\\(\\) has no return typehint specified\\.$#"
+			count: 1
+			path: ../../../tests/ApiDefinitionTest.php
+
+		-
+			message: "#^Method Raml\\\\Tests\\\\ApiDefinitionTest\\:\\:shouldRejectInvalidIntegerParameterResponse\\(\\) has no return typehint specified\\.$#"
+			count: 1
+			path: ../../../tests/ApiDefinitionTest.php
+
+		-
+			message: "#^Method Raml\\\\Tests\\\\ApiDefinitionTest\\:\\:shouldRejectInvalidStringParameterResponse\\(\\) has no return typehint specified\\.$#"
+			count: 1
+			path: ../../../tests/ApiDefinitionTest.php
+
+		-
+			message: "#^Method Raml\\\\Tests\\\\ApiDefinitionTest\\:\\:shouldRejectInvalidEnumParameterResponse\\(\\) has no return typehint specified\\.$#"
+			count: 1
+			path: ../../../tests/ApiDefinitionTest.php
+
+		-
+			message: "#^Method Raml\\\\Tests\\\\ApiDefinitionTest\\:\\:shouldReturnProtocolsIfSpecified\\(\\) has no return typehint specified\\.$#"
+			count: 1
+			path: ../../../tests/ApiDefinitionTest.php
+
+		-
+			message: "#^Method Raml\\\\Tests\\\\ApiDefinitionTest\\:\\:shouldThrowInvalidProtocolExceptionIfWrongProtocol\\(\\) has no return typehint specified\\.$#"
+			count: 1
+			path: ../../../tests/ApiDefinitionTest.php
+
+		-
+			message: "#^Method Raml\\\\Tests\\\\ApiDefinitionTest\\:\\:assertValidationFailedWithErrors\\(\\) has no return typehint specified\\.$#"
+			count: 1
+			path: ../../../tests/ApiDefinitionTest.php
+
+		-
+			message: "#^Method PHPUnit\\\\Framework\\\\Assert\\:\\:assertContainsEquals\\(\\) invoked with 5 parameters, 2\\-3 required\\.$#"
+			count: 1
+			path: ../../../tests/ApiDefinitionTest.php
+
+		-
+			message: "#^Function assertValidationFailedWithErrors\\(\\) has an unused variable \\$message\\.$#"
+			count: 1
+			path: ../../../tests/ApiDefinitionTest.php
+
+		-
+			message: "#^Function assertValidationFailedWithErrors\\(\\) has an unused variable \\$ignoreCase\\.$#"
+			count: 1
+			path: ../../../tests/ApiDefinitionTest.php
+
+		-
+			message: "#^Function assertValidationFailedWithErrors\\(\\) has an unused variable \\$checkForObjectIdentity\\.$#"
+			count: 1
+			path: ../../../tests/ApiDefinitionTest.php
+
+		-
+			message: "#^Method Raml\\\\Tests\\\\ApiDefinitionTest\\:\\:shouldReturnFullResourcesNameForRamlFileWithUrlPrefix\\(\\) has no return typehint specified\\.$#"
+			count: 1
+			path: ../../../tests/ApiDefinitionTest.php
+
+		-
+			message: "#^Method Raml\\\\Tests\\\\JsonSchemaTest\\:\\:shouldReturnJsonString\\(\\) has no return typehint specified\\.$#"
+			count: 1
+			path: ../../../tests/JsonSchemaTest.php
+
+		-
+			message: "#^Cannot call method getMethod\\(\\) on resource\\.$#"
+			count: 5
+			path: ../../../tests/JsonSchemaTest.php
+
+		-
+			message: "#^Method Raml\\\\Tests\\\\JsonSchemaTest\\:\\:shouldCorrectlyValidateCorrectJson\\(\\) has no return typehint specified\\.$#"
+			count: 1
+			path: ../../../tests/JsonSchemaTest.php
+
+		-
+			message: "#^Method Raml\\\\Tests\\\\JsonSchemaTest\\:\\:shouldCorrectlyValidateIncorrectJson\\(\\) has no return typehint specified\\.$#"
+			count: 1
+			path: ../../../tests/JsonSchemaTest.php
+
+		-
+			message: "#^Method Raml\\\\Tests\\\\JsonSchemaTest\\:\\:shouldCorrectlyValidateInvalidJson\\(\\) has no return typehint specified\\.$#"
+			count: 1
+			path: ../../../tests/JsonSchemaTest.php
+
+		-
+			message: "#^Method Raml\\\\Tests\\\\JsonSchemaTest\\:\\:shouldCorrectlyValidateJsonAsArray\\(\\) has no return typehint specified\\.$#"
+			count: 1
+			path: ../../../tests/JsonSchemaTest.php
+
+		-
+			message: "#^Method Raml\\\\Tests\\\\MethodTest\\:\\:shouldGetTheTypeInUpperCase\\(\\) has no return typehint specified\\.$#"
+			count: 1
+			path: ../../../tests/MethodTest.php
+
+		-
+			message: "#^Method Raml\\\\Tests\\\\MethodTest\\:\\:shouldGetTheDescriptionIfPassedInTheDataArray\\(\\) has no return typehint specified\\.$#"
+			count: 1
+			path: ../../../tests/MethodTest.php
+
+		-
+			message: "#^Call to method PHPUnit\\\\Framework\\\\Assert\\:\\:assertNull\\(\\) with string will always evaluate to false\\.$#"
+			count: 1
+			path: ../../../tests/MethodTest.php
+
+		-
+			message: "#^Method Raml\\\\Tests\\\\MethodTest\\:\\:shouldGetTheDisplayNameIfPassedInTheDataArray\\(\\) has no return typehint specified\\.$#"
+			count: 1
+			path: ../../../tests/MethodTest.php
+
+		-
+			message: "#^Method Raml\\\\Tests\\\\MethodTest\\:\\:shouldGetNullForResponseIfNoneIsExists\\(\\) has no return typehint specified\\.$#"
+			count: 1
+			path: ../../../tests/MethodTest.php
+
+		-
+			message: "#^Call to method PHPUnit\\\\Framework\\\\Assert\\:\\:assertNull\\(\\) with Raml\\\\Response will always evaluate to false\\.$#"
+			count: 3
+			path: ../../../tests/MethodTest.php
+
+		-
+			message: "#^Method Raml\\\\Tests\\\\MethodTest\\:\\:shouldGetNullForResponseIfNotAnArrayIsPassed\\(\\) has no return typehint specified\\.$#"
+			count: 1
+			path: ../../../tests/MethodTest.php
+
+		-
+			message: "#^Method Raml\\\\Tests\\\\MethodTest\\:\\:shouldGetValidResponsesIfPassedExpectedValues\\(\\) has no return typehint specified\\.$#"
+			count: 1
+			path: ../../../tests/MethodTest.php
+
+		-
+			message: "#^Method Raml\\\\Tests\\\\MethodTest\\:\\:shouldGetEmptyArrayForQueryParametersIfNoneIsExists\\(\\) has no return typehint specified\\.$#"
+			count: 1
+			path: ../../../tests/MethodTest.php
+
+		-
+			message: "#^Method Raml\\\\Tests\\\\MethodTest\\:\\:shouldGetGlobalProtocols\\(\\) has no return typehint specified\\.$#"
+			count: 1
+			path: ../../../tests/MethodTest.php
+
+		-
+			message: "#^Method Raml\\\\Tests\\\\MethodTest\\:\\:shouldGetOverrideProtocols\\(\\) has no return typehint specified\\.$#"
+			count: 1
+			path: ../../../tests/MethodTest.php
+
+		-
+			message: "#^Method Raml\\\\Tests\\\\NamedParameters\\\\BaseUriParameterTest\\:\\:shouldCorrectlySubstituteTheVersion\\(\\) has no return typehint specified\\.$#"
+			count: 1
+			path: ../../../tests/NamedParameters/BaseUriParameterTest.php
+
+		-
+			message: "#^Method Raml\\\\Tests\\\\NamedParameters\\\\BaseUriParameterTest\\:\\:shouldCorrectlyParseBaseUriParameters\\(\\) has no return typehint specified\\.$#"
+			count: 1
+			path: ../../../tests/NamedParameters/BaseUriParameterTest.php
+
+		-
+			message: "#^Cannot call method getBaseUriParameters\\(\\) on resource\\.$#"
+			count: 2
+			path: ../../../tests/NamedParameters/BaseUriParameterTest.php
+
+		-
+			message: "#^Method Raml\\\\Tests\\\\NamedParameters\\\\BaseUriParameterTest\\:\\:shouldOverrideBaseUriParametersInResource\\(\\) has no return typehint specified\\.$#"
+			count: 1
+			path: ../../../tests/NamedParameters/BaseUriParameterTest.php
+
+		-
+			message: "#^Method Raml\\\\Tests\\\\NamedParameters\\\\BaseUriParameterTest\\:\\:shouldOverrideBaseUriParametersInMethod\\(\\) has no return typehint specified\\.$#"
+			count: 1
+			path: ../../../tests/NamedParameters/BaseUriParameterTest.php
+
+		-
+			message: "#^Cannot call method getMethod\\(\\) on resource\\.$#"
+			count: 1
+			path: ../../../tests/NamedParameters/BaseUriParameterTest.php
+
+		-
+			message: "#^Method Raml\\\\Tests\\\\NamedParameters\\\\BaseUriParameterTest\\:\\:shouldCorrectlyParseNetBaseUri\\(\\) has no return typehint specified\\.$#"
+			count: 1
+			path: ../../../tests/NamedParameters/BaseUriParameterTest.php
+
+		-
+			message: "#^Method Raml\\\\Tests\\\\NamedParameters\\\\BaseUriParameterTest\\:\\:shouldOverrideBaseUriProtocols\\(\\) has no return typehint specified\\.$#"
+			count: 1
+			path: ../../../tests/NamedParameters/BaseUriParameterTest.php
+
+		-
+			message: "#^Method Raml\\\\Tests\\\\NamedParameters\\\\MultipleTypesTest\\:\\:shouldGetTheResourceOnTheBaseUrl\\(\\) has no return typehint specified\\.$#"
+			count: 1
+			path: ../../../tests/NamedParameters/MultipleTypesTest.php
+
+		-
+			message: "#^Call to method PHPUnit\\\\Framework\\\\Assert\\:\\:assertInstanceOf\\(\\) with 'Raml\\\\\\\\Resource' and resource will always evaluate to false\\.$#"
+			count: 1
+			path: ../../../tests/NamedParameters/MultipleTypesTest.php
+
+		-
+			message: "#^Method Raml\\\\Tests\\\\NamedParameters\\\\MultipleTypesTest\\:\\:shouldReturnAnArrayOfTypes\\(\\) has no return typehint specified\\.$#"
+			count: 1
+			path: ../../../tests/NamedParameters/MultipleTypesTest.php
+
+		-
+			message: "#^Cannot call method getMethod\\(\\) on resource\\.$#"
+			count: 1
+			path: ../../../tests/NamedParameters/MultipleTypesTest.php
+
+		-
+			message: "#^Cannot call method getMethod\\(\\) on resource\\.$#"
+			count: 1
+			path: ../../../tests/NamedParameters/ParameterTypesTest.php
+
+		-
+			message: "#^Method Raml\\\\Tests\\\\NamedParameters\\\\ParameterTypesTest\\:\\:shouldValidateWithoutExceptions\\(\\) has no return typehint specified\\.$#"
+			count: 1
+			path: ../../../tests/NamedParameters/ParameterTypesTest.php
+
+		-
+			message: "#^Call to an undefined method object\\:\\:getParameter\\(\\)\\.$#"
+			count: 24
+			path: ../../../tests/NamedParameters/ParameterTypesTest.php
+
+		-
+			message: "#^Method Raml\\\\Tests\\\\NamedParameters\\\\ParameterTypesTest\\:\\:shouldValidateRequired\\(\\) has no return typehint specified\\.$#"
+			count: 1
+			path: ../../../tests/NamedParameters/ParameterTypesTest.php
+
+		-
+			message: "#^Method Raml\\\\Tests\\\\NamedParameters\\\\ParameterTypesTest\\:\\:shouldValidateString\\(\\) has no return typehint specified\\.$#"
+			count: 1
+			path: ../../../tests/NamedParameters/ParameterTypesTest.php
+
+		-
+			message: "#^Method Raml\\\\Tests\\\\NamedParameters\\\\ParameterTypesTest\\:\\:shouldValidateShortString\\(\\) has no return typehint specified\\.$#"
+			count: 1
+			path: ../../../tests/NamedParameters/ParameterTypesTest.php
+
+		-
+			message: "#^Method Raml\\\\Tests\\\\NamedParameters\\\\ParameterTypesTest\\:\\:shouldValidateLongString\\(\\) has no return typehint specified\\.$#"
+			count: 1
+			path: ../../../tests/NamedParameters/ParameterTypesTest.php
+
+		-
+			message: "#^Method Raml\\\\Tests\\\\NamedParameters\\\\ParameterTypesTest\\:\\:shouldValidateNumber\\(\\) has no return typehint specified\\.$#"
+			count: 1
+			path: ../../../tests/NamedParameters/ParameterTypesTest.php
+
+		-
+			message: "#^Method Raml\\\\Tests\\\\NamedParameters\\\\ParameterTypesTest\\:\\:shouldValidateSmallNumber\\(\\) has no return typehint specified\\.$#"
+			count: 1
+			path: ../../../tests/NamedParameters/ParameterTypesTest.php
+
+		-
+			message: "#^Method Raml\\\\Tests\\\\NamedParameters\\\\ParameterTypesTest\\:\\:shouldValidateLargeNumber\\(\\) has no return typehint specified\\.$#"
+			count: 1
+			path: ../../../tests/NamedParameters/ParameterTypesTest.php
+
+		-
+			message: "#^Method Raml\\\\Tests\\\\NamedParameters\\\\ParameterTypesTest\\:\\:shouldValidateInteger\\(\\) has no return typehint specified\\.$#"
+			count: 1
+			path: ../../../tests/NamedParameters/ParameterTypesTest.php
+
+		-
+			message: "#^Method Raml\\\\Tests\\\\NamedParameters\\\\ParameterTypesTest\\:\\:shouldValidatePattern\\(\\) has no return typehint specified\\.$#"
+			count: 1
+			path: ../../../tests/NamedParameters/ParameterTypesTest.php
+
+		-
+			message: "#^Method Raml\\\\Tests\\\\NamedParameters\\\\ParameterTypesTest\\:\\:shouldValidateEnum\\(\\) has no return typehint specified\\.$#"
+			count: 1
+			path: ../../../tests/NamedParameters/ParameterTypesTest.php
+
+		-
+			message: "#^Method Raml\\\\Tests\\\\NamedParameters\\\\ParameterTypesTest\\:\\:shouldValidateBoolean\\(\\) has no return typehint specified\\.$#"
+			count: 1
+			path: ../../../tests/NamedParameters/ParameterTypesTest.php
+
+		-
+			message: "#^Method Raml\\\\Tests\\\\NamedParameters\\\\ParameterTypesTest\\:\\:shouldValidateDate\\(\\) has no return typehint specified\\.$#"
+			count: 1
+			path: ../../../tests/NamedParameters/ParameterTypesTest.php
+
+		-
+			message: "#^Method Raml\\\\Tests\\\\NamedParameters\\\\ParameterTypesTest\\:\\:shouldValidateDateOnly\\(\\) has no return typehint specified\\.$#"
+			count: 1
+			path: ../../../tests/NamedParameters/ParameterTypesTest.php
+
+		-
+			message: "#^Class Raml\\\\Exception\\\\ValidationException should be written with \\:\\:class notation, string found\\.$#"
+			count: 5
+			path: ../../../tests/NamedParameters/ParameterTypesTest.php
+
+		-
+			message: "#^Method Raml\\\\Tests\\\\NamedParameters\\\\ParameterTypesTest\\:\\:shouldValidateDateTimeOnly\\(\\) has no return typehint specified\\.$#"
+			count: 1
+			path: ../../../tests/NamedParameters/ParameterTypesTest.php
+
+		-
+			message: "#^Method Raml\\\\Tests\\\\NamedParameters\\\\ParameterTypesTest\\:\\:shouldValidateTimeOnly\\(\\) has no return typehint specified\\.$#"
+			count: 1
+			path: ../../../tests/NamedParameters/ParameterTypesTest.php
+
+		-
+			message: "#^Method Raml\\\\Tests\\\\NamedParameters\\\\ParameterTypesTest\\:\\:shouldValidateDateTime\\(\\) has no return typehint specified\\.$#"
+			count: 1
+			path: ../../../tests/NamedParameters/ParameterTypesTest.php
+
+		-
+			message: "#^Method Raml\\\\Tests\\\\NamedParameters\\\\ParameterTypesTest\\:\\:shouldValidateDateTimeFormat\\(\\) has no return typehint specified\\.$#"
+			count: 1
+			path: ../../../tests/NamedParameters/ParameterTypesTest.php
+
+		-
+			message: "#^Method Raml\\\\Tests\\\\NamedParameters\\\\ParameterTypesTest\\:\\:shouldThrowExceptionOnInvalidString\\(\\) has no return typehint specified\\.$#"
+			count: 1
+			path: ../../../tests/NamedParameters/ParameterTypesTest.php
+
+		-
+			message: "#^Method Raml\\\\Tests\\\\NamedParameters\\\\ParameterTypesTest\\:\\:shouldThrowExceptionOnInvalidNumber\\(\\) has no return typehint specified\\.$#"
+			count: 1
+			path: ../../../tests/NamedParameters/ParameterTypesTest.php
+
+		-
+			message: "#^Method Raml\\\\Tests\\\\NamedParameters\\\\ParameterTypesTest\\:\\:shouldThrowExceptionOnInvalidInteger\\(\\) has no return typehint specified\\.$#"
+			count: 1
+			path: ../../../tests/NamedParameters/ParameterTypesTest.php
+
+		-
+			message: "#^Method Raml\\\\Tests\\\\NamedParameters\\\\ParameterTypesTest\\:\\:shouldThrowExceptionOnInvalidDate\\(\\) has no return typehint specified\\.$#"
+			count: 1
+			path: ../../../tests/NamedParameters/ParameterTypesTest.php
+
+		-
+			message: "#^Method Raml\\\\Tests\\\\NamedParameters\\\\ParameterTypesTest\\:\\:shouldThrowExceptionOnInvalidBoolean\\(\\) has no return typehint specified\\.$#"
+			count: 1
+			path: ../../../tests/NamedParameters/ParameterTypesTest.php
+
+		-
+			message: "#^Method Raml\\\\Tests\\\\NamedParameters\\\\ParameterTypesTest\\:\\:shouldThrowExceptionOnInvalidFile\\(\\) has no return typehint specified\\.$#"
+			count: 1
+			path: ../../../tests/NamedParameters/ParameterTypesTest.php
+
+		-
+			message: "#^Method Raml\\\\Tests\\\\NamedParameters\\\\UriParameterTest\\:\\:shouldCorrectlyParseBaseUriParameters\\(\\) has no return typehint specified\\.$#"
+			count: 1
+			path: ../../../tests/NamedParameters/UriParameterTest.php
+
+		-
+			message: "#^Call to method PHPUnit\\\\Framework\\\\Assert\\:\\:assertInstanceOf\\(\\) with 'Raml\\\\\\\\Resource' and resource will always evaluate to false\\.$#"
+			count: 4
+			path: ../../../tests/NamedParameters/UriParameterTest.php
+
+		-
+			message: "#^Method Raml\\\\Tests\\\\NamedParameters\\\\UriParameterTest\\:\\:shouldCorrectlyParseRegexUriParameters\\(\\) has no return typehint specified\\.$#"
+			count: 1
+			path: ../../../tests/NamedParameters/UriParameterTest.php
+
+		-
+			message: "#^Method Raml\\\\Tests\\\\NamedParameters\\\\UriParameterTest\\:\\:shouldCorrectlyParseEnumUriParameters\\(\\) has no return typehint specified\\.$#"
+			count: 1
+			path: ../../../tests/NamedParameters/UriParameterTest.php
+
+		-
+			message: "#^Method Raml\\\\Tests\\\\NamedParameters\\\\UriParameterTest\\:\\:shouldPassUriParametersFromParentToSub\\(\\) has no return typehint specified\\.$#"
+			count: 1
+			path: ../../../tests/NamedParameters/UriParameterTest.php
+
+		-
+			message: "#^Method Raml\\\\Tests\\\\NamedParameters\\\\WebFormBodyTest\\:\\:shouldThrowExceptionOnInvalidType\\(\\) has no return typehint specified\\.$#"
+			count: 1
+			path: ../../../tests/NamedParameters/WebFormBodyTest.php
+
+		-
+			message: "#^Method Raml\\\\Tests\\\\NamedParameters\\\\WebFormBodyTest\\:\\:shouldBeCreatedForValidMediaTypeUrlEncoded\\(\\) has no return typehint specified\\.$#"
+			count: 1
+			path: ../../../tests/NamedParameters/WebFormBodyTest.php
+
+		-
+			message: "#^Cannot call method getMethod\\(\\) on resource\\.$#"
+			count: 4
+			path: ../../../tests/NamedParameters/WebFormBodyTest.php
+
+		-
+			message: "#^Method Raml\\\\Tests\\\\NamedParameters\\\\WebFormBodyTest\\:\\:shouldBeCreatedForValidMediaTypeFormData\\(\\) has no return typehint specified\\.$#"
+			count: 1
+			path: ../../../tests/NamedParameters/WebFormBodyTest.php
+
+		-
+			message: "#^Method Raml\\\\Tests\\\\NamedParameters\\\\WebFormBodyTest\\:\\:shouldThrowErrorOnAttemptGetInvalidParameter\\(\\) has no return typehint specified\\.$#"
+			count: 1
+			path: ../../../tests/NamedParameters/WebFormBodyTest.php
+
+		-
+			message: "#^Method Raml\\\\Tests\\\\NamedParameters\\\\WebFormBodyTest\\:\\:shouldBeAbleToGetAllParameters\\(\\) has no return typehint specified\\.$#"
+			count: 1
+			path: ../../../tests/NamedParameters/WebFormBodyTest.php
+
+		-
+			message: "#^Method Raml\\\\Tests\\\\ParseTest\\:\\:shouldCorrectlyLoadASimpleRamlString\\(\\) has no return typehint specified\\.$#"
+			count: 1
+			path: ../../../tests/ParseTest.php
+
+		-
+			message: "#^Method Raml\\\\Tests\\\\ParseTest\\:\\:shouldCorrectlyLoadASimpleRamlStringWithInclude\\(\\) has no return typehint specified\\.$#"
+			count: 1
+			path: ../../../tests/ParseTest.php
+
+		-
+			message: "#^Method Raml\\\\Tests\\\\ParseTest\\:\\:shouldCorrectlyLoadASimpleRamlFile\\(\\) has no return typehint specified\\.$#"
+			count: 1
+			path: ../../../tests/ParseTest.php
+
+		-
+			message: "#^Method Raml\\\\Tests\\\\ParseTest\\:\\:shouldThrowCorrectExceptionOnBadJson\\(\\) has no return typehint specified\\.$#"
+			count: 1
+			path: ../../../tests/ParseTest.php
+
+		-
+			message: "#^Method Raml\\\\Tests\\\\ParseTest\\:\\:shouldThrowFileNotFoundExceptionOnBadRamlFileWithNotExistingFile\\(\\) has no return typehint specified\\.$#"
+			count: 1
+			path: ../../../tests/ParseTest.php
+
+		-
+			message: "#^Method Raml\\\\Tests\\\\ParseTest\\:\\:shouldThrowExceptionOnPathManipulationIfNotAllowed\\(\\) has no return typehint specified\\.$#"
+			count: 1
+			path: ../../../tests/ParseTest.php
+
+		-
+			message: "#^Method Raml\\\\Tests\\\\ParseTest\\:\\:shouldPreventDirectoryTraversalByDefault\\(\\) has no return typehint specified\\.$#"
+			count: 1
+			path: ../../../tests/ParseTest.php
+
+		-
+			message: "#^Method Raml\\\\Tests\\\\ParseTest\\:\\:shouldNotThrowExceptionOnPathManipulationIfAllowed\\(\\) has no return typehint specified\\.$#"
+			count: 1
+			path: ../../../tests/ParseTest.php
+
+		-
+			message: "#^Cannot call method getMethod\\(\\) on resource\\.$#"
+			count: 41
+			path: ../../../tests/ParseTest.php
+
+		-
+			message: "#^Method Raml\\\\Tests\\\\ParseTest\\:\\:shouldCorrectlyReturnHttpProtocol\\(\\) has no return typehint specified\\.$#"
+			count: 1
+			path: ../../../tests/ParseTest.php
+
+		-
+			message: "#^Method Raml\\\\Tests\\\\ParseTest\\:\\:shouldReturnAResourceObjectForAResource\\(\\) has no return typehint specified\\.$#"
+			count: 1
+			path: ../../../tests/ParseTest.php
+
+		-
+			message: "#^Call to method PHPUnit\\\\Framework\\\\Assert\\:\\:assertInstanceOf\\(\\) with 'Raml\\\\\\\\Resource' and resource will always evaluate to false\\.$#"
+			count: 1
+			path: ../../../tests/ParseTest.php
+
+		-
+			message: "#^Method Raml\\\\Tests\\\\ParseTest\\:\\:shouldThrowExceptionIfUriNotFound\\(\\) has no return typehint specified\\.$#"
+			count: 1
+			path: ../../../tests/ParseTest.php
+
+		-
+			message: "#^Method Raml\\\\Tests\\\\ParseTest\\:\\:shouldNotMatchForwardSlashInURIParameter\\(\\) has no return typehint specified\\.$#"
+			count: 1
+			path: ../../../tests/ParseTest.php
+
+		-
+			message: "#^Method Raml\\\\Tests\\\\ParseTest\\:\\:shouldNotMatchForwardSlashAndDuplicationInURIParameter\\(\\) has no return typehint specified\\.$#"
+			count: 1
+			path: ../../../tests/ParseTest.php
+
+		-
+			message: "#^Method Raml\\\\Tests\\\\ParseTest\\:\\:shouldGiveTheResourceTheCorrectDisplayNameIfNotProvided\\(\\) has no return typehint specified\\.$#"
+			count: 1
+			path: ../../../tests/ParseTest.php
+
+		-
+			message: "#^Cannot call method getDisplayName\\(\\) on resource\\.$#"
+			count: 4
+			path: ../../../tests/ParseTest.php
+
+		-
+			message: "#^Method Raml\\\\Tests\\\\ParseTest\\:\\:shouldExcludeQueryParametersWhenFindingAResource\\(\\) has no return typehint specified\\.$#"
+			count: 1
+			path: ../../../tests/ParseTest.php
+
+		-
+			message: "#^Method Raml\\\\Tests\\\\ParseTest\\:\\:shouldGiveTheResourceTheCorrectDisplayNameIfProvided\\(\\) has no return typehint specified\\.$#"
+			count: 1
+			path: ../../../tests/ParseTest.php
+
+		-
+			message: "#^Method Raml\\\\Tests\\\\ParseTest\\:\\:shouldParseMultiLevelUrisAndParameters\\(\\) has no return typehint specified\\.$#"
+			count: 1
+			path: ../../../tests/ParseTest.php
+
+		-
+			message: "#^Method Raml\\\\Tests\\\\ParseTest\\:\\:shouldReturnAMethodObjectForAMethod\\(\\) has no return typehint specified\\.$#"
+			count: 1
+			path: ../../../tests/ParseTest.php
+
+		-
+			message: "#^Cannot call method getMethods\\(\\) on resource\\.$#"
+			count: 2
+			path: ../../../tests/ParseTest.php
+
+		-
+			message: "#^Method Raml\\\\Tests\\\\ParseTest\\:\\:shouldReturnAResponseForAResponse\\(\\) has no return typehint specified\\.$#"
+			count: 1
+			path: ../../../tests/ParseTest.php
+
+		-
+			message: "#^Method Raml\\\\Tests\\\\ParseTest\\:\\:shouldReturnAnExampleForType\\(\\) has no return typehint specified\\.$#"
+			count: 1
+			path: ../../../tests/ParseTest.php
+
+		-
+			message: "#^Method Raml\\\\Tests\\\\ParseTest\\:\\:shouldParseJson\\(\\) has no return typehint specified\\.$#"
+			count: 1
+			path: ../../../tests/ParseTest.php
+
+		-
+			message: "#^Method Raml\\\\Tests\\\\ParseTest\\:\\:shouldParseJsonSchemaInRaml\\(\\) has no return typehint specified\\.$#"
+			count: 1
+			path: ../../../tests/ParseTest.php
+
+		-
+			message: "#^Method Raml\\\\Tests\\\\ParseTest\\:\\:shouldIncludeChildJsonObjects\\(\\) has no return typehint specified\\.$#"
+			count: 1
+			path: ../../../tests/ParseTest.php
+
+		-
+			message: "#^Method Raml\\\\Tests\\\\ParseTest\\:\\:shouldNotParseJsonIfNotRequested\\(\\) has no return typehint specified\\.$#"
+			count: 1
+			path: ../../../tests/ParseTest.php
+
+		-
+			message: "#^Method Raml\\\\Tests\\\\ParseTest\\:\\:shouldParseJsonRefs\\(\\) has no return typehint specified\\.$#"
+			count: 1
+			path: ../../../tests/ParseTest.php
+
+		-
+			message: "#^Method Raml\\\\Tests\\\\ParseTest\\:\\:shouldParseJsonIntoArray\\(\\) has no return typehint specified\\.$#"
+			count: 1
+			path: ../../../tests/ParseTest.php
+
+		-
+			message: "#^Method Raml\\\\Tests\\\\ParseTest\\:\\:shouldParseIncludedJson\\(\\) has no return typehint specified\\.$#"
+			count: 1
+			path: ../../../tests/ParseTest.php
+
+		-
+			message: "#^Method Raml\\\\Tests\\\\ParseTest\\:\\:shouldNotParseIncludedJsonIfNotRequired\\(\\) has no return typehint specified\\.$#"
+			count: 1
+			path: ../../../tests/ParseTest.php
+
+		-
+			message: "#^Method Raml\\\\Tests\\\\ParseTest\\:\\:shouldParseIncludedJsonRefs\\(\\) has no return typehint specified\\.$#"
+			count: 1
+			path: ../../../tests/ParseTest.php
+
+		-
+			message: "#^Method Raml\\\\Tests\\\\ParseTest\\:\\:shouldSetCorrectSourceUriOnSchemaParsers\\(\\) has no return typehint specified\\.$#"
+			count: 1
+			path: ../../../tests/ParseTest.php
+
+		-
+			message: "#^Method Raml\\\\Tests\\\\ParseTest\\:\\:shouldThrowErrorIfEmpty\\(\\) has no return typehint specified\\.$#"
+			count: 1
+			path: ../../../tests/ParseTest.php
+
+		-
+			message: "#^Method Raml\\\\Tests\\\\ParseTest\\:\\:shouldThrowErrorIfNoTitle\\(\\) has no return typehint specified\\.$#"
+			count: 1
+			path: ../../../tests/ParseTest.php
+
+		-
+			message: "#^Method Raml\\\\Tests\\\\ParseTest\\:\\:shouldBeAbleToAddAdditionalSchemaTypes\\(\\) has no return typehint specified\\.$#"
+			count: 1
+			path: ../../../tests/ParseTest.php
+
+		-
+			message: "#^Method Raml\\\\Tests\\\\ParseTest\\:\\:shouldApplyTraitVariables\\(\\) has no return typehint specified\\.$#"
+			count: 1
+			path: ../../../tests/ParseTest.php
+
+		-
+			message: "#^Method Raml\\\\Tests\\\\ParseTest\\:\\:shouldParseIncludedRaml\\(\\) has no return typehint specified\\.$#"
+			count: 1
+			path: ../../../tests/ParseTest.php
+
+		-
+			message: "#^Method Raml\\\\Tests\\\\ParseTest\\:\\:shouldParseIncludedYaml\\(\\) has no return typehint specified\\.$#"
+			count: 1
+			path: ../../../tests/ParseTest.php
+
+		-
+			message: "#^Method Raml\\\\Tests\\\\ParseTest\\:\\:shouldIncludeTraits\\(\\) has no return typehint specified\\.$#"
+			count: 1
+			path: ../../../tests/ParseTest.php
+
+		-
+			message: "#^Method Raml\\\\Tests\\\\ParseTest\\:\\:shouldThrowErrorIfPassedFileDoesNotExist\\(\\) has no return typehint specified\\.$#"
+			count: 1
+			path: ../../../tests/ParseTest.php
+
+		-
+			message: "#^Method Raml\\\\Tests\\\\ParseTest\\:\\:shouldParseHateoasExample\\(\\) has no return typehint specified\\.$#"
+			count: 1
+			path: ../../../tests/ParseTest.php
+
+		-
+			message: "#^Method Raml\\\\Tests\\\\ParseTest\\:\\:shouldParseMethodDescription\\(\\) has no return typehint specified\\.$#"
+			count: 1
+			path: ../../../tests/ParseTest.php
+
+		-
+			message: "#^Method Raml\\\\Tests\\\\ParseTest\\:\\:shouldParseResourceDescription\\(\\) has no return typehint specified\\.$#"
+			count: 1
+			path: ../../../tests/ParseTest.php
+
+		-
+			message: "#^Cannot call method getDescription\\(\\) on resource\\.$#"
+			count: 6
+			path: ../../../tests/ParseTest.php
+
+		-
+			message: "#^Method Raml\\\\Tests\\\\ParseTest\\:\\:shouldParseStatusCode\\(\\) has no return typehint specified\\.$#"
+			count: 1
+			path: ../../../tests/ParseTest.php
+
+		-
+			message: "#^Method Raml\\\\Tests\\\\ParseTest\\:\\:shouldParseMethodHeaders\\(\\) has no return typehint specified\\.$#"
+			count: 1
+			path: ../../../tests/ParseTest.php
+
+		-
+			message: "#^Method Raml\\\\Tests\\\\ParseTest\\:\\:shouldParseResponseHeaders\\(\\) has no return typehint specified\\.$#"
+			count: 1
+			path: ../../../tests/ParseTest.php
+
+		-
+			message: "#^Method Raml\\\\Tests\\\\ParseTest\\:\\:shouldReplaceReservedParameter\\(\\) has no return typehint specified\\.$#"
+			count: 1
+			path: ../../../tests/ParseTest.php
+
+		-
+			message: "#^Method Raml\\\\Tests\\\\ParseTest\\:\\:shouldParameterTransformerWorks\\(\\) has no return typehint specified\\.$#"
+			count: 1
+			path: ../../../tests/ParseTest.php
+
+		-
+			message: "#^Method Raml\\\\Tests\\\\ParseTest\\:\\:shouldParseSchemasDefinedInTheRoot\\(\\) has no return typehint specified\\.$#"
+			count: 1
+			path: ../../../tests/ParseTest.php
+
+		-
+			message: "#^Method Raml\\\\Tests\\\\ParseTest\\:\\:shouldCorrectlyHandleQueryParameters\\(\\) has no return typehint specified\\.$#"
+			count: 1
+			path: ../../../tests/ParseTest.php
+
+		-
+			message: "#^Method Raml\\\\Tests\\\\ParseTest\\:\\:shouldThrowExceptionOnBadQueryParameter\\(\\) has no return typehint specified\\.$#"
+			count: 1
+			path: ../../../tests/ParseTest.php
+
+		-
+			message: "#^Method Raml\\\\Tests\\\\ParseTest\\:\\:shouldReplaceParameterByJsonString\\(\\) has no return typehint specified\\.$#"
+			count: 1
+			path: ../../../tests/ParseTest.php
+
+		-
+			message: "#^Method Raml\\\\Tests\\\\ParseTest\\:\\:shouldParseSecuritySchemes\\(\\) has no return typehint specified\\.$#"
+			count: 1
+			path: ../../../tests/ParseTest.php
+
+		-
+			message: "#^Method Raml\\\\Tests\\\\ParseTest\\:\\:shouldAddHeadersOfSecuritySchemes\\(\\) has no return typehint specified\\.$#"
+			count: 1
+			path: ../../../tests/ParseTest.php
+
+		-
+			message: "#^Method Raml\\\\Tests\\\\ParseTest\\:\\:shouldReplaceSchemaByRootSchema\\(\\) has no return typehint specified\\.$#"
+			count: 1
+			path: ../../../tests/ParseTest.php
+
+		-
+			message: "#^Method Raml\\\\Tests\\\\ParseTest\\:\\:shouldParseAndReplaceSchemaOnlyInResources\\(\\) has no return typehint specified\\.$#"
+			count: 1
+			path: ../../../tests/ParseTest.php
+
+		-
+			message: "#^Method Raml\\\\Tests\\\\ParseTest\\:\\:shouldParseInfoQExample\\(\\) has no return typehint specified\\.$#"
+			count: 1
+			path: ../../../tests/ParseTest.php
+
+		-
+			message: "#^Method Raml\\\\Tests\\\\ParseTest\\:\\:shouldLoadATree\\(\\) has no return typehint specified\\.$#"
+			count: 1
+			path: ../../../tests/ParseTest.php
+
+		-
+			message: "#^Method Raml\\\\Tests\\\\ParseTest\\:\\:shouldThrowExceptionOnInvalidBodyType\\(\\) has no return typehint specified\\.$#"
+			count: 1
+			path: ../../../tests/ParseTest.php
+
+		-
+			message: "#^Method Raml\\\\Tests\\\\ParseTest\\:\\:shouldSupportGenericResponseType\\(\\) has no return typehint specified\\.$#"
+			count: 1
+			path: ../../../tests/ParseTest.php
+
+		-
+			message: "#^Method Raml\\\\Tests\\\\ParseTest\\:\\:shouldMergeMethodSecurityScheme\\(\\) has no return typehint specified\\.$#"
+			count: 1
+			path: ../../../tests/ParseTest.php
+
+		-
+			message: "#^Method Raml\\\\Tests\\\\ParseTest\\:\\:shouldAddSecuritySchemeToResource\\(\\) has no return typehint specified\\.$#"
+			count: 1
+			path: ../../../tests/ParseTest.php
+
+		-
+			message: "#^Method Raml\\\\Tests\\\\ParseTest\\:\\:shouldParseCustomSettingsOnResource\\(\\) has no return typehint specified\\.$#"
+			count: 1
+			path: ../../../tests/ParseTest.php
+
+		-
+			message: "#^Method Raml\\\\Tests\\\\ParseTest\\:\\:shouldParseCustomSettingsOnMethodWithOAuthParser\\(\\) has no return typehint specified\\.$#"
+			count: 1
+			path: ../../../tests/ParseTest.php
+
+		-
+			message: "#^Method Raml\\\\Tests\\\\ParseTest\\:\\:shouldParseIncludedTraits\\(\\) has no return typehint specified\\.$#"
+			count: 1
+			path: ../../../tests/ParseTest.php
+
+		-
+			message: "#^Method Raml\\\\Tests\\\\ParseTest\\:\\:shouldParseResourcePathNameCorrectly\\(\\) has no return typehint specified\\.$#"
+			count: 1
+			path: ../../../tests/ParseTest.php
+
+		-
+			message: "#^Cannot call method getResources\\(\\) on resource\\.$#"
+			count: 6
+			path: ../../../tests/ParseTest.php
+
+		-
+			message: "#^Method Raml\\\\Tests\\\\ParseTest\\:\\:shouldNestedResourcesHaveParentResourceDefined\\(\\) has no return typehint specified\\.$#"
+			count: 1
+			path: ../../../tests/ParseTest.php
+
+		-
+			message: "#^Cannot call method getParentResource\\(\\) on resource\\.$#"
+			count: 3
+			path: ../../../tests/ParseTest.php
+
+		-
+			message: "#^Method Raml\\\\Tests\\\\ParseTest\\:\\:shouldParseTraits\\(\\) has no return typehint specified\\.$#"
+			count: 1
+			path: ../../../tests/ParseTest.php
+
+		-
+			message: "#^Cannot call method getTraits\\(\\) on resource\\.$#"
+			count: 1
+			path: ../../../tests/ParseTest.php
+
+		-
+			message: "#^Method Raml\\\\Tests\\\\ParseTest\\:\\:shouldParseResourceTypesAndTraits\\(\\) has no return typehint specified\\.$#"
+			count: 1
+			path: ../../../tests/ParseTest.php
+
+		-
+			message: "#^Method Raml\\\\Tests\\\\ParseTest\\:\\:shouldParseOptionalMethods\\(\\) has no return typehint specified\\.$#"
+			count: 1
+			path: ../../../tests/ParseTest.php
+
+		-
+			message: "#^Method Raml\\\\Tests\\\\ParseTest\\:\\:shouldNotHaveOptionalMethod\\(\\) has no return typehint specified\\.$#"
+			count: 1
+			path: ../../../tests/ParseTest.php
+
+		-
+			message: "#^Method Raml\\\\Tests\\\\TypeTest\\:\\:shouldCorrectlyValidateCorrectType\\(\\) has no return typehint specified\\.$#"
+			count: 1
+			path: ../../../tests/TypeTest.php
+
+		-
+			message: "#^Cannot call method getMethod\\(\\) on resource\\.$#"
+			count: 11
+			path: ../../../tests/TypeTest.php
+
+		-
+			message: "#^Method Raml\\\\Tests\\\\TypeTest\\:\\:shouldCorrectlyValidateCorrectTypeMissingUnrequired\\(\\) has no return typehint specified\\.$#"
+			count: 1
+			path: ../../../tests/TypeTest.php
+
+		-
+			message: "#^Method Raml\\\\Tests\\\\TypeTest\\:\\:shouldCorrectlyValidateCorrectTypeMissingRequired\\(\\) has no return typehint specified\\.$#"
+			count: 1
+			path: ../../../tests/TypeTest.php
+
+		-
+			message: "#^Method Raml\\\\Tests\\\\TypeTest\\:\\:shouldCorrectlyValidateIncorrectType\\(\\) has no return typehint specified\\.$#"
+			count: 1
+			path: ../../../tests/TypeTest.php
+
+		-
+			message: "#^Method Raml\\\\Tests\\\\TypeTest\\:\\:shouldCorrectlyValidateAdditionalProperties\\(\\) has no return typehint specified\\.$#"
+			count: 1
+			path: ../../../tests/TypeTest.php
+
+		-
+			message: "#^Method Raml\\\\Tests\\\\TypeTest\\:\\:shouldCorrectlyValidateNullTypes\\(\\) has no return typehint specified\\.$#"
+			count: 1
+			path: ../../../tests/TypeTest.php
+
+		-
+			message: "#^Method Raml\\\\Tests\\\\TypeTest\\:\\:shouldCorrectlyValidateRightDateTimeOnlyTypes\\(\\) has no return typehint specified\\.$#"
+			count: 1
+			path: ../../../tests/TypeTest.php
+
+		-
+			message: "#^Method Raml\\\\Tests\\\\TypeTest\\:\\:shouldCorrectlyValidateWrongDateTimeOnlyTypes\\(\\) has no return typehint specified\\.$#"
+			count: 1
+			path: ../../../tests/TypeTest.php
+
+		-
+			message: "#^Method Raml\\\\Tests\\\\TypeTest\\:\\:shouldCorrectlyValidateRightDateOnlyTypes\\(\\) has no return typehint specified\\.$#"
+			count: 1
+			path: ../../../tests/TypeTest.php
+
+		-
+			message: "#^Method Raml\\\\Tests\\\\TypeTest\\:\\:shouldCorrectlyValidateWrongDateOnlyTypes\\(\\) has no return typehint specified\\.$#"
+			count: 1
+			path: ../../../tests/TypeTest.php
+
+		-
+			message: "#^Method Raml\\\\Tests\\\\TypeTest\\:\\:shouldCorrectlyValidateArrayScalarTypes\\(\\) has no return typehint specified\\.$#"
+			count: 1
+			path: ../../../tests/TypeTest.php
+
+		-
+			message: "#^Method Raml\\\\Tests\\\\Types\\\\ArrayTest\\:\\:shouldCorrectlyValidateCorrectType\\(\\) has no return typehint specified\\.$#"
+			count: 1
+			path: ../../../tests/Types/ArrayTest.php
+
+		-
+			message: "#^Cannot call method getMethod\\(\\) on resource\\.$#"
+			count: 4
+			path: ../../../tests/Types/ArrayTest.php
+
+		-
+			message: "#^Method Raml\\\\Tests\\\\Types\\\\ArrayTest\\:\\:shouldCorrectlyValidateIncorrectArraySizeLessThanMinimum\\(\\) has no return typehint specified\\.$#"
+			count: 1
+			path: ../../../tests/Types/ArrayTest.php
+
+		-
+			message: "#^Method Raml\\\\Tests\\\\Types\\\\ArrayTest\\:\\:shouldCorrectlyParseTypeFacet\\(\\) has no return typehint specified\\.$#"
+			count: 1
+			path: ../../../tests/Types/ArrayTest.php
+
+		-
+			message: "#^Method Raml\\\\Tests\\\\Types\\\\ArrayTest\\:\\:shouldCorrectlyValidateIncorrectTypeWhenArraySizeExceedsMaximum\\(\\) has no return typehint specified\\.$#"
+			count: 1
+			path: ../../../tests/Types/ArrayTest.php
+
+		-
+			message: "#^Method Raml\\\\Tests\\\\Types\\\\ObjectTypeTest\\:\\:shouldCorrectlyValidateCorrectType\\(\\) has no return typehint specified\\.$#"
+			count: 1
+			path: ../../../tests/Types/ObjectTypeTest.php
+
+		-
+			message: "#^Cannot call method getMethod\\(\\) on resource\\.$#"
+			count: 2
+			path: ../../../tests/Types/ObjectTypeTest.php
+
+		-
+			message: "#^Method Raml\\\\Tests\\\\Types\\\\ObjectTypeTest\\:\\:shouldNotCorrectlyValidateObjectType\\(\\) has no return typehint specified\\.$#"
+			count: 1
+			path: ../../../tests/Types/ObjectTypeTest.php
+
+		-
+			message: "#^Method Raml\\\\Tests\\\\Types\\\\UnionTypeTest\\:\\:shouldCorrectlyValidateCorrectType\\(\\) has no return typehint specified\\.$#"
+			count: 1
+			path: ../../../tests/Types/UnionTypeTest.php
+
+		-
+			message: "#^Cannot call method getMethod\\(\\) on resource\\.$#"
+			count: 6
+			path: ../../../tests/Types/UnionTypeTest.php
+
+		-
+			message: "#^Method Raml\\\\Tests\\\\Types\\\\UnionTypeTest\\:\\:shouldCorrectlyValidateIncorrectType\\(\\) has no return typehint specified\\.$#"
+			count: 1
+			path: ../../../tests/Types/UnionTypeTest.php
+
+		-
+			message: "#^Method Raml\\\\Tests\\\\Types\\\\UnionTypeTest\\:\\:shouldCorrectlyValidateNullableTypes\\(\\) has no return typehint specified\\.$#"
+			count: 1
+			path: ../../../tests/Types/UnionTypeTest.php
+
+		-
+			message: "#^Method Raml\\\\Tests\\\\Types\\\\UnionTypeTest\\:\\:shouldCorrectlyValidateNullableStringTypes\\(\\) has no return typehint specified\\.$#"
+			count: 1
+			path: ../../../tests/Types/UnionTypeTest.php
+
+		-
+			message: "#^Method Raml\\\\Tests\\\\Types\\\\UnionTypeTest\\:\\:shouldCorrectlyValidateUnionInheritedTypes1\\(\\) has no return typehint specified\\.$#"
+			count: 1
+			path: ../../../tests/Types/UnionTypeTest.php
+
+		-
+			message: "#^Method Raml\\\\Tests\\\\Types\\\\UnionTypeTest\\:\\:shouldCorrectlyValidateUnionInheritedTypes2\\(\\) has no return typehint specified\\.$#"
+			count: 1
+			path: ../../../tests/Types/UnionTypeTest.php
+
+		-
+			message: "#^Method Raml\\\\Tests\\\\Validator\\\\RequestValidatorTest\\:\\:shouldCatchWrongMediaType\\(\\) has no return typehint specified\\.$#"
+			count: 1
+			path: ../../../tests/Validator/RequestValidatorTest.php
+
+		-
+			message: "#^Method Raml\\\\Tests\\\\Validator\\\\RequestValidatorTest\\:\\:shouldSuccessfullyAssertWildcardAcceptHeader\\(\\) has no return typehint specified\\.$#"
+			count: 1
+			path: ../../../tests/Validator/RequestValidatorTest.php
+
+		-
+			message: "#^Method Raml\\\\Tests\\\\Validator\\\\RequestValidatorTest\\:\\:shouldNotAssertBodyOnGetRequest\\(\\) has no return typehint specified\\.$#"
+			count: 1
+			path: ../../../tests/Validator/RequestValidatorTest.php
+
+		-
+			message: "#^Method Raml\\\\Tests\\\\Validator\\\\RequestValidatorTest\\:\\:shouldCatchMissingParameters\\(\\) has no return typehint specified\\.$#"
+			count: 1
+			path: ../../../tests/Validator/RequestValidatorTest.php
+
+		-
+			message: "#^Method Raml\\\\Tests\\\\Validator\\\\RequestValidatorTest\\:\\:shouldCatchInvalidParameters\\(\\) has no return typehint specified\\.$#"
+			count: 1
+			path: ../../../tests/Validator/RequestValidatorTest.php
+
+		-
+			message: "#^Method Raml\\\\Tests\\\\Validator\\\\RequestValidatorTest\\:\\:shouldCatchInvalidBody\\(\\) has no return typehint specified\\.$#"
+			count: 1
+			path: ../../../tests/Validator/RequestValidatorTest.php
+
+		-
+			message: "#^Method Raml\\\\Tests\\\\Validator\\\\RequestValidatorTest\\:\\:shouldAllowEmptyRequestBody\\(\\) has no return typehint specified\\.$#"
+			count: 1
+			path: ../../../tests/Validator/RequestValidatorTest.php
+
+		-
+			message: "#^Method Raml\\\\Tests\\\\Validator\\\\RequestValidatorTest\\:\\:shouldParseContentTypeHeader\\(\\) has no return typehint specified\\.$#"
+			count: 1
+			path: ../../../tests/Validator/RequestValidatorTest.php
+
+		-
+			message: "#^Method Raml\\\\Tests\\\\Validator\\\\ResponseValidatorTest\\:\\:shouldCatchMissingHeaders\\(\\) has no return typehint specified\\.$#"
+			count: 1
+			path: ../../../tests/Validator/ResponseValidatorTest.php
+
+		-
+			message: "#^Method Raml\\\\Tests\\\\Validator\\\\ResponseValidatorTest\\:\\:shouldCatchInvalidHeaders\\(\\) has no return typehint specified\\.$#"
+			count: 1
+			path: ../../../tests/Validator/ResponseValidatorTest.php
+
+		-
+			message: "#^Method Raml\\\\Tests\\\\Validator\\\\ResponseValidatorTest\\:\\:shouldPassOnEmptyBodyIfNotRequired\\(\\) has no return typehint specified\\.$#"
+			count: 1
+			path: ../../../tests/Validator/ResponseValidatorTest.php
+
+		-
+			message: "#^Method Raml\\\\Tests\\\\Validator\\\\ResponseValidatorTest\\:\\:shouldCatchInvalidBody\\(\\) has no return typehint specified\\.$#"
+			count: 1
+			path: ../../../tests/Validator/ResponseValidatorTest.php
+
+		-
+			message: "#^Method Raml\\\\Tests\\\\Validator\\\\ResponseValidatorTest\\:\\:shouldParseContentTypeHeader\\(\\) has no return typehint specified\\.$#"
+			count: 1
+			path: ../../../tests/Validator/ResponseValidatorTest.php
+
+		-
+			message: "#^Method Raml\\\\Tests\\\\Validator\\\\ValidatorSchemaHelperTest\\:\\:shouldThrowExceptionIfResourceNotFound\\(\\) has no return typehint specified\\.$#"
+			count: 1
+			path: ../../../tests/Validator/ValidatorSchemaHelperTest.php
+
+		-
+			message: "#^Method Raml\\\\Tests\\\\Validator\\\\ValidatorSchemaHelperTest\\:\\:shouldThrowExceptionIfMethodNotFound\\(\\) has no return typehint specified\\.$#"
+			count: 1
+			path: ../../../tests/Validator/ValidatorSchemaHelperTest.php
+
+		-
+			message: "#^Method Raml\\\\Tests\\\\Validator\\\\ValidatorSchemaHelperTest\\:\\:shouldThrowExceptionIfResponseNotFound\\(\\) has no return typehint specified\\.$#"
+			count: 1
+			path: ../../../tests/Validator/ValidatorSchemaHelperTest.php
+
+		-
+			message: "#^Method Raml\\\\Tests\\\\Validator\\\\ValidatorSchemaHelperTest\\:\\:shouldThrowExceptionIfResponseBodyNotFound\\(\\) has no return typehint specified\\.$#"
+			count: 1
+			path: ../../../tests/Validator/ValidatorSchemaHelperTest.php
+
+		-
+			message: "#^Method Raml\\\\Tests\\\\Validator\\\\ValidatorSchemaHelperTest\\:\\:shouldCorrectlyReturnResponseBodyWithCompositeMediaType\\(\\) has no return typehint specified\\.$#"
+			count: 1
+			path: ../../../tests/Validator/ValidatorSchemaHelperTest.php
+
+		-
+			message: "#^Method Raml\\\\Tests\\\\Validator\\\\ValidatorSchemaHelperTest\\:\\:shouldThrowExceptionIfResponseBodyIsNotABodyObject\\(\\) has no return typehint specified\\.$#"
+			count: 1
+			path: ../../../tests/Validator/ValidatorSchemaHelperTest.php
+
+		-
+			message: "#^Method Raml\\\\Tests\\\\Validator\\\\ValidatorSchemaHelperTest\\:\\:shouldGetRequiredOrAllQueryParameters\\(\\) has no return typehint specified\\.$#"
+			count: 1
+			path: ../../../tests/Validator/ValidatorSchemaHelperTest.php
+
+		-
+			message: "#^Method Raml\\\\Tests\\\\Validator\\\\ValidatorSchemaHelperTest\\:\\:shouldGetRequestBody\\(\\) has no return typehint specified\\.$#"
+			count: 1
+			path: ../../../tests/Validator/ValidatorSchemaHelperTest.php
+
+		-
+			message: "#^Method Raml\\\\Tests\\\\Validator\\\\ValidatorSchemaHelperTest\\:\\:shouldGetResponse\\(\\) has no return typehint specified\\.$#"
+			count: 1
+			path: ../../../tests/Validator/ValidatorSchemaHelperTest.php
+
+		-
+			message: "#^Method Raml\\\\Tests\\\\Validator\\\\ValidatorSchemaHelperTest\\:\\:shouldGetResponseBody\\(\\) has no return typehint specified\\.$#"
+			count: 1
+			path: ../../../tests/Validator/ValidatorSchemaHelperTest.php
+
+		-
+			message: "#^Method Raml\\\\Tests\\\\Validator\\\\ValidatorSchemaHelperTest\\:\\:shouldGetResponseHeaders\\(\\) has no return typehint specified\\.$#"
+			count: 1
+			path: ../../../tests/Validator/ValidatorSchemaHelperTest.php
+
+		-
+			message: "#^Cannot call method getMethod\\(\\) on resource\\.$#"
+			count: 2
+			path: ../../../tests/XmlSchemaTest.php
+
+		-
+			message: "#^Method Raml\\\\Tests\\\\XmlSchemaTest\\:\\:shouldReturnXmlSchemeDefinition\\(\\) has no return typehint specified\\.$#"
+			count: 1
+			path: ../../../tests/XmlSchemaTest.php
+
+		-
+			message: "#^Method Raml\\\\Tests\\\\XmlSchemaTest\\:\\:shouldCorrectlyValidateCorrectXml\\(\\) has no return typehint specified\\.$#"
+			count: 1
+			path: ../../../tests/XmlSchemaTest.php
+
+		-
+			message: "#^Method Raml\\\\Tests\\\\XmlSchemaTest\\:\\:shouldCorrectlyValidateIncorrectXml\\(\\) has no return typehint specified\\.$#"
+			count: 1
+			path: ../../../tests/XmlSchemaTest.php
+
+		-
+			message: "#^Method Raml\\\\Tests\\\\XmlSchemaTest\\:\\:shouldConvertXmlToString\\(\\) has no return typehint specified\\.$#"
+			count: 1
+			path: ../../../tests/XmlSchemaTest.php
+
+		-
+			message: "#^Method Raml\\\\Tests\\\\XmlSchemaTest\\:\\:shouldThrowExceptionOnIncorrectXml\\(\\) has no return typehint specified\\.$#"
+			count: 1
+			path: ../../../tests/XmlSchemaTest.php
+
+		-
+			message: "#^Method Raml\\\\Tests\\\\XmlSchemaTest\\:\\:assertValidationFailedWithErrors\\(\\) has no return typehint specified\\.$#"
+			count: 1
+			path: ../../../tests/XmlSchemaTest.php
+
+		-
+			message: "#^Method PHPUnit\\\\Framework\\\\Assert\\:\\:assertContainsEquals\\(\\) invoked with 5 parameters, 2\\-3 required\\.$#"
+			count: 1
+			path: ../../../tests/XmlSchemaTest.php
+
+		-
+			message: "#^Function assertValidationFailedWithErrors\\(\\) has an unused variable \\$message\\.$#"
+			count: 1
+			path: ../../../tests/XmlSchemaTest.php
+
+		-
+			message: "#^Function assertValidationFailedWithErrors\\(\\) has an unused variable \\$ignoreCase\\.$#"
+			count: 1
+			path: ../../../tests/XmlSchemaTest.php
+
+		-
+			message: "#^Function assertValidationFailedWithErrors\\(\\) has an unused variable \\$checkObjectIdentity\\.$#"
+			count: 1
+			path: ../../../tests/XmlSchemaTest.php
+

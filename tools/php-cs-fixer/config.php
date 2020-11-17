@@ -2,9 +2,11 @@
 
 declare(strict_types=1);
 
+$rootFolder = __DIR__.'/../../';
+
 $finder = PhpCsFixer\Finder::create()
-    ->in(__DIR__.'/src')
-    ->in(__DIR__.'/tests');
+    ->in($rootFolder.'/src')
+    ->in($rootFolder.'/tests');
 
 return PhpCsFixer\Config::create()
     ->setRules(
@@ -53,7 +55,6 @@ return PhpCsFixer\Config::create()
             'phpdoc_single_line_var_spacing' => false,
             'phpdoc_summary' => false,
             'phpdoc_to_comment' => false,
-            'phpdoc_to_comment' => false,
             'phpdoc_to_return_type' => false,
             'phpdoc_trim' => false,
             'phpdoc_trim_consecutive_blank_line_separation' => false,
@@ -62,7 +63,6 @@ return PhpCsFixer\Config::create()
             'phpdoc_var_annotation_correct_order' => false,
             'phpdoc_var_without_name' => false,
          //   'phpdoc_types_order' => ['null_adjustment' => 'always_last'],
-            'phpdoc_types_order' => false,
             'simplified_null_return' => true,
             'single_line_comment_style' => false,
             'static_lambda' => true,

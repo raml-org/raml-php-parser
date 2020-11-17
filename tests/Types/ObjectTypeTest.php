@@ -14,7 +14,7 @@ class ObjectTypeTest extends TestCase
      */
     private $apiDefinition;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         parent::setUp();
         $this->apiDefinition = (new Parser())->parse(__DIR__ . '/../fixture/object_types.raml');

@@ -52,11 +52,6 @@ install:
 
 script:
   - if [ "$(phpenv version-name)" != "$LATEST_PHP_VERSION" ]; then
-      echo "File validation is skipped for older PHP versions";
-    else
-      composer validate-files;
-    fi;
-  - if [ "$(phpenv version-name)" != "$LATEST_PHP_VERSION" ]; then
       echo "Static analysis is skipped for older PHP versions";
     else
       composer run-static-analysis;

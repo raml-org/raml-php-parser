@@ -13,7 +13,7 @@ class JsonSchemaTest extends TestCase
      */
     private $parser;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         parent::setUp();
         $this->parser = new Parser();
@@ -32,7 +32,7 @@ class JsonSchemaTest extends TestCase
         $schema = $body->getSchema();
 
         $schemaString = (string) $schema;
-        $this->assertInternalType('string', $schemaString);
+        $this->assertIsString($schemaString);
         $this->assertEquals('A list of songs', \json_decode($schemaString)->description);
     }
 

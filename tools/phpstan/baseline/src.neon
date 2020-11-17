@@ -1,0 +1,1672 @@
+parameters:
+	ignoreErrors:
+		-
+			message: "#^Unsafe usage of new static\\(\\)\\.$#"
+			count: 1
+			path: ../../../src/ApiDefinition.php
+
+		-
+			message: "#^Call to function assert\\(\\) with false will always evaluate to false\\.$#"
+			count: 1
+			path: ../../../src/ApiDefinition.php
+
+		-
+			message: "#^Instanceof between resource and Raml\\\\Resource will always evaluate to false\\.$#"
+			count: 1
+			path: ../../../src/ApiDefinition.php
+
+		-
+			message: "#^Cannot call method getUri\\(\\) on resource\\.$#"
+			count: 3
+			path: ../../../src/ApiDefinition.php
+
+		-
+			message: "#^Cannot call method getResources\\(\\) on resource\\.$#"
+			count: 2
+			path: ../../../src/ApiDefinition.php
+
+		-
+			message: "#^Method Raml\\\\ApiDefinition\\:\\:setBaseUri\\(\\) has no return typehint specified\\.$#"
+			count: 1
+			path: ../../../src/ApiDefinition.php
+
+		-
+			message: "#^Method Raml\\\\ApiDefinition\\:\\:setBaseUri\\(\\) has parameter \\$baseUrl with no typehint specified\\.$#"
+			count: 1
+			path: ../../../src/ApiDefinition.php
+
+		-
+			message: "#^Parameter \\#1 \\$str of function strtoupper expects string, string\\|false\\|null given\\.$#"
+			count: 2
+			path: ../../../src/ApiDefinition.php
+
+		-
+			message: "#^Method Raml\\\\ApiDefinition\\:\\:addBaseUriParameter\\(\\) has no return typehint specified\\.$#"
+			count: 1
+			path: ../../../src/ApiDefinition.php
+
+		-
+			message: "#^Method Raml\\\\ApiDefinition\\:\\:addProtocol\\(\\) has no return typehint specified\\.$#"
+			count: 1
+			path: ../../../src/ApiDefinition.php
+
+		-
+			message: "#^Method Raml\\\\ApiDefinition\\:\\:setDefaultMediaType\\(\\) has no return typehint specified\\.$#"
+			count: 1
+			path: ../../../src/ApiDefinition.php
+
+		-
+			message: "#^Method Raml\\\\ApiDefinition\\:\\:addSchemaCollection\\(\\) has no return typehint specified\\.$#"
+			count: 1
+			path: ../../../src/ApiDefinition.php
+
+		-
+			message: "#^Method Raml\\\\ApiDefinition\\:\\:addSchema\\(\\) has no return typehint specified\\.$#"
+			count: 1
+			path: ../../../src/ApiDefinition.php
+
+		-
+			message: "#^Result of && is always false\\.$#"
+			count: 1
+			path: ../../../src/ApiDefinition.php
+
+		-
+			message: "#^Method Raml\\\\ApiDefinition\\:\\:addDocumentation\\(\\) has no return typehint specified\\.$#"
+			count: 1
+			path: ../../../src/ApiDefinition.php
+
+		-
+			message: "#^Method Raml\\\\ApiDefinition\\:\\:getStraightForwardTypes\\(\\) has no return typehint specified\\.$#"
+			count: 1
+			path: ../../../src/ApiDefinition.php
+
+		-
+			message: "#^Call to function is_string\\(\\) with array will always evaluate to false\\.$#"
+			count: 1
+			path: ../../../src/ApiDefinition.php
+
+		-
+			message: "#^Else branch is unreachable because previous condition is always true\\.$#"
+			count: 1
+			path: ../../../src/ApiDefinition.php
+
+		-
+			message: "#^Parameter \\#1 \\$function of function forward_static_call_array expects callable\\(\\)\\: mixed, array\\(class\\-string, 'createFromArray'\\) given\\.$#"
+			count: 1
+			path: ../../../src/ApiDefinition.php
+
+		-
+			message: "#^Method Raml\\\\ApiDefinition\\:\\:addType\\(\\) has no return typehint specified\\.$#"
+			count: 1
+			path: ../../../src/ApiDefinition.php
+
+		-
+			message: "#^Method Raml\\\\ApiDefinition\\:\\:addTrait\\(\\) has no return typehint specified\\.$#"
+			count: 1
+			path: ../../../src/ApiDefinition.php
+
+		-
+			message: "#^Method Raml\\\\ApiDefinition\\:\\:addResource\\(\\) has no return typehint specified\\.$#"
+			count: 1
+			path: ../../../src/ApiDefinition.php
+
+		-
+			message: "#^Array \\(array\\<resource\\>\\) does not accept Raml\\\\Resource\\.$#"
+			count: 1
+			path: ../../../src/ApiDefinition.php
+
+		-
+			message: "#^Method Raml\\\\ApiDefinition\\:\\:removeResource\\(\\) has no return typehint specified\\.$#"
+			count: 1
+			path: ../../../src/ApiDefinition.php
+
+		-
+			message: "#^Method Raml\\\\ApiDefinition\\:\\:addSecurityScheme\\(\\) has no return typehint specified\\.$#"
+			count: 1
+			path: ../../../src/ApiDefinition.php
+
+		-
+			message: "#^Method Raml\\\\ApiDefinition\\:\\:addSecuredBy\\(\\) has no return typehint specified\\.$#"
+			count: 1
+			path: ../../../src/ApiDefinition.php
+
+		-
+			message: "#^Cannot call method getMethods\\(\\) on resource\\.$#"
+			count: 1
+			path: ../../../src/ApiDefinition.php
+
+		-
+			message: "#^Cannot call method getUriParameters\\(\\) on resource\\.$#"
+			count: 1
+			path: ../../../src/ApiDefinition.php
+
+		-
+			message: "#^Cannot call method getMethod\\(\\) on resource\\.$#"
+			count: 1
+			path: ../../../src/ApiDefinition.php
+
+		-
+			message: "#^Method Raml\\\\ApiDefinition\\:\\:setProtocolsFromBaseUri\\(\\) has no return typehint specified\\.$#"
+			count: 1
+			path: ../../../src/ApiDefinition.php
+
+		-
+			message: "#^Unsafe usage of new static\\(\\)\\.$#"
+			count: 1
+			path: ../../../src/Body.php
+
+		-
+			message: "#^Method Raml\\\\Body\\:\\:setDescription\\(\\) has no return typehint specified\\.$#"
+			count: 1
+			path: ../../../src/Body.php
+
+		-
+			message: "#^Ternary operator condition is always true\\.$#"
+			count: 1
+			path: ../../../src/Body.php
+
+		-
+			message: "#^Method Raml\\\\Body\\:\\:setSchema\\(\\) has no return typehint specified\\.$#"
+			count: 1
+			path: ../../../src/Body.php
+
+		-
+			message: "#^Result of && is always false\\.$#"
+			count: 1
+			path: ../../../src/Body.php
+
+		-
+			message: "#^Method Raml\\\\Body\\:\\:setType\\(\\) has no return typehint specified\\.$#"
+			count: 1
+			path: ../../../src/Body.php
+
+		-
+			message: "#^Method Raml\\\\Body\\:\\:addExample\\(\\) has no return typehint specified\\.$#"
+			count: 1
+			path: ../../../src/Body.php
+
+		-
+			message: "#^Property Raml\\\\Exception\\\\BadParameter\\\\FileNotFoundException\\:\\:\\$fileName has no typehint specified\\.$#"
+			count: 1
+			path: ../../../src/Exception/BadParameter/FileNotFoundException.php
+
+		-
+			message: "#^Method Raml\\\\Exception\\\\BadParameter\\\\FileNotFoundException\\:\\:__construct\\(\\) has parameter \\$fileName with no typehint specified\\.$#"
+			count: 1
+			path: ../../../src/Exception/BadParameter/FileNotFoundException.php
+
+		-
+			message: "#^Method Raml\\\\Exception\\\\BadParameter\\\\FileNotFoundException\\:\\:getFileName\\(\\) has no return typehint specified\\.$#"
+			count: 1
+			path: ../../../src/Exception/BadParameter/FileNotFoundException.php
+
+		-
+			message: "#^Property Raml\\\\Exception\\\\BadParameter\\\\ResourceNotFoundException\\:\\:\\$uri has no typehint specified\\.$#"
+			count: 1
+			path: ../../../src/Exception/BadParameter/ResourceNotFoundException.php
+
+		-
+			message: "#^Method Raml\\\\Exception\\\\BadParameter\\\\ResourceNotFoundException\\:\\:__construct\\(\\) has parameter \\$uri with no typehint specified\\.$#"
+			count: 1
+			path: ../../../src/Exception/BadParameter/ResourceNotFoundException.php
+
+		-
+			message: "#^Method Raml\\\\Exception\\\\BadParameter\\\\ResourceNotFoundException\\:\\:getUri\\(\\) has no return typehint specified\\.$#"
+			count: 1
+			path: ../../../src/Exception/BadParameter/ResourceNotFoundException.php
+
+		-
+			message: "#^Method Raml\\\\Exception\\\\EmptyBodyException\\:\\:__construct\\(\\) has parameter \\$code with no typehint specified\\.$#"
+			count: 1
+			path: ../../../src/Exception/EmptyBodyException.php
+
+		-
+			message: "#^Method Raml\\\\Exception\\\\EmptyBodyException\\:\\:__construct\\(\\) has parameter \\$message with no typehint specified\\.$#"
+			count: 1
+			path: ../../../src/Exception/EmptyBodyException.php
+
+		-
+			message: "#^Method Raml\\\\Exception\\\\EmptyBodyException\\:\\:__construct\\(\\) has parameter \\$previous with no typehint specified\\.$#"
+			count: 1
+			path: ../../../src/Exception/EmptyBodyException.php
+
+		-
+			message: "#^Property Raml\\\\Exception\\\\InvalidJsonException\\:\\:\\$errorCode has no typehint specified\\.$#"
+			count: 1
+			path: ../../../src/Exception/InvalidJsonException.php
+
+		-
+			message: "#^Method Raml\\\\Exception\\\\InvalidJsonException\\:\\:__construct\\(\\) has parameter \\$errorCode with no typehint specified\\.$#"
+			count: 1
+			path: ../../../src/Exception/InvalidJsonException.php
+
+		-
+			message: "#^Method Raml\\\\Exception\\\\InvalidJsonException\\:\\:getErrorCode\\(\\) has no return typehint specified\\.$#"
+			count: 1
+			path: ../../../src/Exception/InvalidJsonException.php
+
+		-
+			message: "#^Property Raml\\\\Exception\\\\InvalidKeyException\\:\\:\\$key has no typehint specified\\.$#"
+			count: 1
+			path: ../../../src/Exception/InvalidKeyException.php
+
+		-
+			message: "#^Method Raml\\\\Exception\\\\InvalidKeyException\\:\\:__construct\\(\\) has parameter \\$key with no typehint specified\\.$#"
+			count: 1
+			path: ../../../src/Exception/InvalidKeyException.php
+
+		-
+			message: "#^Method Raml\\\\Exception\\\\InvalidKeyException\\:\\:getKey\\(\\) has no return typehint specified\\.$#"
+			count: 1
+			path: ../../../src/Exception/InvalidKeyException.php
+
+		-
+			message: "#^Method Raml\\\\Exception\\\\InvalidQueryParameterTypeException\\:\\:__construct\\(\\) has parameter \\$type with no typehint specified\\.$#"
+			count: 1
+			path: ../../../src/Exception/InvalidQueryParameterTypeException.php
+
+		-
+			message: "#^Method Raml\\\\Exception\\\\InvalidQueryParameterTypeException\\:\\:getType\\(\\) has no return typehint specified\\.$#"
+			count: 1
+			path: ../../../src/Exception/InvalidQueryParameterTypeException.php
+
+		-
+			message: "#^Method Raml\\\\Exception\\\\InvalidQueryParameterTypeException\\:\\:getValidTypes\\(\\) has no return typehint specified\\.$#"
+			count: 1
+			path: ../../../src/Exception/InvalidQueryParameterTypeException.php
+
+		-
+			message: "#^Property Raml\\\\Exception\\\\InvalidSchemaException\\:\\:\\$errors has no typehint specified\\.$#"
+			count: 1
+			path: ../../../src/Exception/InvalidSchemaException.php
+
+		-
+			message: "#^Method Raml\\\\Exception\\\\InvalidSchemaException\\:\\:getErrors\\(\\) has no return typehint specified\\.$#"
+			count: 1
+			path: ../../../src/Exception/InvalidSchemaException.php
+
+		-
+			message: "#^Parameter \\#2 \\$pieces of function implode expects array, array\\|string given\\.$#"
+			count: 1
+			path: ../../../src/Exception/InvalidXmlException.php
+
+		-
+			message: "#^Method Raml\\\\FileLoader\\\\DefaultFileLoader\\:\\:loadFile\\(\\) should return string but returns string\\|false\\.$#"
+			count: 1
+			path: ../../../src/FileLoader/DefaultFileLoader.php
+
+		-
+			message: "#^Method Raml\\\\FileLoader\\\\JsonSchemaFileLoader\\:\\:loadFile\\(\\) should return string but returns string\\|false\\.$#"
+			count: 1
+			path: ../../../src/FileLoader/JsonSchemaFileLoader.php
+
+		-
+			message: "#^Method Raml\\\\MessageSchemaInterface\\:\\:addHeader\\(\\) has no return typehint specified\\.$#"
+			count: 1
+			path: ../../../src/MessageSchemaInterface.php
+
+		-
+			message: "#^Method Raml\\\\MessageSchemaInterface\\:\\:addBody\\(\\) has no return typehint specified\\.$#"
+			count: 1
+			path: ../../../src/MessageSchemaInterface.php
+
+		-
+			message: "#^Unsafe usage of new static\\(\\)\\.$#"
+			count: 1
+			path: ../../../src/Method.php
+
+		-
+			message: "#^Cannot call method getSecurityScheme\\(\\) on Raml\\\\ApiDefinition\\|null\\.$#"
+			count: 2
+			path: ../../../src/Method.php
+
+		-
+			message: "#^Method Raml\\\\Method\\:\\:setDescription\\(\\) has no return typehint specified\\.$#"
+			count: 1
+			path: ../../../src/Method.php
+
+		-
+			message: "#^Method Raml\\\\Method\\:\\:setDisplayName\\(\\) has no return typehint specified\\.$#"
+			count: 1
+			path: ../../../src/Method.php
+
+		-
+			message: "#^Method Raml\\\\Method\\:\\:addBaseUriParameter\\(\\) has no return typehint specified\\.$#"
+			count: 1
+			path: ../../../src/Method.php
+
+		-
+			message: "#^Method Raml\\\\Method\\:\\:addHeader\\(\\) has no return typehint specified\\.$#"
+			count: 1
+			path: ../../../src/Method.php
+
+		-
+			message: "#^Cannot access offset 'example' on Raml\\\\BodyInterface\\.$#"
+			count: 1
+			path: ../../../src/Method.php
+
+		-
+			message: "#^Method Raml\\\\Method\\:\\:addProtocol\\(\\) has no return typehint specified\\.$#"
+			count: 1
+			path: ../../../src/Method.php
+
+		-
+			message: "#^Method Raml\\\\Method\\:\\:addQueryParameter\\(\\) has no return typehint specified\\.$#"
+			count: 1
+			path: ../../../src/Method.php
+
+		-
+			message: "#^Method Raml\\\\Method\\:\\:addBody\\(\\) has no return typehint specified\\.$#"
+			count: 1
+			path: ../../../src/Method.php
+
+		-
+			message: "#^Method Raml\\\\Method\\:\\:getResponse\\(\\) should return Raml\\\\Response but returns Raml\\\\Response\\|null\\.$#"
+			count: 1
+			path: ../../../src/Method.php
+
+		-
+			message: "#^Method Raml\\\\Method\\:\\:addResponse\\(\\) has no return typehint specified\\.$#"
+			count: 1
+			path: ../../../src/Method.php
+
+		-
+			message: "#^Method Raml\\\\Method\\:\\:addSecurityScheme\\(\\) has no return typehint specified\\.$#"
+			count: 1
+			path: ../../../src/Method.php
+
+		-
+			message: "#^If condition is always true\\.$#"
+			count: 1
+			path: ../../../src/Method.php
+
+		-
+			message: "#^Property Raml\\\\NamedParameter\\:\\:\\$default has no typehint specified\\.$#"
+			count: 1
+			path: ../../../src/NamedParameter.php
+
+		-
+			message: "#^Unsafe usage of new static\\(\\)\\.$#"
+			count: 1
+			path: ../../../src/NamedParameter.php
+
+		-
+			message: "#^Method Raml\\\\NamedParameter\\:\\:setDisplayName\\(\\) has no return typehint specified\\.$#"
+			count: 1
+			path: ../../../src/NamedParameter.php
+
+		-
+			message: "#^Method Raml\\\\NamedParameter\\:\\:setDescription\\(\\) has no return typehint specified\\.$#"
+			count: 1
+			path: ../../../src/NamedParameter.php
+
+		-
+			message: "#^Method Raml\\\\NamedParameter\\:\\:setType\\(\\) has no return typehint specified\\.$#"
+			count: 1
+			path: ../../../src/NamedParameter.php
+
+		-
+			message: "#^Method Raml\\\\NamedParameter\\:\\:setEnum\\(\\) has no return typehint specified\\.$#"
+			count: 1
+			path: ../../../src/NamedParameter.php
+
+		-
+			message: "#^Method Raml\\\\NamedParameter\\:\\:setValidationPattern\\(\\) has no return typehint specified\\.$#"
+			count: 1
+			path: ../../../src/NamedParameter.php
+
+		-
+			message: "#^Method Raml\\\\NamedParameter\\:\\:setMinLength\\(\\) has no return typehint specified\\.$#"
+			count: 1
+			path: ../../../src/NamedParameter.php
+
+		-
+			message: "#^Method Raml\\\\NamedParameter\\:\\:setMaxLength\\(\\) has no return typehint specified\\.$#"
+			count: 1
+			path: ../../../src/NamedParameter.php
+
+		-
+			message: "#^Method Raml\\\\NamedParameter\\:\\:setMinimum\\(\\) has no return typehint specified\\.$#"
+			count: 1
+			path: ../../../src/NamedParameter.php
+
+		-
+			message: "#^Method Raml\\\\NamedParameter\\:\\:setMaximum\\(\\) has no return typehint specified\\.$#"
+			count: 1
+			path: ../../../src/NamedParameter.php
+
+		-
+			message: "#^Method Raml\\\\NamedParameter\\:\\:addExample\\(\\) has no return typehint specified\\.$#"
+			count: 1
+			path: ../../../src/NamedParameter.php
+
+		-
+			message: "#^Method Raml\\\\NamedParameter\\:\\:setRepeat\\(\\) has no return typehint specified\\.$#"
+			count: 1
+			path: ../../../src/NamedParameter.php
+
+		-
+			message: "#^Method Raml\\\\NamedParameter\\:\\:setRequired\\(\\) has no return typehint specified\\.$#"
+			count: 1
+			path: ../../../src/NamedParameter.php
+
+		-
+			message: "#^Method Raml\\\\NamedParameter\\:\\:getDefault\\(\\) has no return typehint specified\\.$#"
+			count: 1
+			path: ../../../src/NamedParameter.php
+
+		-
+			message: "#^Method Raml\\\\NamedParameter\\:\\:setFormat\\(\\) has no return typehint specified\\.$#"
+			count: 1
+			path: ../../../src/NamedParameter.php
+
+		-
+			message: "#^Method Raml\\\\NamedParameter\\:\\:setDefault\\(\\) has no return typehint specified\\.$#"
+			count: 1
+			path: ../../../src/NamedParameter.php
+
+		-
+			message: "#^Method Raml\\\\NamedParameter\\:\\:setDefault\\(\\) has parameter \\$default with no typehint specified\\.$#"
+			count: 1
+			path: ../../../src/NamedParameter.php
+
+		-
+			message: "#^Unreachable statement \\- code above always terminates\\.$#"
+			count: 1
+			path: ../../../src/NamedParameter.php
+
+		-
+			message: "#^Method Raml\\\\NamedParameter\\:\\:validate\\(\\) has no return typehint specified\\.$#"
+			count: 1
+			path: ../../../src/NamedParameter.php
+
+		-
+			message: "#^Method Raml\\\\ParseConfiguration\\:\\:enableDirectoryTraversal\\(\\) has no return typehint specified\\.$#"
+			count: 1
+			path: ../../../src/ParseConfiguration.php
+
+		-
+			message: "#^Method Raml\\\\ParseConfiguration\\:\\:disableDirectoryTraversal\\(\\) has no return typehint specified\\.$#"
+			count: 1
+			path: ../../../src/ParseConfiguration.php
+
+		-
+			message: "#^Method Raml\\\\ParseConfiguration\\:\\:enableSchemaParsing\\(\\) has no return typehint specified\\.$#"
+			count: 1
+			path: ../../../src/ParseConfiguration.php
+
+		-
+			message: "#^Method Raml\\\\ParseConfiguration\\:\\:disableSchemaParsing\\(\\) has no return typehint specified\\.$#"
+			count: 1
+			path: ../../../src/ParseConfiguration.php
+
+		-
+			message: "#^Method Raml\\\\ParseConfiguration\\:\\:enableSecuritySchemeParsing\\(\\) has no return typehint specified\\.$#"
+			count: 1
+			path: ../../../src/ParseConfiguration.php
+
+		-
+			message: "#^Method Raml\\\\ParseConfiguration\\:\\:disableSecuritySchemeParsing\\(\\) has no return typehint specified\\.$#"
+			count: 1
+			path: ../../../src/ParseConfiguration.php
+
+		-
+			message: "#^Method Raml\\\\ParseConfiguration\\:\\:allowRemoteFileInclusion\\(\\) has no return typehint specified\\.$#"
+			count: 1
+			path: ../../../src/ParseConfiguration.php
+
+		-
+			message: "#^Method Raml\\\\ParseConfiguration\\:\\:forbidRemoteFileInclusion\\(\\) has no return typehint specified\\.$#"
+			count: 1
+			path: ../../../src/ParseConfiguration.php
+
+		-
+			message: "#^Method Raml\\\\Parser\\:\\:setConfiguration\\(\\) has no return typehint specified\\.$#"
+			count: 1
+			path: ../../../src/Parser.php
+
+		-
+			message: "#^Method Raml\\\\Parser\\:\\:addSchemaParser\\(\\) has no return typehint specified\\.$#"
+			count: 1
+			path: ../../../src/Parser.php
+
+		-
+			message: "#^Method Raml\\\\Parser\\:\\:addType\\(\\) has no return typehint specified\\.$#"
+			count: 1
+			path: ../../../src/Parser.php
+
+		-
+			message: "#^Method Raml\\\\Parser\\:\\:addSecuritySettingParser\\(\\) has no return typehint specified\\.$#"
+			count: 1
+			path: ../../../src/Parser.php
+
+		-
+			message: "#^Method Raml\\\\Parser\\:\\:addFileLoader\\(\\) has no return typehint specified\\.$#"
+			count: 1
+			path: ../../../src/Parser.php
+
+		-
+			message: "#^Parameter \\#1 \\$filename of function is_file expects string, string\\|false given\\.$#"
+			count: 1
+			path: ../../../src/Parser.php
+
+		-
+			message: "#^Parameter \\#1 \\$path of function dirname expects string, string\\|false given\\.$#"
+			count: 1
+			path: ../../../src/Parser.php
+
+		-
+			message: "#^Parameter \\#1 \\$filename of function file_get_contents expects string, string\\|false given\\.$#"
+			count: 2
+			path: ../../../src/Parser.php
+
+		-
+			message: "#^Parameter \\#1 \\$ramlString of method Raml\\\\Parser\\:\\:parseRamlString\\(\\) expects string, string\\|false given\\.$#"
+			count: 2
+			path: ../../../src/Parser.php
+
+		-
+			message: "#^Method Raml\\\\Parser\\:\\:parseResourceTypes\\(\\) has parameter \\$ramlData with no typehint specified\\.$#"
+			count: 1
+			path: ../../../src/Parser.php
+
+		-
+			message: "#^Parameter \\#1 \\$haystack of function strpos expects string, string\\|false given\\.$#"
+			count: 1
+			path: ../../../src/Parser.php
+
+		-
+			message: "#^Method Raml\\\\Parser\\:\\:parseRamlString\\(\\) should return array but returns array\\|string\\|Symfony\\\\Component\\\\Yaml\\\\Tag\\\\TaggedValue\\.$#"
+			count: 1
+			path: ../../../src/Parser.php
+
+		-
+			message: "#^Parameter \\#1 \\$filename of function is_readable expects string, string\\|false given\\.$#"
+			count: 1
+			path: ../../../src/Parser.php
+
+		-
+			message: "#^Parameter \\#1 \\$string of function strlen expects string, string\\|false given\\.$#"
+			count: 1
+			path: ../../../src/Parser.php
+
+		-
+			message: "#^Parameter \\#1 \\$string of function substr expects string, string\\|false given\\.$#"
+			count: 1
+			path: ../../../src/Parser.php
+
+		-
+			message: "#^Parameter \\#1 \\$str of function md5 expects string, string\\|false given\\.$#"
+			count: 1
+			path: ../../../src/Parser.php
+
+		-
+			message: "#^Parameter \\#1 \\$filePath of method Raml\\\\FileLoader\\\\FileLoaderInterface\\:\\:loadFile\\(\\) expects string, string\\|false given\\.$#"
+			count: 1
+			path: ../../../src/Parser.php
+
+		-
+			message: "#^Method Raml\\\\Parser\\:\\:loadAndParseFile\\(\\) should return array but returns array\\|string\\|Symfony\\\\Component\\\\Yaml\\\\Tag\\\\TaggedValue\\.$#"
+			count: 1
+			path: ../../../src/Parser.php
+
+		-
+			message: "#^Parameter \\#1 \\$haystack of function strpos expects string, string\\|Symfony\\\\Component\\\\Yaml\\\\Tag\\\\TaggedValue given\\.$#"
+			count: 1
+			path: ../../../src/Parser.php
+
+		-
+			message: "#^Parameter \\#3 \\$subject of function str_replace expects array\\|string, string\\|Symfony\\\\Component\\\\Yaml\\\\Tag\\\\TaggedValue given\\.$#"
+			count: 1
+			path: ../../../src/Parser.php
+
+		-
+			message: "#^Parameter \\#2 \\$arr2 of function array_replace_recursive expects array, array\\|string given\\.$#"
+			count: 3
+			path: ../../../src/Parser.php
+
+		-
+			message: "#^Method Raml\\\\Parser\\:\\:replaceTypes\\(\\) should return array but returns array\\|string\\.$#"
+			count: 1
+			path: ../../../src/Parser.php
+
+		-
+			message: "#^Parameter \\#1 \\$haystack of function strpos expects string, string\\|null given\\.$#"
+			count: 2
+			path: ../../../src/Parser.php
+
+		-
+			message: "#^Method Raml\\\\Parser\\:\\:getIncludedFiles\\(\\) has no return typehint specified\\.$#"
+			count: 1
+			path: ../../../src/Parser.php
+
+		-
+			message: "#^Unsafe usage of new static\\(\\)\\.$#"
+			count: 1
+			path: ../../../src/Resource.php
+
+		-
+			message: "#^Cannot call method getSecurityScheme\\(\\) on Raml\\\\ApiDefinition\\|null\\.$#"
+			count: 2
+			path: ../../../src/Resource.php
+
+		-
+			message: "#^Parameter \\#3 \\$subject of function preg_replace expects array\\|string, string\\|null given\\.$#"
+			count: 1
+			path: ../../../src/Resource.php
+
+		-
+			message: "#^Method Raml\\\\Resource\\:\\:setDisplayName\\(\\) has no return typehint specified\\.$#"
+			count: 1
+			path: ../../../src/Resource.php
+
+		-
+			message: "#^Method Raml\\\\Resource\\:\\:setDescription\\(\\) has no return typehint specified\\.$#"
+			count: 1
+			path: ../../../src/Resource.php
+
+		-
+			message: "#^Method Raml\\\\Resource\\:\\:addBaseUriParameter\\(\\) has no return typehint specified\\.$#"
+			count: 1
+			path: ../../../src/Resource.php
+
+		-
+			message: "#^Method Raml\\\\Resource\\:\\:addUriParameter\\(\\) has no return typehint specified\\.$#"
+			count: 1
+			path: ../../../src/Resource.php
+
+		-
+			message: "#^Method Raml\\\\Resource\\:\\:addResource\\(\\) has no return typehint specified\\.$#"
+			count: 1
+			path: ../../../src/Resource.php
+
+		-
+			message: "#^Parameter \\#1 \\$parentResource of method Raml\\\\Resource\\:\\:setParentResource\\(\\) expects resource, \\$this\\(Raml\\\\Resource\\) given\\.$#"
+			count: 1
+			path: ../../../src/Resource.php
+
+		-
+			message: "#^Method Raml\\\\Resource\\:\\:addMethod\\(\\) has no return typehint specified\\.$#"
+			count: 1
+			path: ../../../src/Resource.php
+
+		-
+			message: "#^Method Raml\\\\Resource\\:\\:addSecurityScheme\\(\\) has no return typehint specified\\.$#"
+			count: 1
+			path: ../../../src/Resource.php
+
+		-
+			message: "#^Unsafe usage of new static\\(\\)\\.$#"
+			count: 1
+			path: ../../../src/Response.php
+
+		-
+			message: "#^Method Raml\\\\Response\\:\\:addBody\\(\\) has no return typehint specified\\.$#"
+			count: 1
+			path: ../../../src/Response.php
+
+		-
+			message: "#^Method Raml\\\\Response\\:\\:addHeader\\(\\) has no return typehint specified\\.$#"
+			count: 1
+			path: ../../../src/Response.php
+
+		-
+			message: "#^Method Raml\\\\Response\\:\\:setDescription\\(\\) has no return typehint specified\\.$#"
+			count: 1
+			path: ../../../src/Response.php
+
+		-
+			message: "#^Method Raml\\\\RouteFormatter\\\\RouteFormatterInterface\\:\\:getRoutes\\(\\) has no return typehint specified\\.$#"
+			count: 1
+			path: ../../../src/RouteFormatter/RouteFormatterInterface.php
+
+		-
+			message: "#^Parameter \\#1 \\$string of function strlen expects string, string\\|false\\|null given\\.$#"
+			count: 1
+			path: ../../../src/RouteFormatter/SymfonyRouteFormatter.php
+
+		-
+			message: "#^Parameter \\#2 \\$needle of function strpos expects int\\|string, string\\|false\\|null given\\.$#"
+			count: 1
+			path: ../../../src/RouteFormatter/SymfonyRouteFormatter.php
+
+		-
+			message: "#^Method Raml\\\\RouteFormatter\\\\SymfonyRouteFormatter\\:\\:getRoutes\\(\\) has no return typehint specified\\.$#"
+			count: 1
+			path: ../../../src/RouteFormatter/SymfonyRouteFormatter.php
+
+		-
+			message: "#^Property Raml\\\\Schema\\\\Definition\\\\JsonSchemaDefinition\\:\\:\\$errors has no typehint specified\\.$#"
+			count: 1
+			path: ../../../src/Schema/Definition/JsonSchemaDefinition.php
+
+		-
+			message: "#^Method Raml\\\\Schema\\\\Definition\\\\JsonSchemaDefinition\\:\\:__toString\\(\\) should return string but returns string\\|false\\.$#"
+			count: 1
+			path: ../../../src/Schema/Definition/JsonSchemaDefinition.php
+
+		-
+			message: "#^Method Raml\\\\Schema\\\\Definition\\\\JsonSchemaDefinition\\:\\:validate\\(\\) has no return typehint specified\\.$#"
+			count: 1
+			path: ../../../src/Schema/Definition/JsonSchemaDefinition.php
+
+		-
+			message: "#^Method Raml\\\\Schema\\\\Definition\\\\JsonSchemaDefinition\\:\\:validate\\(\\) has parameter \\$value with no typehint specified\\.$#"
+			count: 1
+			path: ../../../src/Schema/Definition/JsonSchemaDefinition.php
+
+		-
+			message: "#^Parameter \\#1 \\$json of function json_decode expects string, string\\|false given\\.$#"
+			count: 1
+			path: ../../../src/Schema/Definition/JsonSchemaDefinition.php
+
+		-
+			message: "#^Property Raml\\\\Schema\\\\Definition\\\\XmlSchemaDefinition\\:\\:\\$errors has no typehint specified\\.$#"
+			count: 1
+			path: ../../../src/Schema/Definition/XmlSchemaDefinition.php
+
+		-
+			message: "#^Method Raml\\\\Schema\\\\Definition\\\\XmlSchemaDefinition\\:\\:validate\\(\\) has no return typehint specified\\.$#"
+			count: 1
+			path: ../../../src/Schema/Definition/XmlSchemaDefinition.php
+
+		-
+			message: "#^Method Raml\\\\Schema\\\\Definition\\\\XmlSchemaDefinition\\:\\:validate\\(\\) has parameter \\$value with no typehint specified\\.$#"
+			count: 1
+			path: ../../../src/Schema/Definition/XmlSchemaDefinition.php
+
+		-
+			message: "#^Parameter \\#1 \\$data of method Raml\\\\Schema\\\\Parser\\\\JsonSchemaParser\\:\\:resolveRefSchemaRecursively\\(\\) expects stdClass\\|string, object given\\.$#"
+			count: 2
+			path: ../../../src/Schema/Parser/JsonSchemaParser.php
+
+		-
+			message: "#^Method Raml\\\\Schema\\\\Parser\\\\JsonSchemaParser\\:\\:resolveRefSchemaRecursively\\(\\) has no return typehint specified\\.$#"
+			count: 1
+			path: ../../../src/Schema/Parser/JsonSchemaParser.php
+
+		-
+			message: "#^Argument of an invalid type object supplied for foreach, only iterables are supported\\.$#"
+			count: 1
+			path: ../../../src/Schema/Parser/JsonSchemaParser.php
+
+		-
+			message: "#^Method Raml\\\\Schema\\\\SchemaParserAbstract\\:\\:setSourceUri\\(\\) has no return typehint specified\\.$#"
+			count: 1
+			path: ../../../src/Schema/SchemaParserAbstract.php
+
+		-
+			message: "#^Method Raml\\\\Schema\\\\SchemaParserAbstract\\:\\:addCompatibleContentType\\(\\) has no return typehint specified\\.$#"
+			count: 1
+			path: ../../../src/Schema/SchemaParserAbstract.php
+
+		-
+			message: "#^Method Raml\\\\Schema\\\\SchemaParserInterface\\:\\:setSourceUri\\(\\) has no return typehint specified\\.$#"
+			count: 1
+			path: ../../../src/Schema/SchemaParserInterface.php
+
+		-
+			message: "#^Unsafe usage of new static\\(\\)\\.$#"
+			count: 1
+			path: ../../../src/SecurityScheme.php
+
+		-
+			message: "#^Method Raml\\\\SecurityScheme\\:\\:getKey\\(\\) should return string but returns string\\|null\\.$#"
+			count: 1
+			path: ../../../src/SecurityScheme.php
+
+		-
+			message: "#^Method Raml\\\\SecurityScheme\\:\\:setDescription\\(\\) has no return typehint specified\\.$#"
+			count: 1
+			path: ../../../src/SecurityScheme.php
+
+		-
+			message: "#^Method Raml\\\\SecurityScheme\\:\\:setType\\(\\) has no return typehint specified\\.$#"
+			count: 1
+			path: ../../../src/SecurityScheme.php
+
+		-
+			message: "#^Method Raml\\\\SecurityScheme\\:\\:setDescribedBy\\(\\) has no return typehint specified\\.$#"
+			count: 1
+			path: ../../../src/SecurityScheme.php
+
+		-
+			message: "#^Method Raml\\\\SecurityScheme\\:\\:setSettings\\(\\) has no return typehint specified\\.$#"
+			count: 1
+			path: ../../../src/SecurityScheme.php
+
+		-
+			message: "#^Property Raml\\\\SecurityScheme\\:\\:\\$settings \\(object\\) does not accept array\\|object\\.$#"
+			count: 1
+			path: ../../../src/SecurityScheme.php
+
+		-
+			message: "#^Method Raml\\\\SecurityScheme\\:\\:mergeSettings\\(\\) has no return typehint specified\\.$#"
+			count: 1
+			path: ../../../src/SecurityScheme.php
+
+		-
+			message: "#^Unsafe usage of new static\\(\\)\\.$#"
+			count: 1
+			path: ../../../src/SecurityScheme/SecuritySchemeDescribedBy.php
+
+		-
+			message: "#^Method Raml\\\\SecurityScheme\\\\SecuritySchemeDescribedBy\\:\\:addBody\\(\\) has no return typehint specified\\.$#"
+			count: 1
+			path: ../../../src/SecurityScheme/SecuritySchemeDescribedBy.php
+
+		-
+			message: "#^Method Raml\\\\SecurityScheme\\\\SecuritySchemeDescribedBy\\:\\:addHeader\\(\\) has no return typehint specified\\.$#"
+			count: 1
+			path: ../../../src/SecurityScheme/SecuritySchemeDescribedBy.php
+
+		-
+			message: "#^Method Raml\\\\SecurityScheme\\\\SecuritySchemeDescribedBy\\:\\:addQueryParameter\\(\\) has no return typehint specified\\.$#"
+			count: 1
+			path: ../../../src/SecurityScheme/SecuritySchemeDescribedBy.php
+
+		-
+			message: "#^Method Raml\\\\SecurityScheme\\\\SecuritySchemeDescribedBy\\:\\:getResponse\\(\\) should return Raml\\\\Response but returns Raml\\\\Response\\|null\\.$#"
+			count: 1
+			path: ../../../src/SecurityScheme/SecuritySchemeDescribedBy.php
+
+		-
+			message: "#^Method Raml\\\\SecurityScheme\\\\SecuritySchemeDescribedBy\\:\\:addResponse\\(\\) has no return typehint specified\\.$#"
+			count: 1
+			path: ../../../src/SecurityScheme/SecuritySchemeDescribedBy.php
+
+		-
+			message: "#^Unsafe usage of new static\\(\\)\\.$#"
+			count: 1
+			path: ../../../src/SecurityScheme/SecuritySettings/DefaultSecuritySettings.php
+
+		-
+			message: "#^Method Raml\\\\SecurityScheme\\\\SecuritySettings\\\\DefaultSecuritySettings\\:\\:mergeSettings\\(\\) has no return typehint specified\\.$#"
+			count: 1
+			path: ../../../src/SecurityScheme/SecuritySettings/DefaultSecuritySettings.php
+
+		-
+			message: "#^Method Raml\\\\SecurityScheme\\\\SecuritySettings\\\\DefaultSecuritySettings\\:\\:offsetSet\\(\\) has parameter \\$offset with no typehint specified\\.$#"
+			count: 1
+			path: ../../../src/SecurityScheme/SecuritySettings/DefaultSecuritySettings.php
+
+		-
+			message: "#^Method Raml\\\\SecurityScheme\\\\SecuritySettings\\\\DefaultSecuritySettings\\:\\:offsetSet\\(\\) has parameter \\$value with no typehint specified\\.$#"
+			count: 1
+			path: ../../../src/SecurityScheme/SecuritySettings/DefaultSecuritySettings.php
+
+		-
+			message: "#^Method Raml\\\\SecurityScheme\\\\SecuritySettings\\\\DefaultSecuritySettings\\:\\:offsetExists\\(\\) has parameter \\$offset with no typehint specified\\.$#"
+			count: 1
+			path: ../../../src/SecurityScheme/SecuritySettings/DefaultSecuritySettings.php
+
+		-
+			message: "#^Method Raml\\\\SecurityScheme\\\\SecuritySettings\\\\DefaultSecuritySettings\\:\\:offsetUnset\\(\\) has parameter \\$offset with no typehint specified\\.$#"
+			count: 1
+			path: ../../../src/SecurityScheme/SecuritySettings/DefaultSecuritySettings.php
+
+		-
+			message: "#^Method Raml\\\\SecurityScheme\\\\SecuritySettings\\\\DefaultSecuritySettings\\:\\:offsetGet\\(\\) has no return typehint specified\\.$#"
+			count: 1
+			path: ../../../src/SecurityScheme/SecuritySettings/DefaultSecuritySettings.php
+
+		-
+			message: "#^Method Raml\\\\SecurityScheme\\\\SecuritySettings\\\\DefaultSecuritySettings\\:\\:offsetGet\\(\\) has parameter \\$offset with no typehint specified\\.$#"
+			count: 1
+			path: ../../../src/SecurityScheme/SecuritySettings/DefaultSecuritySettings.php
+
+		-
+			message: "#^Unsafe usage of new static\\(\\)\\.$#"
+			count: 1
+			path: ../../../src/SecurityScheme/SecuritySettings/OAuth1SecuritySettings.php
+
+		-
+			message: "#^Method Raml\\\\SecurityScheme\\\\SecuritySettings\\\\OAuth1SecuritySettings\\:\\:setTokenCredentialsUri\\(\\) has no return typehint specified\\.$#"
+			count: 1
+			path: ../../../src/SecurityScheme/SecuritySettings/OAuth1SecuritySettings.php
+
+		-
+			message: "#^Method Raml\\\\SecurityScheme\\\\SecuritySettings\\\\OAuth1SecuritySettings\\:\\:setRequestTokenUri\\(\\) has no return typehint specified\\.$#"
+			count: 1
+			path: ../../../src/SecurityScheme/SecuritySettings/OAuth1SecuritySettings.php
+
+		-
+			message: "#^Method Raml\\\\SecurityScheme\\\\SecuritySettings\\\\OAuth1SecuritySettings\\:\\:setAuthorizationUri\\(\\) has no return typehint specified\\.$#"
+			count: 1
+			path: ../../../src/SecurityScheme/SecuritySettings/OAuth1SecuritySettings.php
+
+		-
+			message: "#^Unsafe usage of new static\\(\\)\\.$#"
+			count: 1
+			path: ../../../src/SecurityScheme/SecuritySettings/OAuth2SecuritySettings.php
+
+		-
+			message: "#^Method Raml\\\\SecurityScheme\\\\SecuritySettings\\\\OAuth2SecuritySettings\\:\\:setAuthorizationUri\\(\\) has no return typehint specified\\.$#"
+			count: 1
+			path: ../../../src/SecurityScheme/SecuritySettings/OAuth2SecuritySettings.php
+
+		-
+			message: "#^Method Raml\\\\SecurityScheme\\\\SecuritySettings\\\\OAuth2SecuritySettings\\:\\:setAccessTokenUri\\(\\) has no return typehint specified\\.$#"
+			count: 1
+			path: ../../../src/SecurityScheme/SecuritySettings/OAuth2SecuritySettings.php
+
+		-
+			message: "#^Method Raml\\\\SecurityScheme\\\\SecuritySettings\\\\OAuth2SecuritySettings\\:\\:addAuthorizationGrants\\(\\) has no return typehint specified\\.$#"
+			count: 1
+			path: ../../../src/SecurityScheme/SecuritySettings/OAuth2SecuritySettings.php
+
+		-
+			message: "#^Method Raml\\\\SecurityScheme\\\\SecuritySettings\\\\OAuth2SecuritySettings\\:\\:addScope\\(\\) has no return typehint specified\\.$#"
+			count: 1
+			path: ../../../src/SecurityScheme/SecuritySettings/OAuth2SecuritySettings.php
+
+		-
+			message: "#^Return type \\(Raml\\\\SecurityScheme\\\\SecuritySettings\\\\DefaultSecuritySettings\\) of method Raml\\\\SecurityScheme\\\\SecuritySettingsParser\\\\DefaultSecuritySettingsParser\\:\\:createSecuritySettings\\(\\) should be compatible with return type \\(array\\<object\\>\\) of method Raml\\\\SecurityScheme\\\\SecuritySettingsParserInterface\\:\\:createSecuritySettings\\(\\)$#"
+			count: 1
+			path: ../../../src/SecurityScheme/SecuritySettingsParser/DefaultSecuritySettingsParser.php
+
+		-
+			message: "#^Return type \\(Raml\\\\SecurityScheme\\\\SecuritySettings\\\\OAuth1SecuritySettings\\) of method Raml\\\\SecurityScheme\\\\SecuritySettingsParser\\\\OAuth1SecuritySettingsParser\\:\\:createSecuritySettings\\(\\) should be compatible with return type \\(array\\<object\\>\\) of method Raml\\\\SecurityScheme\\\\SecuritySettingsParserInterface\\:\\:createSecuritySettings\\(\\)$#"
+			count: 1
+			path: ../../../src/SecurityScheme/SecuritySettingsParser/OAuth1SecuritySettingsParser.php
+
+		-
+			message: "#^Return type \\(Raml\\\\SecurityScheme\\\\SecuritySettings\\\\OAuth2SecuritySettings\\) of method Raml\\\\SecurityScheme\\\\SecuritySettingsParser\\\\OAuth2SecuritySettingsParser\\:\\:createSecuritySettings\\(\\) should be compatible with return type \\(array\\<object\\>\\) of method Raml\\\\SecurityScheme\\\\SecuritySettingsParserInterface\\:\\:createSecuritySettings\\(\\)$#"
+			count: 1
+			path: ../../../src/SecurityScheme/SecuritySettingsParser/OAuth2SecuritySettingsParser.php
+
+		-
+			message: "#^Method Raml\\\\TraitCollection\\:\\:add\\(\\) has no return typehint specified\\.$#"
+			count: 1
+			path: ../../../src/TraitCollection.php
+
+		-
+			message: "#^Method Raml\\\\TraitCollection\\:\\:remove\\(\\) has no return typehint specified\\.$#"
+			count: 1
+			path: ../../../src/TraitCollection.php
+
+		-
+			message: "#^Call to function is_array\\(\\) with string will always evaluate to false\\.$#"
+			count: 1
+			path: ../../../src/TraitCollection.php
+
+		-
+			message: "#^Method Raml\\\\TraitCollection\\:\\:clear\\(\\) has no return typehint specified\\.$#"
+			count: 1
+			path: ../../../src/TraitCollection.php
+
+		-
+			message: "#^Unsafe usage of new static\\(\\)\\.$#"
+			count: 1
+			path: ../../../src/TraitDefinition.php
+
+		-
+			message: "#^Unsafe usage of new static\\(\\)\\.$#"
+			count: 1
+			path: ../../../src/Type.php
+
+		-
+			message: "#^Call to function assert\\(\\) with false will always evaluate to false\\.$#"
+			count: 1
+			path: ../../../src/Type.php
+
+		-
+			message: "#^Instanceof between static\\(Raml\\\\Type\\) and Raml\\\\TraitDefinition will always evaluate to false\\.$#"
+			count: 1
+			path: ../../../src/Type.php
+
+		-
+			message: "#^Method Raml\\\\Type\\:\\:discriminate\\(\\) has no return typehint specified\\.$#"
+			count: 1
+			path: ../../../src/Type.php
+
+		-
+			message: "#^Method Raml\\\\Type\\:\\:discriminate\\(\\) has parameter \\$value with no typehint specified\\.$#"
+			count: 1
+			path: ../../../src/Type.php
+
+		-
+			message: "#^Method Raml\\\\Type\\:\\:setDefinition\\(\\) has no return typehint specified\\.$#"
+			count: 1
+			path: ../../../src/Type.php
+
+		-
+			message: "#^Method Raml\\\\Type\\:\\:setEnum\\(\\) has no return typehint specified\\.$#"
+			count: 1
+			path: ../../../src/Type.php
+
+		-
+			message: "#^Property Raml\\\\Type\\:\\:\\$parent \\(Raml\\\\Types\\\\ObjectType\\|string\\) does not accept Raml\\\\Type\\.$#"
+			count: 1
+			path: ../../../src/Type.php
+
+		-
+			message: "#^Parameter \\#1 \\$var of function count expects array\\|Countable, array\\<int, string\\>\\|false given\\.$#"
+			count: 1
+			path: ../../../src/Type.php
+
+		-
+			message: "#^Cannot access offset 0 on array\\<int, string\\>\\|false\\.$#"
+			count: 2
+			path: ../../../src/Type.php
+
+		-
+			message: "#^Cannot access offset 1 on array\\<int, string\\>\\|false\\.$#"
+			count: 2
+			path: ../../../src/Type.php
+
+		-
+			message: "#^Method Raml\\\\Type\\:\\:validate\\(\\) has no return typehint specified\\.$#"
+			count: 1
+			path: ../../../src/Type.php
+
+		-
+			message: "#^Method Raml\\\\Type\\:\\:validate\\(\\) has parameter \\$value with no typehint specified\\.$#"
+			count: 1
+			path: ../../../src/Type.php
+
+		-
+			message: "#^Property Raml\\\\TypeCollection\\:\\:\\$position \\(string\\) does not accept default value of type int\\.$#"
+			count: 1
+			path: ../../../src/TypeCollection.php
+
+		-
+			message: "#^Method Raml\\\\TypeCollection\\:\\:current\\(\\) has no return typehint specified\\.$#"
+			count: 1
+			path: ../../../src/TypeCollection.php
+
+		-
+			message: "#^Method Raml\\\\TypeCollection\\:\\:key\\(\\) has no return typehint specified\\.$#"
+			count: 1
+			path: ../../../src/TypeCollection.php
+
+		-
+			message: "#^Property Raml\\\\TypeCollection\\:\\:\\$position \\(string\\) does not accept int\\.$#"
+			count: 2
+			path: ../../../src/TypeCollection.php
+
+		-
+			message: "#^Method Raml\\\\TypeCollection\\:\\:add\\(\\) has no return typehint specified\\.$#"
+			count: 1
+			path: ../../../src/TypeCollection.php
+
+		-
+			message: "#^Method Raml\\\\TypeCollection\\:\\:remove\\(\\) has no return typehint specified\\.$#"
+			count: 1
+			path: ../../../src/TypeCollection.php
+
+		-
+			message: "#^Method Raml\\\\TypeCollection\\:\\:applyInheritance\\(\\) has no return typehint specified\\.$#"
+			count: 1
+			path: ../../../src/TypeCollection.php
+
+		-
+			message: "#^Call to an undefined method Raml\\\\TypeInterface\\:\\:toArray\\(\\)\\.$#"
+			count: 1
+			path: ../../../src/TypeCollection.php
+
+		-
+			message: "#^Method Raml\\\\TypeCollection\\:\\:clear\\(\\) has no return typehint specified\\.$#"
+			count: 1
+			path: ../../../src/TypeCollection.php
+
+		-
+			message: "#^Method Raml\\\\TypeInterface\\:\\:getName\\(\\) has no return typehint specified\\.$#"
+			count: 1
+			path: ../../../src/TypeInterface.php
+
+		-
+			message: "#^Method Raml\\\\TypeInterface\\:\\:discriminate\\(\\) has no return typehint specified\\.$#"
+			count: 1
+			path: ../../../src/TypeInterface.php
+
+		-
+			message: "#^Method Raml\\\\TypeInterface\\:\\:discriminate\\(\\) has parameter \\$value with no typehint specified\\.$#"
+			count: 1
+			path: ../../../src/TypeInterface.php
+
+		-
+			message: "#^Property Raml\\\\Types\\\\ArrayType\\:\\:\\$SCALAR_TYPES has no typehint specified\\.$#"
+			count: 1
+			path: ../../../src/Types/ArrayType.php
+
+		-
+			message: "#^Method Raml\\\\Types\\\\ArrayType\\:\\:setUniqueItems\\(\\) has no return typehint specified\\.$#"
+			count: 1
+			path: ../../../src/Types/ArrayType.php
+
+		-
+			message: "#^Method Raml\\\\Types\\\\ArrayType\\:\\:setItems\\(\\) has no return typehint specified\\.$#"
+			count: 1
+			path: ../../../src/Types/ArrayType.php
+
+		-
+			message: "#^Method Raml\\\\Types\\\\ArrayType\\:\\:setMinItems\\(\\) has no return typehint specified\\.$#"
+			count: 1
+			path: ../../../src/Types/ArrayType.php
+
+		-
+			message: "#^Method Raml\\\\Types\\\\ArrayType\\:\\:setMaxItems\\(\\) has no return typehint specified\\.$#"
+			count: 1
+			path: ../../../src/Types/ArrayType.php
+
+		-
+			message: "#^Method Raml\\\\Types\\\\ArrayType\\:\\:validate\\(\\) has no return typehint specified\\.$#"
+			count: 1
+			path: ../../../src/Types/ArrayType.php
+
+		-
+			message: "#^Method Raml\\\\Types\\\\ArrayType\\:\\:validate\\(\\) has parameter \\$value with no typehint specified\\.$#"
+			count: 1
+			path: ../../../src/Types/ArrayType.php
+
+		-
+			message: "#^Method Raml\\\\Types\\\\ArrayType\\:\\:validateScalars\\(\\) has no return typehint specified\\.$#"
+			count: 1
+			path: ../../../src/Types/ArrayType.php
+
+		-
+			message: "#^Method Raml\\\\Types\\\\ArrayType\\:\\:validateScalars\\(\\) has parameter \\$value with no typehint specified\\.$#"
+			count: 1
+			path: ../../../src/Types/ArrayType.php
+
+		-
+			message: "#^Method Raml\\\\Types\\\\ArrayType\\:\\:validateObjects\\(\\) has no return typehint specified\\.$#"
+			count: 1
+			path: ../../../src/Types/ArrayType.php
+
+		-
+			message: "#^Method Raml\\\\Types\\\\ArrayType\\:\\:validateObjects\\(\\) has parameter \\$value with no typehint specified\\.$#"
+			count: 1
+			path: ../../../src/Types/ArrayType.php
+
+		-
+			message: "#^Method Raml\\\\Types\\\\BooleanType\\:\\:validate\\(\\) has no return typehint specified\\.$#"
+			count: 1
+			path: ../../../src/Types/BooleanType.php
+
+		-
+			message: "#^Method Raml\\\\Types\\\\BooleanType\\:\\:validate\\(\\) has parameter \\$value with no typehint specified\\.$#"
+			count: 1
+			path: ../../../src/Types/BooleanType.php
+
+		-
+			message: "#^Method Raml\\\\Types\\\\DateOnlyType\\:\\:validate\\(\\) has no return typehint specified\\.$#"
+			count: 1
+			path: ../../../src/Types/DateOnlyType.php
+
+		-
+			message: "#^Method Raml\\\\Types\\\\DateOnlyType\\:\\:validate\\(\\) has parameter \\$value with no typehint specified\\.$#"
+			count: 1
+			path: ../../../src/Types/DateOnlyType.php
+
+		-
+			message: "#^Method Raml\\\\Types\\\\DatetimeOnlyType\\:\\:validate\\(\\) has no return typehint specified\\.$#"
+			count: 1
+			path: ../../../src/Types/DatetimeOnlyType.php
+
+		-
+			message: "#^Method Raml\\\\Types\\\\DatetimeOnlyType\\:\\:validate\\(\\) has parameter \\$value with no typehint specified\\.$#"
+			count: 1
+			path: ../../../src/Types/DatetimeOnlyType.php
+
+		-
+			message: "#^Method Raml\\\\Types\\\\DatetimeType\\:\\:validate\\(\\) has no return typehint specified\\.$#"
+			count: 1
+			path: ../../../src/Types/DatetimeType.php
+
+		-
+			message: "#^Method Raml\\\\Types\\\\DatetimeType\\:\\:validate\\(\\) has parameter \\$value with no typehint specified\\.$#"
+			count: 1
+			path: ../../../src/Types/DatetimeType.php
+
+		-
+			message: "#^Method Raml\\\\Types\\\\FileType\\:\\:getFileTypes\\(\\) has no return typehint specified\\.$#"
+			count: 1
+			path: ../../../src/Types/FileType.php
+
+		-
+			message: "#^Method Raml\\\\Types\\\\FileType\\:\\:setFileTypes\\(\\) has parameter \\$fileTypes with no typehint specified\\.$#"
+			count: 1
+			path: ../../../src/Types/FileType.php
+
+		-
+			message: "#^Method Raml\\\\Types\\\\FileType\\:\\:getMinLength\\(\\) has no return typehint specified\\.$#"
+			count: 1
+			path: ../../../src/Types/FileType.php
+
+		-
+			message: "#^Method Raml\\\\Types\\\\FileType\\:\\:setMinLength\\(\\) has parameter \\$minLength with no typehint specified\\.$#"
+			count: 1
+			path: ../../../src/Types/FileType.php
+
+		-
+			message: "#^Method Raml\\\\Types\\\\FileType\\:\\:getMaxLength\\(\\) has no return typehint specified\\.$#"
+			count: 1
+			path: ../../../src/Types/FileType.php
+
+		-
+			message: "#^Method Raml\\\\Types\\\\FileType\\:\\:setMaxLength\\(\\) has parameter \\$maxLength with no typehint specified\\.$#"
+			count: 1
+			path: ../../../src/Types/FileType.php
+
+		-
+			message: "#^Method Raml\\\\Types\\\\FileType\\:\\:validate\\(\\) has no return typehint specified\\.$#"
+			count: 1
+			path: ../../../src/Types/FileType.php
+
+		-
+			message: "#^Method Raml\\\\Types\\\\FileType\\:\\:validate\\(\\) has parameter \\$value with no typehint specified\\.$#"
+			count: 1
+			path: ../../../src/Types/FileType.php
+
+		-
+			message: "#^Method Raml\\\\Types\\\\JsonType\\:\\:validate\\(\\) has no return typehint specified\\.$#"
+			count: 1
+			path: ../../../src/Types/JsonType.php
+
+		-
+			message: "#^Method Raml\\\\Types\\\\JsonType\\:\\:validate\\(\\) has parameter \\$value with no typehint specified\\.$#"
+			count: 1
+			path: ../../../src/Types/JsonType.php
+
+		-
+			message: "#^Parameter \\#1 \\$function of function call_user_func_array expects callable\\(\\)\\: mixed, array\\(Raml\\\\Type, string\\) given\\.$#"
+			count: 1
+			path: ../../../src/Types/LazyProxyType.php
+
+		-
+			message: "#^Unsafe usage of new static\\(\\)\\.$#"
+			count: 1
+			path: ../../../src/Types/LazyProxyType.php
+
+		-
+			message: "#^Cannot assign offset string to string\\.$#"
+			count: 1
+			path: ../../../src/Types/LazyProxyType.php
+
+		-
+			message: "#^Call to an undefined method Raml\\\\Type\\:\\:getDiscriminator\\(\\)\\.$#"
+			count: 1
+			path: ../../../src/Types/LazyProxyType.php
+
+		-
+			message: "#^Call to an undefined method Raml\\\\Type\\:\\:getDiscriminatorValue\\(\\)\\.$#"
+			count: 1
+			path: ../../../src/Types/LazyProxyType.php
+
+		-
+			message: "#^Method Raml\\\\Types\\\\LazyProxyType\\:\\:validate\\(\\) has no return typehint specified\\.$#"
+			count: 1
+			path: ../../../src/Types/LazyProxyType.php
+
+		-
+			message: "#^Method Raml\\\\Types\\\\LazyProxyType\\:\\:validate\\(\\) has parameter \\$value with no typehint specified\\.$#"
+			count: 1
+			path: ../../../src/Types/LazyProxyType.php
+
+		-
+			message: "#^Property Raml\\\\Types\\\\LazyProxyType\\:\\:\\$wrappedObject \\(Raml\\\\Type\\) does not accept Raml\\\\TypeInterface\\.$#"
+			count: 1
+			path: ../../../src/Types/LazyProxyType.php
+
+		-
+			message: "#^Method Raml\\\\Types\\\\NullType\\:\\:validate\\(\\) has no return typehint specified\\.$#"
+			count: 1
+			path: ../../../src/Types/NullType.php
+
+		-
+			message: "#^Method Raml\\\\Types\\\\NullType\\:\\:validate\\(\\) has parameter \\$value with no typehint specified\\.$#"
+			count: 1
+			path: ../../../src/Types/NullType.php
+
+		-
+			message: "#^Method Raml\\\\Types\\\\NumberType\\:\\:validate\\(\\) has no return typehint specified\\.$#"
+			count: 1
+			path: ../../../src/Types/NumberType.php
+
+		-
+			message: "#^Method Raml\\\\Types\\\\NumberType\\:\\:validate\\(\\) has parameter \\$value with no typehint specified\\.$#"
+			count: 1
+			path: ../../../src/Types/NumberType.php
+
+		-
+			message: "#^Unreachable statement \\- code above always terminates\\.$#"
+			count: 1
+			path: ../../../src/Types/ObjectType.php
+
+		-
+			message: "#^Method Raml\\\\Types\\\\ObjectType\\:\\:getAdditionalProperties\\(\\) has no return typehint specified\\.$#"
+			count: 1
+			path: ../../../src/Types/ObjectType.php
+
+		-
+			message: "#^Method Raml\\\\Types\\\\ObjectType\\:\\:setAdditionalProperties\\(\\) has parameter \\$additionalProperties with no typehint specified\\.$#"
+			count: 1
+			path: ../../../src/Types/ObjectType.php
+
+		-
+			message: "#^Method Raml\\\\Types\\\\ObjectType\\:\\:validate\\(\\) has no return typehint specified\\.$#"
+			count: 1
+			path: ../../../src/Types/ObjectType.php
+
+		-
+			message: "#^Method Raml\\\\Types\\\\ObjectType\\:\\:validate\\(\\) has parameter \\$value with no typehint specified\\.$#"
+			count: 1
+			path: ../../../src/Types/ObjectType.php
+
+		-
+			message: "#^Strict comparison using \\=\\=\\= between Raml\\\\Type\\|void and null will always evaluate to false\\.$#"
+			count: 1
+			path: ../../../src/Types/ObjectType.php
+
+		-
+			message: "#^Cannot call method validate\\(\\) on Raml\\\\Type\\|void\\.$#"
+			count: 1
+			path: ../../../src/Types/ObjectType.php
+
+		-
+			message: "#^Cannot call method isValid\\(\\) on Raml\\\\Type\\|void\\.$#"
+			count: 1
+			path: ../../../src/Types/ObjectType.php
+
+		-
+			message: "#^Cannot call method getErrors\\(\\) on Raml\\\\Type\\|void\\.$#"
+			count: 1
+			path: ../../../src/Types/ObjectType.php
+
+		-
+			message: "#^Method Raml\\\\Types\\\\StringType\\:\\:getPattern\\(\\) has no return typehint specified\\.$#"
+			count: 1
+			path: ../../../src/Types/StringType.php
+
+		-
+			message: "#^Method Raml\\\\Types\\\\StringType\\:\\:setPattern\\(\\) has parameter \\$pattern with no typehint specified\\.$#"
+			count: 1
+			path: ../../../src/Types/StringType.php
+
+		-
+			message: "#^Method Raml\\\\Types\\\\StringType\\:\\:getMinLength\\(\\) has no return typehint specified\\.$#"
+			count: 1
+			path: ../../../src/Types/StringType.php
+
+		-
+			message: "#^Method Raml\\\\Types\\\\StringType\\:\\:setMinLength\\(\\) has parameter \\$minLength with no typehint specified\\.$#"
+			count: 1
+			path: ../../../src/Types/StringType.php
+
+		-
+			message: "#^Method Raml\\\\Types\\\\StringType\\:\\:getMaxLength\\(\\) has no return typehint specified\\.$#"
+			count: 1
+			path: ../../../src/Types/StringType.php
+
+		-
+			message: "#^Method Raml\\\\Types\\\\StringType\\:\\:setMaxLength\\(\\) has parameter \\$maxLength with no typehint specified\\.$#"
+			count: 1
+			path: ../../../src/Types/StringType.php
+
+		-
+			message: "#^Method Raml\\\\Types\\\\StringType\\:\\:validate\\(\\) has no return typehint specified\\.$#"
+			count: 1
+			path: ../../../src/Types/StringType.php
+
+		-
+			message: "#^Method Raml\\\\Types\\\\StringType\\:\\:validate\\(\\) has parameter \\$value with no typehint specified\\.$#"
+			count: 1
+			path: ../../../src/Types/StringType.php
+
+		-
+			message: "#^Method Raml\\\\Types\\\\TimeOnlyType\\:\\:validate\\(\\) has no return typehint specified\\.$#"
+			count: 1
+			path: ../../../src/Types/TimeOnlyType.php
+
+		-
+			message: "#^Method Raml\\\\Types\\\\TimeOnlyType\\:\\:validate\\(\\) has parameter \\$value with no typehint specified\\.$#"
+			count: 1
+			path: ../../../src/Types/TimeOnlyType.php
+
+		-
+			message: "#^Method Raml\\\\Types\\\\TypeValidationError\\:\\:__construct\\(\\) has parameter \\$constraint with no typehint specified\\.$#"
+			count: 1
+			path: ../../../src/Types/TypeValidationError.php
+
+		-
+			message: "#^Method Raml\\\\Types\\\\TypeValidationError\\:\\:__construct\\(\\) has parameter \\$property with no typehint specified\\.$#"
+			count: 1
+			path: ../../../src/Types/TypeValidationError.php
+
+		-
+			message: "#^Method Raml\\\\Types\\\\TypeValidationError\\:\\:unexpectedValue\\(\\) has parameter \\$actualValue with no typehint specified\\.$#"
+			count: 1
+			path: ../../../src/Types/TypeValidationError.php
+
+		-
+			message: "#^Method Raml\\\\Types\\\\TypeValidationError\\:\\:unexpectedValueType\\(\\) has parameter \\$actualValue with no typehint specified\\.$#"
+			count: 1
+			path: ../../../src/Types/TypeValidationError.php
+
+		-
+			message: "#^Method Raml\\\\Types\\\\TypeValidationError\\:\\:unexpectedValueType\\(\\) has parameter \\$constraint with no typehint specified\\.$#"
+			count: 1
+			path: ../../../src/Types/TypeValidationError.php
+
+		-
+			message: "#^Method Raml\\\\Types\\\\TypeValidationError\\:\\:unexpectedArrayValueType\\(\\) has parameter \\$actualValue with no typehint specified\\.$#"
+			count: 1
+			path: ../../../src/Types/TypeValidationError.php
+
+		-
+			message: "#^Method Raml\\\\Types\\\\TypeValidationError\\:\\:unexpectedArrayValueType\\(\\) has parameter \\$constraint with no typehint specified\\.$#"
+			count: 1
+			path: ../../../src/Types/TypeValidationError.php
+
+		-
+			message: "#^Method Raml\\\\Types\\\\TypeValidationError\\:\\:valueExceedsMinimum\\(\\) has parameter \\$actualValue with no typehint specified\\.$#"
+			count: 1
+			path: ../../../src/Types/TypeValidationError.php
+
+		-
+			message: "#^Method Raml\\\\Types\\\\TypeValidationError\\:\\:valueExceedsMinimum\\(\\) has parameter \\$minValue with no typehint specified\\.$#"
+			count: 1
+			path: ../../../src/Types/TypeValidationError.php
+
+		-
+			message: "#^Method Raml\\\\Types\\\\TypeValidationError\\:\\:valueExceedsMaximum\\(\\) has parameter \\$actualValue with no typehint specified\\.$#"
+			count: 1
+			path: ../../../src/Types/TypeValidationError.php
+
+		-
+			message: "#^Method Raml\\\\Types\\\\TypeValidationError\\:\\:valueExceedsMaximum\\(\\) has parameter \\$maxValue with no typehint specified\\.$#"
+			count: 1
+			path: ../../../src/Types/TypeValidationError.php
+
+		-
+			message: "#^Method Raml\\\\Types\\\\UnionType\\:\\:getPropertyByName\\(\\) should return Raml\\\\Type\\|null but return statement is missing\\.$#"
+			count: 1
+			path: ../../../src/Types/UnionType.php
+
+		-
+			message: "#^Method Raml\\\\Types\\\\UnionType\\:\\:getAdditionalProperties\\(\\) has no return typehint specified\\.$#"
+			count: 1
+			path: ../../../src/Types/UnionType.php
+
+		-
+			message: "#^Method Raml\\\\Types\\\\UnionType\\:\\:setAdditionalProperties\\(\\) has parameter \\$additionalProperties with no typehint specified\\.$#"
+			count: 1
+			path: ../../../src/Types/UnionType.php
+
+		-
+			message: "#^Method Raml\\\\Types\\\\UnionType\\:\\:validate\\(\\) has no return typehint specified\\.$#"
+			count: 1
+			path: ../../../src/Types/UnionType.php
+
+		-
+			message: "#^Method Raml\\\\Types\\\\UnionType\\:\\:validate\\(\\) has parameter \\$value with no typehint specified\\.$#"
+			count: 1
+			path: ../../../src/Types/UnionType.php
+
+		-
+			message: "#^Method Raml\\\\Types\\\\XmlType\\:\\:validate\\(\\) has no return typehint specified\\.$#"
+			count: 1
+			path: ../../../src/Types/XmlType.php
+
+		-
+			message: "#^Method Raml\\\\Types\\\\XmlType\\:\\:validate\\(\\) has parameter \\$value with no typehint specified\\.$#"
+			count: 1
+			path: ../../../src/Types/XmlType.php
+
+		-
+			message: "#^Parameter \\#1 \\$source of method DOMDocument\\:\\:schemaValidateSource\\(\\) expects string, array given\\.$#"
+			count: 1
+			path: ../../../src/Types/XmlType.php
+
+		-
+			message: "#^Static property Raml\\\\Utility\\\\StringTransformer\\:\\:\\$possibleTransformations \\(array\\<string\\>\\) does not accept default value of type array\\<int, int\\>\\.$#"
+			count: 1
+			path: ../../../src/Utility/StringTransformer.php
+
+		-
+			message: "#^Call to function in_array\\(\\) with arguments int, array\\<string\\> and true will always evaluate to false\\.$#"
+			count: 1
+			path: ../../../src/Utility/StringTransformer.php
+
+		-
+			message: "#^Unreachable statement \\- code above always terminates\\.$#"
+			count: 1
+			path: ../../../src/Utility/StringTransformer.php
+
+		-
+			message: "#^Method Raml\\\\Utility\\\\TraitParserHelper\\:\\:applyFunctions\\(\\) should return string but returns string\\|null\\.$#"
+			count: 1
+			path: ../../../src/Utility/TraitParserHelper.php
+
+		-
+			message: "#^Unreachable statement \\- code above always terminates\\.$#"
+			count: 10
+			path: ../../../src/Utility/TraitParserHelper.php
+
+		-
+			message: "#^Property Raml\\\\Validator\\\\ContentConverter\\:\\:\\$jsonTypes has no typehint specified\\.$#"
+			count: 1
+			path: ../../../src/Validator/ContentConverter.php
+
+		-
+			message: "#^Property Raml\\\\Validator\\\\ContentConverter\\:\\:\\$xmlTypes has no typehint specified\\.$#"
+			count: 1
+			path: ../../../src/Validator/ContentConverter.php
+
+		-
+			message: "#^Method Raml\\\\Validator\\\\ContentConverter\\:\\:convertStringByContentType\\(\\) has no return typehint specified\\.$#"
+			count: 1
+			path: ../../../src/Validator/ContentConverter.php
+
+		-
+			message: "#^Method Raml\\\\Validator\\\\ContentConverter\\:\\:convertStringByContentType\\(\\) has parameter \\$contentType with no typehint specified\\.$#"
+			count: 1
+			path: ../../../src/Validator/ContentConverter.php
+
+		-
+			message: "#^Method Raml\\\\Validator\\\\ContentConverter\\:\\:convertStringByContentType\\(\\) has parameter \\$string with no typehint specified\\.$#"
+			count: 1
+			path: ../../../src/Validator/ContentConverter.php
+
+		-
+			message: "#^Method Raml\\\\Validator\\\\ContentConverter\\:\\:parseMediaRange\\(\\) has no return typehint specified\\.$#"
+			count: 1
+			path: ../../../src/Validator/ContentConverter.php
+
+		-
+			message: "#^Method Raml\\\\Validator\\\\ContentConverter\\:\\:parseMediaRange\\(\\) has parameter \\$mediaRange with no typehint specified\\.$#"
+			count: 1
+			path: ../../../src/Validator/ContentConverter.php
+
+		-
+			message: "#^Method Raml\\\\Validator\\\\RequestValidator\\:\\:validateRequest\\(\\) has no return typehint specified\\.$#"
+			count: 1
+			path: ../../../src/Validator/RequestValidator.php
+
+		-
+			message: "#^Method Raml\\\\Validator\\\\RequestValidator\\:\\:assertNoMissingParameters\\(\\) has no return typehint specified\\.$#"
+			count: 1
+			path: ../../../src/Validator/RequestValidator.php
+
+		-
+			message: "#^Method Raml\\\\Validator\\\\RequestValidator\\:\\:assertValidParameters\\(\\) has no return typehint specified\\.$#"
+			count: 1
+			path: ../../../src/Validator/RequestValidator.php
+
+		-
+			message: "#^Method Raml\\\\Validator\\\\RequestValidator\\:\\:assertValidBody\\(\\) has no return typehint specified\\.$#"
+			count: 1
+			path: ../../../src/Validator/RequestValidator.php
+
+		-
+			message: "#^Method Raml\\\\Validator\\\\RequestValidator\\:\\:assertMediaTypes\\(\\) has no return typehint specified\\.$#"
+			count: 1
+			path: ../../../src/Validator/RequestValidator.php
+
+		-
+			message: "#^Method Raml\\\\Validator\\\\RequestValidator\\:\\:getTypeValidationErrorsAsString\\(\\) has no return typehint specified\\.$#"
+			count: 1
+			path: ../../../src/Validator/RequestValidator.php
+
+		-
+			message: "#^Method Raml\\\\Validator\\\\ResponseValidator\\:\\:validateResponse\\(\\) has no return typehint specified\\.$#"
+			count: 1
+			path: ../../../src/Validator/ResponseValidator.php
+
+		-
+			message: "#^Method Raml\\\\Validator\\\\ResponseValidator\\:\\:assertNoMissingHeaders\\(\\) has no return typehint specified\\.$#"
+			count: 1
+			path: ../../../src/Validator/ResponseValidator.php
+
+		-
+			message: "#^Method Raml\\\\Validator\\\\ResponseValidator\\:\\:assertValidHeaders\\(\\) has no return typehint specified\\.$#"
+			count: 1
+			path: ../../../src/Validator/ResponseValidator.php
+
+		-
+			message: "#^Method Raml\\\\Validator\\\\ResponseValidator\\:\\:assertValidBody\\(\\) has no return typehint specified\\.$#"
+			count: 1
+			path: ../../../src/Validator/ResponseValidator.php
+
+		-
+			message: "#^Method Raml\\\\Validator\\\\ResponseValidator\\:\\:getTypeValidationErrorsAsString\\(\\) has no return typehint specified\\.$#"
+			count: 1
+			path: ../../../src/Validator/ResponseValidator.php
+
+		-
+			message: "#^Strict comparison using \\=\\=\\= between null and Raml\\\\Response will always evaluate to false\\.$#"
+			count: 1
+			path: ../../../src/Validator/ValidatorSchemaHelper.php
+
+		-
+			message: "#^Call to function assert\\(\\) with false will always evaluate to false\\.$#"
+			count: 1
+			path: ../../../src/Validator/ValidatorSchemaHelper.php
+
+		-
+			message: "#^Instanceof between resource and Raml\\\\Resource will always evaluate to false\\.$#"
+			count: 1
+			path: ../../../src/Validator/ValidatorSchemaHelper.php
+
+		-
+			message: "#^Method Raml\\\\ValidatorInterface\\:\\:validate\\(\\) has no return typehint specified\\.$#"
+			count: 1
+			path: ../../../src/ValidatorInterface.php
+
+		-
+			message: "#^Method Raml\\\\ValidatorInterface\\:\\:validate\\(\\) has parameter \\$value with no typehint specified\\.$#"
+			count: 1
+			path: ../../../src/ValidatorInterface.php
+
+		-
+			message: "#^Unsafe usage of new static\\(\\)\\.$#"
+			count: 1
+			path: ../../../src/WebFormBody.php
+
+		-
+			message: "#^Method Raml\\\\WebFormBody\\:\\:addParameter\\(\\) has no return typehint specified\\.$#"
+			count: 1
+			path: ../../../src/WebFormBody.php
+
