@@ -83,9 +83,9 @@ class Type implements ArrayInstantiationInterface, TypeInterface
         if (isset($data['enum'])) {
             $class->setEnum($data['enum']);
         }
-        if (\substr($name, -1) === '?') {
+        if (\mb_substr($name, -1) === '?') {
             $class->setRequired(false);
-            $class->setName(\substr($name, 0, -1));
+            $class->setName(\mb_substr($name, 0, -1));
         }
         $class->setDefinition($data);
 

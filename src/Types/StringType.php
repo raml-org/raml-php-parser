@@ -153,12 +153,12 @@ class StringType extends Type
             }
         }
         if (null !== $this->minLength) {
-            if (\strlen($value) < $this->minLength) {
+            if (\mb_strlen($value) < $this->minLength) {
                 $this->errors[] = TypeValidationError::stringLengthExceedsMinimum($this->getName(), $this->minLength, $value);
             }
         }
         if (null !== $this->maxLength) {
-            if (\strlen($value) > $this->maxLength) {
+            if (\mb_strlen($value) > $this->maxLength) {
                 $this->errors[] = TypeValidationError::stringLengthExceedsMaximum($this->getName(), $this->maxLength, $value);
             }
         }

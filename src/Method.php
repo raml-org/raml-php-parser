@@ -115,7 +115,7 @@ class Method implements ArrayInstantiationInterface, MessageSchemaInterface
      */
     public function __construct($type, ApiDefinition $apiDefinition)
     {
-        $this->type = \strtoupper($type);
+        $this->type = \mb_strtoupper($type);
 
         foreach ($apiDefinition->getProtocols() as $protocol) {
             $this->addProtocol($protocol);
@@ -421,8 +421,8 @@ class Method implements ArrayInstantiationInterface, MessageSchemaInterface
             return $this->bodyList[$type];
         }
 
-        if (($pos = \strpos($type, ';')) !== false) {
-            $type = \substr($type, 0, $pos);
+        if (($pos = \mb_strpos($type, ';')) !== false) {
+            $type = \mb_substr($type, 0, $pos);
             if (isset($this->bodyList[$type])) {
                 return $this->bodyList[$type];
             }

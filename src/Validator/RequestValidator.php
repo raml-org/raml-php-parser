@@ -36,7 +36,7 @@ class RequestValidator
         $this->assertNoMissingParameters($request);
         $this->assertValidParameters($request);
 
-        if (!\in_array(\strtolower($request->getMethod()), ['get', 'delete'], true)) {
+        if (!\in_array(\mb_strtolower($request->getMethod()), ['get', 'delete'], true)) {
             $this->assertValidBody($request);
         }
     }
@@ -59,7 +59,7 @@ class RequestValidator
 
         throw new ValidatorRequestException(\sprintf(
             'Missing request parameters required by the schema for `%s %s`: %s',
-            \strtoupper($method),
+            \mb_strtoupper($method),
             $path,
             \implode(', ', \array_keys($missingParameters))
         ));
@@ -89,7 +89,7 @@ class RequestValidator
             } catch (ValidationException $exception) {
                 $message = \sprintf(
                     'Request parameter does not match schema for `%s %s`: %s',
-                    \strtoupper($method),
+                    \mb_strtoupper($method),
                     $path,
                     $exception->getMessage()
                 );
@@ -113,7 +113,7 @@ class RequestValidator
         if ($schemaBody->getValidator()->getErrors()) {
             $message = \sprintf(
                 'Request body for %s %s with content type %s does not match schema: %s',
-                \strtoupper($method),
+                \mb_strtoupper($method),
                 $path,
                 $contentType,
                 $this->getTypeValidationErrorsAsString($schemaBody->getValidator()->getErrors())

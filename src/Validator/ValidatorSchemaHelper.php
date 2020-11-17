@@ -93,7 +93,7 @@ class ValidatorSchemaHelper
         if (null === $responseSchema) {
             throw new ValidatorSchemaException(\sprintf(
                 'Schema for %s %s with status code %d was not found in API definition',
-                \strtoupper($method),
+                \mb_strtoupper($method),
                 $path,
                 $statusCode
             ));
@@ -157,7 +157,7 @@ class ValidatorSchemaHelper
         } catch (Exception $exception) {
             $message = \sprintf(
                 'Schema for %s %s with content type %s was not found in API definition',
-                \strtoupper($method),
+                \mb_strtoupper($method),
                 $path,
                 $contentType
             );
@@ -169,7 +169,7 @@ class ValidatorSchemaHelper
         if (!($body instanceof Body)) {
             throw new ValidatorSchemaException(\sprintf(
                 'Schema for %s %s with content type %s is BodyInterface but not a Body object, so we can\'t use it',
-                \strtoupper($method),
+                \mb_strtoupper($method),
                 $path,
                 $contentType
             ));
@@ -213,7 +213,7 @@ class ValidatorSchemaHelper
         } catch (\Exception $exception) {
             throw new ValidatorSchemaException(\sprintf(
                 'Schema for %s %s was not found in API definition',
-                \strtoupper($method),
+                \mb_strtoupper($method),
                 $path
             ));
         }

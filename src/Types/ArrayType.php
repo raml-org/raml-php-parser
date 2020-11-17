@@ -68,9 +68,9 @@ class ArrayType extends Type
     {
         $type = parent::createFromArray($name, $data);
         \assert($type instanceof self);
-        $pos = \strpos($type->getType(), '[]');
+        $pos = \mb_strpos($type->getType(), '[]');
         if ($pos !== false) {
-            $type->setItems(\substr($type->getType(), 0, $pos));
+            $type->setItems(\mb_substr($type->getType(), 0, $pos));
         }
         $type->setType('array');
 

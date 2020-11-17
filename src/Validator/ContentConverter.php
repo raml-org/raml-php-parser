@@ -51,7 +51,7 @@ class ContentConverter
         $parts = \explode(';', $mediaRange);
         $params = [];
         foreach ($parts as $param) {
-            if (\strpos($param, '=') !== false) {
+            if (\mb_strpos($param, '=') !== false) {
                 list($k, $v) = \explode('=', \trim($param));
                 $params[$k] = $v;
             }
@@ -64,8 +64,8 @@ class ContentConverter
         if (!$subtype) {
             throw new \UnexpectedValueException('Malformed media-range: ' . $mediaRange);
         }
-        $plusPos = \strpos($subtype, '+');
-        $genericSubtype = false !== $plusPos ? \substr($subtype, $plusPos + 1) : $subtype;
+        $plusPos = \mb_strpos($subtype, '+');
+        $genericSubtype = false !== $plusPos ? \mb_substr($subtype, $plusPos + 1) : $subtype;
 
         return \sprintf('%s/%s', \trim($type), \trim($genericSubtype));
     }

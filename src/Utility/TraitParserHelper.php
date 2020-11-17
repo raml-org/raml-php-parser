@@ -51,11 +51,11 @@ class TraitParserHelper
 
                         break;
                     case 'uppercase':
-                        return \strtoupper($values[$matches[1]]);
+                        return \mb_strtoupper($values[$matches[1]]);
 
                         break;
                     case 'lowercase':
-                        return \strtolower($values[$matches[1]]);
+                        return \mb_strtolower($values[$matches[1]]);
 
                         break;
                     case 'lowercamelcase':

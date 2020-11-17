@@ -219,7 +219,7 @@ class TypeValidationError
                 return $acc . ((string) $error . ', ');
             }, "{$type} (");
 
-            $errors[] = \substr($message, 0, \strlen($message) - 2) . ')';
+            $errors[] = \mb_substr($message, 0, \mb_strlen($message) - 2) . ')';
         }
 
         return new self(
