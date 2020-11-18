@@ -59,7 +59,7 @@ class SymfonyRouteFormatter implements RouteFormatterInterface
             // baseUri may also contain path that has been omitted for brevity in the
             // RAML creation.
             $host = \parse_url($url, PHP_URL_HOST);
-            $fullPath = \substr($url, \strpos($url, $host) + \strlen($host));
+            $fullPath = \mb_substr($url, \mb_strpos($url, $host) + \mb_strlen($host));
 
             // Now build our Route class.
             $route = new Route($fullPath);

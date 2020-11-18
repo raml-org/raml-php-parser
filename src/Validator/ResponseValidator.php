@@ -45,7 +45,7 @@ class ResponseValidator
 
         throw new ValidatorResponseException(\sprintf(
             'Missing response headers required by the schema for %s %s with status code %s: %s',
-            \strtoupper($method),
+            \mb_strtoupper($method),
             $path,
             $statusCode,
             $this->getNamedParametersAsString($missingHeaders)
@@ -78,7 +78,7 @@ class ResponseValidator
                                 'with status code %s does not match schema: %s',
                             $key,
                             $headerValue,
-                            \strtoupper($method),
+                            \mb_strtoupper($method),
                             $path,
                             $statusCode,
                             $exception->getMessage()
@@ -109,7 +109,7 @@ class ResponseValidator
         if ($schemaBody->getValidator()->getErrors()) {
             $message = \sprintf(
                 'Response body for %s %s with content type %s and status code %s does not match schema: %s',
-                \strtoupper($method),
+                \mb_strtoupper($method),
                 $path,
                 $contentType,
                 $statusCode,

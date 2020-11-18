@@ -849,7 +849,7 @@ class NamedParameter implements ArrayInstantiationInterface
                  * @link http://raml.org/spec.html#minlength
                  */
                 $minLength = $this->getMinLength();
-                if (!empty($minLength) && \strlen($param) < $minLength) {
+                if (!empty($minLength) && \mb_strlen($param) < $minLength) {
                     throw new ValidationException(
                         $this->getKey() . ' must be at least ' . $minLength . ' characters long',
                         static::VAL_TOOSHORT
@@ -862,7 +862,7 @@ class NamedParameter implements ArrayInstantiationInterface
                  * @link http://raml.org/spec.html#maxlength
                  */
                 $maxLength = $this->getMaxLength();
-                if (!empty($maxLength) && \strlen($param) > $maxLength) {
+                if (!empty($maxLength) && \mb_strlen($param) > $maxLength) {
                     throw new ValidationException(
                         $this->getKey() . ' must be no more than ' . $maxLength . ' characters long',
                         static::VAL_TOOLONG

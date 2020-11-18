@@ -299,7 +299,7 @@ class ApiDefinition implements ArrayInstantiationInterface
 
         foreach ($data as $resourceName => $resource) {
             // check if actually a resource
-            if (\strpos($resourceName, '/') === 0) {
+            if (\mb_strpos($resourceName, '/') === 0) {
                 $apiDefinition->addResource(
                     Resource::createFromArray(
                         $apiDefinition->getUrlPrefix() . $resourceName,
@@ -428,7 +428,7 @@ class ApiDefinition implements ArrayInstantiationInterface
         $this->baseUri = $baseUrl;
 
         if (!$this->protocols) {
-            $protocol = \strtoupper(\parse_url($this->baseUri, PHP_URL_SCHEME));
+            $protocol = \mb_strtoupper(\parse_url($this->baseUri, PHP_URL_SCHEME));
             if (!empty($protocol)) {
                 $this->protocols = [$protocol];
             }
@@ -643,11 +643,11 @@ class ApiDefinition implements ArrayInstantiationInterface
                 return \forward_static_call_array([$className, 'createFromArray'], [$name, $definition]);
             }
             // if $type contains a '|' we can safely assume it's a combination of types (union)
-            if (\strpos($type, '|') !== false) {
+            if (\mb_strpos($type, '|') !== false) {
                 return UnionType::createFromArray($name, $definition);
             }
             // if $type contains a '[]' it means we have an array with a item restriction
-            if (\strpos($type, '[]') !== false) {
+            if (\mb_strpos($type, '[]') !== false) {
                 return ArrayType::createFromArray($name, $definition);
             }
             // no standard type found so this must be a reference to a custom defined type
@@ -817,7 +817,7 @@ class ApiDefinition implements ArrayInstantiationInterface
 
     private function setProtocolsFromBaseUri()
     {
-        $schema = \strtoupper(\parse_url($this->baseUri, PHP_URL_SCHEME));
+        $schema = \mb_strtoupper(\parse_url($this->baseUri, PHP_URL_SCHEME));
 
         $this->protocols = empty($schema) ? [self::PROTOCOL_HTTPS, self::PROTOCOL_HTTP] : [$schema];
     }

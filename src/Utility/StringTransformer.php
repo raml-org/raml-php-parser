@@ -90,13 +90,13 @@ class StringTransformer
                 // lowercase functions
                 case self::LOWER_HYPHEN_CASE:
                 case self::LOWER_UNDERSCORE_CASE:
-                    $newString .= $delimiter . \strtolower($split[$i]);
+                    $newString .= $delimiter . \mb_strtolower($split[$i]);
 
                     break;
                 // uppercase functions
                 case self::UPPER_UNDERSCORE_CASE:
                 case self::UPPER_HYPHEN_CASE:
-                    $newString .= $delimiter . \strtoupper($split[$i]);
+                    $newString .= $delimiter . \mb_strtoupper($split[$i]);
 
                     break;
             }
