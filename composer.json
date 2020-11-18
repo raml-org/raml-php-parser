@@ -39,7 +39,7 @@
   },
 
   "require": {
-    "php": "^5.6|^7.0",
+    "php": "^7.3",
     "ext-dom": "*",
     "ext-json": "*",
     "ext-pcre": "*",
