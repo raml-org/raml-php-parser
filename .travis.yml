@@ -42,7 +42,7 @@ install:
     else
       composer update -n --no-dev --prefer-dist;
     fi;
-  - if [ "$(phpenv version-name)" != "$LATEST_PHP_VERSION" ]; then
+  - if [ "$(phpenv version-name)" = "$LATEST_PHP_VERSION" ]; then
       echo "Install dev dependencies";
       composer update -n --dev
     fi;
