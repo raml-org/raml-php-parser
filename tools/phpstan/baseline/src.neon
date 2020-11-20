@@ -36,7 +36,7 @@ parameters:
 			path: ../../../src/ApiDefinition.php
 
 		-
-			message: "#^Parameter \\#1 \\$str of function strtoupper expects string, string\\|false\\|null given\\.$#"
+			message: "#^Parameter \\#1 \\$str of function mb_strtoupper expects string, string\\|false\\|null given\\.$#"
 			count: 2
 			path: ../../../src/ApiDefinition.php
 
@@ -571,7 +571,7 @@ parameters:
 			path: ../../../src/Parser.php
 
 		-
-			message: "#^Parameter \\#1 \\$haystack of function strpos expects string, string\\|false given\\.$#"
+			message: "#^Parameter \\#1 \\$haystack of function mb_strpos expects string, string\\|false given\\.$#"
 			count: 1
 			path: ../../../src/Parser.php
 
@@ -586,12 +586,12 @@ parameters:
 			path: ../../../src/Parser.php
 
 		-
-			message: "#^Parameter \\#1 \\$string of function strlen expects string, string\\|false given\\.$#"
+			message: "#^Parameter \\#1 \\$str of function mb_strlen expects string, string\\|false given\\.$#"
 			count: 1
 			path: ../../../src/Parser.php
 
 		-
-			message: "#^Parameter \\#1 \\$string of function substr expects string, string\\|false given\\.$#"
+			message: "#^Parameter \\#1 \\$str of function mb_substr expects string, string\\|false given\\.$#"
 			count: 1
 			path: ../../../src/Parser.php
 
@@ -611,7 +611,7 @@ parameters:
 			path: ../../../src/Parser.php
 
 		-
-			message: "#^Parameter \\#1 \\$haystack of function strpos expects string, string\\|Symfony\\\\Component\\\\Yaml\\\\Tag\\\\TaggedValue given\\.$#"
+			message: "#^Parameter \\#1 \\$haystack of function mb_strpos expects string, string\\|Symfony\\\\Component\\\\Yaml\\\\Tag\\\\TaggedValue given\\.$#"
 			count: 1
 			path: ../../../src/Parser.php
 
@@ -631,7 +631,7 @@ parameters:
 			path: ../../../src/Parser.php
 
 		-
-			message: "#^Parameter \\#1 \\$haystack of function strpos expects string, string\\|null given\\.$#"
+			message: "#^Parameter \\#1 \\$haystack of function mb_strpos expects string, string\\|null given\\.$#"
 			count: 2
 			path: ../../../src/Parser.php
 
@@ -721,12 +721,12 @@ parameters:
 			path: ../../../src/RouteFormatter/RouteFormatterInterface.php
 
 		-
-			message: "#^Parameter \\#1 \\$string of function strlen expects string, string\\|false\\|null given\\.$#"
+			message: "#^Parameter \\#1 \\$str of function mb_strlen expects string, string\\|false\\|null given\\.$#"
 			count: 1
 			path: ../../../src/RouteFormatter/SymfonyRouteFormatter.php
 
 		-
-			message: "#^Parameter \\#2 \\$needle of function strpos expects int\\|string, string\\|false\\|null given\\.$#"
+			message: "#^Parameter \\#2 \\$needle of function mb_strpos expects string, string\\|false\\|null given\\.$#"
 			count: 1
 			path: ../../../src/RouteFormatter/SymfonyRouteFormatter.php
 
