@@ -12,18 +12,18 @@
     failOnRisky="true"
     beStrictAboutTestsThatDoNotTestAnything="true"
     beStrictAboutOutputDuringTests="true"
-    bootstrap="vendor/autoload.php"
+    bootstrap="../../vendor/autoload.php"
  >
 
     <testsuites>
         <testsuite name="PHP Raml Parser">
-            <directory>./tests</directory>
+            <directory>../../tests</directory>
         </testsuite>
     </testsuites>
 
     <filter>
         <whitelist>
-            <directory suffix=".php">./src</directory>
+            <directory suffix=".php">../../src</directory>
         </whitelist>
     </filter>
 

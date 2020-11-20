@@ -22,7 +22,7 @@ use Symfony\Component\Routing\RouteCollection;
 
 class ApiDefinitionTest extends TestCase
 {
-    protected function setUp()
+    protected function setUp(): void
     {
         parent::setUp();
         \setlocale(LC_NUMERIC, 'C');
@@ -465,7 +465,7 @@ class ApiDefinitionTest extends TestCase
     {
         $this->assertFalse($validator->isValid(), 'Validator expected to fail');
         foreach ($errors as $error) {
-            $this->assertContains(
+            $this->assertContainsEquals(
                 $error,
                 $validator->getErrors(),
                 $message = \sprintf('Validator expected to contain error: %s', $error->__toString()),

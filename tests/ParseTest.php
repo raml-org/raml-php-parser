@@ -29,7 +29,7 @@ class ParseTest extends TestCase
      */
     private $parser;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         parent::setUp();
         $this->parser = new Parser();
@@ -381,7 +381,7 @@ RAML;
         $body = $response->getBodyByType('application/json');
         $schema = $body->getSchema();
 
-        $this->assertInternalType('string', $schema);
+        $this->assertIsString($schema);
     }
 
     /**
@@ -455,7 +455,7 @@ RAML;
         $body = $response->getBodyByType('application/json');
         $schema = $body->getSchema();
 
-        $this->assertInternalType('string', $schema);
+        $this->assertIsString($schema);
     }
 
     /**

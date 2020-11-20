@@ -2,6 +2,7 @@
 
 namespace Raml\Tests\Validator;
 
+use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 use Psr\Http\Message\RequestInterface;
 use Psr\Http\Message\ResponseInterface;
@@ -22,21 +23,21 @@ class ResponseValidatorTest extends TestCase
     private $parser;
 
     /**
-     * @var RequestInterface|PHPUnit_Framework_MockObject_MockObject
+     * @var RequestInterface&MockObject
      */
     private $request;
 
     /**
-     * @var ResponseInterface|PHPUnit_Framework_MockObject_MockObject
+     * @var ResponseInterface&MockObject
      */
     private $response;
 
     /**
-     * @var UriInterface|PHPUnit_Framework_MockObject_MockObject
+     * @var UriInterface&MockObject
      */
     private $uri;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         parent::setUp();
         $this->parser = new Parser();
@@ -174,7 +175,6 @@ class ResponseValidatorTest extends TestCase
 
     /**
      * @test
-     * @doesNotPerformAssertions
      */
     public function shouldParseContentTypeHeader()
     {

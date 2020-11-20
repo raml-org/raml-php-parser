@@ -18,7 +18,7 @@ class ParameterTypesTest extends TestCase
      */
     private $validateBody;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         parent::setUp();
         $this->parser = new Parser();

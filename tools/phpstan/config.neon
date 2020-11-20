@@ -1,0 +1,30 @@
+includes:
+	- %rootDir%/../../../vendor/phpstan/phpstan-phpunit/extension.neon
+	- %rootDir%/../../../tools/phpstan/baseline/src.neon
+	- %rootDir%/../../../tools/phpstan/baseline/tests.neon
+
+parameters:
+	level: 8
+	parallel:
+		processTimeout: 90.0
+	checkMissingIterableValueType: false
+	checkGenericClassInNonGenericObjectType: false
+	inferPrivatePropertyTypeFromConstructor: true
+
+services:
+    -
+        class: SlamPhpStan\GotoRule
+        tags:
+            - phpstan.rules.rule
+    -
+        class: SlamPhpStan\PhpUnitFqcnAnnotationRule
+        tags:
+            - phpstan.rules.rule
+    -
+        class: SlamPhpStan\StringToClassRule
+        tags:
+            - phpstan.rules.rule
+    -
+        class: SlamPhpStan\UnusedVariableRule
+        tags:
+            - phpstan.rules.rule

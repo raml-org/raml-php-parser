@@ -7,16 +7,13 @@ cache:
     - $HOME/.composer/cache
 
 php:
-  - 5.6
-  - 7.0
-  - 7.1
-  - 7.2
   - 7.3
+  - 7.4
   - nightly
 
 env:
   global:
-    - LATEST_PHP_VERSION="7.3"
+    - LATEST_PHP_VERSION="7.4"
   matrix:
     - DEPENDENCIES="beta"
     - DEPENDENCIES="low"
@@ -37,24 +34,20 @@ before_install:
   - mkdir -p build/logs
 
 install:
-  - if [ "$(phpenv version-name)" != "$LATEST_PHP_VERSION" ]; then
-      composer remove friendsofphp/php-cs-fixer phpstan/phpstan --dev;
-    fi
   - if [ "$DEPENDENCIES" = "beta" ]; then
       composer config minimum-stability beta;
-      composer update -n --prefer-dist;
+      composer update -n --no-dev --prefer-dist;
     elif [ "$DEPENDENCIES" = "low" ]; then
-      composer update -n --prefer-dist --prefer-lowest;
+      composer update -n --no-dev --prefer-dist --prefer-lowest;
     else
-      composer update -n --prefer-dist;
+      composer update -n --no-dev --prefer-dist;
+    fi;
+  - if [ "$(phpenv version-name)" = "$LATEST_PHP_VERSION" ]; then
+      echo "Install dev dependencies";
+      composer update -n --dev;
     fi;
 
 script:
-  - if [ "$(phpenv version-name)" != "$LATEST_PHP_VERSION" ]; then
-      echo "File validation is skipped for older PHP versions";
-    else
-      composer validate-files;
-    fi;
   - if [ "$(phpenv version-name)" != "$LATEST_PHP_VERSION" ]; then
       echo "Static analysis is skipped for older PHP versions";
     else

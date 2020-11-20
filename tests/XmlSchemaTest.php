@@ -15,7 +15,7 @@ class XmlSchemaTest extends TestCase
      */
     private $parser;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         parent::setUp();
         $this->parser = new Parser();
@@ -119,7 +119,7 @@ XML
      */
     public function shouldConvertXmlToString()
     {
-        $this->assertInternalType('string', (string) $this->loadXmlSchema());
+        $this->assertIsString((string) $this->loadXmlSchema());
     }
 
     /**
@@ -156,7 +156,7 @@ XML
     {
         $this->assertFalse($validator->isValid(), 'Validator expected to fail');
         foreach ($errors as $error) {
-            $this->assertContains(
+            $this->assertContainsEquals(
                 $error,
                 $validator->getErrors(),
                 $message = \sprintf('Validator expected to contain error: %s', $error->__toString()),
