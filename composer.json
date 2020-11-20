@@ -81,7 +81,7 @@
       "phpunit --configuration='./tools/phpunit/config.xml'"
     ],
     "run-tests-with-clover": [
-      "phpunit --coverage-clover='./build/logs/clover.xml'"
+      "phpunit --configuration='./tools/phpunit/config.xml' --coverage-clover='./build/logs/clover.xml'"
     ]
   },
 
