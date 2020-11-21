@@ -49,19 +49,9 @@ install:
 
 script:
   - if [ "$(phpenv version-name)" != "$LATEST_PHP_VERSION" ]; then
-      echo "Static analysis is skipped for older PHP versions";
+      echo "Most CI steps are skipped for older PHP versions";
     else
-      composer run-static-analysis;
-    fi;
-  - if [ "$(phpenv version-name)" != "$LATEST_PHP_VERSION" ]; then
-      echo "Code style check is skipped for older PHP versions";
-    else
-      composer check-code-style;
-    fi;
-  - if [ "$(phpenv version-name)" != "$LATEST_PHP_VERSION" ]; then
-      echo "Security check is skipped for older PHP versions";
-    else
-      composer check-security;
+      composer run-ci;
     fi;
   - composer run-tests-with-clover
 
