@@ -13,7 +13,7 @@ class MethodTest extends TestCase
     /**
      * @test
      */
-    public function shouldGetTheTypeInUpperCase()
+    public function shouldGetTheTypeInUpperCase(): void
     {
         $apiDefinition = new ApiDefinition('The title');
 
@@ -30,7 +30,7 @@ class MethodTest extends TestCase
     /**
      * @test
      */
-    public function shouldGetTheDescriptionIfPassedInTheDataArray()
+    public function shouldGetTheDescriptionIfPassedInTheDataArray(): void
     {
         $apiDefinition = new ApiDefinition('The title');
 
@@ -44,7 +44,7 @@ class MethodTest extends TestCase
     /**
      * @test
      */
-    public function shouldGetTheDisplayNameIfPassedInTheDataArray()
+    public function shouldGetTheDisplayNameIfPassedInTheDataArray(): void
     {
         $apiDefinition = new ApiDefinition('The title');
 
@@ -58,7 +58,7 @@ class MethodTest extends TestCase
     /**
      * @test
      */
-    public function shouldGetNullForResponseIfNoneIsExists()
+    public function shouldGetNullForResponseIfNoneIsExists(): void
     {
         $apiDefinition = new ApiDefinition('The title');
 
@@ -70,7 +70,7 @@ class MethodTest extends TestCase
     /**
      * @test
      */
-    public function shouldGetNullForResponseIfNotAnArrayIsPassed()
+    public function shouldGetNullForResponseIfNotAnArrayIsPassed(): void
     {
         $apiDefinition = new ApiDefinition('The title');
 
@@ -82,7 +82,7 @@ class MethodTest extends TestCase
     /**
      * @test
      */
-    public function shouldGetValidResponsesIfPassedExpectedValues()
+    public function shouldGetValidResponsesIfPassedExpectedValues(): void
     {
         $apiDefinition = new ApiDefinition('The title');
 
@@ -119,7 +119,7 @@ class MethodTest extends TestCase
     /**
      * @test
      */
-    public function shouldGetEmptyArrayForQueryParametersIfNoneIsExists()
+    public function shouldGetEmptyArrayForQueryParametersIfNoneIsExists(): void
     {
         $apiDefinition = new ApiDefinition('The title');
         $method = Method::createFromArray('get', [], $apiDefinition);
@@ -129,7 +129,7 @@ class MethodTest extends TestCase
     /**
      * @test
      */
-    public function shouldGetGlobalProtocols()
+    public function shouldGetGlobalProtocols(): void
     {
         $parser = new Parser();
         $apiDefinition = $parser->parse(__DIR__ . '/fixture/protocols/noProtocolSpecified.raml');
@@ -150,7 +150,7 @@ class MethodTest extends TestCase
     /**
      * @test
      */
-    public function shouldGetOverrideProtocols()
+    public function shouldGetOverrideProtocols(): void
     {
         $parser = new Parser();
         $apiDefinition = $parser->parse(__DIR__ . '/fixture/protocols/noProtocolSpecified.raml');

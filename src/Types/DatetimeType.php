@@ -13,7 +13,7 @@ class DatetimeType extends Type
     /**
      * @var string
      */
-    const DEFAULT_FORMAT = DATE_RFC3339;
+    public const DEFAULT_FORMAT = DATE_RFC3339;
 
     /**
      * DateTime format to use
@@ -66,7 +66,7 @@ class DatetimeType extends Type
         return $this;
     }
 
-    public function validate($value)
+    public function validate($value): void
     {
         parent::validate($value);
 

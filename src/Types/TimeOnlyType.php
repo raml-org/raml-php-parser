@@ -12,7 +12,7 @@ class TimeOnlyType extends Type
     /**
      * @var string
      */
-    const FORMAT = 'H:i:s';
+    public const FORMAT = 'H:i:s';
 
     /**
      * Create a new TimeOnlyType from an array of data
@@ -28,7 +28,7 @@ class TimeOnlyType extends Type
         return $type;
     }
 
-    public function validate($value)
+    public function validate($value): void
     {
         parent::validate($value);
 

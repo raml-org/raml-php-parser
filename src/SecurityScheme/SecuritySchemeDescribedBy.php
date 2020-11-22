@@ -128,9 +128,8 @@ class SecuritySchemeDescribedBy implements ArrayInstantiationInterface
 
     /**
      * Add a body
-     *
      */
-    public function addBody(BodyInterface $body)
+    public function addBody(BodyInterface $body): void
     {
         $this->bodyList[$body->getMediaType()] = $body;
     }
@@ -147,9 +146,8 @@ class SecuritySchemeDescribedBy implements ArrayInstantiationInterface
 
     /**
      * Add a new header
-     *
      */
-    public function addHeader(NamedParameter $header)
+    public function addHeader(NamedParameter $header): void
     {
         $this->headers[$header->getKey()] = $header;
     }
@@ -168,9 +166,8 @@ class SecuritySchemeDescribedBy implements ArrayInstantiationInterface
 
     /**
      * Add a query parameter
-     *
      */
-    public function addQueryParameter(NamedParameter $queryParameter)
+    public function addQueryParameter(NamedParameter $queryParameter): void
     {
         $this->queryParameters[$queryParameter->getKey()] = $queryParameter;
     }
@@ -196,14 +193,13 @@ class SecuritySchemeDescribedBy implements ArrayInstantiationInterface
      */
     public function getResponse($responseCode)
     {
-        return isset($this->responses[$responseCode]) ? $this->responses[$responseCode] : null;
+        return $this->responses[$responseCode] ?? null;
     }
 
     /**
      * Add a response
-     *
      */
-    public function addResponse(Response $response)
+    public function addResponse(Response $response): void
     {
         $this->responses[$response->getStatusCode()] = $response;
     }

@@ -26,28 +26,28 @@ class BaseUriParameterTest extends TestCase
     private function getValidDef()
     {
         $raml = <<<RAML
-#%RAML 0.8
-title: Users API
-version: 1.2
-baseUri: https://{apiDomain}.someapi.com/{version}
-/users:
-  displayName: retrieve all users
-  baseUriParameters:
-    apiDomain:
-      enum: [ "api" ]
-  /{userId}/image:
-    displayName: access users pictures
-    baseUriParameters:
-      apiDomain:
-        enum: [ "static" ]
-    get:
-      displayName: retrieve a user's picture
-    put:
-      displayName: update a user's picture
-      baseUriParameters:
-        apiDomain:
-          enum: [ "content-update" ]
-RAML;
+            #%RAML 0.8
+            title: Users API
+            version: 1.2
+            baseUri: https://{apiDomain}.someapi.com/{version}
+            /users:
+              displayName: retrieve all users
+              baseUriParameters:
+                apiDomain:
+                  enum: [ "api" ]
+              /{userId}/image:
+                displayName: access users pictures
+                baseUriParameters:
+                  apiDomain:
+                    enum: [ "static" ]
+                get:
+                  displayName: retrieve a user's picture
+                put:
+                  displayName: update a user's picture
+                  baseUriParameters:
+                    apiDomain:
+                      enum: [ "content-update" ]
+            RAML;
 
         return $this->parser->parseFromString($raml, '');
     }
@@ -55,7 +55,7 @@ RAML;
     /**
      * @test
      */
-    public function shouldCorrectlySubstituteTheVersion()
+    public function shouldCorrectlySubstituteTheVersion(): void
     {
         $apiDef = $this->getValidDef();
 
@@ -65,7 +65,7 @@ RAML;
     /**
      * @test
      */
-    public function shouldCorrectlyParseBaseUriParameters()
+    public function shouldCorrectlyParseBaseUriParameters(): void
     {
         $apiDef = $this->getValidDef();
 
@@ -82,7 +82,7 @@ RAML;
     /**
      * @test
      */
-    public function shouldOverrideBaseUriParametersInResource()
+    public function shouldOverrideBaseUriParametersInResource(): void
     {
         $apiDef = $this->getValidDef();
         $resource = $apiDef->getResourceByUri('/users/1/image');
@@ -92,7 +92,7 @@ RAML;
     /**
      * @test
      */
-    public function shouldOverrideBaseUriParametersInMethod()
+    public function shouldOverrideBaseUriParametersInMethod(): void
     {
         $apiDef = $this->getValidDef();
         $resource = $apiDef->getResourceByUri('/users/1/image');
@@ -103,15 +103,15 @@ RAML;
     /**
      * @test
      */
-    public function shouldCorrectlyParseNetBaseUri()
+    public function shouldCorrectlyParseNetBaseUri(): void
     {
         $raml = <<<RAML
-#%RAML 0.8
-title: Test body
-baseUri: //some-host/
-/:
-  get: []
-RAML;
+            #%RAML 0.8
+            title: Test body
+            baseUri: //some-host/
+            /:
+              get: []
+            RAML;
         $protocols = $this->parser->parseFromString($raml, '')->getProtocols();
 
         $this->assertContains('HTTP', $protocols);
@@ -121,16 +121,16 @@ RAML;
     /**
      * @test
      */
-    public function shouldOverrideBaseUriProtocols()
+    public function shouldOverrideBaseUriProtocols(): void
     {
         $raml = <<<RAML
-#%RAML 0.8
-title: Test body
-baseUri: //some-host/
-protocols:  [ HTTP ]
-/:
-  get: []
-RAML;
+            #%RAML 0.8
+            title: Test body
+            baseUri: //some-host/
+            protocols:  [ HTTP ]
+            /:
+              get: []
+            RAML;
         $protocols = $this->parser->parseFromString($raml, '')->getProtocols();
 
         $this->assertContains('HTTP', $protocols);

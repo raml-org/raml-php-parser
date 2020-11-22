@@ -44,7 +44,7 @@ class RequestValidatorTest extends TestCase
     /**
      * @test
      */
-    public function shouldCatchWrongMediaType()
+    public function shouldCatchWrongMediaType(): void
     {
         $this->expectException(ValidatorRequestException::class);
         $this->expectExceptionMessage('Invalid Media type');
@@ -62,7 +62,7 @@ class RequestValidatorTest extends TestCase
      * @test
      * @doesNotPerformAssertions
      */
-    public function shouldSuccessfullyAssertWildcardAcceptHeader()
+    public function shouldSuccessfullyAssertWildcardAcceptHeader(): void
     {
         $this->request->method('getMethod')->willReturn('get');
         $this->uri->method('getPath')->willReturn('/songs');
@@ -77,7 +77,7 @@ class RequestValidatorTest extends TestCase
      * @test
      * @doesNotPerformAssertions
      */
-    public function shouldNotAssertBodyOnGetRequest()
+    public function shouldNotAssertBodyOnGetRequest(): void
     {
         $body = $this->createMock(StreamInterface::class);
         $body->method('getContents')->willReturn('');
@@ -95,7 +95,7 @@ class RequestValidatorTest extends TestCase
     /**
      * @test
      */
-    public function shouldCatchMissingParameters()
+    public function shouldCatchMissingParameters(): void
     {
         $this->request->method('getMethod')->willReturn('get');
         $this->uri->method('getPath')->willReturn('/songs');
@@ -112,7 +112,7 @@ class RequestValidatorTest extends TestCase
     /**
      * @test
      */
-    public function shouldCatchInvalidParameters()
+    public function shouldCatchInvalidParameters(): void
     {
         $this->request->method('getMethod')->willReturn('get');
         $this->uri->method('getPath')->willReturn('/songs');
@@ -129,7 +129,7 @@ class RequestValidatorTest extends TestCase
     /**
      * @test
      */
-    public function shouldCatchInvalidBody()
+    public function shouldCatchInvalidBody(): void
     {
         $body = $this->createMock(StreamInterface::class);
         $body->method('getContents')->willReturn('{"title":"Aaa"}');
@@ -149,7 +149,7 @@ class RequestValidatorTest extends TestCase
      * @test
      * @doesNotPerformAssertions
      */
-    public function shouldAllowEmptyRequestBody()
+    public function shouldAllowEmptyRequestBody(): void
     {
         $body = $this->createMock(StreamInterface::class);
         $body->method('getContents')->willReturn('');
@@ -166,7 +166,7 @@ class RequestValidatorTest extends TestCase
     /**
      * @test
      */
-    public function shouldParseContentTypeHeader()
+    public function shouldParseContentTypeHeader(): void
     {
         $body = $this->createMock(StreamInterface::class);
         $body->method('getContents')->willReturn('{"title":"Aaa"}');

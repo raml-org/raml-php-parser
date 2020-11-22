@@ -22,21 +22,21 @@ class UriParameterTest extends TestCase
     /**
      * @test
      */
-    public function shouldCorrectlyParseBaseUriParameters()
+    public function shouldCorrectlyParseBaseUriParameters(): void
     {
         $raml = <<<RAML
-#%RAML 0.8
-title: User API
-version: 1.2
-/user:
-  /{userId}:
-    displayName: Get a user
-    uriParameters:
-      userId:
-        type: integer
-    get:
-      displayName: retrieve a user's picture
-RAML;
+            #%RAML 0.8
+            title: User API
+            version: 1.2
+            /user:
+              /{userId}:
+                displayName: Get a user
+                uriParameters:
+                  userId:
+                    type: integer
+                get:
+                  displayName: retrieve a user's picture
+            RAML;
 
         $apiDef = $this->parser->parseFromString($raml, '');
         $resource = $apiDef->getResourceByUri('/user/1');
@@ -46,22 +46,22 @@ RAML;
     /**
      * @test
      */
-    public function shouldCorrectlyParseRegexUriParameters()
+    public function shouldCorrectlyParseRegexUriParameters(): void
     {
         $raml = <<<RAML
-#%RAML 0.8
-title: User API
-version: 1.2
-/user:
-  /{userName}:
-    displayName: Get a user by name
-    uriParameters:
-      userName:
-        type: string
-        pattern: ^[a-z0-9]+$
-    get:
-      displayName: retrieve a user's picture by user name
-RAML;
+            #%RAML 0.8
+            title: User API
+            version: 1.2
+            /user:
+              /{userName}:
+                displayName: Get a user by name
+                uriParameters:
+                  userName:
+                    type: string
+                    pattern: ^[a-z0-9]+$
+                get:
+                  displayName: retrieve a user's picture by user name
+            RAML;
 
         $apiDef = $this->parser->parseFromString($raml, '');
         $resource = $apiDef->getResourceByUri('/user/alec');
@@ -71,22 +71,22 @@ RAML;
     /**
      * @test
      */
-    public function shouldCorrectlyParseEnumUriParameters()
+    public function shouldCorrectlyParseEnumUriParameters(): void
     {
         $raml = <<<RAML
-#%RAML 0.8
-title: User API
-version: 1.2
+            #%RAML 0.8
+            title: User API
+            version: 1.2
 
-/user:
-  /{userName}:
-    displayName: Get a user by name
-    uriParameters:
-      userName:
-        enum: [one, two]        
-    get:
-      displayName: retrieve a user's picture by user name
-RAML;
+            /user:
+              /{userName}:
+                displayName: Get a user by name
+                uriParameters:
+                  userName:
+                    enum: [one, two]        
+                get:
+                  displayName: retrieve a user's picture by user name
+            RAML;
 
         $apiDef = $this->parser->parseFromString($raml, '');
         $resource = $apiDef->getResourceByUri('/user/one');
@@ -96,23 +96,23 @@ RAML;
     /**
      * @test
      */
-    public function shouldPassUriParametersFromParentToSub()
+    public function shouldPassUriParametersFromParentToSub(): void
     {
         $raml = <<<RAML
-#%RAML 0.8
-title: User API
-version: 1.0
+            #%RAML 0.8
+            title: User API
+            version: 1.0
 
-/base/{param1}:
-  uriParameters:
-    param1:
-      type: string
+            /base/{param1}:
+              uriParameters:
+                param1:
+                  type: string
 
-  /sub/{param2}:
-    uriParameters:
-      param2:
-        type: string        
-RAML;
+              /sub/{param2}:
+                uriParameters:
+                  param2:
+                    type: string        
+            RAML;
 
         $apiDef = $this->parser->parseFromString($raml, '');
 

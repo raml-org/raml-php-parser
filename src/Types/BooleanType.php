@@ -26,7 +26,7 @@ class BooleanType extends Type
         return $type;
     }
 
-    public function validate($value)
+    public function validate($value): void
     {
         parent::validate($value);
 

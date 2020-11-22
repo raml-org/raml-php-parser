@@ -39,7 +39,7 @@ class ApiDefinitionTest extends TestCase
     /**
      * @test
      */
-    public function shouldReturnFullResourcesForRamlFileWithDefaultFormatter()
+    public function shouldReturnFullResourcesForRamlFileWithDefaultFormatter(): void
     {
         $api = $this->buildParser()->parse(__DIR__ . '/fixture/includeSchema.raml');
         $routes = $api->getResourcesAsUri();
@@ -56,7 +56,7 @@ class ApiDefinitionTest extends TestCase
     /**
      * @test
      */
-    public function shouldReturnFullResourcesForRamlFileWithNoFormatter()
+    public function shouldReturnFullResourcesForRamlFileWithNoFormatter(): void
     {
         $api = $this->buildParser()->parse(__DIR__ . '/fixture/includeSchema.raml');
 
@@ -75,7 +75,7 @@ class ApiDefinitionTest extends TestCase
     /**
      * @test
      */
-    public function shouldReturnFullResourcesForRamlFileWithSymfonyFormatter()
+    public function shouldReturnFullResourcesForRamlFileWithSymfonyFormatter(): void
     {
         $api = $this->buildParser()->parse(__DIR__ . '/fixture/includeSchema.raml');
 
@@ -94,7 +94,7 @@ class ApiDefinitionTest extends TestCase
     /**
      * @test
      */
-    public function shouldReturnURIProtocol()
+    public function shouldReturnURIProtocol(): void
     {
         $api = $this->buildParser()->parse(__DIR__ . '/fixture/protocols/noProtocolSpecified.raml');
         $this->assertCount(1, $api->getProtocols());
@@ -106,7 +106,7 @@ class ApiDefinitionTest extends TestCase
     /**
      * @test
      */
-    public function shouldProcessTypes()
+    public function shouldProcessTypes(): void
     {
         $api = $this->buildParser()->parse(__DIR__ . '/fixture/types.raml');
         $this->assertCount(1, $api->getTypes());
@@ -125,7 +125,7 @@ class ApiDefinitionTest extends TestCase
     /**
      * @test
      */
-    public function shouldBeAbleToAccessOriginalInheritanceTypes()
+    public function shouldBeAbleToAccessOriginalInheritanceTypes(): void
     {
         $api = $this->buildParser()->parse(__DIR__ . '/fixture/raml-1.0/inheritanceTypes.raml');
         /** @var LazyProxyType $adminType */
@@ -153,7 +153,7 @@ class ApiDefinitionTest extends TestCase
     /**
      * @test
      */
-    public function shouldParseLibraries()
+    public function shouldParseLibraries(): void
     {
         $configuration = new ParseConfiguration();
         $configuration->allowRemoteFileInclusion();
@@ -176,7 +176,7 @@ class ApiDefinitionTest extends TestCase
     /**
      * @test
      */
-    public function shouldParseTypesToSubTypes()
+    public function shouldParseTypesToSubTypes(): void
     {
         $api = $this->buildParser()->parse(__DIR__ . '/fixture/raml-1.0/types.raml');
         $types = $api->getTypes();
@@ -189,7 +189,7 @@ class ApiDefinitionTest extends TestCase
     /**
      * @test
      */
-    public function shouldParseComplexTypes()
+    public function shouldParseComplexTypes(): void
     {
         $api = $this->buildParser()->parse(__DIR__ . '/fixture/raml-1.0/complexTypes.raml');
         // check types
@@ -215,7 +215,7 @@ class ApiDefinitionTest extends TestCase
     /**
      * @test
      */
-    public function shouldPassValidResponse()
+    public function shouldPassValidResponse(): void
     {
         $api = $this->buildParser()->parse(__DIR__ . '/fixture/raml-1.0/complexTypes.raml');
         /** @var Body $body */
@@ -255,7 +255,7 @@ class ApiDefinitionTest extends TestCase
     /**
      * @test
      */
-    public function shouldRejectMissingParameterResponse()
+    public function shouldRejectMissingParameterResponse(): void
     {
         $api = $this->buildParser()->parse(__DIR__ . '/fixture/raml-1.0/complexTypes.raml');
         /** @var Body $body */
@@ -285,7 +285,7 @@ class ApiDefinitionTest extends TestCase
     /**
      * @test
      */
-    public function shouldRejectInvalidIntegerParameterResponse()
+    public function shouldRejectInvalidIntegerParameterResponse(): void
     {
         $api = $this->buildParser()->parse(__DIR__ . '/fixture/raml-1.0/complexTypes.raml');
         /** @var Body $body */
@@ -337,7 +337,7 @@ class ApiDefinitionTest extends TestCase
     /**
      * @test
      */
-    public function shouldRejectInvalidStringParameterResponse()
+    public function shouldRejectInvalidStringParameterResponse(): void
     {
         $api = $this->buildParser()->parse(__DIR__ . '/fixture/raml-1.0/complexTypes.raml');
         /** @var Body $body */
@@ -389,7 +389,7 @@ class ApiDefinitionTest extends TestCase
     /**
      * @test
      */
-    public function shouldRejectInvalidEnumParameterResponse()
+    public function shouldRejectInvalidEnumParameterResponse(): void
     {
         $api = $this->buildParser()->parse(__DIR__ . '/fixture/raml-1.0/complexTypes.raml');
         /** @var Body $body */
@@ -438,7 +438,7 @@ class ApiDefinitionTest extends TestCase
     /**
      * @test
      */
-    public function shouldReturnProtocolsIfSpecified()
+    public function shouldReturnProtocolsIfSpecified(): void
     {
         $api = $this->buildParser()->parse(__DIR__ . '/fixture/protocols/protocolsSpecified.raml');
         $this->assertCount(2, $api->getProtocols());
@@ -451,7 +451,7 @@ class ApiDefinitionTest extends TestCase
     /**
      * @test
      */
-    public function shouldThrowInvalidProtocolExceptionIfWrongProtocol()
+    public function shouldThrowInvalidProtocolExceptionIfWrongProtocol(): void
     {
         $this->expectException(InvalidProtocolException::class);
 
@@ -461,7 +461,7 @@ class ApiDefinitionTest extends TestCase
     /**
      * @param TypeValidationError[] $errors
      */
-    private function assertValidationFailedWithErrors(ValidatorInterface $validator, $errors)
+    private function assertValidationFailedWithErrors(ValidatorInterface $validator, $errors): void
     {
         $this->assertFalse($validator->isValid(), 'Validator expected to fail');
         foreach ($errors as $error) {
@@ -478,7 +478,7 @@ class ApiDefinitionTest extends TestCase
     /**
      * @test
      */
-    public function shouldReturnFullResourcesNameForRamlFileWithUrlPrefix()
+    public function shouldReturnFullResourcesNameForRamlFileWithUrlPrefix(): void
     {
         $api = $this->buildParser()->parse(__DIR__ . '/fixture/includeUrlPrefix.raml');
         $this->assertEquals([

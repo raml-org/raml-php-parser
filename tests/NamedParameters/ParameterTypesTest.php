@@ -24,48 +24,48 @@ class ParameterTypesTest extends TestCase
         $this->parser = new Parser();
 
         $validateRaml = <<<RAML
-#%RAML 0.8
-title: Test named parameters
-/:
-  post:
-    body:
-      application/x-www-form-urlencoded:
-        formParameters:
-          requiredstring:
-            type: string
-            required: true
-          string:
-            type: string
-            minLength: 3
-            maxLength: 5
-          number:
-            type: number
-            minimum: 1
-            maximum: 10
-          integer:
-            type: integer
-          pattern:
-            type: integer
-            pattern: '^[-+]?[0-5]+$'
-          enum:
-            type: string
-            enum: ['laughing', 'my', 'butt', 'off']
-          boolean:
-            type: boolean
-          date:
-            type: date
-          date-only:
-            type: date-only
-          datetime-only:
-            type: datetime-only
-          time-only:
-            type: time-only
-          datetime:
-            type: datetime
-          datetime_format:
-            type: datetime
-            format: Y-m-d H:i:s
-RAML;
+            #%RAML 0.8
+            title: Test named parameters
+            /:
+              post:
+                body:
+                  application/x-www-form-urlencoded:
+                    formParameters:
+                      requiredstring:
+                        type: string
+                        required: true
+                      string:
+                        type: string
+                        minLength: 3
+                        maxLength: 5
+                      number:
+                        type: number
+                        minimum: 1
+                        maximum: 10
+                      integer:
+                        type: integer
+                      pattern:
+                        type: integer
+                        pattern: '^[-+]?[0-5]+$'
+                      enum:
+                        type: string
+                        enum: ['laughing', 'my', 'butt', 'off']
+                      boolean:
+                        type: boolean
+                      date:
+                        type: date
+                      date-only:
+                        type: date-only
+                      datetime-only:
+                        type: datetime-only
+                      time-only:
+                        type: time-only
+                      datetime:
+                        type: datetime
+                      datetime_format:
+                        type: datetime
+                        format: Y-m-d H:i:s
+            RAML;
         $apiDefinition = $this->parser->parseFromString($validateRaml, '');
         $resource = $apiDefinition->getResourceByUri('/');
         $method = $resource->getMethod('post');
@@ -76,7 +76,7 @@ RAML;
      * @test
      * @doesNotPerformAssertions
      */
-    public function shouldValidateWithoutExceptions()
+    public function shouldValidateWithoutExceptions(): void
     {
         // Not Required
         $namedParameter = $this->validateBody->getParameter('string');
@@ -96,7 +96,7 @@ RAML;
     /**
      * @test
      */
-    public function shouldValidateRequired()
+    public function shouldValidateRequired(): void
     {
         // Required
         $this->expectException(ValidationException::class);
@@ -109,7 +109,7 @@ RAML;
     /**
      * @test
      */
-    public function shouldValidateString()
+    public function shouldValidateString(): void
     {
         // When is a string not a string? When it's an integer.
         $this->expectException(ValidationException::class);
@@ -122,7 +122,7 @@ RAML;
     /**
      * @test
      */
-    public function shouldValidateShortString()
+    public function shouldValidateShortString(): void
     {
         // String is too short
         $this->expectException(ValidationException::class);
@@ -135,7 +135,7 @@ RAML;
     /**
      * @test
      */
-    public function shouldValidateLongString()
+    public function shouldValidateLongString(): void
     {
         // String is too long
         $this->expectException(ValidationException::class);
@@ -148,7 +148,7 @@ RAML;
     /**
      * @test
      */
-    public function shouldValidateNumber()
+    public function shouldValidateNumber(): void
     {
         // When is a number not a number? When it's an... array!
         $this->expectException(ValidationException::class);
@@ -161,7 +161,7 @@ RAML;
     /**
      * @test
      */
-    public function shouldValidateSmallNumber()
+    public function shouldValidateSmallNumber(): void
     {
         // Number is less than the minimum value
         $this->expectException(ValidationException::class);
@@ -174,7 +174,7 @@ RAML;
     /**
      * @test
      */
-    public function shouldValidateLargeNumber()
+    public function shouldValidateLargeNumber(): void
     {
         // Number is more than the maximum value
         $this->expectException(ValidationException::class);
@@ -187,7 +187,7 @@ RAML;
     /**
      * @test
      */
-    public function shouldValidateInteger()
+    public function shouldValidateInteger(): void
     {
         // When is aniteger not an integer? Well... you get the picture.
         $this->expectException(ValidationException::class);
@@ -200,7 +200,7 @@ RAML;
     /**
      * @test
      */
-    public function shouldValidatePattern()
+    public function shouldValidatePattern(): void
     {
         // Pattern validation
         $this->expectException(ValidationException::class);
@@ -213,7 +213,7 @@ RAML;
     /**
      * @test
      */
-    public function shouldValidateEnum()
+    public function shouldValidateEnum(): void
     {
         // Enum validation
         $this->expectException(ValidationException::class);
@@ -226,7 +226,7 @@ RAML;
     /**
      * @test
      */
-    public function shouldValidateBoolean()
+    public function shouldValidateBoolean(): void
     {
         // Boolean validation
         $this->expectException(ValidationException::class);
@@ -239,7 +239,7 @@ RAML;
     /**
      * @test
      */
-    public function shouldValidateDate()
+    public function shouldValidateDate(): void
     {
         // Date validation
         $this->expectException(ValidationException::class);
@@ -252,9 +252,9 @@ RAML;
     /**
      * @test
      */
-    public function shouldValidateDateOnly()
+    public function shouldValidateDateOnly(): void
     {
-        $this->expectException('\Raml\Exception\ValidationException');
+        $this->expectException(ValidationException::class);
         $namedParameter = $this->validateBody->getParameter('date-only');
         $namedParameter->validate('2018-08-05T13:24:55');
     }
@@ -262,9 +262,9 @@ RAML;
     /**
      * @test
      */
-    public function shouldValidateDateTimeOnly()
+    public function shouldValidateDateTimeOnly(): void
     {
-        $this->expectException('\Raml\Exception\ValidationException');
+        $this->expectException(ValidationException::class);
         $namedParameter = $this->validateBody->getParameter('datetime-only');
         $namedParameter->validate('2018-08-05T13:24:55+12:00');
     }
@@ -272,9 +272,9 @@ RAML;
     /**
      * @test
      */
-    public function shouldValidateTimeOnly()
+    public function shouldValidateTimeOnly(): void
     {
-        $this->expectException('\Raml\Exception\ValidationException');
+        $this->expectException(ValidationException::class);
         $namedParameter = $this->validateBody->getParameter('time-only');
         $namedParameter->validate('2018-08-05T13:24:55');
     }
@@ -282,9 +282,9 @@ RAML;
     /**
      * @test
      */
-    public function shouldValidateDateTime()
+    public function shouldValidateDateTime(): void
     {
-        $this->expectException('\Raml\Exception\ValidationException');
+        $this->expectException(ValidationException::class);
         $namedParameter = $this->validateBody->getParameter('datetime');
         $namedParameter->validate('2018-08-05 13:24:55');
     }
@@ -292,9 +292,9 @@ RAML;
     /**
      * @test
      */
-    public function shouldValidateDateTimeFormat()
+    public function shouldValidateDateTimeFormat(): void
     {
-        $this->expectException('\Raml\Exception\ValidationException');
+        $this->expectException(ValidationException::class);
         $namedParameter = $this->validateBody->getParameter('datetime_format');
         $namedParameter->validate('2018-08-05T13:24:55');
     }
@@ -304,20 +304,20 @@ RAML;
     /**
      * @test
      */
-    public function shouldThrowExceptionOnInvalidString()
+    public function shouldThrowExceptionOnInvalidString(): void
     {
         $raml = <<<RAML
-#%RAML 0.8
-title: Test named parameters
-/:
-  post:
-    body:
-      application/x-www-form-urlencoded:
-        formParameters:
-          param:
-            type: string
-            default: 10
-RAML;
+            #%RAML 0.8
+            title: Test named parameters
+            /:
+              post:
+                body:
+                  application/x-www-form-urlencoded:
+                    formParameters:
+                      param:
+                        type: string
+                        default: 10
+            RAML;
 
         $this->expectException(\InvalidArgumentException::class);
         $this->expectExceptionMessage('Default parameter is not a string');
@@ -327,20 +327,20 @@ RAML;
     /**
      * @test
      */
-    public function shouldThrowExceptionOnInvalidNumber()
+    public function shouldThrowExceptionOnInvalidNumber(): void
     {
         $raml = <<<RAML
-#%RAML 0.8
-title: Test named parameters
-/:
-  post:
-    body:
-      application/x-www-form-urlencoded:
-        formParameters:
-          param:
-            type: number
-            default: string
-RAML;
+            #%RAML 0.8
+            title: Test named parameters
+            /:
+              post:
+                body:
+                  application/x-www-form-urlencoded:
+                    formParameters:
+                      param:
+                        type: number
+                        default: string
+            RAML;
 
         $this->expectException(\InvalidArgumentException::class);
         $this->expectExceptionMessage('Default parameter is not a number');
@@ -350,20 +350,20 @@ RAML;
     /**
      * @test
      */
-    public function shouldThrowExceptionOnInvalidInteger()
+    public function shouldThrowExceptionOnInvalidInteger(): void
     {
         $raml = <<<RAML
-#%RAML 0.8
-title: Test named parameters
-/:
-  post:
-    body:
-      application/x-www-form-urlencoded:
-        formParameters:
-          param:
-            type: integer
-            default: 10.1
-RAML;
+            #%RAML 0.8
+            title: Test named parameters
+            /:
+              post:
+                body:
+                  application/x-www-form-urlencoded:
+                    formParameters:
+                      param:
+                        type: integer
+                        default: 10.1
+            RAML;
 
         $this->expectException(\InvalidArgumentException::class);
         $this->expectExceptionMessage('Default parameter is not an integer');
@@ -373,20 +373,20 @@ RAML;
     /**
      * @test
      */
-    public function shouldThrowExceptionOnInvalidDate()
+    public function shouldThrowExceptionOnInvalidDate(): void
     {
         $raml = <<<RAML
-#%RAML 0.8
-title: Test named parameters
-/:
-  post:
-    body:
-      application/x-www-form-urlencoded:
-        formParameters:
-          param:
-            type: date
-            default: 2000
-RAML;
+            #%RAML 0.8
+            title: Test named parameters
+            /:
+              post:
+                body:
+                  application/x-www-form-urlencoded:
+                    formParameters:
+                      param:
+                        type: date
+                        default: 2000
+            RAML;
 
         $this->expectException(\InvalidArgumentException::class);
         $this->expectExceptionMessage('Default parameter is not a dateTime object');
@@ -396,20 +396,20 @@ RAML;
     /**
      * @test
      */
-    public function shouldThrowExceptionOnInvalidBoolean()
+    public function shouldThrowExceptionOnInvalidBoolean(): void
     {
         $raml = <<<RAML
-#%RAML 0.8
-title: Test named parameters
-/:
-  post:
-    body:
-      application/x-www-form-urlencoded:
-        formParameters:
-          param:
-            type: boolean
-            default: 1
-RAML;
+            #%RAML 0.8
+            title: Test named parameters
+            /:
+              post:
+                body:
+                  application/x-www-form-urlencoded:
+                    formParameters:
+                      param:
+                        type: boolean
+                        default: 1
+            RAML;
 
         $this->expectException(\InvalidArgumentException::class);
         $this->expectExceptionMessage('Default parameter is not a boolean');
@@ -419,20 +419,20 @@ RAML;
     /**
      * @test
      */
-    public function shouldThrowExceptionOnInvalidFile()
+    public function shouldThrowExceptionOnInvalidFile(): void
     {
         $raml = <<<RAML
-#%RAML 0.8
-title: Test named parameters
-/:
-  post:
-    body:
-      application/x-www-form-urlencoded:
-        formParameters:
-          param:
-            type: file
-            default: 1
-RAML;
+            #%RAML 0.8
+            title: Test named parameters
+            /:
+              post:
+                body:
+                  application/x-www-form-urlencoded:
+                    formParameters:
+                      param:
+                        type: file
+                        default: 1
+            RAML;
 
         $this->expectException(\InvalidArgumentException::class);
         $this->expectExceptionMessage('A default value cannot be set for a file');
