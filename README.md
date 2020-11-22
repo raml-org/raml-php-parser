@@ -1,7 +1,6 @@
 [![Build Status](https://api.travis-ci.org/raml-org/raml-php-parser.svg?branch=master)](https://www.travis-ci.org/raml-org/raml-php-parser)
 [![Coverage Status](https://coveralls.io/repos/github/raml-org/raml-php-parser/badge.svg?branch=master)](https://coveralls.io/github/raml-org/raml-php-parser?branch=master)
 [![Latest Stable Version](https://poser.pugx.org/raml-org/raml-php-parser/v/stable)](https://packagist.org/packages/raml-org/raml-php-parser)
-[![Latest Unstable Version](https://poser.pugx.org/raml-org/raml-php-parser/v/unstable)](https://packagist.org/packages/raml-org/raml-php-parser)
 [![Total Downloads](https://poser.pugx.org/raml-org/raml-php-parser/downloads)](https://packagist.org/packages/raml-org/raml-php-parser)
 
 See the [RAML specification](https://github.com/raml-org/raml-spec).
