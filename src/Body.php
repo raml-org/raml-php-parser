@@ -153,7 +153,7 @@ class Body implements BodyInterface, ArrayInstantiationInterface
      *
      * @param string $description
      */
-    public function setDescription($description)
+    public function setDescription($description): void
     {
         $this->description = $description;
     }
@@ -187,7 +187,7 @@ class Body implements BodyInterface, ArrayInstantiationInterface
      *
      * @throws \Exception
      */
-    public function setSchema($schema)
+    public function setSchema($schema): void
     {
         if (!\is_string($schema) && !$schema instanceof SchemaDefinitionInterface) {
             throw new InvalidSchemaDefinitionException();
@@ -214,7 +214,7 @@ class Body implements BodyInterface, ArrayInstantiationInterface
      *
      * @throws \Exception Throws exception when type does not parse
      */
-    public function setType(TypeInterface $type)
+    public function setType(TypeInterface $type): void
     {
         $this->type = $type;
     }
@@ -246,7 +246,7 @@ class Body implements BodyInterface, ArrayInstantiationInterface
      *
      * @param string $example
      */
-    public function addExample($example)
+    public function addExample($example): void
     {
         $this->examples[] = $example;
     }

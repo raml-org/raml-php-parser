@@ -23,7 +23,7 @@ class ArrayTest extends TestCase
     /**
      * @test
      */
-    public function shouldCorrectlyValidateCorrectType()
+    public function shouldCorrectlyValidateCorrectType(): void
     {
         $simpleRaml = $this->parser->parse(__DIR__ . '/../fixture/simple_types.raml');
         $resource = $simpleRaml->getResourceByUri('/songs');
@@ -42,7 +42,7 @@ class ArrayTest extends TestCase
     /**
      * @test
      */
-    public function shouldCorrectlyValidateIncorrectArraySizeLessThanMinimum()
+    public function shouldCorrectlyValidateIncorrectArraySizeLessThanMinimum(): void
     {
         $simpleRaml = $this->parser->parse(__DIR__ . '/../fixture/simple_types.raml');
         $resource = $simpleRaml->getResourceByUri('/songs');
@@ -60,7 +60,7 @@ class ArrayTest extends TestCase
     /**
      * @test
      */
-    public function shouldCorrectlyParseTypeFacet()
+    public function shouldCorrectlyParseTypeFacet(): void
     {
         $simpleRaml = $this->parser->parse(__DIR__ . '/../fixture/simple_types.raml');
         $resource = $simpleRaml->getResourceByUri('/songs');
@@ -77,7 +77,7 @@ class ArrayTest extends TestCase
     /**
      * @test
      */
-    public function shouldCorrectlyValidateIncorrectTypeWhenArraySizeExceedsMaximum()
+    public function shouldCorrectlyValidateIncorrectTypeWhenArraySizeExceedsMaximum(): void
     {
         $simpleRaml = $this->parser->parse(__DIR__ . '/../fixture/simple_types.raml');
         $resource = $simpleRaml->getResourceByUri('/songs');

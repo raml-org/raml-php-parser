@@ -13,7 +13,6 @@ interface MessageSchemaInterface
 
     /**
      * Add a new header
-     *
      */
     public function addHeader(NamedParameter $header);
 
@@ -37,7 +36,6 @@ interface MessageSchemaInterface
 
     /**
      * Add a body
-     *
      */
     public function addBody(BodyInterface $body);
 }

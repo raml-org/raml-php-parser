@@ -24,7 +24,7 @@ class WebFormBodyTest extends TestCase
     /**
      * @test
      */
-    public function shouldThrowExceptionOnInvalidType()
+    public function shouldThrowExceptionOnInvalidType(): void
     {
         $this->expectException(\InvalidArgumentException::class);
         new WebFormBody('test');
@@ -33,20 +33,20 @@ class WebFormBodyTest extends TestCase
     /**
      * @test
      */
-    public function shouldBeCreatedForValidMediaTypeUrlEncoded()
+    public function shouldBeCreatedForValidMediaTypeUrlEncoded(): void
     {
         $raml = <<<RAML
-#%RAML 0.8
-title: Test named parameters
-/:
-  post:
-    body:
-      application/x-www-form-urlencoded:
-        formParameters:
-          string:
-            type: string
-            default: A string
-RAML;
+            #%RAML 0.8
+            title: Test named parameters
+            /:
+              post:
+                body:
+                  application/x-www-form-urlencoded:
+                    formParameters:
+                      string:
+                        type: string
+                        default: A string
+            RAML;
 
         $apiDefinition = $this->parser->parseFromString($raml, '');
         $resource = $apiDefinition->getResourceByUri('/');
@@ -59,20 +59,20 @@ RAML;
     /**
      * @test
      */
-    public function shouldBeCreatedForValidMediaTypeFormData()
+    public function shouldBeCreatedForValidMediaTypeFormData(): void
     {
         $raml = <<<RAML
-#%RAML 0.8
-title: Test named parameters
-/:
-  post:
-    body:
-      multipart/form-data:
-        formParameters:
-          string:
-            type: string
-            default: A string
-RAML;
+            #%RAML 0.8
+            title: Test named parameters
+            /:
+              post:
+                body:
+                  multipart/form-data:
+                    formParameters:
+                      string:
+                        type: string
+                        default: A string
+            RAML;
 
         $apiDefinition = $this->parser->parseFromString($raml, '');
         $resource = $apiDefinition->getResourceByUri('/');
@@ -85,20 +85,20 @@ RAML;
     /**
      * @test
      */
-    public function shouldThrowErrorOnAttemptGetInvalidParameter()
+    public function shouldThrowErrorOnAttemptGetInvalidParameter(): void
     {
         $raml = <<<RAML
-#%RAML 0.8
-title: Test named parameters
-/:
-  post:
-    body:
-      multipart/form-data:
-        formParameters:
-          string:
-            type: string
-            default: A string
-RAML;
+            #%RAML 0.8
+            title: Test named parameters
+            /:
+              post:
+                body:
+                  multipart/form-data:
+                    formParameters:
+                      string:
+                        type: string
+                        default: A string
+            RAML;
 
         $apiDefinition = $this->parser->parseFromString($raml, '');
         $resource = $apiDefinition->getResourceByUri('/');
@@ -119,20 +119,20 @@ RAML;
     /**
      * @test
      */
-    public function shouldBeAbleToGetAllParameters()
+    public function shouldBeAbleToGetAllParameters(): void
     {
         $raml = <<<RAML
-#%RAML 0.8
-title: Test named parameters
-/:
-  post:
-    body:
-      multipart/form-data:
-        formParameters:
-          string:
-            type: string
-            default: A string
-RAML;
+            #%RAML 0.8
+            title: Test named parameters
+            /:
+              post:
+                body:
+                  multipart/form-data:
+                    formParameters:
+                      string:
+                        type: string
+                        default: A string
+            RAML;
 
         $apiDefinition = $this->parser->parseFromString($raml, '');
         $resource = $apiDefinition->getResourceByUri('/');

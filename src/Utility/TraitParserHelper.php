@@ -40,7 +40,7 @@ class TraitParserHelper
             ')' .
             ')?>>/',
             static function ($matches) use ($values) {
-                $transformer = isset($matches[3]) ? $matches[3] : '';
+                $transformer = $matches[3] ?? '';
                 switch ($transformer) {
                     case 'singularize':
                         return Inflect::singularize($values[$matches[1]]);

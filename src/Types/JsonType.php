@@ -38,9 +38,8 @@ class JsonType extends Type
     /**
      * Validate a JSON string against the schema
      * - Converts the string into a JSON object then uses the JsonSchema Validator to validate
-     *
      */
-    public function validate($value)
+    public function validate($value): void
     {
         $validator = new Validator();
         $jsonSchema = $this->json;

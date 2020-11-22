@@ -63,7 +63,7 @@ class ResponseValidatorTest extends TestCase
     /**
      * @test
      */
-    public function shouldCatchMissingHeaders()
+    public function shouldCatchMissingHeaders(): void
     {
         $this->request->method('getMethod')->willReturn('get');
         $this->uri->method('getPath')->willReturn('/songs');
@@ -80,7 +80,7 @@ class ResponseValidatorTest extends TestCase
     /**
      * @test
      */
-    public function shouldCatchInvalidHeaders()
+    public function shouldCatchInvalidHeaders(): void
     {
         $headers = [
             'X-Required-Header' => ['123456'],
@@ -108,7 +108,7 @@ class ResponseValidatorTest extends TestCase
     /**
      * @test
      */
-    public function shouldPassOnEmptyBodyIfNotRequired()
+    public function shouldPassOnEmptyBodyIfNotRequired(): void
     {
         $json = '';
 
@@ -142,7 +142,7 @@ class ResponseValidatorTest extends TestCase
     /**
      * @test
      */
-    public function shouldCatchInvalidBody()
+    public function shouldCatchInvalidBody(): void
     {
         $json = '{}';
 
@@ -176,7 +176,7 @@ class ResponseValidatorTest extends TestCase
     /**
      * @test
      */
-    public function shouldParseContentTypeHeader()
+    public function shouldParseContentTypeHeader(): void
     {
         $json = '{}';
 

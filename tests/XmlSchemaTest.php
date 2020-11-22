@@ -27,30 +27,30 @@ class XmlSchemaTest extends TestCase
     private function getSchema()
     {
         $raml = <<<'RAML'
-#%RAML 0.8
+            #%RAML 0.8
 
-title: World Music API
-baseUri: http://example.api.com/{version}
-version: v1
-/songs:
-  get:
-    responses:
-        200:
-          body:
-            text/xml:
-              schema: |
-                <xs:schema attributeFormDefault="unqualified"
-                elementFormDefault="qualified"
-                xmlns:xs="http://www.w3.org/2001/XMLSchema">
-                    <xs:element name="api-request">
-                        <xs:complexType>
-                            <xs:sequence>
-                                <xs:element type="xs:string" name="input"/>
-                            </xs:sequence>
-                        </xs:complexType>
-                    </xs:element>
-                </xs:schema>
-RAML;
+            title: World Music API
+            baseUri: http://example.api.com/{version}
+            version: v1
+            /songs:
+              get:
+                responses:
+                    200:
+                      body:
+                        text/xml:
+                          schema: |
+                            <xs:schema attributeFormDefault="unqualified"
+                            elementFormDefault="qualified"
+                            xmlns:xs="http://www.w3.org/2001/XMLSchema">
+                                <xs:element name="api-request">
+                                    <xs:complexType>
+                                        <xs:sequence>
+                                            <xs:element type="xs:string" name="input"/>
+                                        </xs:sequence>
+                                    </xs:complexType>
+                                </xs:element>
+                            </xs:schema>
+            RAML;
 
         $simpleRaml = $this->parser->parseFromString($raml, '');
         $resource = $simpleRaml->getResourceByUri('/songs');
@@ -64,7 +64,7 @@ RAML;
     /**
      * @test
      */
-    public function shouldReturnXmlSchemeDefinition()
+    public function shouldReturnXmlSchemeDefinition(): void
     {
         $this->assertInstanceOf(XmlSchemaDefinition::class, $this->getSchema());
     }
@@ -72,16 +72,16 @@ RAML;
     /**
      * @test
      */
-    public function shouldCorrectlyValidateCorrectXml()
+    public function shouldCorrectlyValidateCorrectXml(): void
     {
         $xml = new \DOMDocument();
         $xml->loadXML(
             <<<'XML'
-<?xml version="1.0"?>
-<api-request>
-    <input>v1.0</input>
-</api-request>
-XML
+                <?xml version="1.0"?>
+                <api-request>
+                    <input>v1.0</input>
+                </api-request>
+                XML
         );
 
         $schema = $this->getSchema();
@@ -92,16 +92,16 @@ XML
     /**
      * @test
      */
-    public function shouldCorrectlyValidateIncorrectXml()
+    public function shouldCorrectlyValidateIncorrectXml(): void
     {
         $xml = new \DOMDocument();
         $xml->loadXML(
             <<<'XML'
-<?xml version="1.0"?>
-<api-response>
-    <input>v1.0</input>
-</api-response>
-XML
+                <?xml version="1.0"?>
+                <api-response>
+                    <input>v1.0</input>
+                </api-response>
+                XML
         );
 
         $schema = $this->getSchema();
@@ -117,7 +117,7 @@ XML
     /**
      * @test
      */
-    public function shouldConvertXmlToString()
+    public function shouldConvertXmlToString(): void
     {
         $this->assertIsString((string) $this->loadXmlSchema());
     }
@@ -125,7 +125,7 @@ XML
     /**
      * @test
      */
-    public function shouldThrowExceptionOnIncorrectXml()
+    public function shouldThrowExceptionOnIncorrectXml(): void
     {
         $badXml = new \DOMDocument();
         $badXml->loadXML('<api-request></api-request>');
@@ -152,7 +152,7 @@ XML
     /**
      * @param TypeValidationError[] $errors
      */
-    private function assertValidationFailedWithErrors(ValidatorInterface $validator, array $errors)
+    private function assertValidationFailedWithErrors(ValidatorInterface $validator, array $errors): void
     {
         $this->assertFalse($validator->isValid(), 'Validator expected to fail');
         foreach ($errors as $error) {

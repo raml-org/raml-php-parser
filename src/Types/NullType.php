@@ -26,7 +26,7 @@ class NullType extends Type
         return $type;
     }
 
-    public function validate($value)
+    public function validate($value): void
     {
         if (null !== $value) {
             $this->errors[] = TypeValidationError::unexpectedValueType($this->getName(), 'null', $value);

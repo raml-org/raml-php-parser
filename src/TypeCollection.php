@@ -68,7 +68,7 @@ class TypeCollection implements \Iterator
     /**
      * {@inheritDoc}
      */
-    public function next()
+    public function next(): void
     {
         $this->position++;
     }
@@ -76,7 +76,7 @@ class TypeCollection implements \Iterator
     /**
      * {@inheritDoc}
      */
-    public function rewind()
+    public function rewind(): void
     {
         $this->position = 0;
     }
@@ -94,7 +94,7 @@ class TypeCollection implements \Iterator
      *
      * @param TypeInterface $type Type to add.
      */
-    public function add(TypeInterface $type)
+    public function add(TypeInterface $type): void
     {
         $this->collection[] = $type;
     }
@@ -105,7 +105,7 @@ class TypeCollection implements \Iterator
      * @param TypeInterface $typeToRemove Type to remove.
      * @throws \RuntimeException When no type is found.
      */
-    public function remove(TypeInterface $typeToRemove)
+    public function remove(TypeInterface $typeToRemove): void
     {
         foreach ($this->collection as $key => $type) {
             if ($type === $typeToRemove) {
@@ -154,7 +154,7 @@ class TypeCollection implements \Iterator
     /**
      * Applies inheritance on all types that have a parent
      */
-    public function applyInheritance()
+    public function applyInheritance(): void
     {
         foreach ($this->typesWithInheritance as $type) {
             $type->inheritFromParent();
@@ -194,7 +194,7 @@ class TypeCollection implements \Iterator
     /**
      * Clears the TypeCollection of any registered types
      */
-    public function clear()
+    public function clear(): void
     {
         $this->collection = [];
         $this->position = 0;

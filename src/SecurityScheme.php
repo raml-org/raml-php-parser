@@ -135,7 +135,7 @@ class SecurityScheme implements ArrayInstantiationInterface
      *
      * @param string $description
      */
-    public function setDescription($description)
+    public function setDescription($description): void
     {
         $this->description = $description;
     }
@@ -157,7 +157,7 @@ class SecurityScheme implements ArrayInstantiationInterface
      *
      * @param string $type
      */
-    public function setType($type)
+    public function setType($type): void
     {
         $this->type = $type;
     }
@@ -176,9 +176,8 @@ class SecurityScheme implements ArrayInstantiationInterface
 
     /**
      * Set the implementation details of the security scheme
-     *
      */
-    public function setDescribedBy(SecuritySchemeDescribedBy $describedBy)
+    public function setDescribedBy(SecuritySchemeDescribedBy $describedBy): void
     {
         $this->describedBy = $describedBy;
     }
@@ -200,7 +199,7 @@ class SecurityScheme implements ArrayInstantiationInterface
      *
      * @param object|array $settings
      */
-    public function setSettings($settings)
+    public function setSettings($settings): void
     {
         $this->settings = $settings;
     }
@@ -210,7 +209,7 @@ class SecurityScheme implements ArrayInstantiationInterface
      *
      * @param array $newSettings
      */
-    public function mergeSettings($newSettings)
+    public function mergeSettings($newSettings): void
     {
         if (\is_object($this->getSettings())) {
             $settingsClass = \get_class($this->getSettings());

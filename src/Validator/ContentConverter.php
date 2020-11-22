@@ -52,7 +52,7 @@ class ContentConverter
         $params = [];
         foreach ($parts as $param) {
             if (\mb_strpos($param, '=') !== false) {
-                list($k, $v) = \explode('=', \trim($param));
+                [$k, $v] = \explode('=', \trim($param));
                 $params[$k] = $v;
             }
         }
@@ -60,7 +60,7 @@ class ContentConverter
         if ($fullType === '*') {
             return '*/*';
         }
-        list($type, $subtype) = \explode('/', $fullType);
+        [$type, $subtype] = \explode('/', $fullType);
         if (!$subtype) {
             throw new \UnexpectedValueException('Malformed media-range: ' . $mediaRange);
         }

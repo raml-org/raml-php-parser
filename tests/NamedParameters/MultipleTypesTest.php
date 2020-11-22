@@ -23,7 +23,7 @@ class MultipleTypesTest extends TestCase
     /**
      * @test
      */
-    public function shouldGetTheResourceOnTheBaseUrl()
+    public function shouldGetTheResourceOnTheBaseUrl(): void
     {
         $apiDefinition = $this->parser->parse(__DIR__ . '/fixture/multipleTypes.raml');
 
@@ -34,7 +34,7 @@ class MultipleTypesTest extends TestCase
     /**
      * @test
      */
-    public function shouldReturnAnArrayOfTypes()
+    public function shouldReturnAnArrayOfTypes(): void
     {
         $apiDefinition = $this->parser->parse(__DIR__ . '/fixture/multipleTypes.raml');
 

@@ -212,7 +212,6 @@ class ObjectType extends Type
 
     /**
      * Get the value of Additional Properties
-     *
      */
     public function getAdditionalProperties()
     {
@@ -278,7 +277,7 @@ class ObjectType extends Type
         return $this;
     }
 
-    public function validate($value)
+    public function validate($value): void
     {
         parent::validate($value);
 

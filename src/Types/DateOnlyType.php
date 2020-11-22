@@ -14,7 +14,7 @@ class DateOnlyType extends Type
     /**
      * @var string
      */
-    const FORMAT = 'Y-m-d';
+    public const FORMAT = 'Y-m-d';
 
     /**
     * Create a new DateOnlyType from an array of data
@@ -31,7 +31,7 @@ class DateOnlyType extends Type
         return $type;
     }
 
-    public function validate($value)
+    public function validate($value): void
     {
         parent::validate($value);
 

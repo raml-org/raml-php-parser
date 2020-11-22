@@ -39,7 +39,7 @@ class ParseConfiguration
     /**
      * Enable directory traversal
      */
-    public function enableDirectoryTraversal()
+    public function enableDirectoryTraversal(): void
     {
         $this->allowDirectoryTraversal = true;
     }
@@ -47,7 +47,7 @@ class ParseConfiguration
     /**
      * Disable directory traversal
      */
-    public function disableDirectoryTraversal()
+    public function disableDirectoryTraversal(): void
     {
         $this->allowDirectoryTraversal = false;
     }
@@ -67,7 +67,7 @@ class ParseConfiguration
     /**
      * Enable schema parsing
      */
-    public function enableSchemaParsing()
+    public function enableSchemaParsing(): void
     {
         $this->parseSchemas = true;
     }
@@ -75,7 +75,7 @@ class ParseConfiguration
     /**
      * Disable schema parsing
      */
-    public function disableSchemaParsing()
+    public function disableSchemaParsing(): void
     {
         $this->parseSchemas = false;
     }
@@ -95,7 +95,7 @@ class ParseConfiguration
     /**
      * Enable security scheme parsing
      */
-    public function enableSecuritySchemeParsing()
+    public function enableSecuritySchemeParsing(): void
     {
         $this->parseSecuritySchemes = true;
     }
@@ -103,7 +103,7 @@ class ParseConfiguration
     /**
      * Disable security scheme parsing
      */
-    public function disableSecuritySchemeParsing()
+    public function disableSecuritySchemeParsing(): void
     {
         $this->parseSecuritySchemes = false;
     }
@@ -126,12 +126,12 @@ class ParseConfiguration
         return $this->remoteFileInclusionEnabled;
     }
 
-    public function allowRemoteFileInclusion()
+    public function allowRemoteFileInclusion(): void
     {
         $this->remoteFileInclusionEnabled = true;
     }
 
-    public function forbidRemoteFileInclusion()
+    public function forbidRemoteFileInclusion(): void
     {
         $this->remoteFileInclusionEnabled = false;
     }
