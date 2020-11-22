@@ -20,7 +20,7 @@ class ResponseValidator
         $this->schemaHelper = $schema;
     }
 
-    public function validateResponse(RequestInterface $request, ResponseInterface $response)
+    public function validateResponse(RequestInterface $request, ResponseInterface $response): void
     {
         $this->assertNoMissingHeaders($request, $response);
         $this->assertValidHeaders($request, $response);
@@ -30,7 +30,7 @@ class ResponseValidator
     /**
      * @throws ValidatorResponseException
      */
-    private function assertNoMissingHeaders(RequestInterface $request, ResponseInterface $response)
+    private function assertNoMissingHeaders(RequestInterface $request, ResponseInterface $response): void
     {
         $method = $request->getMethod();
         $path = $request->getUri()->getPath();
@@ -55,7 +55,7 @@ class ResponseValidator
     /**
      * @throws ValidatorResponseException
      */
-    private function assertValidHeaders(RequestInterface $request, ResponseInterface $response)
+    private function assertValidHeaders(RequestInterface $request, ResponseInterface $response): void
     {
         $method = $request->getMethod();
         $path = $request->getUri()->getPath();
@@ -94,7 +94,7 @@ class ResponseValidator
     /**
      * @throws ValidatorResponseException
      */
-    private function assertValidBody(RequestInterface $request, ResponseInterface $response)
+    private function assertValidBody(RequestInterface $request, ResponseInterface $response): void
     {
         $method = $request->getMethod();
         $path = $request->getUri()->getPath();

@@ -12,7 +12,7 @@ class DatetimeOnlyType extends Type
     /**
      * @var string
      */
-    const FORMAT = 'Y-m-d\\TH:i:s';
+    public const FORMAT = 'Y-m-d\\TH:i:s';
 
     /**
     * Create a new DateTimeOnlyType from an array of data
@@ -29,7 +29,7 @@ class DatetimeOnlyType extends Type
         return $type;
     }
 
-    public function validate($value)
+    public function validate($value): void
     {
         parent::validate($value);
 

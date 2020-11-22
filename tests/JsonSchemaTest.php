@@ -22,7 +22,7 @@ class JsonSchemaTest extends TestCase
     /**
      * @test
      */
-    public function shouldReturnJsonString()
+    public function shouldReturnJsonString(): void
     {
         $simpleRaml = $this->parser->parse(__DIR__ . '/fixture/simple.raml');
         $resource = $simpleRaml->getResourceByUri('/songs');
@@ -39,7 +39,7 @@ class JsonSchemaTest extends TestCase
     /**
      * @test
      */
-    public function shouldCorrectlyValidateCorrectJson()
+    public function shouldCorrectlyValidateCorrectJson(): void
     {
         $simpleRaml = $this->parser->parse(__DIR__ . '/fixture/simple.raml');
         $resource = $simpleRaml->getResourceByUri('/songs');
@@ -55,7 +55,7 @@ class JsonSchemaTest extends TestCase
     /**
      * @test
      */
-    public function shouldCorrectlyValidateIncorrectJson()
+    public function shouldCorrectlyValidateIncorrectJson(): void
     {
         $simpleRaml = $this->parser->parse(__DIR__ . '/fixture/simple.raml');
         $resource = $simpleRaml->getResourceByUri('/songs');
@@ -71,7 +71,7 @@ class JsonSchemaTest extends TestCase
     /**
      * @test
      */
-    public function shouldCorrectlyValidateInvalidJson()
+    public function shouldCorrectlyValidateInvalidJson(): void
     {
         $simpleRaml = $this->parser->parse(__DIR__ . '/fixture/simple.raml');
         $resource = $simpleRaml->getResourceByUri('/songs');
@@ -87,7 +87,7 @@ class JsonSchemaTest extends TestCase
     /**
      * @test
      */
-    public function shouldCorrectlyValidateJsonAsArray()
+    public function shouldCorrectlyValidateJsonAsArray(): void
     {
         $simpleRaml = $this->parser->parse(__DIR__ . '/fixture/simple.raml');
         $resource = $simpleRaml->getResourceByUri('/songs/{songId}');

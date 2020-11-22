@@ -140,7 +140,7 @@ class UnionType extends Type
         return $this;
     }
 
-    public function validate($value)
+    public function validate($value): void
     {
         $selfProperties = [];
         $selfValue = [];

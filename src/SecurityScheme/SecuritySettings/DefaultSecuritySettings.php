@@ -11,7 +11,7 @@ class DefaultSecuritySettings implements SecuritySettingsInterface, \ArrayAccess
      *
      * @var string
      */
-    const TYPE = '*';
+    public const TYPE = '*';
 
     /**
      * The security settings
@@ -44,9 +44,8 @@ class DefaultSecuritySettings implements SecuritySettingsInterface, \ArrayAccess
 
     /**
      * Merge new settings into the current settings
-     *
      */
-    public function mergeSettings(array $newSettings)
+    public function mergeSettings(array $newSettings): void
     {
         $this->settings = \array_replace($this->settings, $newSettings);
     }
@@ -54,9 +53,8 @@ class DefaultSecuritySettings implements SecuritySettingsInterface, \ArrayAccess
     /**
      * Sets a settings value
      * @link http://php.net/manual/en/arrayaccess.offsetset.php
-     *
      */
-    public function offsetSet($offset, $value)
+    public function offsetSet($offset, $value): void
     {
         if (null === $offset) {
             $this->settings[] = $value;
@@ -80,9 +78,8 @@ class DefaultSecuritySettings implements SecuritySettingsInterface, \ArrayAccess
     /**
      * Delete a settings value
      * @link http://php.net/manual/en/arrayaccess.offsetunset.php
-     *
      */
-    public function offsetUnset($offset)
+    public function offsetUnset($offset): void
     {
         unset($this->settings[$offset]);
     }
@@ -90,12 +87,10 @@ class DefaultSecuritySettings implements SecuritySettingsInterface, \ArrayAccess
     /**
      * Get a single settings value
      * @link http://php.net/manual/en/arrayaccess.offsetget.php
-     *
-     *
      */
     public function offsetGet($offset)
     {
-        return isset($this->settings[$offset]) ? $this->settings[$offset] : null;
+        return $this->settings[$offset] ?? null;
     }
 
     /**

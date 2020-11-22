@@ -30,7 +30,6 @@ class Response implements ArrayInstantiationInterface, MessageSchemaInterface
     private $bodyList;
 
     /**
-     *
      * @see http://raml.org/spec.html#headers
      *
      * @var NamedParameter[]
@@ -145,9 +144,8 @@ class Response implements ArrayInstantiationInterface, MessageSchemaInterface
 
     /**
      * Add a new body
-     *
      */
-    public function addBody(BodyInterface $body)
+    public function addBody(BodyInterface $body): void
     {
         $this->bodyList[$body->getMediaType()] = $body;
     }
@@ -166,9 +164,8 @@ class Response implements ArrayInstantiationInterface, MessageSchemaInterface
 
     /**
      * Add a new header
-     *
      */
-    public function addHeader(NamedParameter $header)
+    public function addHeader(NamedParameter $header): void
     {
         $this->headers[$header->getKey()] = $header;
     }
@@ -190,7 +187,7 @@ class Response implements ArrayInstantiationInterface, MessageSchemaInterface
      *
      * @param string $description
      */
-    public function setDescription($description)
+    public function setDescription($description): void
     {
         $this->description = $description;
     }

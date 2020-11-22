@@ -33,7 +33,6 @@ class TraitCollection implements \Iterator
 
     /**
      * prevent initiation from outside, there can be only one!
-     *
      */
     private function __construct()
     {
@@ -76,12 +75,12 @@ class TraitCollection implements \Iterator
         return $this->position;
     }
 
-    public function next()
+    public function next(): void
     {
         $this->position++;
     }
 
-    public function rewind()
+    public function rewind(): void
     {
         $this->position = 0;
     }
@@ -99,7 +98,7 @@ class TraitCollection implements \Iterator
      *
      * @param TraitDefinition $traitToAdd Type to add.
      */
-    public function add(TraitDefinition $traitToAdd)
+    public function add(TraitDefinition $traitToAdd): void
     {
         foreach ($this->collection as $trait) {
             if ($trait === $traitToAdd) {
@@ -116,7 +115,7 @@ class TraitCollection implements \Iterator
      *
      * @throws Exception
      */
-    public function remove(TraitDefinition $traitToRemove)
+    public function remove(TraitDefinition $traitToRemove): void
     {
         foreach ($this->collection as $key => $trait) {
             if ($trait === $traitToRemove) {
@@ -171,9 +170,8 @@ class TraitCollection implements \Iterator
 
     /**
      * Clears the TraitCollection of any registered types
-     *
      */
-    public function clear()
+    public function clear(): void
     {
         $this->collection = [];
         $this->position = 0;

@@ -48,7 +48,7 @@ class XmlSchemaDefinition implements SchemaDefinitionInterface
      *
      * @throws \Exception
      */
-    public function validate($value)
+    public function validate($value): void
     {
         if (!$value instanceof DOMDocument) {
             $this->errors[] = TypeValidationError::xmlValidationFailed('Expected value of type DOMDocument');

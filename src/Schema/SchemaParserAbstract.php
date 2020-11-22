@@ -27,7 +27,7 @@ abstract class SchemaParserAbstract implements SchemaParserInterface
      *
      * @param string $sourceUri
      */
-    public function setSourceUri($sourceUri)
+    public function setSourceUri($sourceUri): void
     {
         $this->sourceUri = $sourceUri;
     }
@@ -65,7 +65,7 @@ abstract class SchemaParserAbstract implements SchemaParserInterface
      *
      * @param string $contentType
      */
-    public function addCompatibleContentType($contentType)
+    public function addCompatibleContentType($contentType): void
     {
         if (!\in_array($contentType, $this->compatibleContentTypes, true)) {
             $this->compatibleContentTypes[] = $contentType;

@@ -68,7 +68,6 @@ class StringType extends Type
 
     /**
      * Get the value of Pattern
-     *
      */
     public function getPattern()
     {
@@ -90,7 +89,6 @@ class StringType extends Type
 
     /**
      * Get the value of Min Length
-     *
      */
     public function getMinLength()
     {
@@ -112,7 +110,6 @@ class StringType extends Type
 
     /**
      * Get the value of Max Length
-     *
      */
     public function getMaxLength()
     {
@@ -132,7 +129,7 @@ class StringType extends Type
         return $this;
     }
 
-    public function validate($value)
+    public function validate($value): void
     {
         parent::validate($value);
 

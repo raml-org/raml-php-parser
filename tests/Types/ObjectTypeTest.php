@@ -23,7 +23,7 @@ class ObjectTypeTest extends TestCase
     /**
      * @test
      */
-    public function shouldCorrectlyValidateCorrectType()
+    public function shouldCorrectlyValidateCorrectType(): void
     {
         $resource = $this->apiDefinition->getResourceByUri('/actors/1');
         $method = $resource->getMethod('get');
@@ -42,7 +42,7 @@ class ObjectTypeTest extends TestCase
     /**
      * @test
      */
-    public function shouldNotCorrectlyValidateObjectType()
+    public function shouldNotCorrectlyValidateObjectType(): void
     {
         $resource = $this->apiDefinition->getResourceByUri('/actors/1');
         $method = $resource->getMethod('get');

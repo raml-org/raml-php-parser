@@ -144,9 +144,8 @@ class Parser
 
     /**
      * Set the parse configuration
-     *
      */
-    public function setConfiguration(ParseConfiguration $config)
+    public function setConfiguration(ParseConfiguration $config): void
     {
         $this->configuration = $config;
     }
@@ -155,9 +154,8 @@ class Parser
 
     /**
      * Add a new schema parser
-     *
      */
-    public function addSchemaParser(SchemaParserInterface $schemaParser)
+    public function addSchemaParser(SchemaParserInterface $schemaParser): void
     {
         foreach ($schemaParser->getCompatibleContentTypes() as $contentType) {
             $this->schemaParsers[$contentType] = $schemaParser;
@@ -166,18 +164,16 @@ class Parser
 
     /**
      * Add a new type
-     *
      */
-    public function addType(TypeInterface $type)
+    public function addType(TypeInterface $type): void
     {
         $this->types[$type->getName()] = $type;
     }
 
     /**
      * Add a new security scheme
-     *
      */
-    public function addSecuritySettingParser(SecuritySettingsParserInterface $securitySettingsParser)
+    public function addSecuritySettingParser(SecuritySettingsParserInterface $securitySettingsParser): void
     {
         foreach ($securitySettingsParser->getCompatibleTypes() as $contentType) {
             $this->securitySettingsParsers[$contentType] = $securitySettingsParser;
@@ -186,9 +182,8 @@ class Parser
 
     /**
      * Add a file loader
-     *
      */
-    public function addFileLoader(FileLoaderInterface $fileLoader)
+    public function addFileLoader(FileLoaderInterface $fileLoader): void
     {
         foreach ($fileLoader->getValidExtensions() as $extension) {
             $this->fileLoaders[$extension] = $fileLoader;
@@ -379,7 +374,7 @@ class Parser
         $securitySchemes = [];
 
         foreach ($schemesArray as $key => $securitySchemeData) {
-            $parser = isset($this->securitySettingsParsers['*']) ? $this->securitySettingsParsers['*'] : false;
+            $parser = $this->securitySettingsParsers['*'] ?? false;
 
             $securitySchemes[$key] = $securitySchemeData;
             $securityScheme = $securitySchemes[$key];
@@ -394,7 +389,7 @@ class Parser
 
             // If we found a parser, create it's settings object.
             if ($parser) {
-                $settings = isset($securityScheme['settings']) ? $securityScheme['settings'] : [];
+                $settings = $securityScheme['settings'] ?? [];
                 $securitySchemes[$key]['settings'] = $parser->createSecuritySettings($settings);
             }
         }

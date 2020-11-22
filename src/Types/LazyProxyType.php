@@ -139,7 +139,7 @@ class LazyProxyType extends Type
         return $this->getResolvedObject()->getRequired();
     }
 
-    public function validate($value)
+    public function validate($value): void
     {
         $this->errors = [];
         $original = $this->getResolvedObject();

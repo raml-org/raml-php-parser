@@ -36,9 +36,8 @@ class XmlType extends Type
 
     /**
      * Validate an XML string against the schema
-     *
      */
-    public function validate($value)
+    public function validate($value): void
     {
         if (!$value instanceof DOMDocument) {
             $this->errors[] = TypeValidationError::xmlValidationFailed('Expected value of type DOMDocument');

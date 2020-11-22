@@ -74,9 +74,8 @@ class WebFormBody extends NamedParameter implements BodyInterface
 
     /**
      * Add a NamedParameter object to the list
-     *
      */
-    public function addParameter(NamedParameter $namedParameter)
+    public function addParameter(NamedParameter $namedParameter): void
     {
         $this->namedParameters[$namedParameter->getKey()] = $namedParameter;
     }

@@ -9,7 +9,7 @@ class OAuth2SecuritySettings implements SecuritySettingsInterface
     /**
      * @var string
      */
-    const TYPE = 'OAuth 2.0';
+    public const TYPE = 'OAuth 2.0';
 
     // --
 
@@ -103,7 +103,7 @@ class OAuth2SecuritySettings implements SecuritySettingsInterface
      *
      * @param string $authorizationUri
      */
-    public function setAuthorizationUri($authorizationUri)
+    public function setAuthorizationUri($authorizationUri): void
     {
         $this->authorizationUri = $authorizationUri;
     }
@@ -125,7 +125,7 @@ class OAuth2SecuritySettings implements SecuritySettingsInterface
      *
      * @param string $accessTokenUri
      */
-    public function setAccessTokenUri($accessTokenUri)
+    public function setAccessTokenUri($accessTokenUri): void
     {
         $this->accessTokenUri = $accessTokenUri;
     }
@@ -147,7 +147,7 @@ class OAuth2SecuritySettings implements SecuritySettingsInterface
      *
      * @param string $authorizationGrant
      */
-    public function addAuthorizationGrants($authorizationGrant)
+    public function addAuthorizationGrants($authorizationGrant): void
     {
         $this->authorizationGrants[] = $authorizationGrant;
     }
@@ -169,7 +169,7 @@ class OAuth2SecuritySettings implements SecuritySettingsInterface
      *
      * @param string $scope
      */
-    public function addScope($scope)
+    public function addScope($scope): void
     {
         $this->scopes[] = $scope;
     }

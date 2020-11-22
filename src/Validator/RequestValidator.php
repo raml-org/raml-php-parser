@@ -30,7 +30,7 @@ class RequestValidator
     /**
      * @throws Exception
      */
-    public function validateRequest(RequestInterface $request)
+    public function validateRequest(RequestInterface $request): void
     {
         $this->assertMediaTypes($request);
         $this->assertNoMissingParameters($request);
@@ -44,7 +44,7 @@ class RequestValidator
     /**
      * @throws ValidatorRequestException
      */
-    private function assertNoMissingParameters(RequestInterface $request)
+    private function assertNoMissingParameters(RequestInterface $request): void
     {
         $method = $request->getMethod();
         $path = $request->getUri()->getPath();
@@ -68,7 +68,7 @@ class RequestValidator
     /**
      * @throws ValidatorRequestException
      */
-    private function assertValidParameters(RequestInterface $request)
+    private function assertValidParameters(RequestInterface $request): void
     {
         $method = $request->getMethod();
         $path = $request->getUri()->getPath();
@@ -99,7 +99,7 @@ class RequestValidator
         }
     }
 
-    private function assertValidBody(RequestInterface $request)
+    private function assertValidBody(RequestInterface $request): void
     {
         $method = $request->getMethod();
         $path = $request->getUri()->getPath();
@@ -143,7 +143,7 @@ class RequestValidator
         }, $errors));
     }
 
-    private function assertMediaTypes(RequestInterface $request)
+    private function assertMediaTypes(RequestInterface $request): void
     {
         $method = $request->getMethod();
         $path = $request->getUri()->getPath();

@@ -21,7 +21,7 @@ class UnionTypeTest extends TestCase
     /**
      * @test
      */
-    public function shouldCorrectlyValidateCorrectType()
+    public function shouldCorrectlyValidateCorrectType(): void
     {
         $simpleRaml = $this->parser->parse(__DIR__ . '/../fixture/simple_types.raml');
         $resource = $simpleRaml->getResourceByUri('/songs');
@@ -37,7 +37,7 @@ class UnionTypeTest extends TestCase
     /**
      * @test
      */
-    public function shouldCorrectlyValidateIncorrectType()
+    public function shouldCorrectlyValidateIncorrectType(): void
     {
         $simpleRaml = $this->parser->parse(__DIR__ . '/../fixture/simple_types.raml');
         $resource = $simpleRaml->getResourceByUri('/songs');
@@ -59,7 +59,7 @@ class UnionTypeTest extends TestCase
     /**
      * @test
      */
-    public function shouldCorrectlyValidateNullableTypes()
+    public function shouldCorrectlyValidateNullableTypes(): void
     {
         $simpleRaml = $this->parser->parse(__DIR__ . '/../fixture/simple_types.raml');
         $resource = $simpleRaml->getResourceByUri('/songs');
@@ -77,7 +77,7 @@ class UnionTypeTest extends TestCase
     /**
      * @test
      */
-    public function shouldCorrectlyValidateNullableStringTypes()
+    public function shouldCorrectlyValidateNullableStringTypes(): void
     {
         $simpleRaml = $this->parser->parse(__DIR__ . '/../fixture/simple_types.raml');
         $resource = $simpleRaml->getResourceByUri('/songs');
@@ -102,7 +102,7 @@ class UnionTypeTest extends TestCase
     /**
      * @test
      */
-    public function shouldCorrectlyValidateUnionInheritedTypes1()
+    public function shouldCorrectlyValidateUnionInheritedTypes1(): void
     {
         $simpleRaml = $this->parser->parse(__DIR__ . '/../fixture/simple_types.raml');
         $resource = $simpleRaml->getResourceByUri('/songs');
@@ -124,7 +124,7 @@ class UnionTypeTest extends TestCase
     /**
      * @test
      */
-    public function shouldCorrectlyValidateUnionInheritedTypes2()
+    public function shouldCorrectlyValidateUnionInheritedTypes2(): void
     {
         $simpleRaml = $this->parser->parse(__DIR__ . '/../fixture/simple_types.raml');
         $resource = $simpleRaml->getResourceByUri('/songs');

@@ -21,7 +21,7 @@ class TypeTest extends TestCase
     /**
      * @test
      */
-    public function shouldCorrectlyValidateCorrectType()
+    public function shouldCorrectlyValidateCorrectType(): void
     {
         $simpleRaml = $this->parser->parse(__DIR__ . '/fixture/simple_types.raml');
         $resource = $simpleRaml->getResourceByUri('/songs');
@@ -37,7 +37,7 @@ class TypeTest extends TestCase
     /**
      * @test
      */
-    public function shouldCorrectlyValidateCorrectTypeMissingUnrequired()
+    public function shouldCorrectlyValidateCorrectTypeMissingUnrequired(): void
     {
         $simpleRaml = $this->parser->parse(__DIR__ . '/fixture/simple_types.raml');
         $resource = $simpleRaml->getResourceByUri('/songs');
@@ -53,7 +53,7 @@ class TypeTest extends TestCase
     /**
      * @test
      */
-    public function shouldCorrectlyValidateCorrectTypeMissingRequired()
+    public function shouldCorrectlyValidateCorrectTypeMissingRequired(): void
     {
         $simpleRaml = $this->parser->parse(__DIR__ . '/fixture/simple_types.raml');
         $resource = $simpleRaml->getResourceByUri('/songs');
@@ -69,7 +69,7 @@ class TypeTest extends TestCase
     /**
      * @test
      */
-    public function shouldCorrectlyValidateIncorrectType()
+    public function shouldCorrectlyValidateIncorrectType(): void
     {
         $simpleRaml = $this->parser->parse(__DIR__ . '/fixture/simple_types.raml');
         $resource = $simpleRaml->getResourceByUri('/songs');
@@ -85,7 +85,7 @@ class TypeTest extends TestCase
     /**
      * @test
      */
-    public function shouldCorrectlyValidateAdditionalProperties()
+    public function shouldCorrectlyValidateAdditionalProperties(): void
     {
         $simpleRaml = $this->parser->parse(__DIR__ . '/fixture/simple_types.raml');
         $resource = $simpleRaml->getResourceByUri('/songs');
@@ -101,7 +101,7 @@ class TypeTest extends TestCase
     /**
      * @test
      */
-    public function shouldCorrectlyValidateNullTypes()
+    public function shouldCorrectlyValidateNullTypes(): void
     {
         $simpleRaml = $this->parser->parse(__DIR__ . '/fixture/simple_types.raml');
         $resource = $simpleRaml->getResourceByUri('/songs');
@@ -120,7 +120,7 @@ class TypeTest extends TestCase
     /**
      * @test
      */
-    public function shouldCorrectlyValidateRightDateTimeOnlyTypes()
+    public function shouldCorrectlyValidateRightDateTimeOnlyTypes(): void
     {
         $simpleRaml = $this->parser->parse(__DIR__ . '/fixture/simple_types.raml');
         $resource = $simpleRaml->getResourceByUri('/songs');
@@ -136,7 +136,7 @@ class TypeTest extends TestCase
     /**
      * @test
      */
-    public function shouldCorrectlyValidateWrongDateTimeOnlyTypes()
+    public function shouldCorrectlyValidateWrongDateTimeOnlyTypes(): void
     {
         $simpleRaml = $this->parser->parse(__DIR__ . '/fixture/simple_types.raml');
         $resource = $simpleRaml->getResourceByUri('/songs');
@@ -152,7 +152,7 @@ class TypeTest extends TestCase
     /**
      * @test
      */
-    public function shouldCorrectlyValidateRightDateOnlyTypes()
+    public function shouldCorrectlyValidateRightDateOnlyTypes(): void
     {
         $simpleRaml = $this->parser->parse(__DIR__ . '/fixture/simple_types.raml');
         $resource = $simpleRaml->getResourceByUri('/songs');
@@ -168,7 +168,7 @@ class TypeTest extends TestCase
     /**
      * @test
      */
-    public function shouldCorrectlyValidateWrongDateOnlyTypes()
+    public function shouldCorrectlyValidateWrongDateOnlyTypes(): void
     {
         $simpleRaml = $this->parser->parse(__DIR__ . '/fixture/simple_types.raml');
         $resource = $simpleRaml->getResourceByUri('/songs');
@@ -184,7 +184,7 @@ class TypeTest extends TestCase
     /**
      * @test
      */
-    public function shouldCorrectlyValidateArrayScalarTypes()
+    public function shouldCorrectlyValidateArrayScalarTypes(): void
     {
         $simpleRaml = $this->parser->parse(__DIR__ . '/fixture/simple_types.raml');
         $resource = $simpleRaml->getResourceByUri('/songs');

@@ -249,7 +249,7 @@ class Method implements ArrayInstantiationInterface, MessageSchemaInterface
      *
      * @param string $description
      */
-    public function setDescription($description)
+    public function setDescription($description): void
     {
         $this->description = $description;
     }
@@ -271,7 +271,7 @@ class Method implements ArrayInstantiationInterface, MessageSchemaInterface
      *
      * @param string|null $displayName
      */
-    public function setDisplayName($displayName)
+    public function setDisplayName($displayName): void
     {
         $this->displayName = $displayName;
     }
@@ -290,9 +290,8 @@ class Method implements ArrayInstantiationInterface, MessageSchemaInterface
 
     /**
      * Add a new base uri parameter
-     *
      */
-    public function addBaseUriParameter(NamedParameter $namedParameter)
+    public function addBaseUriParameter(NamedParameter $namedParameter): void
     {
         $this->baseUriParameters[$namedParameter->getKey()] = $namedParameter;
     }
@@ -311,9 +310,8 @@ class Method implements ArrayInstantiationInterface, MessageSchemaInterface
 
     /**
      * Add a new header
-     *
      */
-    public function addHeader(NamedParameter $header)
+    public function addHeader(NamedParameter $header): void
     {
         $this->headers[$header->getKey()] = $header;
     }
@@ -358,7 +356,7 @@ class Method implements ArrayInstantiationInterface, MessageSchemaInterface
      */
     public function getExampleByType($type)
     {
-        return isset($this->bodyList[$type]['example']) ? $this->bodyList[$type]['example'] : null;
+        return $this->bodyList[$type]['example'] ?? null;
     }
 
     /**
@@ -368,7 +366,7 @@ class Method implements ArrayInstantiationInterface, MessageSchemaInterface
      *
      * @throws \InvalidArgumentException
      */
-    public function addProtocol($protocol)
+    public function addProtocol($protocol): void
     {
         if (!\in_array($protocol, [ApiDefinition::PROTOCOL_HTTP, ApiDefinition::PROTOCOL_HTTPS], true)) {
             throw new \InvalidArgumentException(\sprintf('"%s" is not a valid protocol', $protocol));
@@ -393,9 +391,8 @@ class Method implements ArrayInstantiationInterface, MessageSchemaInterface
 
     /**
      * Add a query parameter
-     *
      */
-    public function addQueryParameter(NamedParameter $queryParameter)
+    public function addQueryParameter(NamedParameter $queryParameter): void
     {
         $this->queryParameters[$queryParameter->getKey()] = $queryParameter;
     }
@@ -443,9 +440,8 @@ class Method implements ArrayInstantiationInterface, MessageSchemaInterface
 
     /**
      * Add a body
-     *
      */
-    public function addBody(BodyInterface $body)
+    public function addBody(BodyInterface $body): void
     {
         $this->bodyList[$body->getMediaType()] = $body;
     }
@@ -471,14 +467,13 @@ class Method implements ArrayInstantiationInterface, MessageSchemaInterface
      */
     public function getResponse($responseCode)
     {
-        return isset($this->responses[$responseCode]) ? $this->responses[$responseCode] : null;
+        return $this->responses[$responseCode] ?? null;
     }
 
     /**
      * Add a response
-     *
      */
-    public function addResponse(Response $response)
+    public function addResponse(Response $response): void
     {
         $this->responses[$response->getStatusCode()] = $response;
     }
@@ -498,7 +493,7 @@ class Method implements ArrayInstantiationInterface, MessageSchemaInterface
     /**
      * @param bool $merge Set to true to merge the security scheme data with the method, or false to not merge it.
      */
-    public function addSecurityScheme(SecurityScheme $securityScheme, $merge = true)
+    public function addSecurityScheme(SecurityScheme $securityScheme, $merge = true): void
     {
         $this->securitySchemes[$securityScheme->getKey()] = $securityScheme;
 

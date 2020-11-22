@@ -175,7 +175,7 @@ class NumberType extends Type
         return $this;
     }
 
-    public function validate($value)
+    public function validate($value): void
     {
         parent::validate($value);
 
