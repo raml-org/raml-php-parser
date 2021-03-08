@@ -1,5 +1,4 @@
-bin
-build
-vendor
-.php_cs.cache
+!/bin/local-php-security-checker*
+/bin/
+/vendor/
 composer.lock
