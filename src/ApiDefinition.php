@@ -127,7 +127,7 @@ class ApiDefinition implements ArrayInstantiationInterface
      *
      * @see http://raml.org/spec.html#resources-and-nested-resources
      *
-     * @var resource[]
+     * @var Resource[]
      */
     private $resources = [];
 
@@ -317,7 +317,7 @@ class ApiDefinition implements ArrayInstantiationInterface
      * Get a resource by a uri
      *
      * @param string $uri
-     * @return resource
+     * @return Resource
      *
      * @throws ResourceNotFoundException
      */
@@ -341,7 +341,7 @@ class ApiDefinition implements ArrayInstantiationInterface
      * Get a resource by a path
      *
      * @param string $path
-     * @return resource
+     * @return Resource
      *
      * @throws ResourceNotFoundException
      */
@@ -382,8 +382,8 @@ class ApiDefinition implements ArrayInstantiationInterface
     }
 
     /**
-     * @param resource[] $resources
-     * @return resource[]
+     * @param Resource[] $resources
+     * @return Resource[]
      */
     private function getResourcesAsArray($resources)
     {
@@ -708,7 +708,7 @@ class ApiDefinition implements ArrayInstantiationInterface
     /**
      * Get the resources tree
      *
-     * @return resource[]
+     * @return Resource[]
      */
     public function getResources()
     {
@@ -778,7 +778,7 @@ class ApiDefinition implements ArrayInstantiationInterface
      * GET /songs => [api.example.org, /songs, GET, [https], Raml\Method]
      * GET /songs/{songId} => [api.example.org, /songs/{songId}, GET, [https], Raml\Method]
      *
-     * @param resource[] $resources
+     * @param Resource[] $resources
      * @return BasicRoute[]
      */
     private function getMethodsAsArray(array $resources)
