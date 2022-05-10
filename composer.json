@@ -1,8 +1,8 @@
 {
-  "name": "arthurkushman/raml-php-parser",
+  "name": "raml-org/raml-php-parser",
   "type": "library",
   "description": "A RAML parser built in php",
-  "homepage": "https://github.com/arthurkushman/raml-php-parser",
+  "homepage": "https://github.com/raml-org/raml-php-parser",
   "license": "MIT",
 
   "authors": [
