@@ -52,7 +52,7 @@ class TypeCollection implements \Iterator
     /**
      * {@inheritDoc}
      */
-    public function current()
+    public function current(): mixed
     {
         return $this->collection[$this->position];
     }
@@ -60,7 +60,7 @@ class TypeCollection implements \Iterator
     /**
      * {@inheritDoc}
      */
-    public function key()
+    public function key(): mixed
     {
         return $this->position;
     }
@@ -84,7 +84,7 @@ class TypeCollection implements \Iterator
     /**
      * {@inheritDoc}
      */
-    public function valid()
+    public function valid(): bool
     {
         return isset($this->collection[$this->position]);
     }
