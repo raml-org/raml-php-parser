@@ -55,10 +55,7 @@ class TraitCollection implements \Iterator
         return self::$instance;
     }
 
-    /**
-     * @return TraitDefinition
-     */
-    public function current()
+    public function current(): TraitDefinition
     {
         if ($this->valid()) {
             return $this->collection[$this->position];
@@ -67,10 +64,7 @@ class TraitCollection implements \Iterator
         throw new InvalidKeyException($this->position);
     }
 
-    /**
-     * @return int
-     */
-    public function key()
+    public function key(): int
     {
         return $this->position;
     }
@@ -85,10 +79,7 @@ class TraitCollection implements \Iterator
         $this->position = 0;
     }
 
-    /**
-     * @return bool
-     */
-    public function valid()
+    public function valid(): bool
     {
         return isset($this->collection[$this->position]);
     }
