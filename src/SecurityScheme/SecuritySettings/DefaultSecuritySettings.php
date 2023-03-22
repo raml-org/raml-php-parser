@@ -70,7 +70,7 @@ class DefaultSecuritySettings implements SecuritySettingsInterface, \ArrayAccess
      *
      * @return bool
      */
-    public function offsetExists($offset)
+    public function offsetExists($offset): bool
     {
         return isset($this->settings[$offset]);
     }
@@ -88,7 +88,7 @@ class DefaultSecuritySettings implements SecuritySettingsInterface, \ArrayAccess
      * Get a single settings value
      * @link http://php.net/manual/en/arrayaccess.offsetget.php
      */
-    public function offsetGet($offset)
+    public function offsetGet($offset): mixed
     {
         return $this->settings[$offset] ?? null;
     }
